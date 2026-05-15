@@ -1,10 +1,5 @@
 #include "log.h"
-
-
-void OnDataLoaded()
-{
-   
-}
+namespace logger = SKSE::log;
 
 std::string general_word_on_milk_pumps = R"SKSE(
 A general word on Milk Pumps: Milk pumps in Skyrim are milking stalls, much like for a milk cow, only that this device is designed for human women.
@@ -16,7 +11,7 @@ Despite its intimidating appearance, every curve and restraint is shaped for lon
 )SKSE";
 
 std::string standard_thought_instruction = R"SKSE(
-Now your task is this:  Comment on this, with thoughts of YOU as the player. How does the situation make you feel? What are you thinking, being milked like a cow in this contraption?";
+Now your task is this:  Comment on this, with thoughts of YOU as the player. How does the situation make you feel? What are you thinking now?";
 )SKSE";
 
 std::string milk_pump_prompt_1 = R"SKSE(
@@ -34,6 +29,9 @@ Also, there might be residual pain in your nipples, and of course the humiliatio
 The Milking Cuirass you were fitted with, which is like a piece of armor, that is designed to be suck milk from your breasts and also features humiliating cow design 
 is removed and you get back into your outfit from before.
 )SKSE" + general_word_on_milk_pumps + standard_thought_instruction;
+
+
+
 
 std::string blacksmith_forge_prompt_1 = R"SKSE(
 Now the situation is this: YOU, the player, are about to use a Blacksmith Forge. 
@@ -53,6 +51,502 @@ Workbenches allow you to improve your armour items.  You must have the right mat
 and the necessary smithing skill to do so.  It is not possible to create new items here. The Workbench is only for improvements.
 )SKSE" + standard_thought_instruction;
 
+std::string tanning_rack_prompt_1 = R"SKSE(
+Now the situation is this: YOU, the player, are about to use a Tanning Rack. 
+Tanning Racks allow you to break down items from your inventory into basic leather or leather stripes or simple components like that.
+If you have raw hides or old leather items, you can make basic leather components from them. But you must have the right materials
+It is not possible to create new armour or complex items here. Also improvements to items are not possible.
+)SKSE" + standard_thought_instruction;
+
+std::string smelter_prompt_1 = R"SKSE(
+Now the situation is this: YOU, the player, are about to use a Smelter. 
+Here you can turn in your raw ores, weapons or armour to smelt and disassemble them into fresh raw materials to be used later as a source for new items or improvements at the Blacksmith forge, the Workbench or the Grindstone.
+You must have the right materials to do so.
+)SKSE" + standard_thought_instruction;
+
+std::array<std::string, 5> furniture_prompt_list = {
+    blacksmith_forge_prompt_1,
+    grindstone_prompt_1,
+    workbench_prompt_1,
+    tanning_rack_prompt_1,
+    smelter_prompt_1
+};
+
+std::array<std::string, 5> furniture_prompt_triggers = {
+    "Blacksmith Forge",
+    "Grindstone",
+    "Workbench",
+    "Tanning Rack",
+    "Smelter"  // Arcane Enchanter  // Alchemist's Retort  // Alchemy Lab  //  Staff Enchanter 
+};
+
+std::array<std::string, 10> list_of_enemy_contracted_sicknesses = {
+    "Ataxia",
+    "Bone Break Fever",
+    "Brain Rot",
+    "Brown Rot",
+    "Droops",
+	"Greenspore",
+	"Rattles",
+	"Rockjoint",
+	"Gutworm",
+	"Witbane"
+};
+
+std::array<std::string, 2> list_of_food_contracted_sicknesses = {
+    "Stomach Rot",
+    "Food Poisoning"
+};
+
+
+
+std::string my_active_effect_description_string = "Nothing yet!";
+
+class MyVisitor :
+    public RE::MagicTarget::ForEachActiveEffectVisitor
+{
+public:
+    RE::BSContainer::ForEachResult Accept(RE::ActiveEffect* effect) override
+    {
+        if (effect) {
+            auto* base = effect->GetBaseObject();
+            if (base) {
+                // logger::info("Effect: {}", base->GetName());
+				logger::info(
+					"Effect ptr={} base={}",
+					(void*)effect,
+					base ? base->GetName() : "NULL"
+				);
+            }
+        }
+        return RE::BSContainer::ForEachResult::kContinue;
+    }
+};
+
+class UIDMatchVisitor :
+    public RE::MagicTarget::ForEachActiveEffectVisitor
+{
+public:
+    UIDMatchVisitor(std::uint16_t uid) :
+        targetUID(uid),
+        found(nullptr)
+    {}
+
+    RE::BSContainer::ForEachResult Accept(RE::ActiveEffect* effect) override
+    {
+        if (!effect) {
+            return RE::BSContainer::ForEachResult::kContinue;
+        }
+
+        // 🔑 THIS is the key comparison
+        if (effect->usUniqueID == targetUID)
+        {
+            found = effect;
+            auto* base = effect->GetBaseObject();
+            if (base) {
+                // logger::info("Effect: {}", base->GetName());
+				logger::info(
+					"Effect ptr={} base={}",
+					(void*)effect,
+					base ? base->GetName() : "NULL"
+				);
+            }
+            return RE::BSContainer::ForEachResult::kStop;
+        }
+
+        return RE::BSContainer::ForEachResult::kContinue;
+    }
+
+    RE::ActiveEffect* GetResult() const
+    {
+        return found;
+    }
+
+private:
+    std::uint16_t targetUID;
+    RE::ActiveEffect* found;
+};
+
+//  Here comes teh code for hooking into the active effect application and removal, i.e. the list of currently active effects.
+class ChangesToTheActiveMagicEffectListEventHandler :
+    public RE::BSTEventSink<RE::TESActiveEffectApplyRemoveEvent>
+{
+public:
+    RE::BSEventNotifyControl ProcessEvent(
+        const RE::TESActiveEffectApplyRemoveEvent* a_event,
+        RE::BSTEventSource<RE::TESActiveEffectApplyRemoveEvent>*
+    ) override
+    {
+        // Protect from null pointer access, just in case.
+		if (!a_event) {
+			RE::DebugMessageBox("WOW! Null EVENT POINTER received in the ACTIVE EVENT CHANGE HANDLER!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		// Let's see what this event is about.  Who is the actor and what is the effect?		
+		auto* targetRef = a_event->target.get();
+		if (!targetRef) {
+			RE::DebugMessageBox("WOW! Null TARGET POINTER received in the ACTIVE EVENT CHANGE HANDLER!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		RE::Actor* actor;
+		actor = targetRef->As<RE::Actor>();
+		if (!actor) {
+			RE::DebugMessageBox("WOW! There in NOT EVEN AN ACTOR in this ACTIVE EVENT CHANGE!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		// ✔ only care about player
+		if (!actor->IsPlayerRef()) {
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		logger::info("========== Found an effect, that is actually about the Player.  Let's go into more details below! =============");		
+		SKSE::log::info(
+			"Effect {} on {} | UID={}",
+			a_event->isApplied ? "APPLIED" : "REMOVED",
+			actor->GetName(),
+			a_event->activeEffectUniqueID);
+
+		auto* magicTarget = actor->GetMagicTarget();
+		auto* ref = a_event->target.get();
+
+		// MyVisitor visitor;  // old Version had really no parameter
+		UIDMatchVisitor visitor(a_event->activeEffectUniqueID);  // new version, we want to find the effect with the same UID in the current list of active effects.
+
+		magicTarget->VisitEffects(visitor);
+		auto* effect = visitor.GetResult();
+
+		if (!effect)		
+		{
+			logger::info("No matching ActiveEffect found for UID {}", a_event->activeEffectUniqueID);
+			RE::DebugMessageBox("WOW! AFTER RUNNING VisitEffects, we got NO MATCHING ACTIVE EFFECT FOUND for the current UID!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+
+		auto* base = effect->GetBaseObject();
+		logger::info("Effect ptr: {}", (void*)effect);
+		logger::info("UID: {}", a_event->activeEffectUniqueID);
+
+		if (!base)
+		{
+			RE::DebugMessageBox("WOW! THE BASE OBJECT IS NULL!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		auto our_form_id = base->GetFormID();
+		auto base_name = base->GetName();
+
+		//  Cell Tracking Effect
+		if (std::strcmp(base_name, "Cell Tracking Effect") == 0) {
+			logger::info("----------------->>>>>>>>>>>>>>> SKIPPING THE REST, BECAUES THIS IS SOME CELL TRACKING FROM MIA's LAIR / Slavemod.");
+			return RE::BSEventNotifyControl::kContinue; 
+		}
+		//  Cell Tracking Effect
+		if (std::strcmp(base_name, "Maintenance") == 0) {
+			logger::info("----------------->>>>>>>>>>>>>>> SKIPPING THE REST, BECAUES THIS IS SOME Hunger-Tracking from RND-Needs-Mod.");
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		logger::info("Base name: {}", base_name);
+		logger::info("Base ptr: {}", (void*)base);
+		logger::info("Base-FormID: {:X}", our_form_id);
+
+		logger::info("Base-Form Type: {}   (This means: {}) ", (int)base->GetFormType(),   RE::FormTypeToString(base->GetFormType() ) );  // Which types are there? 
+		logger::info("base-Effect EDID: {}", base->GetFormEditorID());
+		logger::info("Source pointer: {}", (void*)effect->spell);
+		auto caster = effect->caster.get();
+		logger::info("Caster: {}", caster ? caster->GetName() : "None");
+		auto* source = effect->spell;
+		logger::info("Source ptr: {}", (void*)source);
+
+		// Optional but very useful if available in your build:
+		logger::info("Magnitude: {}", effect->magnitude);
+		logger::info("Duration: {}", effect->duration);
+		// logger::info("Elapsed: {}", effect->elapsedTime);
+
+		if (source) {
+			logger::info("Source name: {}", source->GetName());
+			logger::info("Source FormID: {:X}", source->GetFormID());
+			logger::info("Source EDID: {}", source->GetFormEditorID());
+		} else {
+			logger::info("No source spell for this effect.");
+		}
+
+		
+
+
+		// Let's inspect the FormID and hte Form behind the effect, to see if we can identify it.  
+		// auto* form = RE::TESForm::LookupByID(0x2803BD99);
+		auto* form = RE::TESForm::LookupByID(our_form_id);
+		if (form)
+		{
+			logger::info("Form with ID {:X} found: {}", our_form_id, form->GetName());
+		}
+		else
+		{
+			logger::info("Form with ID {:X} not found.", our_form_id);
+		}
+
+		// Let's also track the drunk-stumble-script:  It means the stumble-and-fall animation is playing, 
+		// so we might as well say so.
+		if ( (std::strcmp(base_name, "Drunk Stumble Script") == 0) && (a_event->isApplied) ){  	// Drunk Stumble Script
+			// Here you can add your custom logic for when the stumble-and-fall animation is playing.
+			throw_out_TTS_thought_message("YOU, the player, just stumbled and fell over you own feet.  How does that make you feel?  What are you thinking now? ");
+			return RE::BSEventNotifyControl::kContinue;
+		} else {
+			logger::info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx NOT THE DRUNK STUMBLE SCRIPT!");
+		}
+
+
+		// Let's try to track Stomach Rot here, which is a common effect that is applied when the player eats something rotten.  
+		// It has a very specific magnitude and duration, so it should be easy to identify.
+		if (base && ( IsAFoodBasedDisease(base_name) != -1) && (a_event->isApplied) )
+		{
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler! ", base_name);
+
+			RE::DebugMessageBox(stomach_rot_status.c_str());	
+			// Here you can add your custom logic for when Stomach Rot is applied or removed.
+
+			// We want to broadcast mod events.  So we need this event source.
+			std::string  mod_event_name = "SNMI_PlayerActivatedSomething";
+			std::string  mod_event_string_arg = std::format("YOU, the player, just ate something!  As a total surprise, you now notice, that you may have just contracted the so-called disease '{}' from it!  You need to announce the potential infection in your response, so that the actual player is informed.  You may do that implicitly, in the form of regret, surprise anger or shock.  It is a potentially dangerous condition. Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name); //  + standard_thought_instruction;
+			auto eventSource = SKSE::GetModCallbackEventSource();
+			SKSE::ModCallbackEvent my_event(
+				mod_event_name,                        // event name
+				mod_event_string_arg,                  // arbitrary string argument 
+				123.0f,                                // arbitrary float argument
+				RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+			);
+			eventSource->SendEvent(&my_event);
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		// Let's try to track Unforgiving Devices Struggle Exhaustion here:  FIRST THE APPLICATION OF THE EFFECT.
+		if (base && ( (std::strcmp(base->GetName(), "Exhaustion") == 0)  ) && ( (std::strcmp(source->GetName(), "Struggle exhaustion") == 0)  ) && (a_event->isApplied) )
+		{
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler! ", base_name);
+			RE::DebugMessageBox(stomach_rot_status.c_str());	
+			// Here you can add your custom logic for when Stomach Rot is applied or removed.
+			// We want to broadcast mod events.  So we need this event source.
+			std::string  mod_event_name = "SNMI_PlayerActivatedSomething";
+			std::string  mod_event_string_arg = std::format("YOU, the player, just tried getting out of your locking bondage devices for a whole while. Maybe it worked, maybe it didn't work, but nevertheless now you are too exhausted to continue.  Say as much in your response."); //  + standard_thought_instruction;
+			auto eventSource = SKSE::GetModCallbackEventSource();
+			SKSE::ModCallbackEvent my_event(
+				mod_event_name,                        // event name
+				mod_event_string_arg,                  // arbitrary string argument 
+				123.0f,                                // arbitrary float argument
+				RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+			);
+			eventSource->SendEvent(&my_event);
+			return RE::BSEventNotifyControl::kContinue;
+		}
+		// Let's try to track Unforgiving Devices Struggle Exhaustion here:  NOW THE REMOVAL OF THE EFFECT.
+		if (base && ( (std::strcmp(base->GetName(), "Exhaustion") == 0)  ) && ( (std::strcmp(source->GetName(), "Struggle exhaustion") == 0)  ) && (!a_event->isApplied) )
+		{
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler! ", base_name);
+			RE::DebugMessageBox(stomach_rot_status.c_str());	
+			// Here you can add your custom logic for when Stomach Rot is applied or removed.
+			// We want to broadcast mod events.  So we need this event source.
+			std::string  mod_event_name = "SNMI_PlayerActivatedSomething";
+			std::string  mod_event_string_arg = std::format("YOU, the player, just were trying to get out of your locking bondage devices for a whole while. That had made you exhausted to the point where you couldn't continue any more.  But now time has passed and you're feeling better and you're good to go once more and could give it another try.  Say as much in your response."); //  + standard_thought_instruction;
+			auto eventSource = SKSE::GetModCallbackEventSource();
+			SKSE::ModCallbackEvent my_event(
+				mod_event_name,                        // event name
+				mod_event_string_arg,                  // arbitrary string argument 
+				123.0f,                                // arbitrary float argument
+				RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+			);
+			eventSource->SendEvent(&my_event);
+			return RE::BSEventNotifyControl::kContinue;
+		}
+		// Let's try to track Unforgiving Devices Struggle Exhaustion here:  FIRST THE APPLICATION OF THE EFFECT.
+		if (base && ( (std::strcmp(base->GetName(), "Device Manifest") == 0)  ) && (a_event->isApplied) )
+		{
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler! ", base_name);
+			RE::DebugMessageBox(stomach_rot_status.c_str());	
+			// Here you can add your custom logic for when Stomach Rot is applied or removed.
+			// We want to broadcast mod events.  So we need this event source.
+			std::string  mod_event_name = "SNMI_PlayerActivatedSomething";
+			std::string  mod_event_string_arg = std::format("Some substance called black goo just came in contact with you, and, to your horror, it manifested into a bondage device, thus trapping you as the victim now locked into said device.  What are you thinking in the face of this situation? "); //  + standard_thought_instruction;
+			auto eventSource = SKSE::GetModCallbackEventSource();
+			SKSE::ModCallbackEvent my_event(
+				mod_event_name,                        // event name
+				mod_event_string_arg,                  // arbitrary string argument 
+				123.0f,                                // arbitrary float argument
+				RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+			);
+			eventSource->SendEvent(&my_event);
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		/*
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:206] Effect APPLIED on Beea | UID=19
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:148] Effect ptr=0x13c3b010e00 base=SpeedMult Penalty
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:230] Effect ptr: 0x13c3b010e00
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:231] UID: 19
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:253] Base name: SpeedMult Penalty
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:254] Base ptr: 0x136e8560100
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:255] Base-FormID: 1401332D
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:257] Base-Form Type: 18   (This means: MGEF) 
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:258] base-Effect EDID: zadx_effPenaltySpeedMult
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:259] Source pointer: 0x136e826f4c0
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:261] Caster: Beea
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:263] Source ptr: 0x136e826f4c0
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:266] Magnitude: -20
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:267] Duration: 0
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:271] Source name: BootSlow-Enchant
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:272] Source FormID: 1401332E
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:273] Source EDID: zadx_EnchSlowBoots
+[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:286] Form with ID 1401332D found: SpeedMult Penalty
+*/
+
+
+        return RE::BSEventNotifyControl::kContinue;
+    }
+	private:
+	void throw_out_TTS_thought_message(std::string my_message) {
+		RE::DebugMessageBox(my_message.c_str());
+		// We want to broadcast mod events.  So we need this event source.
+		std::string  mod_event_name = "SNMI_PlayerActivatedSomething";
+		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
+		auto eventSource = SKSE::GetModCallbackEventSource();
+		SKSE::ModCallbackEvent my_event(
+			mod_event_name,                        // event name
+			mod_event_string_arg,                  // arbitrary string argument 
+			123.0f,                                // arbitrary float argument
+			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+		);
+		eventSource->SendEvent(&my_event);
+	}
+	int IsAFoodBasedDisease(std::string_view keyword)
+	{
+		for (std::size_t i = 0; i < list_of_food_contracted_sicknesses.size(); ++i)
+		{
+			if (keyword == list_of_food_contracted_sicknesses[i])
+			{
+				return static_cast<int>(i);
+			}
+		}
+		return -1;
+	}
+};
+
+
+class ModEventHandler :
+    public RE::BSTEventSink<SKSE::ModCallbackEvent>
+{
+public:
+
+    RE::BSEventNotifyControl ProcessEvent(
+        const SKSE::ModCallbackEvent* a_event,
+        RE::BSTEventSource<SKSE::ModCallbackEvent>*)
+        override
+    {
+        if (!a_event) {
+            return RE::BSEventNotifyControl::kContinue;
+        }
+        // logger::info("MOD EVENT:");
+        // logger::info("  Name: {}", a_event->eventName);
+        // logger::info("  StrArg: {}", a_event->strArg);
+        // logger::info("  NumArg: {}", a_event->numArg);
+		
+		if ( (std::strcmp(a_event->eventName.c_str() , "SKICP_configManagerReady") == 0)  ||  (std::strcmp(a_event->eventName.c_str() , "Apropos2GameLoaded") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_hudModeChanged") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_widgetLoaded") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_widgetManagerReady") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_iWantWidgetsReset") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_iWantStatusBarsReady") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "iWantStatusBarsReady") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "iWantWidgetsReset") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "SLA_Int_PlayerLoadsGame") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "sla_Int_PlayerLoadsGame") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "sla_UpdateComplete") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "SN_StatusUpdated") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "_SN_StatusUpdated") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechStarted") == 0)
+			// || (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechCompleted") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioStarted") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioEnded") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "UD_AfterUIReload") == 0) 			
+			|| (std::strcmp(a_event->eventName.c_str() , "UD_QuestKeywordUpdate") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "UD_GenericKeyUpdate") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "UD_PatchUpdate") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "UIListMenu_LoadMenu") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "UIListMenu_CloseMenu") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "UIListMenu_SelectItemText") == 0)   // this may be useful later, because it indicated player is trying lockpicking now
+			|| (std::strcmp(a_event->eventName.c_str() , "UIListMenu_SelectItem") == 0)
+			// || (std::strcmp(a_event->eventName.c_str() , "UD_SentientDialogue") == 0)  // Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
+			|| (std::strcmp(a_event->eventName.c_str() , "RSM_LoadPlugins") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "SeverActions_CellLoaded") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "ReSchlongify") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "MME_MilkCycleComplete") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "BeeingFemale") == 0)   //  We ignore this for now, maybe later we can do something with it.
+		) {
+			// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
+			logger::info("=== Mod Event Ignored:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		// We log all other mod events, because they might be interesting for us to react to and turn into immersive player thoughts
+		logger::info("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
+		std::string debug_message = std::format("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg );
+		RE::DebugMessageBox(debug_message.c_str());
+
+		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceRemovedBoots
+		if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedBoots") == 0)  ) {
+			throw_out_TTS_thought_message("YOU, the player, just managed to get our of your locking bondage boots.  What a relief!  What are you thinking now based on this? ");
+			return RE::BSEventNotifyControl::kContinue;
+		}
+		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
+		if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedWristRestraint") == 0)  ) {
+			throw_out_TTS_thought_message("YOU, the player,  managed to get our of your locking bondage device.  Your wrists are free again!  What a relief!  What are you thinking now based on this? ");
+			return RE::BSEventNotifyControl::kContinue;
+		}
+		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
+		if ( (std::strcmp(a_event->eventName.c_str() , "UD_SentientDialogue") == 0)  ) {
+			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
+			std::string  thought_message = std::format("YOU, the player, suddenly have a feeling like your {} is speaking to you, but you cannot be sure.  What are you thinking now based on this? ", a_event->strArg.c_str());
+			throw_out_TTS_thought_message(thought_message);
+			return RE::BSEventNotifyControl::kContinue;
+		}
+		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
+		if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedBoots") == 0)  ) {
+			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
+			std::string  thought_message = std::format("YOU, the player, just got locked into bondage boots and you cannot take them off any more because they got locked onto your feet.  What are you thinking now based on this? ", a_event->strArg.c_str());
+			throw_out_TTS_thought_message(thought_message);
+			return RE::BSEventNotifyControl::kContinue;
+		}
+		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
+		if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedyoke") == 0)  ) {
+			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
+			std::string  thought_message = std::format("YOU, the player, just got locked into an iron bondage yoke. Such a yoke is an iron bondage device, that locks around your neck and wrists, trapping your wrists in a position next to your shoulders, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? ", a_event->strArg.c_str());
+			throw_out_TTS_thought_message(thought_message);
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+
+        return RE::BSEventNotifyControl::kContinue;
+    }
+	private:
+	void throw_out_TTS_thought_message(std::string my_message) {
+		RE::DebugMessageBox(my_message.c_str());
+		// We want to broadcast mod events.  So we need this event source.
+		std::string  mod_event_name = "SNMI_PlayerActivatedSomething";
+		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
+		auto eventSource = SKSE::GetModCallbackEventSource();
+		SKSE::ModCallbackEvent my_event(
+			mod_event_name,                        // event name
+			mod_event_string_arg,                  // arbitrary string argument 
+			123.0f,                                // arbitrary float argument
+			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+		);
+		eventSource->SendEvent(&my_event);
+	}
+};
 
 
 
@@ -128,48 +622,21 @@ public:
 					SKSE::log::info("THIS IS THE 1st Event for Milk Pump! {} " , mod_event_string_arg );
 				}
                 mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
-            } else if (std::strcmp(furniture_name , "Blacksmith Forge") == 0) {
-				SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated the Blacksmith Forge!  THIS GETS A SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
+            } else if (GetKeywordIndex(furniture_name) != -1) {
+				SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated a piece of furniture that is in our list of special furniture!  This gets a SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
+			
 				auto* player = RE::PlayerCharacter::GetSingleton();
 				auto furniture = player->GetOccupiedFurniture().get();
 				if (furniture) {
-					// player is already using furniture, so this is probably the second event.  No comment on this in the blacksmith forge case.
-					SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated the Blacksmith Forge, but this is probably the second furniture event, so we EXIT without no message and no further ado now!!!!");
+					// player is already using furniture, so this is probably the second event.  No comment on this for all the furnitures in this standard list.
+					SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated a furniture from the list of special furniture, but this is probably the second furniture event, so we EXIT without no message and no further ado now!!!!");
         			return RE::BSEventNotifyControl::kContinue;
-				}		else {
-					mod_event_string_arg = blacksmith_forge_prompt_1;
-					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for Blacksmith Forge! " + mod_event_string_arg ).c_str());
-					SKSE::log::info("THIS IS THE 1st Event for Blacksmith Forge! {} " , mod_event_string_arg );
+				} else {
+					mod_event_string_arg = furniture_prompt_list[GetKeywordIndex(furniture_name)];
+					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for this furnitures item (because player not in a furniture already! " + mod_event_string_arg ).c_str());
+					SKSE::log::info("THIS IS THE 1st Event for this furniture item (because player not in a furniture already)! {} " , mod_event_string_arg );
 				}
                 mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
-            } else if (std::strcmp(furniture_name , "Grindstone") == 0) {
-				SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated the Grindstone!  THIS GETS A SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
-				auto* player = RE::PlayerCharacter::GetSingleton();
-				auto furniture = player->GetOccupiedFurniture().get();
-				if (furniture) {
-					// player is already using furniture, so this is probably the second event.  No comment on this in the blacksmith forge case.
-					SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated the Grindstone, but this is probably the second furniture event, so we EXIT without no message and no further ado now!!!!");
-        			return RE::BSEventNotifyControl::kContinue;
-				}		else {
-					mod_event_string_arg = grindstone_prompt_1;
-					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for Grindstone! " + mod_event_string_arg ).c_str());
-					SKSE::log::info("THIS IS THE 1st Event for Grindstone! {} " , mod_event_string_arg );
-				}
-                mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
-            } else if (std::strcmp(furniture_name , "Workbench") == 0) {
-				SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated the Workbench!  THIS GETS A SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
-				auto* player = RE::PlayerCharacter::GetSingleton();
-				auto furniture = player->GetOccupiedFurniture().get();
-				if (furniture) {
-					// player is already using furniture, so this is probably the second event.  No comment on this in the blacksmith forge case.
-					SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated the Workbench, but this is probably the second furniture event, so we EXIT without no message and no further ado now!!!!");
-        			return RE::BSEventNotifyControl::kContinue;
-				}		else {
-					mod_event_string_arg = workbench_prompt_1;
-					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for Workbench! " + mod_event_string_arg ).c_str());
-					SKSE::log::info("THIS IS THE 1st Event for Workbench! {} " , mod_event_string_arg );			
-				}
-                mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";            
 			} else {
 
 				//  LATER:  Add special treatment for:  Bench
@@ -214,18 +681,36 @@ public:
 
         return RE::BSEventNotifyControl::kContinue;
     };
+	private:
+	int GetKeywordIndex(std::string_view keyword)
+	{
+		for (std::size_t i = 0; i < furniture_prompt_triggers.size(); ++i)
+		{
+			if (keyword == furniture_prompt_triggers[i])
+			{
+				return static_cast<int>(i);
+			}
+		}
+		return -1;
+	}
 };
 
-//  Instantiate the code for hooking into the Tanning Rack
+//  Instantiate the code for hooking into Furniture, i.e. Blacksmith Forge, Workbenches, Tanning Rack and also Milk Pumps.
 static ActivateEventHandler g_activateHandler;
 
+//  Instantiate the code for hooking into the Active Effect Changes.
+static ChangesToTheActiveMagicEffectListEventHandler g_ChangesToTheActiveMagicEffectListEventHandler;
+
+//  Instantiate the code for hooking into the mod event listener.
+static ModEventHandler g_mod_event_handler;
+
+auto* source = RE::ScriptEventSourceHolder::GetSingleton();
 
 void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 {
 	switch (a_msg->type) {
 	case SKSE::MessagingInterface::kDataLoaded:
         
-
 		RE::ConsoleLog::GetSingleton()->Print("[SkyrimNetMessagelessImmersion] 0004 SkyrimNetMessagelessImmersion.dll plugin was loaded. GREAT!");
 		// That has happend before, right?  SetupLog();
 		RE::ConsoleLog::GetSingleton()->Print("[SkyrimNetMessagelessImmersion] 0002 Log setup just passed.");
@@ -237,8 +722,21 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		RE::ScriptEventSourceHolder::GetSingleton()
 		->AddEventSink<RE::TESActivateEvent>(&g_activateHandler);
 
+		if (source) {
+			source->AddEventSink<RE::TESActiveEffectApplyRemoveEvent>(&g_ChangesToTheActiveMagicEffectListEventHandler);
+			SKSE::log::info("[SkyrimNetMessagelessImmersion] 0005: Registered ACTIVE-MAGIC-EFFECT-CHANGE event sink");
+		} else {
+			RE::DebugMessageBox("FAILED TO GET SOURCE FOR THE EVENT LISTENER REGISTRATION!!!!");
+		};
+
+
+		// Register also out mod-event-listener, that just catched intentionally broadcasted mod events.
+		// auto* mod_event_source = SKSE::GetModCallbackEventSource();
+		// mod_event_source->AddEventSink(&g_mod_event_handler);
+		SKSE::GetModCallbackEventSource()->AddEventSink(&g_mod_event_handler);
 
 		break;
+
 	case SKSE::MessagingInterface::kPostLoad:
 		break;
 	case SKSE::MessagingInterface::kPreLoadGame:
@@ -247,7 +745,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
         break;
 	case SKSE::MessagingInterface::kNewGame:
 		break;
-	}
+	};
 }
 
 SKSEPluginLoad(const SKSE::LoadInterface *skse) {
