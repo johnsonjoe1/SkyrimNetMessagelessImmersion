@@ -8,6 +8,17 @@ At present, there is only a SKSE plugin and some trigger-yaml files for SkyrimNe
 Nothing is overwritten and no other mods or proceedinds are changed.  That is one of the ideas here:  
 Don't change anything about the mechanics of Skyrim or any installed mods.
 Just make them messageless, if the user so desires.
+Make especially those messages that just scroll by and are easily overlooked into a player-thought (or later maybe some other) reaction,
+e.g. when getting infected with a disease, and it's visible in the active effect page, it should also trigger a response thought in-game.
+When the disease gets worse, it should trigger another reaction.  
+If an items has some magic effects attached to it, that could trigger more responses by the player-character in game.
+
+# Installation instructions
+There is currently no release package.  If you really want one, I can make one.  Just say so.
+
+# Features list
+At present, there are some hooks into the activation of furniture, like Tanning Rack and Blacksmith forge, that should trigger player thought.
+Then there are some hooks into the active magic effect process.  Whatever seems reasonable and makes sense will trigger 
 
 # CommonLibSSE NG
 
