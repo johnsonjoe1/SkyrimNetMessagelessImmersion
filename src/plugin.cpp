@@ -184,26 +184,22 @@ public:
 			RE::DebugMessageBox("WOW! Null EVENT POINTER received in the ACTIVE EVENT CHANGE HANDLER!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
 			return RE::BSEventNotifyControl::kContinue;
 		}
-
 		// Let's see what this event is about.  Who is the actor and what is the effect?		
 		auto* targetRef = a_event->target.get();
 		if (!targetRef) {
 			RE::DebugMessageBox("WOW! Null TARGET POINTER received in the ACTIVE EVENT CHANGE HANDLER!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
 			return RE::BSEventNotifyControl::kContinue;
 		}
-
 		RE::Actor* actor;
 		actor = targetRef->As<RE::Actor>();
 		if (!actor) {
 			RE::DebugMessageBox("WOW! There in NOT EVEN AN ACTOR in this ACTIVE EVENT CHANGE!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
 			return RE::BSEventNotifyControl::kContinue;
 		}
-
 		// ✔ only care about player
 		if (!actor->IsPlayerRef()) {
 			return RE::BSEventNotifyControl::kContinue;
 		}
-
 		logger::info("========== Found an effect, that is actually about the Player.  Let's go into more details below! =============");		
 		SKSE::log::info(
 			"Effect {} on {} | UID={}",
@@ -216,7 +212,6 @@ public:
 
 		// MyVisitor visitor;  // old Version had really no parameter
 		UIDMatchVisitor visitor(a_event->activeEffectUniqueID);  // new version, we want to find the effect with the same UID in the current list of active effects.
-
 		magicTarget->VisitEffects(visitor);
 		auto* effect = visitor.GetResult();
 
@@ -226,20 +221,20 @@ public:
 			RE::DebugMessageBox("WOW! AFTER RUNNING VisitEffects, we got NO MATCHING ACTIVE EFFECT FOUND for the current UID!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
 			return RE::BSEventNotifyControl::kContinue;
 		}
-
-
 		auto* base = effect->GetBaseObject();
-
-
 		if (!base)
 		{
 			RE::DebugMessageBox("WOW! THE BASE OBJECT IS NULL!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
 			return RE::BSEventNotifyControl::kContinue;
 		}
-
 		auto our_form_id = base->GetFormID();
 		auto base_name = base->GetName();
-
+		auto caster = effect->caster.get();
+		auto* source = effect->spell;
+		// Let's inspect the FormID and hte Form behind the effect, to see if we can identify it.  
+		// auto* form = RE::TESForm::LookupByID(0x2803BD99);
+		auto* form = RE::TESForm::LookupByID(our_form_id);
+		
 		//  Cell Tracking Effect
 		if ( (std::strcmp(base_name, "Cell Tracking Effect") == 0) || (std::strcmp(base_name, "SCO_CellChangeDetectMgef") == 0) || (std::strcmp(base_name, "SCO_CellChangeBegin") == 0) )  {   // SCO_CellChangeDetectMgef  SCO_CellChangeBegin
 			logger::info("----------------->>>>>>>>>>>>>>> SKIPPING THE REST, BECAUES THIS IS SOME CELL TRACKING FROM MIA's LAIR or some other mod.");
@@ -265,46 +260,57 @@ public:
 			logger::info("----------------->>>>>>>>>>>>>>> SKIPPING THE REST, BECAUES THIS IS SOME technicallity from SOS (schlongs-of-skyrim).");
 			return RE::BSEventNotifyControl::kContinue;
 		}
-		
-
+		//  RaceMenuHH Scale Effect
+		if (std::strcmp(base_name, "RaceMenuHH Scale Effect") == 0) {
+			logger::info("----------------->>>>>>>>>>>>>>> SKIPPING THE REST, BECAUES THIS IS SOME technicallity from RaceMenuHH.");
+			return RE::BSEventNotifyControl::kContinue;
+		}
+		// Let's try to track YPS-Fashion-High-Heels-slowdown-effect:  this gets activated and deactivated all the time, so we have to keep our messages in check
+		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "High Heel Novice") == 0)  ) && (a_event->isApplied) && (effect->magnitude < 0) )
+		{
+			SKSE::log::info("xxxxxxxxxxx High Heels Novice MAGIC EFFECT PROPERLY DETECTED");
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS HIGH HEELS NOVICE! ", base_name);
+			// RE::DebugMessageBox(stomach_rot_status.c_str());	
+			throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You already have some experience with them, but you are still a High Heels Novice, so they still slow you down a bit. It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			return RE::BSEventNotifyControl::kContinue;
+		}
+		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "High Heel Novice") == 0)  ) && (!a_event->isApplied) ) {
+			// We do nothing here.
+			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of High Heels Novice MAGIC EFFECT.");
+			return RE::BSEventNotifyControl::kContinue;
+		}
+		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "Untrained Feet") == 0)  ) && (a_event->isApplied) && (effect->magnitude < 0) )
+		{
+			SKSE::log::info("xxxxxxxxxxx YPS 'Untrained Feet' (high heels) MAGIC EFFECT PROPERLY DETECTED");
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS UNTRAINED FEET! ", base_name);
+			// RE::DebugMessageBox(stomach_rot_status.c_str());	
+			throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now.  It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			return RE::BSEventNotifyControl::kContinue;
+		}
+		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "Untrained Feet") == 0)  ) && (!a_event->isApplied) ) {
+			// We do nothing here.
+			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of Untrained Feet MAGIC EFFECT.");
+			return RE::BSEventNotifyControl::kContinue;
+		}
 
 
 		// logger::info("Effect ptr: {}", (void*)effect);
 		// logger::info("UID: {}", a_event->activeEffectUniqueID);
-		logger::info("Base name: {}", base_name);
-		logger::info("Base ptr: {}", (void*)base);
-		logger::info("Base-FormID: {:X}", our_form_id);
-
-		logger::info("Base-Form Type: {}   (This means: {}) ", (int)base->GetFormType(),   RE::FormTypeToString(base->GetFormType() ) );  // Which types are there? 
-		logger::info("base-Effect EDID: {}", base->GetFormEditorID());
-		logger::info("Source pointer: {}", (void*)effect->spell);
-		auto caster = effect->caster.get();
-		logger::info("Caster: {}", caster ? caster->GetName() : "None");
-		auto* source = effect->spell;
-		logger::info("Source ptr: {}", (void*)source);
-
+		logger::info("Base name: {} | Base ptr: {} | Base-FormID: {:X} | Base-Form Type: {}   (This means: {}) ", base_name, (void*)base, our_form_id, (int)base->GetFormType(),   RE::FormTypeToString(base->GetFormType() ) );
+		logger::info("base-Effect EDID: {} | Source ptr: {}  |  Caster: {} ", base->GetFormEditorID(), (void*)source, caster ? caster->GetName() : "None");
+		// logger::info("Source pointer: {}", (void*)effect->spell);
+		// logger::info("Source ptr: {}  |  Caster: {} ", (void*)source, caster ? caster->GetName() : "None");
 		// Optional but very useful if available in your build:
-		logger::info("Magnitude: {}", effect->magnitude);
-		logger::info("Duration: {}", effect->duration);
+		logger::info("Magnitude: {} | Duration: {}", effect->magnitude, effect->duration);
 		// logger::info("Elapsed: {}", effect->elapsedTime);
-
 		if (source) {
-			logger::info("Source name: {}", source->GetName());
-			logger::info("Source FormID: {:X}", source->GetFormID());
-			logger::info("Source EDID: {}", source->GetFormEditorID());
+			logger::info("Source name: {} | Source FormID: {:X} | Source EDID: {} ", source->GetName(), source->GetFormID(), source->GetFormEditorID());
 		} else {
 			logger::info("No source spell for this effect.");
 		}
-
-		
-
-
-		// Let's inspect the FormID and hte Form behind the effect, to see if we can identify it.  
-		// auto* form = RE::TESForm::LookupByID(0x2803BD99);
-		auto* form = RE::TESForm::LookupByID(our_form_id);
 		if (form)
 		{
-			logger::info("Form with ID {:X} found: {}", our_form_id, form->GetName());
+			logger::info("Form LookupByID {:X} found: {}", our_form_id, form->GetName());
 		}
 		else
 		{
@@ -324,55 +330,84 @@ public:
 		// It has a very specific magnitude and duration, so it should be easy to identify.
 		if (base && ( IsAFoodBasedDisease(base_name) != -1) && (a_event->isApplied) )
 		{
-			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler! ", base_name);
-			RE::DebugMessageBox(stomach_rot_status.c_str());	
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for FOOD-BASED-DISEASE! ", base_name);
+			RE::DebugMessageBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
+			SKSE::log::info("XX-- our event handler for FOOD-BASED-DISEASE!");
 			throw_out_TTS_thought_message(std::format("YOU, the player, just ate something!  As a total surprise, you now notice, that you may have just contracted the so-called disease '{}' from it!  You need to announce the potential infection in your response, so that the actual player is informed.  You may do that implicitly, in the form of regret, surprise anger or shock.  It is a potentially dangerous condition. Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track Unforgiving Devices Struggle Exhaustion here:  FIRST THE APPLICATION OF THE EFFECT.
 		if (base && ( (std::strcmp(base->GetName(), "Exhaustion") == 0)  ) && ( (std::strcmp(source->GetName(), "Struggle exhaustion") == 0)  ) && (a_event->isApplied) )
 		{
-			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler! ", base_name);
-			RE::DebugMessageBox(stomach_rot_status.c_str());	
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UNFORGIVING-DEVICES STRUGGLE EXHAUSTION! ", base_name);
+			//RE::DebugMessageBox(stomach_rot_status.c_str());	
+			SKSE::log::info("XX-- our event handler for UD STRUGGLE EXHAUSTION APPLICATION!");
 			throw_out_TTS_thought_message(std::format("YOU, the player, just tried getting out of your locking bondage devices for a whole while. You may have made some progress, but nevertheless now you are too exhausted to continue.  Say as much in your response.")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track Unforgiving Devices Struggle Exhaustion here:  NOW THE REMOVAL OF THE EFFECT.
 		if (base && ( (std::strcmp(base->GetName(), "Exhaustion") == 0)  ) && ( (std::strcmp(source->GetName(), "Struggle exhaustion") == 0)  ) && (!a_event->isApplied) )
 		{
-			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler! ", base_name);
-			RE::DebugMessageBox(stomach_rot_status.c_str());	
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UNFORGIVING-DEVICES STRUGGLE EXHAUSTION! ", base_name);
+			// RE::DebugMessageBox(stomach_rot_status.c_str());	
+			SKSE::log::info("XX-- our event handler for UD STRUGGLE EXHAUSTION REMOVAL!");
 			throw_out_TTS_thought_message(std::format("YOU, the player, just were trying to get out of your locking bondage devices for a whole while. You may have made some progress, but in any case, that activity had made you exhausted to the point where you couldn't continue any more.  But now time has passed and you're feeling better and you're good to go and maybe could continue trying.  Say as much in your response.")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track UD/US Black-Goo-Application-Effect here:  FIRST THE APPLICATION OF THE EFFECT.
 		if (base && ( (std::strcmp(base->GetName(), "Device Manifest") == 0)  ) && (a_event->isApplied) )
 		{
-			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler! ", base_name);
-			RE::DebugMessageBox(stomach_rot_status.c_str());	
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for BLACK-GOO-APPLICATION! ", base_name);
+			// RE::DebugMessageBox(stomach_rot_status.c_str());	
+			SKSE::log::info("XX-- our event handler for BLACK-GOO-APPLICATION!");
 			throw_out_TTS_thought_message(std::format("Some substance called black goo just came in contact with you, and, to your horror, it manifested into a bondage device, thus trapping you as the victim now locked into said device.  What are you thinking in the face of this situation? ")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track UD/DD slowdown-effect from bondage boots:  :  NOW THE REMOVAL OF THE EFFECT.
 		if (base && ( (std::strcmp(base->GetName(), "SpeedMult Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "BootSlow-Enchant") == 0)  ) && (a_event->isApplied) )
 		{
-			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler! ", base_name);
-			RE::DebugMessageBox(stomach_rot_status.c_str());	
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UD BONDAGE-BOOTS SLOWDOWN APPLICATION! ", base_name);
+			// RE::DebugMessageBox(stomach_rot_status.c_str());	
+			SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
 			throw_out_TTS_thought_message(std::format("YOU, the player, just got locking bondage boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these heels equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track UD/DD slowdown-effect from bondage boots:  NOW THE REMOVAL OF THE EFFECT.
 		if (base && ( (std::strcmp(base->GetName(), "SpeedMult Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "BootSlow-Enchant") == 0)  ) && (!a_event->isApplied) )
 		{
-			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler! ", base_name);
-			RE::DebugMessageBox(stomach_rot_status.c_str());	
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UD BONDAGE-BOOTS SLOWDOWN REMOVAL! ", base_name);
+			// RE::DebugMessageBox(stomach_rot_status.c_str());	
+			SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWAN REMOVAL!");
 			throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into bondage boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking bondage devices on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 
 
+		// 
 
-		/*
+
+				/*
+Effect APPLIED on Beea | UID=10
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:150] Effect ptr=0x12896d8a8e0 base=Movement Speed Penalty
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:274] Base name: Movement Speed Penalty
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:275] Base ptr: 0x12163e2fe40
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:276] Base-FormID: 66030BDA
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:278] Base-Form Type: 18   (This means: MGEF) 
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:279] base-Effect EDID: yps_effPenaltySpeedMult
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:280] Source pointer: 0x12163e59c00
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:282] Caster: Beea
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:284] Source ptr: 0x12163e59c00
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:287] Magnitude: -10
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:288] Duration: 0
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:292] Source name: High Heel Novice
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:293] Source FormID: 66031C03
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:294] Source EDID: ypsSpellSpeedDebuff10
+[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:307] Form with ID 66030BDA found: Movement Speed Penalty
+
+
+
+
+
 [2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:206] Effect APPLIED on Beea | UID=19
 [2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:148] Effect ptr=0x13c3b010e00 base=SpeedMult Penalty
 [2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:230] Effect ptr: 0x13c3b010e00
@@ -417,13 +452,43 @@ public:
 [2026-05-15 22:49:42.607] [log] [info] [plugin.cpp:495] MOD EVENT:  Name: DeviceEquippedBallet Boots  StrArg: Beea  NumArg: 1
 
 */
-
+		SKSE::log::info(".");
+		SKSE::log::info(".");
+		SKSE::log::info("ABOVE IS A POTENTIALLY UNHANDLED MAGIC EFFECT??? CHECK THE BASE NAME AND SOURCE NAME TO SEE IF IT'S SOMETHING YOU WANT TO REACT TO, OR IF IT'S SOME RANDOM EFFECT THAT YOU DON'T CARE ABOUT.  IF IT'S THE LATTER, THEN YOU PROBABLY WANT TO ADD A NEW IF-STATEMENT FOR THIS EFFECT IN THIS HANDLER, SO THAT IT DOESN'T GET LOGGED IN SUCH DETAIL ANY MORE, BECAUSE THAT WOULD BE ANNOYING.  CHECK THE BASE NAME AND SOURCE NAME TO SEE WHAT EFFECT THIS IS ABOUT.  IF IT'S AN EFFECT YOU CARE ABOUT, THEN CONSIDER ADDING A CUSTOM MESSAGE FOR IT IN THIS HANDLER, SO THAT YOUR TTS CAN REACT TO IT IN A MEANINGFUL WAY! ");
 
         return RE::BSEventNotifyControl::kContinue;
     }
 	private:
+	void throw_out_BACKGROUND_TTS_thought_message(std::string my_message) {
+		// The background channel shouldn't be flooded with text all the time.  Give the real user a chance to relax.  So only bring background stuff, when nothing else is going on.
+		auto now = std::chrono::steady_clock::now();
+		auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
+		SKSE::log::info("Time since last thought-speech on BACKGROUNDCHANNEL OR PRIORITIES CHANNELS: {} seconds", runtime.count());
+		// RE::DebugMessageBox(("Time passed since the last speech: " + std::to_string(runtime.count()) + " seconds").c_str());
+		const int minimum_time_since_last_speech = 90;  // in seconds, so 1.5 minutes
+		if (runtime.count() < minimum_time_since_last_speech) {
+			SKSE::log::info("Not throwing out the BACKGROUNDCHANNEL text as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_speech);
+			// return RE::BSEventNotifyControl::kContinue;
+		} else {
+			//RE::DebugMessageBox(my_message.c_str());
+			SKSE::log::info("The thought for the BACKGROUND TTS channel is: {} ", my_message.c_str());
+			// We want to broadcast mod events.  So we need this event source.
+			std::string  mod_event_name = "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought";
+			std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
+			auto eventSource = SKSE::GetModCallbackEventSource();
+			SKSE::ModCallbackEvent my_event(
+				mod_event_name,                        // event name
+				mod_event_string_arg,                  // arbitrary string argument 
+				123.0f,                                // arbitrary float argument
+				RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+			);
+			eventSource->SendEvent(&my_event);
+			last_speech_timestamp=std::chrono::steady_clock::now();  // only reset the timer if real speech has been produced
+		}
+	}	
 	void throw_out_TTS_thought_message(std::string my_message) {
-		RE::DebugMessageBox(my_message.c_str());
+		// RE::DebugMessageBox(my_message.c_str());
+		SKSE::log::info("The thought for the NORMAL THOUGHT channel is: {} ", my_message.c_str());
 		// We want to broadcast mod events.  So we need this event source.
 		std::string  mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";  //  was, but was probably wrong:   SNMI_PlayerActivatedSomething";
 		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
@@ -468,7 +533,11 @@ public:
         // logger::info("  StrArg: {}", a_event->strArg);
         // logger::info("  NumArg: {}", a_event->numArg);
 		
-		if ( (std::strcmp(a_event->eventName.c_str() , "SKICP_configManagerReady") == 0)  ||  (std::strcmp(a_event->eventName.c_str() , "Apropos2GameLoaded") == 0) 
+		if ( (std::strcmp(a_event->eventName.c_str() , "SKICP_configManagerReady") == 0)  
+		    || (std::strcmp(a_event->eventName.c_str() , "Apropos2GameLoaded") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)        // treat our own events with a log entry only.
+			|| (std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_IMPORANT_PlayerThought") == 0)            // treat our own events with a log entry only.
+			|| (std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought") == 0)   // treat our own events with a log entry only.
 			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_hudModeChanged") == 0) 
 			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_widgetLoaded") == 0) 
 			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_widgetManagerReady") == 0) 
@@ -501,10 +570,14 @@ public:
 			|| (std::strcmp(a_event->eventName.c_str() , "RSM_LoadPlugins") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "SeverActions_CellLoaded") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "SeverActions_FamiliarityTimestamp") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "SeverActions_ReputationAssess") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "ReSchlongify") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "MME_MilkCycleComplete") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "BeeingFemale") == 0)   //  We ignore this for now, maybe later we can do something with it.
 			|| (std::strcmp(a_event->eventName.c_str() , "CBPCPlayerCollisionWithFemaleEvent") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "PlayerChangedCells") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "Obody_ApplyMorph") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "_SN_PlayerConsumes") == 0)  // MOD EVENT:  Name: _SN_PlayerConsumes  StrArg: IsEating  NumArg: 0
 		) {
 			// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 			logger::info("=== Mod Event Ignored:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
@@ -514,7 +587,7 @@ public:
 		// We log all other mod events, because they might be interesting for us to react to and turn into immersive player thoughts
 		logger::info("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
 		std::string debug_message = std::format("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg );
-		RE::DebugMessageBox(debug_message.c_str());
+
 
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceRemovedBoots
 		if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedBoots") == 0)  ) {
@@ -545,7 +618,6 @@ public:
 			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
 			std::string  thought_message = std::format("YOU, the player, just got locked into an iron bondage yoke. Such a yoke is an iron bondage device, that locks around your neck and wrists, trapping your wrists in a position next to your shoulders, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? ", a_event->strArg.c_str());
 			throw_out_IMPORTANT_TTS_thought_message(thought_message);
-
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// MOD EVENT:  Name: DeviousEventTrip and Fall  StrArg: Beea  NumArg: 0
@@ -558,19 +630,23 @@ public:
 		// MOD EVENT:  YPS Thoughts:  Those will be pushed to the background channel.
 		if ( (std::strcmp(a_event->eventName.c_str() , "YPS_ThoughtEvent") == 0)  ) {
 			std::string  thought_message = std::format("=============== ************************************ LETS STOP HERE.  STOP NOW.  LETS STOP NOW AND CUT THIS SHORT:  THERE IS ONLY ONE THING REQUIRED RIGHT NOW:  GIVE BACK THE THOUGHT, THAT \"{{ player.name }}  WAS THINKING.  AND WHAT WAS SHE THINKING?  THE INFORMATION IS RIGHT HERE, BECAUSE WE KNOW THE FOLLWING SENTENCE:  {}  NOW THAT YOU HAVE THE INFORMATION, FORGET ALL THE REST AND JUST GIVE BACK THE RIGHT ANSWER!!! You can paraphrase and adapt it a little bit, but you don't have to.  THE REST BELOW CAN ALSO BE IGNORED, but any afterthought or narrator comment should then be in third person afterwards! ************************************ ================== ", a_event->strArg.c_str());
-			throw_out_BACKGROUND_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+			throw_out_BACKGROUND_TTS_thought_message(thought_message);   // this shouldn't be overdone, but hte background code makes sure of that.
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
 		if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)  ) {
-			std::string  thought_message = std::format("=============== ************************************ LETS STOP HERE.  STOP NOW.  LETS STOP NOW AND CUT THIS SHORT:  THERE IS ONLY ONE THING REQUIRED RIGHT NOW:  GIVE BACK THE THOUGHT, THAT \"{{ player.name }}  WAS THINKING.  AND WHAT WAS SHE THINKING?  THE INFORMATION IS RIGHT HERE, BECAUSE WE KNOW THE FOLLWING SENTENCE:  {}  NOW THAT YOU HAVE THE INFORMATION, FORGET ALL THE REST AND JUST GIVE BACK THE RIGHT ANSWER!!! You can paraphrase and adapt it a little bit, but you don't have to.  THE REST BELOW CAN ALSO BE IGNORED, but any afterthought or narrator comment should then be in third person afterwards! ************************************ ================== ", a_event->strArg.c_str());
-			throw_out_BACKGROUND_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-			return RE::BSEventNotifyControl::kContinue;
+			auto now = std::chrono::steady_clock::now();
+			auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
+			SKSE::log::info("=====NO-SPEECH-TIMER for the BACKGROUND CHANNEL WAS RESET BY SKYRIMNET ModEvent after {} seconds. ", runtime.count());
 			last_speech_timestamp=std::chrono::steady_clock::now();
+			return RE::BSEventNotifyControl::kContinue;
 		}
 		// 	|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)
 		
-		
+
+
+		// IF the MOD-EVENT really WASNT HANDLED BY THIS POINT, IT IS MAYBE SOMETHING NEW, AND THEREFORE WE MAKE A MESSAGEBOX-ANNOUNCEMENT OF it.
+		RE::DebugMessageBox(debug_message.c_str());
 
 
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
@@ -591,11 +667,9 @@ public:
     }
 	private:
 
-
-
-
 	void throw_out_TTS_thought_message(std::string my_message) {
-		RE::DebugMessageBox(my_message.c_str());
+		// RE::DebugMessageBox(my_message.c_str());
+		SKSE::log::info("The thought for the NORMAL THOUGHT channel is: {} ", my_message.c_str());
 		// We want to broadcast mod events.  So we need this event source.
 		std::string  mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";  //  was, but was probably wrong:   SNMI_PlayerActivatedSomething";
 		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
@@ -610,7 +684,8 @@ public:
 		last_speech_timestamp=std::chrono::steady_clock::now();
 	}
 	void throw_out_IMPORTANT_TTS_thought_message(std::string my_message) {
-		RE::DebugMessageBox(my_message.c_str());
+		// RE::DebugMessageBox(my_message.c_str());
+		SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: {} ", my_message.c_str());
 		// We want to broadcast mod events.  So we need this event source.
 		std::string  mod_event_name = "SNMI_Pump_IMPORANT_PlayerThought";
 		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
@@ -632,10 +707,11 @@ public:
 		// RE::DebugMessageBox(("Time passed since the last speech: " + std::to_string(runtime.count()) + " seconds").c_str());
 		const int minimum_time_since_last_speech = 90;  // in seconds, so 1.5 minutes
 		if (runtime.count() < minimum_time_since_last_speech) {
-			SKSE::log::info("Not throwing out the YPS_ThoughtEvent as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_speech);
+			SKSE::log::info("Not throwing out the BACKGROUNDCHANNEL text as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_speech);
 			// return RE::BSEventNotifyControl::kContinue;
 		} else {
-			RE::DebugMessageBox(my_message.c_str());
+			//RE::DebugMessageBox(my_message.c_str());
+			SKSE::log::info("The thought for the BACKGROUND TTS channel is: {} ", my_message.c_str());
 			// We want to broadcast mod events.  So we need this event source.
 			std::string  mod_event_name = "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought";
 			std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
@@ -647,8 +723,8 @@ public:
 				RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
 			);
 			eventSource->SendEvent(&my_event);
+			last_speech_timestamp=std::chrono::steady_clock::now();   // only reset the timer if real speech has been produced
 		}
-		last_speech_timestamp=std::chrono::steady_clock::now();
 	}
 };
 
