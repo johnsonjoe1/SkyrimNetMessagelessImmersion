@@ -1,0 +1,21 @@
+name: "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought"
+description: "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought:  This is just to put the incoming string from the SkyrimNet_MessagelessImmersion into a SkyrimNet thought event.  This specific event is only for BACKGROUNDCHANNEL messages.  They don't need a cooldown, because the channel will only be used, when it's been quiet on all three SNMI channels for a while anyway.  So it can have 0 cooldown."
+
+eventCriteria:
+  eventType: "mod_event"
+  schemaConditions:
+    - fieldPath: "event_name"
+      operator: "equals"
+      value: "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought"
+
+response:
+  type: "player_thought"
+  content: "  {{ event_json.str_arg }}  "
+
+audience: "player"
+
+enabled: true
+interrupt: false
+probability: 1
+cooldownSeconds: 0
+priority: 5
