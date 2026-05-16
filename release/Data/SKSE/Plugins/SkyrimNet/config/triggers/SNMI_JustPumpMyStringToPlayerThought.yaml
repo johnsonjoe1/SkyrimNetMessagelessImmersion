@@ -1,0 +1,21 @@
+name: "SNMI_JustPumpMyStringToPlayerThought"
+description: "SNMI_JustPumpMyStringToPlayerThought:  This is just to put the incoming string from the SkyrimNet_MessagelessImmersion into a SkyrimNet thought event with relatively short cooldown."
+
+eventCriteria:
+  eventType: "mod_event"
+  schemaConditions:
+    - fieldPath: "event_name"
+      operator: "equals"
+      value: "SNMI_JustPumpMyStringToPlayerThought"
+
+response:
+  type: "player_thought"
+  content: "  {{ event_json.str_arg }}  "
+
+audience: "player"
+
+enabled: true
+interrupt: false
+probability: 1
+cooldownSeconds: 15
+priority: 1

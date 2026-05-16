@@ -1,0 +1,21 @@
+name: "SNMI_Pump_IMPORANT_PlayerThought"
+description: "SNMI_Pump_IMPORANT_PlayerThought:  This is just to put the incoming string from the SkyrimNet_MessagelessImmersion into a SkyrimNet thought event.  This specific event is only for IMPORTANT messages, that should never be omitted.  Therefore it should be RARELY used and therefore it can be allowed to have 0 cooldown."
+
+eventCriteria:
+  eventType: "mod_event"
+  schemaConditions:
+    - fieldPath: "event_name"
+      operator: "equals"
+      value: "SNMI_Pump_IMPORANT_PlayerThought"
+
+response:
+  type: "player_thought"
+  content: "  {{ event_json.str_arg }}  "
+
+audience: "player"
+
+enabled: true
+interrupt: false
+probability: 1
+cooldownSeconds: 0
+priority: 1

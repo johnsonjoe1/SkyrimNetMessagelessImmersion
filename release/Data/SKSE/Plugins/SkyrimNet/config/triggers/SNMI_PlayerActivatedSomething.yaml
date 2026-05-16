@@ -1,0 +1,21 @@
+name: "SNMI_PlayerActivatedSomething"
+description: "SNMI_PlayerActivatedSomething:  The player actived something, maybe a bench, maybe a tanning rack, maybe something else"
+
+eventCriteria:
+  eventType: "mod_event"
+  schemaConditions:
+    - fieldPath: "event_name"
+      operator: "equals"
+      value: "SNMI_PlayerActivatedSomething"
+
+response:
+  type: "player_thought"
+  content: "Now the situation is this: YOU, the player, just are using a  {{ event_json.str_arg }}  .  Comment on this, with thoughts of YOU as the player. How does the situation make you feel?  What are you thinking?  Does this help you or make you feel better in any way?"
+
+audience: "player"
+
+enabled: true
+interrupt: false
+probability: 1
+cooldownSeconds: 9
+priority: 1
