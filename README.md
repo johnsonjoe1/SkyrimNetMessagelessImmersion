@@ -1,4 +1,14 @@
 
+# Project description
+This project takes SkyrimNet and adds some additional triggers to trigger player-thoughts.
+The idea is to make Skyrim basically messageless, because the player character notices all changes in-game and reflects on them.
+So that in an ideal scenario, all widgets and all fonts could be removed from the screen for better immersion.
+Of course, this is just a noob project, with so far no real experience with Skyrim modding.
+At present, there is only a SKSE plugin and some trigger-yaml files for SkyrimNet.
+Nothing is overwritten and no other mods or proceedinds are changed.  That is one of the ideas here:  
+Don't change anything about the mechanics of Skyrim or any installed mods.
+Just make them messageless, if the user so desires.
+
 # CommonLibSSE NG
 
 Because this uses [CommonLibSSE NG](https://github.com/CharmedBaryon/CommonLibSSE-NG), it supports Skyrim SE, AE, GOG, and VR. 
@@ -69,3 +79,13 @@ For VSCode users, they must have a `launch.json` file like the one below:
     ]
 }
 ```
+
+
+# License
+As free as possible. I guess nobody want this code anyway.
+
+# Credits
+I took the template from https://github.com/Monitor221hz/CommonLibSSE-NG-Template-Plugin
+So all credit goes to whoever contributes there and is credited there.
+
+
