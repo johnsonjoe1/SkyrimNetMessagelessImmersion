@@ -30,6 +30,9 @@ If you want, you can disable e.g. the background thought channel by deleting the
 # Contributing guidelines
 You really want to help?  Most people have far more skill and competence to work on something far better and more complex.  This noob codebase would only slow them down.  Just in case:  If you send something, please keep it simple and noob-friendly enough, that I can hope to understand it.  Thanks!
 
+# ======= The rest below is from the original CommonLibSSE-NG template, so don't ask me about it ============
+Thanks!
+
 # CommonLibSSE NG
 
 Because this uses [CommonLibSSE NG](https://github.com/CharmedBaryon/CommonLibSSE-NG), it supports Skyrim SE, AE, GOG, and VR. 
