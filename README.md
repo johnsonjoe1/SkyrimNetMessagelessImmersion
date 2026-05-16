@@ -16,7 +16,7 @@ If an items has some magic effects attached to it, that could trigger more respo
 # Installation instructions
 There is currently no release package.  If you really want one, I can make one.  Just say so.
 
-Requirements:  Skyrim AE latest version 1.1170 or something, Skyrim SKSE the latest version, and SkyrimNet (20.2+ version or any version that still has trigger yaml-files, but they don't change that much)
+Requirements/Versions:  The Skyrim version I'm using is Skyrim AE latest version 1.6.1170, Skyrim SKSE the latest version as of 2026, and SkyrimNet (20.2+ version or any version that still has trigger yaml-files, but they don't change that much).
 Any other mods, that would benefit from the plugin are not required, as it doesn't change them, it just listens to them and reads out stuff from them. 
 
 # Features list
