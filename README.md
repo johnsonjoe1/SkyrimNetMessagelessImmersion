@@ -18,7 +18,11 @@ There is currently no release package.  If you really want one, I can make one. 
 
 # Features list
 At present, there are some hooks into the activation of furniture, like Tanning Rack and Blacksmith forge, that should trigger player thought.
-Then there are some hooks into the active magic effect process.  Whatever seems reasonable and makes sense will trigger 
+Then there are some hooks into the active magic effect process.  Whatever seems reasonable and can easily be interpreted from what is there in the event data will trigger a response.
+Also, mod event broadcasts from other mods will be listened to, and, where applicable, trigger a player-character thought response (depending on relevance).
+According to importance, some thoughts will be pushed with priority and on a no-cooldown channel.
+Other less important and more backgroundish events and sitation will only trigger thought-responses if it has been quiet for a while and nothing is going on.
+
 
 # CommonLibSSE NG
 
