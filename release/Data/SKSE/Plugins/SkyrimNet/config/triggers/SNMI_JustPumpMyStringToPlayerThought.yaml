@@ -18,4 +18,4 @@ enabled: true
 interrupt: false
 probability: 1
 cooldownSeconds: 15
-priority: 1
+priority: 3
