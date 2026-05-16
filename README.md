@@ -23,6 +23,12 @@ Also, mod event broadcasts from other mods will be listened to, and, where appli
 According to importance, some thoughts will be pushed with priority and on a no-cooldown channel.
 Other less important and more backgroundish events and sitation will only trigger thought-responses if it has been quiet for a while and nothing is going on.
 
+# Usage/Configuration
+Everything is hard-coded at the moment.  There are no config-files or MCMs or anything like that.
+If you want, you can disable e.g. the background thought channel by deleting the SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought.yaml file. You can do that from within SkyrimNet by editing the list of triggers there.
+
+# Contributing guidelines
+You really want to help?  Most people have far more skill and competence to work on something far better and more complex.  This noob codebase would only slow them down.  Just in case:  If you send something, please keep it simple and noob-friendly enough, that I can hope to understand it.  Thanks!
 
 # CommonLibSSE NG
 
