@@ -33,6 +33,9 @@ If you want, you can disable e.g. the background thought channel by deleting the
 # Contributing guidelines
 You really want to help?  Most people have far more skill and competence to work on something far better and more complex.  This noob codebase would only slow them down.  Just in case:  If you send something, please keep it simple and noob-friendly enough, that I can hope to understand it.  Thanks!
 
+There is infinitely much to do, as there are infinitely many mods, that could be SkyrimNet-integreated in this way.  
+The priority should be on stuff, that doesn't yet has a standalone SkyrimNet-integration already.
+
 # License
 As free as possible. I guess nobody want this code anyway.  And that is referring only to the parts I added to the project, not the template/libraries that I started with.  See their license in the respective places.
 
