@@ -1,4 +1,7 @@
 #include "log.h"
+#include "RE/Skyrim.h"
+#include "SKSE/SKSE.h"
+
 namespace logger = SKSE::log;
 
 static auto last_speech_timestamp = std::chrono::steady_clock::now();
@@ -643,6 +646,11 @@ public:
 		}
 		// 	|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)
 		
+		// MORE THINGS TO HANDLE: Name: yps_AddictionBuffChange  StrArg:   NumArg: 6
+
+		// MORE THINGS TO HANDLE: Name: yps_FashionChange  StrArg: FingerNailPolish  NumArg: 0
+
+		// MORE THINGS TO HANDLE: (This is from the ass-slap or tit-slap in Spank-that-Ass / Devious Followers Mod) Name: DF-ResistanceLoss  StrArg:   NumArg: 1
 
 
 		// IF the MOD-EVENT really WASNT HANDLED BY THIS POINT, IT IS MAYBE SOMETHING NEW, AND THEREFORE WE MAKE A MESSAGEBOX-ANNOUNCEMENT OF it.
@@ -700,6 +708,9 @@ public:
 		last_speech_timestamp=std::chrono::steady_clock::now();
 	}
 	void throw_out_BACKGROUND_TTS_thought_message(std::string my_message) {
+
+		//
+
 		// The background channel shouldn't be flooded with text all the time.  Give the real user a chance to relax.  So only bring background stuff, when nothing else is going on.
 		auto now = std::chrono::steady_clock::now();
 		auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
@@ -728,6 +739,52 @@ public:
 	}
 };
 
+/*
+class MilkManager
+{
+public:
+    static void SetMilkLevel(
+        RE::StaticFunctionTag*,
+        float a_value);
+
+private:
+    static inline float _milkLevel = 0.0f;
+};
+*/
+
+
+class SNMIPapyrus
+{
+public:
+    static bool Register(RE::BSScript::IVirtualMachine*);
+    static void SetMilkLevel(
+        RE::StaticFunctionTag*,
+        float a_value);
+    float GetMilkLevel();
+private:
+    static inline float _milkLevel = 0.0f;
+};
+void SNMIPapyrus::SetMilkLevel(
+    RE::StaticFunctionTag*,
+    float a_value)
+{
+    _milkLevel = a_value;
+
+    SKSE::log::info("Milk level updated: {}", a_value);
+}
+float SNMIPapyrus::GetMilkLevel()
+{
+    return _milkLevel;
+}
+bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
+{
+    a_vm->RegisterFunction(
+        "SetMilkLevel",
+        "SNMI_Native",
+        SetMilkLevel);
+
+    return true;
+}
 
 
 //  Here comes some code for hooking into the Tanning Rack
