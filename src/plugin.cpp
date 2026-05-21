@@ -97,15 +97,48 @@ std::array<std::string, 10> list_of_enemy_contracted_sicknesses = {
 	"Gutworm",
 	"Witbane"
 };
-
 std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Stomach Rot",
     "Food Poisoning"
 };
-
-
-
 std::string my_active_effect_description_string = "Nothing yet!";
+
+// FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
+class SNMIPapyrus
+{
+public:
+    static bool Register(RE::BSScript::IVirtualMachine*);
+    static void SetMilkLevel(
+        RE::StaticFunctionTag*,
+        float a_value);
+    static float GetMilkLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
+private:
+    static inline float _milkLevel = 0.0f;
+};
+void SNMIPapyrus::SetMilkLevel(
+    RE::StaticFunctionTag*,
+    float a_value)
+{
+    _milkLevel = a_value;
+
+    SKSE::log::info("Milk level updated: {}", a_value);
+}
+float SNMIPapyrus::GetMilkLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
+{
+    return _milkLevel;
+}
+bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
+{
+    a_vm->RegisterFunction(
+        "SetMilkLevel",
+        "SNMI_Native",
+        SetMilkLevel);
+
+    return true;
+}
+
+
+
 
 class MyVisitor :
     public RE::MagicTarget::ForEachActiveEffectVisitor
@@ -536,6 +569,10 @@ public:
         // logger::info("  StrArg: {}", a_event->strArg);
         // logger::info("  NumArg: {}", a_event->numArg);
 		
+		float current_milk = SNMIPapyrus::GetMilkLevel();
+		SKSE::log::info("Current milk level is {}", current_milk);
+
+
 		if ( (std::strcmp(a_event->eventName.c_str() , "SKICP_configManagerReady") == 0)  
 		    || (std::strcmp(a_event->eventName.c_str() , "Apropos2GameLoaded") == 0) 
 			|| (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)        // treat our own events with a log entry only.
@@ -739,55 +776,10 @@ public:
 	}
 };
 
-/*
-class MilkManager
-{
-public:
-    static void SetMilkLevel(
-        RE::StaticFunctionTag*,
-        float a_value);
-
-private:
-    static inline float _milkLevel = 0.0f;
-};
-*/
 
 
-class SNMIPapyrus
-{
-public:
-    static bool Register(RE::BSScript::IVirtualMachine*);
-    static void SetMilkLevel(
-        RE::StaticFunctionTag*,
-        float a_value);
-    float GetMilkLevel();
-private:
-    static inline float _milkLevel = 0.0f;
-};
-void SNMIPapyrus::SetMilkLevel(
-    RE::StaticFunctionTag*,
-    float a_value)
-{
-    _milkLevel = a_value;
 
-    SKSE::log::info("Milk level updated: {}", a_value);
-}
-float SNMIPapyrus::GetMilkLevel()
-{
-    return _milkLevel;
-}
-bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
-{
-    a_vm->RegisterFunction(
-        "SetMilkLevel",
-        "SNMI_Native",
-        SetMilkLevel);
-
-    return true;
-}
-
-
-//  Here comes some code for hooking into the Tanning Rack
+//  Here comes the code for hooking into the furniture usage events, or even all usage events, but for now we focus on furniture.
 class ActivateEventHandler :
     public RE::BSTEventSink<RE::TESActivateEvent>
 {
@@ -996,6 +988,10 @@ SKSEPluginLoad(const SKSE::LoadInterface *skse) {
 	if (!messaging->RegisterListener("SKSE", MessageHandler)) {
 		return false;
 	}
+
+	// We NEED to register the papyrus interfaces here, before the Virtual-Machine is running.
+	// Otherwise we get an error in the papayrus.log.0:  [05/21/2026 - 07:26:51PM] error: Unbound native function "SetMilkLevel" called
+	SKSE::GetPapyrusInterface()->Register(SNMIPapyrus::Register);
 
     return true;
 }
