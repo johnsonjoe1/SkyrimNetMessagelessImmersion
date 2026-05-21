@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 # Set your project name. This will be the name of your SKSE .dll file.
-project(SkyrimNetMessagelessImmersion VERSION 0.0.2 LANGUAGES CXX)
+project(SkyrimNetMessagelessImmersion VERSION 0.0.3 LANGUAGES CXX)
 
 #
 
@@ -22,12 +22,12 @@ if(DEFINED ENV{SKYRIM_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_FOLDER}/Data")
 endif()
 
 # If you're using Mod Organizer 2 or Vortex, you might want this to go inside
-# of your "mods" folder, inside of a subfolder named "<your mod>".
+# of your "mods" folder, inside of a subfolder named "<your mod>". 
 #
 # To do this automatically, set the `SKYRIM_MODS_FOLDER` environment variable
 # to the path of your "mods" folder
 if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")
-    # set(OUTPUT_FOLDER "$ENV{SKYRIM_MODS_FOLDER}/${PROJECT_NAME} ${CMAKE_BUILD_TYPE}")
+    ###JOHNSONJOE1:  set(OUTPUT_FOLDER "$ENV{SKYRIM_MODS_FOLDER}/${PROJECT_NAME} ${CMAKE_BUILD_TYPE}")
     set(OUTPUT_FOLDER "$ENV{SKYRIM_MODS_FOLDER}/${PROJECT_NAME}")
 endif()
 
@@ -49,20 +49,15 @@ target_include_directories(
 	PRIVATE
 		${SIMPLEINI_INCLUDE_DIRS}
 )
-
-message(STATUS "About to deploy")
-
 # When your SKSE .dll is compiled, this will automatically copy the .dll into your mods folder.
 # Only works if you configure DEPLOY_ROOT above (or set the SKYRIM_MODS_FOLDER environment variable)
 if(DEFINED OUTPUT_FOLDER)
     # If you specify an <OUTPUT_FOLDER> (including via environment variables)
     # then we'll copy your mod files into Skyrim or a mod manager for you!
-
-    message(STATUS "The is an OUTPUT_FOLDER defined.")
-
-
+    message(STATUS "There is an OUTPUT_FOLDER defined, so final DLL files will go to THAT FOLDER.")
     # Copy the SKSE plugin .dll files into the SKSE/Plugins/ folder
     set(DLL_FOLDER "${OUTPUT_FOLDER}/SKSE/Plugins")
+
 
     set (CONFIG_FOLDER "Template_Plugin")
     set(SRC_CONFIG_FOLDER "${CMAKE_SOURCE_DIR}/config")
