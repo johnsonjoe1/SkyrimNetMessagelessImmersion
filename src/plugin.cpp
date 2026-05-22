@@ -35,9 +35,6 @@ The Milking Cuirass you were fitted with, which is like a piece of armor, that i
 is removed and you get back into your outfit from before.
 )SKSE" + general_word_on_milk_pumps + standard_thought_instruction;
 
-
-
-
 std::string blacksmith_forge_prompt_1 = R"SKSE(
 Now the situation is this: YOU, the player, are about to use a Blacksmith Forge. 
 Blacksmith Forges allow you to craft entire new weapons and armor or also other small useful items for everyday use, but you must have the right materials 
@@ -108,31 +105,35 @@ class SNMIPapyrus
 {
 public:
     static bool Register(RE::BSScript::IVirtualMachine*);
-    static void SetMilkLevel(
-        RE::StaticFunctionTag*,
-        float a_value);
+    static void SetMilkLevel(RE::StaticFunctionTag*, float a_value);
     static float GetMilkLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
+    static void SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value);
+    static float GetKeepaliveLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
 private:
-    static inline float _milkLevel = 0.0f;
+    static inline float _milkLevel = 123.0f;
+	static inline float _keepaliveLevel = 0.0f;
 };
-void SNMIPapyrus::SetMilkLevel(
-    RE::StaticFunctionTag*,
-    float a_value)
+
+void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
 {
     _milkLevel = a_value;
-
-    SKSE::log::info("Milk level updated: {}", a_value);
+    SKSE::log::info("Note:  Milk level updated VIA PUSH FROM PAPYRUS: {}", a_value);
 }
 float SNMIPapyrus::GetMilkLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
+{    return _milkLevel;   }
+void SNMIPapyrus::SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value)
 {
-    return _milkLevel;
+    _keepaliveLevel = a_value;
+    SKSE::log::info("Note:  Keepalive level updated VIA PUSH FROM PAPYRUS: {}", a_value);
 }
+float SNMIPapyrus::GetKeepaliveLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
+{    return _keepaliveLevel;   }
+
+
 bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 {
-    a_vm->RegisterFunction(
-        "SetMilkLevel",
-        "SNMI_Native",
-        SetMilkLevel);
+    a_vm->RegisterFunction("SetMilkLevel", "SNMI_Native", SetMilkLevel);
+    a_vm->RegisterFunction("SetKeepaliveLevel", "SNMI_Native", SetKeepaliveLevel);
 
     return true;
 }
@@ -569,10 +570,6 @@ public:
         // logger::info("  StrArg: {}", a_event->strArg);
         // logger::info("  NumArg: {}", a_event->numArg);
 		
-		float current_milk = SNMIPapyrus::GetMilkLevel();
-		SKSE::log::info("Current milk level is {}", current_milk);
-
-
 		if ( (std::strcmp(a_event->eventName.c_str() , "SKICP_configManagerReady") == 0)  
 		    || (std::strcmp(a_event->eventName.c_str() , "Apropos2GameLoaded") == 0) 
 			|| (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)        // treat our own events with a log entry only.
@@ -618,11 +615,21 @@ public:
 			|| (std::strcmp(a_event->eventName.c_str() , "PlayerChangedCells") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "Obody_ApplyMorph") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "_SN_PlayerConsumes") == 0)  // MOD EVENT:  Name: _SN_PlayerConsumes  StrArg: IsEating  NumArg: 0
+			|| (std::strcmp(a_event->eventName.c_str() , "PlayerOrgasmEnd") == 0)
 		) {
 			// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 			logger::info("=== Mod Event Ignored:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
 			return RE::BSEventNotifyControl::kContinue;
 		}
+
+		// Now, PERIODICALLY, we take care of changes in the values of other mods.  We put this here, because this gets
+		// triggered reasonably often.
+		float current_milk = SNMIPapyrus::GetMilkLevel();
+		float current_keepalive = SNMIPapyrus::GetKeepaliveLevel();
+		SKSE::log::info("Current Keepalive: {}", current_keepalive);
+		SKSE::log::info("Current milk level is {}", current_milk);
+
+
 
 		// We log all other mod events, because they might be interesting for us to react to and turn into immersive player thoughts
 		logger::info("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
@@ -673,6 +680,15 @@ public:
 			throw_out_BACKGROUND_TTS_thought_message(thought_message);   // this shouldn't be overdone, but hte background code makes sure of that.
 			return RE::BSEventNotifyControl::kContinue;
 		}
+		// MOD EVENT:  Generic orgasm start (and end)  [2026-05-21 21:44:52.579] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmStart  StrArg:   NumArg: 0  // [2026-05-21 21:45:00.613] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmEnd  StrArg:   NumArg: 0
+		if ( (std::strcmp(a_event->eventName.c_str() , "PlayerOrgasmStart") == 0)  ) {
+			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
+			std::string  thought_message = std::format("Regardless whether you like it or not, from all the stimulation, you, the player, are now suddenly having an orgasm! Let us know this via your response. ");
+			throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+			return RE::BSEventNotifyControl::kContinue;
+		}
+		
+
 		// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
 		if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)  ) {
 			auto now = std::chrono::steady_clock::now();
