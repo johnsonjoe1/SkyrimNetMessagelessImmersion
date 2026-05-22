@@ -29,11 +29,14 @@ Other less important and more backgroundish events and sitation will only trigge
 At present there is some content from vanilla Skyrim:
 * Thoughts upon using vanilla furniture blacksmith forge, tanning rack, grindstone and others.
 * Thoughts upon contracting certain diseases (Stomach rot, others untested).
+
 At present there is some content from Devious Devices / Unforgiving Devices:
 * Thoughts upon NEW slowdown penatly applied from some Devious Devices/Unforgiving Devices shoes.
 * Thoughts upon equipping / being equipped with yokes and straightjackets (based on hook into Magic Effect).
+
 At present there is some content from YPS fashion mod:
 * Thoughts upon (recurring) slowdown penalty applied from YPS fashion mod and the current training status (Untrained feet and High Heels novice only so far).
+
 At present there is some content from YPS fashion mod:
 * Thoughts upon using Milk-Mod-Economy furniture Milk Pumps.
 
