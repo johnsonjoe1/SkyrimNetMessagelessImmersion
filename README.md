@@ -33,6 +33,7 @@ At present there is some content from vanilla Skyrim:
 At present there is some content from Devious Devices / Unforgiving Devices:
 * Thoughts upon NEW slowdown penatly applied from some Devious Devices/Unforgiving Devices shoes.
 * Thoughts upon equipping / being equipped with yokes and straightjackets (based on hook into Magic Effect).
+* Tripping over your feet due to bondage boots.
 
 At present there is some content from YPS fashion mod:
 * Thoughts upon (recurring) slowdown penalty applied from YPS fashion mod and the current training status (Untrained feet and High Heels novice only so far).
