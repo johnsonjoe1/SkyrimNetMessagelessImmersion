@@ -99,18 +99,24 @@ std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Food Poisoning"
 };
 std::string my_active_effect_description_string = "Nothing yet!";
+std::string previous_milk_string = "No milk string HISTORY defined yet!";
+
 
 // FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
+
 class SNMIPapyrus
 {
 public:
     static bool Register(RE::BSScript::IVirtualMachine*);
     static void SetMilkLevel(RE::StaticFunctionTag*, float a_value);
+	static void SetMilkString(RE::StaticFunctionTag*, std::string a_value);
     static float GetMilkLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
+    static std::string GetMilkString();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
     static void SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value);
     static float GetKeepaliveLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
 private:
     static inline float _milkLevel = 123.0f;
+	static inline std::string _milkString = "No milk string defined IN PLUGIN yet!";
 	static inline float _keepaliveLevel = 0.0f;
 };
 
@@ -119,8 +125,16 @@ void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
     _milkLevel = a_value;
     SKSE::log::info("Note:  Milk level updated VIA PUSH FROM PAPYRUS: {}", a_value);
 }
+void SNMIPapyrus::SetMilkString(RE::StaticFunctionTag*, std::string s_value)
+{
+    _milkString = s_value;
+    SKSE::log::info("Note:  Milk string updated VIA PUSH FROM PAPYRUS: {}", s_value);
+}
+
 float SNMIPapyrus::GetMilkLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
 {    return _milkLevel;   }
+std::string SNMIPapyrus::GetMilkString()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
+{    return _milkString;   }
 void SNMIPapyrus::SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value)
 {
     _keepaliveLevel = a_value;
@@ -131,6 +145,7 @@ float SNMIPapyrus::GetKeepaliveLevel()     //  Here we must NOT use static.  Tha
 bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 {
     a_vm->RegisterFunction("SetMilkLevel", "SNMI_Native", SetMilkLevel);
+	a_vm->RegisterFunction("SetMilkString", "SNMI_Native", SetMilkString);
     a_vm->RegisterFunction("SetKeepaliveLevel", "SNMI_Native", SetKeepaliveLevel);
 
     return true;
@@ -655,10 +670,22 @@ public:
 		// triggered reasonably often.
 		float current_milk = SNMIPapyrus::GetMilkLevel();
 		float current_keepalive = SNMIPapyrus::GetKeepaliveLevel();
+		std::string current_milk_string = SNMIPapyrus::GetMilkString();
 		SKSE::log::info("Current Keepalive: {}", current_keepalive);
-		SKSE::log::info("Current milk level is {}", current_milk);
+		SKSE::log::info("Current milk level is: {}", current_milk);
+		SKSE::log::info("Current milk string is: {}", current_milk_string);
+		SKSE::log::info("PREVIOUS milk string is: {}", previous_milk_string);
+		// We check if there is a change in the milk string
+		if ( (std::strcmp(current_milk_string.c_str() , previous_milk_string.c_str()) == 0)  ) {
+			// There was no change in milk string
+		} else {
+			// There was a change in milk string
 
+			DumpThoughts::throw_out_TTS_thought_message("Due to milk slowly accumulating in her breasts, " + current_milk_string);
+			previous_milk_string = current_milk_string;  // Update the previous milk string to the current one for the next comparison.			
+		}
 
+		
 
 		// We log all other mod events, because they might be interesting for us to react to and turn into immersive player thoughts
 		logger::info("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);

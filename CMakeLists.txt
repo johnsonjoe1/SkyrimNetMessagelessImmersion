@@ -57,18 +57,21 @@ if(DEFINED OUTPUT_FOLDER)
     message(STATUS "There is an OUTPUT_FOLDER defined, so final DLL files will go to THAT FOLDER.")
     # Copy the SKSE plugin .dll files into the SKSE/Plugins/ folder
     set(DLL_FOLDER "${OUTPUT_FOLDER}/SKSE/Plugins")
-
+    set(LOCAL_RELEASE_FOLDER "${CMAKE_SOURCE_DIR}/release/SKSE/Plugins")
 
     set (CONFIG_FOLDER "Template_Plugin")
     set(SRC_CONFIG_FOLDER "${CMAKE_SOURCE_DIR}/config")
     
     message(STATUS "SKSE plugin output folder: ${DLL_FOLDER}")
+    message(STATUS "Local release folder: ${LOCAL_RELEASE_FOLDER}")
 
     add_custom_command(
         TARGET "${PROJECT_NAME}"
         POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E make_directory "${DLL_FOLDER}"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:${PROJECT_NAME}>" "${LOCAL_RELEASE_FOLDER}/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
+
         VERBATIM
     )
     if (EXISTS "${SRC_CONFIG_FOLDER}")

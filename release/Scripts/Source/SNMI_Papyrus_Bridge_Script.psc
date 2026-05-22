@@ -4,6 +4,9 @@ Scriptname SNMI_Papyrus_Bridge_Script extends Quest
 float keepalive_value = 1.01
 float current_milk_value = 15.5
 float max_milk_value = 15.5
+float current_lactacid = 13.3
+string milk_string = "No milk_string defined yet!"
+; int MilkCnt = 1
 
 Event OnInit()
     RegisterForSingleUpdate(10.0)
@@ -12,16 +15,37 @@ Event OnInit()
 EndEvent
 
 Event OnUpdate()
-    ; SNMI_Bridge.UpdateMilkLevel()
-
 
     keepalive_value += 1.0
     current_milk_value = StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkCount")
     max_milk_value     = StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkMaximum")
+    current_lactacid   = StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.LactacidCount")
+
+    Int MilkCnt = Math.Floor(current_milk_value)
+	Int MilkMax = Math.Floor(max_milk_value)
+    Int MilkStageStrings = JsonUtil.StringListCount("/MME/Strings_Milkstage", "milkstage") - 1
+
+    if MilkCnt >= MilkMax 
+        milk_string = (formatString(JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkStageStrings), Game.GetPlayer().GetLeveledActorBase().GetName()))
+    elseif MilkCnt == (MilkMax - 1)
+        milk_string = (formatString(JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkStageStrings - 1), Game.GetPlayer().GetLeveledActorBase().GetName()))
+    elseif MilkCnt == (MilkMax - 2)
+        milk_string = (formatString(JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkStageStrings - 2), Game.GetPlayer().GetLeveledActorBase().GetName()))
+    else
+        milk_string = (formatString(JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkCnt), Game.GetPlayer().GetLeveledActorBase().GetName()))
+    endif
+
+    ; Let's try to get that milk stage from the MME mod, without any overhead
+    ; milk_string = JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkCnt)
+    ; debug.Notification(formatString(milk_string, Game.GetPlayer().GetLeveledActorBase().GetName()))
+    ; debug.Notification(milk_string)
+
 
     SNMI_Native.SetMilkLevel(current_milk_value)
+    SNMI_Native.SetMilkString(milk_string)
+
     SNMI_Native.SetKeepaliveLevel(keepalive_value)
-	Debug.Notification("[SNMI] Periodic 10 sec update: current_milk_value: " + current_milk_value + ", max_milk_value: " + max_milk_value + ", keepalive_value: " + keepalive_value)
+	Debug.Notification("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", Counter: " + Math.Floor(keepalive_value))
     RegisterForSingleUpdate(10.0)
 EndEvent
 
@@ -52,4 +76,33 @@ float function getMilkMaximum(actor akActor) global
 ;	endif
 endfunction
 
+
+
+;  THIS FUNCTION IS COPIED 1:1 FROM MILKQUEST.psc, TO AVOID DEPENDENCY ON THEIR FILES.
+String Function formatString(String src, String part1 = "", String part2 = "", String part3 = "", String part4 = "", String part5 = "")
+	;Debug.Messagebox("json source: " + src)
+	int pos1 = StringUtil.find(src, "%text1")
+	if pos1 == 0
+		src = StringUtil.substring("", 0, pos1) + part1 + StringUtil.substring(src, pos1+6)
+	elseif pos1 != -1
+		src = StringUtil.substring(src, 0, pos1) + part1 + StringUtil.substring(src, pos1+6)
+	endIf
+	int pos2 = StringUtil.find(src, "%text2")
+	if pos2 != -1
+		src = StringUtil.substring(src, 0, pos2) + part2 + StringUtil.substring(src, pos2+6)
+	endIf
+	int pos3 = StringUtil.find(src, "%text3")
+	if pos3 != -1
+		src = StringUtil.substring(src, 0, pos3) + part3 + StringUtil.substring(src, pos3+6)
+	endIf
+	int pos4 = StringUtil.find(src, "%text4")
+	if pos4 != -1
+		src = StringUtil.substring(src, 0, pos4) + part4 + StringUtil.substring(src, pos4+6)
+	endIf
+	int pos5 = StringUtil.find(src, "%text5")
+	if pos5 != -1
+		src = StringUtil.substring(src, 0, pos5) + part5 + StringUtil.substring(src, pos5+6)
+	endIf
+	return src
+EndFunction
 
