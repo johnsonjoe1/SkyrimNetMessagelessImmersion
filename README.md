@@ -1,13 +1,18 @@
 
 # Project description
-This project takes SkyrimNet and adds some additional triggers to trigger player-thoughts.
+Ever had to open the Skyrim Magic Effect screen to see what is going on with your character?
+Ever overlooked a notification message that flashed by but was important for gameplay?
+
+This project takes SkyrimNet and adds some additional triggers to trigger player-thoughts that should resolve that.
 The idea is to make Skyrim basically messageless, because the player character notices all changes in-game and reflects on them.
 So that in an ideal scenario, all widgets and all fonts could be removed from the screen for better immersion.
+
 Of course, this is just a noob project, with so far no real experience with Skyrim modding.
-At present, there is only a SKSE plugin and some trigger-yaml files for SkyrimNet.
-Nothing is overwritten and no other mods or proceedinds are changed.  That is one of the ideas here:  
-Don't change anything about the mechanics of Skyrim or any installed mods.
-Just make them messageless, if the user so desires.
+At present, there is only a SKSE plugin and some trigger-yaml files for SkyrimNet and since recently also the first papyrus bridge.
+
+The idea is, not to change anything, but just make the interface potentially messageless and widgetless.
+Nothing is overwritten concerning other mods and no require and no other mods or proceedinds are changed.  That is one of the ideas here:  
+
 Make especially those messages that just scroll by and are easily overlooked into a player-thought (or later maybe some other) reaction,
 e.g. when getting infected with a disease, and it's visible in the active effect page, it should also trigger a response thought in-game.
 When the disease gets worse, it should trigger another reaction.  
