@@ -6,3 +6,4 @@ build
 cmake-build*
 release/Scripts/*.pex
 release/SKSE/Plugins/SkyrimNetMessagelessImmersion.dll
+release/SNMI_release_*.zip
