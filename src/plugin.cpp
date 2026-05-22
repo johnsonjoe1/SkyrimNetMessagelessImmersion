@@ -128,8 +128,6 @@ void SNMIPapyrus::SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value)
 }
 float SNMIPapyrus::GetKeepaliveLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
 {    return _keepaliveLevel;   }
-
-
 bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 {
     a_vm->RegisterFunction("SetMilkLevel", "SNMI_Native", SetMilkLevel);
@@ -139,8 +137,78 @@ bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 }
 
 
+// ****************************************************************************************************************
+//  Now some utility stuff:  The basic message dumping and queuing for thoughts occurs in different classes, so we refactor it onto a new class here.
+class DumpThoughts
+{
+public:
+	static void throw_out_BACKGROUND_TTS_thought_message(std::string my_message) {
+		// The background channel shouldn't be flooded with text all the time.  Give the real user a chance to relax.  So only bring background stuff, when nothing else is going on.
+		auto now = std::chrono::steady_clock::now();
+		auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
+		SKSE::log::info("Time since last thought-speech on BACKGROUNDCHANNEL OR PRIORITIES CHANNELS: {} seconds", runtime.count());
+		// RE::DebugMessageBox(("Time passed since the last speech: " + std::to_string(runtime.count()) + " seconds").c_str());
+		const int minimum_time_since_last_speech = 90;  // in seconds, so 1.5 minutes
+		if (runtime.count() < minimum_time_since_last_speech) {
+			SKSE::log::info("Not throwing out the BACKGROUNDCHANNEL text as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_speech);
+			// return RE::BSEventNotifyControl::kContinue;
+		} else {
+			//RE::DebugMessageBox(my_message.c_str());
+			SKSE::log::info("The thought for the BACKGROUND TTS channel is: {} ", my_message.c_str());
+			// We want to broadcast mod events.  So we need this event source.
+			std::string  mod_event_name = "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought";
+			std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
+			auto eventSource = SKSE::GetModCallbackEventSource();
+			SKSE::ModCallbackEvent my_event(
+				mod_event_name,                        // event name
+				mod_event_string_arg,                  // arbitrary string argument 
+				123.0f,                                // arbitrary float argument
+				RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+			);
+			eventSource->SendEvent(&my_event);
+			last_speech_timestamp=std::chrono::steady_clock::now();  // only reset the timer if real speech has been produced
+		}
+	}	
+	static void throw_out_TTS_thought_message(std::string my_message) {
+		// RE::DebugMessageBox(my_message.c_str());
+		SKSE::log::info("The thought for the NORMAL THOUGHT channel is: {} ", my_message.c_str());
+		// We want to broadcast mod events.  So we need this event source.
+		std::string  mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";  //  was, but was probably wrong:   SNMI_PlayerActivatedSomething";
+		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
+		auto eventSource = SKSE::GetModCallbackEventSource();
+		SKSE::ModCallbackEvent my_event(
+			mod_event_name,                        // event name
+			mod_event_string_arg,                  // arbitrary string argument 
+			123.0f,                                // arbitrary float argument
+			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+		);
+		eventSource->SendEvent(&my_event);
+		last_speech_timestamp=std::chrono::steady_clock::now();		
+	}
+
+	static void throw_out_IMPORTANT_TTS_thought_message(std::string my_message) {
+		// RE::DebugMessageBox(my_message.c_str());
+		SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: {} ", my_message.c_str());
+		// We want to broadcast mod events.  So we need this event source.
+		std::string  mod_event_name = "SNMI_Pump_IMPORANT_PlayerThought";
+		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
+		auto eventSource = SKSE::GetModCallbackEventSource();
+		SKSE::ModCallbackEvent my_event(
+			mod_event_name,                        // event name
+			mod_event_string_arg,                  // arbitrary string argument 
+			123.0f,                                // arbitrary float argument
+			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+		);
+		eventSource->SendEvent(&my_event);
+		last_speech_timestamp=std::chrono::steady_clock::now();
+	}
+};
 
 
+
+
+// ****************************************************************************************************************
+// This is the handling of Active Magic Effects and everything related to it.
 class MyVisitor :
     public RE::MagicTarget::ForEachActiveEffectVisitor
 {
@@ -308,7 +376,7 @@ public:
 			SKSE::log::info("xxxxxxxxxxx High Heels Novice MAGIC EFFECT PROPERLY DETECTED");
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS HIGH HEELS NOVICE! ", base_name);
 			// RE::DebugMessageBox(stomach_rot_status.c_str());	
-			throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You already have some experience with them, but you are still a High Heels Novice, so they still slow you down a bit. It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You already have some experience with them, but you are still a High Heels Novice, so they still slow you down a bit. It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "High Heel Novice") == 0)  ) && (!a_event->isApplied) ) {
@@ -321,7 +389,7 @@ public:
 			SKSE::log::info("xxxxxxxxxxx YPS 'Untrained Feet' (high heels) MAGIC EFFECT PROPERLY DETECTED");
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS UNTRAINED FEET! ", base_name);
 			// RE::DebugMessageBox(stomach_rot_status.c_str());	
-			throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now.  It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now.  It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "Untrained Feet") == 0)  ) && (!a_event->isApplied) ) {
@@ -358,7 +426,7 @@ public:
 		// so we might as well say so.
 		if ( (std::strcmp(base_name, "Drunk Stumble Script") == 0) && (a_event->isApplied) ){  	// Drunk Stumble Script
 			// Here you can add your custom logic for when the stumble-and-fall animation is playing.
-			throw_out_TTS_thought_message("YOU, the player, are so drunk, that you just lost balance and just stumbled and fell over you own feet from all the alcohol.  How does that make you feel?  What are you thinking now? ");
+			DumpThoughts::throw_out_TTS_thought_message("YOU, the player, are so drunk, that you just lost balance and just stumbled and fell over you own feet from all the alcohol.  How does that make you feel?  What are you thinking now? ");
 			return RE::BSEventNotifyControl::kContinue;
 		} else {
 			// logger::info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx NOT THE DRUNK STUMBLE SCRIPT!");
@@ -370,7 +438,7 @@ public:
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for FOOD-BASED-DISEASE! ", base_name);
 			RE::DebugMessageBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
 			SKSE::log::info("XX-- our event handler for FOOD-BASED-DISEASE!");
-			throw_out_TTS_thought_message(std::format("YOU, the player, just ate something!  As a total surprise, you now notice, that you may have just contracted the so-called disease '{}' from it!  You need to announce the potential infection in your response, so that the actual player is informed.  You may do that implicitly, in the form of regret, surprise anger or shock.  It is a potentially dangerous condition. Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate something!  As a total surprise, you now notice, that you may have just contracted the so-called disease '{}' from it!  You need to announce the potential infection in your response, so that the actual player is informed.  You may do that implicitly, in the form of regret, surprise anger or shock.  It is a potentially dangerous condition. Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track Unforgiving Devices Struggle Exhaustion here:  FIRST THE APPLICATION OF THE EFFECT.
@@ -379,7 +447,7 @@ public:
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UNFORGIVING-DEVICES STRUGGLE EXHAUSTION! ", base_name);
 			//RE::DebugMessageBox(stomach_rot_status.c_str());	
 			SKSE::log::info("XX-- our event handler for UD STRUGGLE EXHAUSTION APPLICATION!");
-			throw_out_TTS_thought_message(std::format("YOU, the player, just tried getting out of your locking bondage devices for a whole while. You may have made some progress, but nevertheless now you are too exhausted to continue.  Say as much in your response.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just tried getting out of your locking bondage devices for a whole while. You may have made some progress, but nevertheless now you are too exhausted to continue.  Say as much in your response.")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track Unforgiving Devices Struggle Exhaustion here:  NOW THE REMOVAL OF THE EFFECT.
@@ -388,7 +456,7 @@ public:
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UNFORGIVING-DEVICES STRUGGLE EXHAUSTION! ", base_name);
 			// RE::DebugMessageBox(stomach_rot_status.c_str());	
 			SKSE::log::info("XX-- our event handler for UD STRUGGLE EXHAUSTION REMOVAL!");
-			throw_out_TTS_thought_message(std::format("YOU, the player, just were trying to get out of your locking bondage devices for a whole while. You may have made some progress, but in any case, that activity had made you exhausted to the point where you couldn't continue any more.  But now time has passed and you're feeling better and you're good to go and maybe could continue trying.  Say as much in your response.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just were trying to get out of your locking bondage devices for a whole while. You may have made some progress, but in any case, that activity had made you exhausted to the point where you couldn't continue any more.  But now time has passed and you're feeling better and you're good to go and maybe could continue trying.  Say as much in your response.")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track UD/US Black-Goo-Application-Effect here:  FIRST THE APPLICATION OF THE EFFECT.
@@ -397,7 +465,7 @@ public:
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for BLACK-GOO-APPLICATION! ", base_name);
 			// RE::DebugMessageBox(stomach_rot_status.c_str());	
 			SKSE::log::info("XX-- our event handler for BLACK-GOO-APPLICATION!");
-			throw_out_TTS_thought_message(std::format("Some substance called black goo just came in contact with you, and, to your horror, it manifested into a bondage device, thus trapping you as the victim now locked into said device.  What are you thinking in the face of this situation? ")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message(std::format("Some substance called black goo just came in contact with you, and, to your horror, it manifested into a bondage device, thus trapping you as the victim now locked into said device.  What are you thinking in the face of this situation? ")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track UD/DD slowdown-effect from bondage boots:  :  NOW THE REMOVAL OF THE EFFECT.
@@ -406,7 +474,7 @@ public:
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UD BONDAGE-BOOTS SLOWDOWN APPLICATION! ", base_name);
 			// RE::DebugMessageBox(stomach_rot_status.c_str());	
 			SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
-			throw_out_TTS_thought_message(std::format("YOU, the player, just got locking bondage boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these heels equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking bondage boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these heels equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track UD/DD slowdown-effect from bondage boots:  NOW THE REMOVAL OF THE EFFECT.
@@ -415,7 +483,7 @@ public:
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UD BONDAGE-BOOTS SLOWDOWN REMOVAL! ", base_name);
 			// RE::DebugMessageBox(stomach_rot_status.c_str());	
 			SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWAN REMOVAL!");
-			throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into bondage boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking bondage devices on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into bondage boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking bondage devices on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
 
@@ -496,48 +564,7 @@ Effect APPLIED on Beea | UID=10
         return RE::BSEventNotifyControl::kContinue;
     }
 	private:
-	void throw_out_BACKGROUND_TTS_thought_message(std::string my_message) {
-		// The background channel shouldn't be flooded with text all the time.  Give the real user a chance to relax.  So only bring background stuff, when nothing else is going on.
-		auto now = std::chrono::steady_clock::now();
-		auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
-		SKSE::log::info("Time since last thought-speech on BACKGROUNDCHANNEL OR PRIORITIES CHANNELS: {} seconds", runtime.count());
-		// RE::DebugMessageBox(("Time passed since the last speech: " + std::to_string(runtime.count()) + " seconds").c_str());
-		const int minimum_time_since_last_speech = 90;  // in seconds, so 1.5 minutes
-		if (runtime.count() < minimum_time_since_last_speech) {
-			SKSE::log::info("Not throwing out the BACKGROUNDCHANNEL text as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_speech);
-			// return RE::BSEventNotifyControl::kContinue;
-		} else {
-			//RE::DebugMessageBox(my_message.c_str());
-			SKSE::log::info("The thought for the BACKGROUND TTS channel is: {} ", my_message.c_str());
-			// We want to broadcast mod events.  So we need this event source.
-			std::string  mod_event_name = "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought";
-			std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-			auto eventSource = SKSE::GetModCallbackEventSource();
-			SKSE::ModCallbackEvent my_event(
-				mod_event_name,                        // event name
-				mod_event_string_arg,                  // arbitrary string argument 
-				123.0f,                                // arbitrary float argument
-				RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-			);
-			eventSource->SendEvent(&my_event);
-			last_speech_timestamp=std::chrono::steady_clock::now();  // only reset the timer if real speech has been produced
-		}
-	}	
-	void throw_out_TTS_thought_message(std::string my_message) {
-		// RE::DebugMessageBox(my_message.c_str());
-		SKSE::log::info("The thought for the NORMAL THOUGHT channel is: {} ", my_message.c_str());
-		// We want to broadcast mod events.  So we need this event source.
-		std::string  mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";  //  was, but was probably wrong:   SNMI_PlayerActivatedSomething";
-		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-		auto eventSource = SKSE::GetModCallbackEventSource();
-		SKSE::ModCallbackEvent my_event(
-			mod_event_name,                        // event name
-			mod_event_string_arg,                  // arbitrary string argument 
-			123.0f,                                // arbitrary float argument
-			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-		);
-		eventSource->SendEvent(&my_event);
-	}
+
 	int IsAFoodBasedDisease(std::string_view keyword)
 	{
 		for (std::size_t i = 0; i < list_of_food_contracted_sicknesses.size(); ++i)
@@ -616,6 +643,8 @@ public:
 			|| (std::strcmp(a_event->eventName.c_str() , "Obody_ApplyMorph") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "_SN_PlayerConsumes") == 0)  // MOD EVENT:  Name: _SN_PlayerConsumes  StrArg: IsEating  NumArg: 0
 			|| (std::strcmp(a_event->eventName.c_str() , "PlayerOrgasmEnd") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "dhlp-Resume") == 0)   // This is technical Devious Helplessness operational stuff, to continue mod processes.
+			|| (std::strcmp(a_event->eventName.c_str() , "dhlp-Suspend") == 0)   // This is technical Devious Helplessness operational stuff, to suspend mod processes.
 		) {
 			// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 			logger::info("=== Mod Event Ignored:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
@@ -638,53 +667,53 @@ public:
 
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceRemovedBoots
 		if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedBoots") == 0)  ) {
-			throw_out_IMPORTANT_TTS_thought_message("YOU, the player, just managed to get our of your locking bondage boots.  What a relief!  What are you thinking now based on this? ");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player, just managed to get our of your locking bondage boots.  What a relief!  What are you thinking now based on this? ");
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 		if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedWristRestraint") == 0)  ) {
-			throw_out_IMPORTANT_TTS_thought_message("YOU, the player,  managed to get our of your locking bondage device.  Your wrists are free again!  What a relief!  What are you thinking now based on this? ");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player,  managed to get our of your locking bondage device.  Your wrists are free again!  What a relief!  What are you thinking now based on this? ");
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 		if ( (std::strcmp(a_event->eventName.c_str() , "UD_SentientDialogue") == 0)  ) {
 			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
 			std::string  thought_message = std::format("YOU, the player, suddenly have a feeling like your {} is speaking to you, but you cannot be sure.  What are you thinking now based on this? ", a_event->strArg.c_str());
-			throw_out_TTS_thought_message(thought_message);
+			DumpThoughts::throw_out_TTS_thought_message(thought_message);
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 		if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedBoots") == 0)  || (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedBallet Boots") == 0)) {  
 			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
 			std::string  thought_message = std::format("YOU, the player, just got locked into bondage boots and you cannot take them off any more because they got locked onto your feet.  What are you thinking now based on this? ", a_event->strArg.c_str());
-			throw_out_IMPORTANT_TTS_thought_message(thought_message);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 		if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedyoke") == 0)  ) {
 			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
 			std::string  thought_message = std::format("YOU, the player, just got locked into an iron bondage yoke. Such a yoke is an iron bondage device, that locks around your neck and wrists, trapping your wrists in a position next to your shoulders, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? ", a_event->strArg.c_str());
-			throw_out_IMPORTANT_TTS_thought_message(thought_message);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// MOD EVENT:  Name: DeviousEventTrip and Fall  StrArg: Beea  NumArg: 0
 		if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventTrip and Fall") == 0)  ) {
 			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
 			std::string  thought_message = std::format("YOU, the player, just tripped over your own feet, because you are wearing these devious bondage boots that you are locked into and cannot take off.  What are you thinking now based on this? ", a_event->strArg.c_str());
-			throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// MOD EVENT:  YPS Thoughts:  Those will be pushed to the background channel.
 		if ( (std::strcmp(a_event->eventName.c_str() , "YPS_ThoughtEvent") == 0)  ) {
 			std::string  thought_message = std::format("=============== ************************************ LETS STOP HERE.  STOP NOW.  LETS STOP NOW AND CUT THIS SHORT:  THERE IS ONLY ONE THING REQUIRED RIGHT NOW:  GIVE BACK THE THOUGHT, THAT \"{{ player.name }}  WAS THINKING.  AND WHAT WAS SHE THINKING?  THE INFORMATION IS RIGHT HERE, BECAUSE WE KNOW THE FOLLWING SENTENCE:  {}  NOW THAT YOU HAVE THE INFORMATION, FORGET ALL THE REST AND JUST GIVE BACK THE RIGHT ANSWER!!! You can paraphrase and adapt it a little bit, but you don't have to.  THE REST BELOW CAN ALSO BE IGNORED, but any afterthought or narrator comment should then be in third person afterwards! ************************************ ================== ", a_event->strArg.c_str());
-			throw_out_BACKGROUND_TTS_thought_message(thought_message);   // this shouldn't be overdone, but hte background code makes sure of that.
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(thought_message);   // this shouldn't be overdone, but hte background code makes sure of that.
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// MOD EVENT:  Generic orgasm start (and end)  [2026-05-21 21:44:52.579] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmStart  StrArg:   NumArg: 0  // [2026-05-21 21:45:00.613] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmEnd  StrArg:   NumArg: 0
 		if ( (std::strcmp(a_event->eventName.c_str() , "PlayerOrgasmStart") == 0)  ) {
 			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
 			std::string  thought_message = std::format("Regardless whether you like it or not, from all the stimulation, you, the player, are now suddenly having an orgasm! Let us know this via your response. ");
-			throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		
@@ -707,8 +736,7 @@ public:
 
 
 		// IF the MOD-EVENT really WASNT HANDLED BY THIS POINT, IT IS MAYBE SOMETHING NEW, AND THEREFORE WE MAKE A MESSAGEBOX-ANNOUNCEMENT OF it.
-		RE::DebugMessageBox(debug_message.c_str());
-
+		RE::DebugMessageBox(("SNMI:  An unhandled mod-event was discovered: " + debug_message).c_str());
 
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 		/*  IN THE END, WE CANNOT USE THIS, BECAUSE IT GETS TRIGGERED ALL THE TIME FROM E.g. UD ELLBOW BINDER NON-STOP FROM THE IDLE ANIMATION.
@@ -718,7 +746,7 @@ public:
 			// In the CBPS mode, there are these collision configs below, but the str-args observed in real life so far were:  L Breast01
 			// [NPC L Breast] [NPC R Breast] [NPC L Butt] [NPC R Butt]
 			std::string  thought_message = std::format("YOU, the player, just took a hard hit one of your body parts.  You can guess which one it is from this string: '{}'. This was probably very painful. Say as much in your response, also mentioning the respective body part.  What are you thinking now based on this? ", a_event->strArg.c_str());
-			throw_out_IMPORTANT_TTS_thought_message(thought_message);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		*/
@@ -726,70 +754,9 @@ public:
 
         return RE::BSEventNotifyControl::kContinue;
     }
-	private:
 
-	void throw_out_TTS_thought_message(std::string my_message) {
-		// RE::DebugMessageBox(my_message.c_str());
-		SKSE::log::info("The thought for the NORMAL THOUGHT channel is: {} ", my_message.c_str());
-		// We want to broadcast mod events.  So we need this event source.
-		std::string  mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";  //  was, but was probably wrong:   SNMI_PlayerActivatedSomething";
-		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-		auto eventSource = SKSE::GetModCallbackEventSource();
-		SKSE::ModCallbackEvent my_event(
-			mod_event_name,                        // event name
-			mod_event_string_arg,                  // arbitrary string argument 
-			123.0f,                                // arbitrary float argument
-			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-		);
-		eventSource->SendEvent(&my_event);
-		last_speech_timestamp=std::chrono::steady_clock::now();
-	}
-	void throw_out_IMPORTANT_TTS_thought_message(std::string my_message) {
-		// RE::DebugMessageBox(my_message.c_str());
-		SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: {} ", my_message.c_str());
-		// We want to broadcast mod events.  So we need this event source.
-		std::string  mod_event_name = "SNMI_Pump_IMPORANT_PlayerThought";
-		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-		auto eventSource = SKSE::GetModCallbackEventSource();
-		SKSE::ModCallbackEvent my_event(
-			mod_event_name,                        // event name
-			mod_event_string_arg,                  // arbitrary string argument 
-			123.0f,                                // arbitrary float argument
-			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-		);
-		eventSource->SendEvent(&my_event);
-		last_speech_timestamp=std::chrono::steady_clock::now();
-	}
-	void throw_out_BACKGROUND_TTS_thought_message(std::string my_message) {
 
-		//
 
-		// The background channel shouldn't be flooded with text all the time.  Give the real user a chance to relax.  So only bring background stuff, when nothing else is going on.
-		auto now = std::chrono::steady_clock::now();
-		auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
-		SKSE::log::info("Time since last thought-speech on BACKGROUNDCHANNEL OR PRIORITIES CHANNELS: {} seconds", runtime.count());
-		// RE::DebugMessageBox(("Time passed since the last speech: " + std::to_string(runtime.count()) + " seconds").c_str());
-		const int minimum_time_since_last_speech = 90;  // in seconds, so 1.5 minutes
-		if (runtime.count() < minimum_time_since_last_speech) {
-			SKSE::log::info("Not throwing out the BACKGROUNDCHANNEL text as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_speech);
-			// return RE::BSEventNotifyControl::kContinue;
-		} else {
-			//RE::DebugMessageBox(my_message.c_str());
-			SKSE::log::info("The thought for the BACKGROUND TTS channel is: {} ", my_message.c_str());
-			// We want to broadcast mod events.  So we need this event source.
-			std::string  mod_event_name = "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought";
-			std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-			auto eventSource = SKSE::GetModCallbackEventSource();
-			SKSE::ModCallbackEvent my_event(
-				mod_event_name,                        // event name
-				mod_event_string_arg,                  // arbitrary string argument 
-				123.0f,                                // arbitrary float argument
-				RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-			);
-			eventSource->SendEvent(&my_event);
-			last_speech_timestamp=std::chrono::steady_clock::now();   // only reset the timer if real speech has been produced
-		}
-	}
 };
 
 
