@@ -777,7 +777,12 @@ public:
 
 
 		// IF the MOD-EVENT really WASNT HANDLED BY THIS POINT, IT IS MAYBE SOMETHING NEW, AND THEREFORE WE MAKE A MESSAGEBOX-ANNOUNCEMENT OF it.
-		RE::DebugMessageBox(("SNMI:  An unhandled mod-event was discovered: " + debug_message).c_str());
+		if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
+		{
+			RE::DebugMessageBox(("SNMI:  An unhandled mod-event was discovered: " + debug_message).c_str());
+		} else {
+			SKSE::log::info("SNMI:  An unhandled mod-event was discovered: {}", debug_message);
+		}
 
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 		/*  IN THE END, WE CANNOT USE THIS, BECAUSE IT GETS TRIGGERED ALL THE TIME FROM E.g. UD ELLBOW BINDER NON-STOP FROM THE IDLE ANIMATION.

@@ -43,9 +43,15 @@ Event OnUpdate()
 
     SNMI_Native.SetMilkLevel(current_milk_value)
     SNMI_Native.SetMilkString(milk_string)
-
     SNMI_Native.SetKeepaliveLevel(keepalive_value)
-	Debug.Notification("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", Counter: " + Math.Floor(keepalive_value))
+
+    ; Only the DEBUG-Player will receive these extra notifications, so as to make them invisible for players in the release.
+    if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
+         Debug.Notification("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", Counter: " + Math.Floor(keepalive_value))
+	Else
+        Debug.Trace("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", Counter: " + Math.Floor(keepalive_value))
+    endif 
+    
     RegisterForSingleUpdate(10.0)
 EndEvent
 
