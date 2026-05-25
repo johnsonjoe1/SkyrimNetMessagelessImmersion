@@ -614,6 +614,7 @@ public:
 		
 		if ( (std::strcmp(a_event->eventName.c_str() , "SKICP_configManagerReady") == 0)  
 		    || (std::strcmp(a_event->eventName.c_str() , "Apropos2GameLoaded") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "Apropos2ConfigClose") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)        // treat our own events with a log entry only.
 			|| (std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_IMPORANT_PlayerThought") == 0)            // treat our own events with a log entry only.
 			|| (std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought") == 0)   // treat our own events with a log entry only.
@@ -627,11 +628,25 @@ public:
 			|| (std::strcmp(a_event->eventName.c_str() , "SKICP_modSelected") == 0)   // this is broadcast when the player selects a mod in the SKI Configuration Menu.
 			|| (std::strcmp(a_event->eventName.c_str() , "SKICP_pageSelected") == 0)  // this is broadcast when the player selects a page of a mod configuration in the SKI Configuration Menu.
 			|| (std::strcmp(a_event->eventName.c_str() , "SKICP_optionHighlighted") == 0)   // this is broadcast when the player highlights a configuration option for a mod in the SKI Configuration Menu.
+			|| (std::strcmp(a_event->eventName.c_str() , "SKICP_optionSelected") == 0)   // this is broadcast when the player selects a configuration option for a mod in the SKI Configuration Menu.
+			|| (std::strcmp(a_event->eventName.c_str() , "SKICP_messageDialogClosed") == 0)   // this is broadcast when the player closes a message dialog in the SKI Configuration Menu.
+			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_widgetError") == 0)            // this is broadcast when a widget error occurs.
+			|| (std::strcmp(a_event->eventName.c_str() , "RSM_CategoriesInitialized") == 0)   // this is some technical event from RaceMenu that we don't care about.
+			|| (std::strcmp(a_event->eventName.c_str() , "RSM_Initialized") == 0)             // this is some technical event from RaceMenu that we don't care about.
+			|| (std::strcmp(a_event->eventName.c_str() , "RSM_SliderChange") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "RSM_Reinitialized") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "RSM_RequestTintSave") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "RSM_RequestTintLoad") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "RSM_HairColorChange") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "RSM_ShadersInvalidated") == 0)
+			|| (std::strcmp(a_event->eventName.c_str() , "zadRegisterEvents") == 0)   			// This is from zadLibs probably and just a technical event anyway.
+			|| (std::strcmp(a_event->eventName.c_str() , "GagSoundsRegistered") == 0)			// This is from zadLibs probably and just a technical event anyway.
 			|| (std::strcmp(a_event->eventName.c_str() , "SLA_Int_PlayerLoadsGame") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "sla_Int_PlayerLoadsGame") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "sla_UpdateComplete") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "SN_StatusUpdated") == 0) 
 			|| (std::strcmp(a_event->eventName.c_str() , "_SN_StatusUpdated") == 0) 
+			|| (std::strcmp(a_event->eventName.c_str() , "_SN_UIConfigured") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechStarted") == 0)
 			// || (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechCompleted") == 0)
 			// || (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)
@@ -680,7 +695,6 @@ public:
 			// There was no change in milk string
 		} else {
 			// There was a change in milk string
-
 			DumpThoughts::throw_out_TTS_thought_message("Due to milk slowly accumulating in her breasts, " + current_milk_string);
 			previous_milk_string = current_milk_string;  // Update the previous milk string to the current one for the next comparison.			
 		}
@@ -705,7 +719,7 @@ public:
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 		if ( (std::strcmp(a_event->eventName.c_str() , "UD_SentientDialogue") == 0)  ) {
 			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
-			std::string  thought_message = std::format("YOU, the player, suddenly have a feeling like your {} is speaking to you, but you cannot be sure.  What are you thinking now based on this? ", a_event->strArg.c_str());
+			std::string  thought_message = std::format("YOU, the player, suddenly have a feeling like your {} is speaking to you, even though it is just an item and not a living creature.  Is it maybe time to question your sanity?  What are you thinking now based on this? ", a_event->strArg.c_str());
 			DumpThoughts::throw_out_TTS_thought_message(thought_message);
 			return RE::BSEventNotifyControl::kContinue;
 		}
