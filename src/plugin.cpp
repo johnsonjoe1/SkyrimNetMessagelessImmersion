@@ -101,55 +101,10 @@ std::array<std::string, 2> list_of_food_contracted_sicknesses = {
 std::string my_active_effect_description_string = "Nothing yet!";
 std::string previous_milk_string = "No milk string HISTORY defined yet!";
 
+float previous_milk_level = 0;
+float previous_milk_max = 0;
 
-// FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
 
-class SNMIPapyrus
-{
-public:
-    static bool Register(RE::BSScript::IVirtualMachine*);
-    static void SetMilkLevel(RE::StaticFunctionTag*, float a_value);
-	static void SetMilkString(RE::StaticFunctionTag*, std::string a_value);
-    static float GetMilkLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
-    static std::string GetMilkString();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
-    static void SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value);
-    static float GetKeepaliveLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
-private:
-    static inline float _milkLevel = 123.0f;
-	static inline std::string _milkString = "No milk string defined IN PLUGIN yet!";
-	static inline float _keepaliveLevel = 0.0f;
-};
-
-void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
-{
-    _milkLevel = a_value;
-    SKSE::log::info("Note:  Milk level updated VIA PUSH FROM PAPYRUS: {}", a_value);
-}
-void SNMIPapyrus::SetMilkString(RE::StaticFunctionTag*, std::string s_value)
-{
-    _milkString = s_value;
-    SKSE::log::info("Note:  Milk string updated VIA PUSH FROM PAPYRUS: {}", s_value);
-}
-
-float SNMIPapyrus::GetMilkLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
-{    return _milkLevel;   }
-std::string SNMIPapyrus::GetMilkString()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
-{    return _milkString;   }
-void SNMIPapyrus::SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value)
-{
-    _keepaliveLevel = a_value;
-    SKSE::log::info("Note:  Keepalive level updated VIA PUSH FROM PAPYRUS: {}", a_value);
-}
-float SNMIPapyrus::GetKeepaliveLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
-{    return _keepaliveLevel;   }
-bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
-{
-    a_vm->RegisterFunction("SetMilkLevel", "SNMI_Native", SetMilkLevel);
-	a_vm->RegisterFunction("SetMilkString", "SNMI_Native", SetMilkString);
-    a_vm->RegisterFunction("SetKeepaliveLevel", "SNMI_Native", SetKeepaliveLevel);
-
-    return true;
-}
 
 
 // ****************************************************************************************************************
@@ -219,6 +174,70 @@ public:
 	}
 };
 
+
+
+
+
+// FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
+
+class SNMIPapyrus
+{
+public:
+    static bool Register(RE::BSScript::IVirtualMachine*);
+    static void SetMilkLevel(RE::StaticFunctionTag*, float a_value);
+	static void SetMilkString(RE::StaticFunctionTag*, std::string a_value);
+    static float GetMilkLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
+    static std::string GetMilkString();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
+    static void SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value);
+    static float GetKeepaliveLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
+private:
+    static inline float _milkLevel = 123.0f;
+	static inline std::string _milkString = "No milk string defined IN PLUGIN yet!";
+	static inline float _keepaliveLevel = 0.0f;
+};
+
+void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
+{
+    _milkLevel = a_value;
+	float milk_max = 4.0;
+    SKSE::log::info("Note:  Milk level updated VIA PUSH FROM PAPYRUS: {}", a_value);
+	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
+	if ( (previous_milk_level > 0.15 ) && (a_value <= 0.15) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are now sucked dry and have no more milk!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response!");
+	}
+	if ( (previous_milk_level < 0.5f * milk_max) &&  (previous_milk_level > 0.01f ) && (a_value >= 0.5f * milk_max) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached half of their capacity!  Say so and let us know what you are thinking!  And make it clear that you speak about your breasts and the milk in your response!");
+	}
+	if ( (previous_milk_level < milk_max) && (a_value >= milk_max) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached their maximum capacity!  Milk might start to leak from your breasts at any time now.  Say so and let us know how you feel about that!  And make it clear that you speak about your breasts and the milk in your response!");
+	}	
+	previous_milk_level = a_value;  // update the previous level for the next check
+}
+void SNMIPapyrus::SetMilkString(RE::StaticFunctionTag*, std::string s_value)
+{
+    _milkString = s_value;
+    SKSE::log::info("Note:  Milk string updated VIA PUSH FROM PAPYRUS: {}", s_value);
+}
+
+float SNMIPapyrus::GetMilkLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
+{    return _milkLevel;   }
+std::string SNMIPapyrus::GetMilkString()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
+{    return _milkString;   }
+void SNMIPapyrus::SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value)
+{
+    _keepaliveLevel = a_value;
+    SKSE::log::info("Note:  Keepalive level updated VIA PUSH FROM PAPYRUS: {}", a_value);
+}
+float SNMIPapyrus::GetKeepaliveLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
+{    return _keepaliveLevel;   }
+bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
+{
+    a_vm->RegisterFunction("SetMilkLevel", "SNMI_Native", SetMilkLevel);
+	a_vm->RegisterFunction("SetMilkString", "SNMI_Native", SetMilkString);
+    a_vm->RegisterFunction("SetKeepaliveLevel", "SNMI_Native", SetKeepaliveLevel);
+
+    return true;
+}
 
 
 
@@ -756,6 +775,17 @@ public:
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 			return RE::BSEventNotifyControl::kContinue;
 		}
+		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedStraitJacket
+		if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedStraitJacket") == 0)  ) {
+			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
+			std::string  thought_message = std::format("YOU, the player, just got locked into a strait jacket.  The jacket holds your arms and hands in tight sleeves bound around your torso, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? ", a_event->strArg.c_str());
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		 
+
+
 		// MOD EVENT:  Name: DeviousEventTrip and Fall  StrArg: Beea  NumArg: 0
 		if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventTrip and Fall") == 0)  ) {
 			// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
