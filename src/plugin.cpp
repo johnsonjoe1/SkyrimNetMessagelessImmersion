@@ -675,6 +675,25 @@ public:
 			|| (std::strcmp(a_event->eventName.c_str() , "PlayerOrgasmEnd") == 0)
 			|| (std::strcmp(a_event->eventName.c_str() , "dhlp-Resume") == 0)   // This is technical Devious Helplessness operational stuff, to continue mod processes.
 			|| (std::strcmp(a_event->eventName.c_str() , "dhlp-Suspend") == 0)   // This is technical Devious Helplessness operational stuff, to suspend mod processes.
+			|| (std::strcmp(a_event->eventName.c_str() , "SSL_PREPARE_Thread0") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "SSL_LOCK_Thread0") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "AnimationStarting") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "AnimationStart") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "AnimationStart_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "SSL_READY_Thread0") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "StageStart") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "StageStart_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "StageEnd") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "StageEnd_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "SL_SetSpeed") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "SL_EndScene") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "SSL_CLEAR_Thread0") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnding") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnd") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+			|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnd_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+
 		) {
 			// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 			logger::info("=== Mod Event Ignored:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
@@ -782,7 +801,7 @@ public:
 			RE::DebugMessageBox(("SNMI:  An unhandled mod-event was discovered: " + debug_message).c_str());
 		} else {
 			SKSE::log::info("SNMI:  An unhandled mod-event was discovered: {}", debug_message);
-		}
+		}  
 
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 		/*  IN THE END, WE CANNOT USE THIS, BECAUSE IT GETS TRIGGERED ALL THE TIME FROM E.g. UD ELLBOW BINDER NON-STOP FROM THE IDLE ANIMATION.
