@@ -2,9 +2,11 @@
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 
+#include "DumpThoughts.h"
+
 namespace logger = SKSE::log;
 
-static auto last_speech_timestamp = std::chrono::steady_clock::now();
+// static auto last_speech_timestamp = std::chrono::steady_clock::now();
 
 std::string general_word_on_milk_pumps = R"SKSE(
 A general word on Milk Pumps: Milk pumps in Skyrim are milking stalls, much like for a milk cow, only that this device is designed for human women.
@@ -107,6 +109,7 @@ float previous_milk_max = 0;
 
 
 
+/*
 // ****************************************************************************************************************
 //  Now some utility stuff:  The basic message dumping and queuing for thoughts occurs in different classes, so we refactor it onto a new class here.
 class DumpThoughts
@@ -174,7 +177,7 @@ public:
 	}
 };
 
-
+*/
 
 
 
@@ -720,11 +723,11 @@ public:
 		}
 
 		// Now, PERIODICALLY, we take care of changes in the values of other mods.  We put this here, because this gets
-		// triggered reasonably often.
+		// triggered reasonably often.  
 		float current_milk = SNMIPapyrus::GetMilkLevel();
 		float current_keepalive = SNMIPapyrus::GetKeepaliveLevel();
 		std::string current_milk_string = SNMIPapyrus::GetMilkString();
-		SKSE::log::info("Current Keepalive: {}", current_keepalive);
+		SKSE::log::info("Current Keepalive: {}", current_keepalive);  
 		SKSE::log::info("Current milk level is: {}", current_milk);
 		SKSE::log::info("Current milk string is: {}", current_milk_string);
 		SKSE::log::info("PREVIOUS milk string is: {}", previous_milk_string);
@@ -811,9 +814,12 @@ public:
 		// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
 		if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)  ) {
 			auto now = std::chrono::steady_clock::now();
-			auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
+			// auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
+			auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - DumpThoughts::GetLastSpeechTimestamp());
+
 			SKSE::log::info("=====NO-SPEECH-TIMER for the BACKGROUND CHANNEL WAS RESET BY SKYRIMNET ModEvent after {} seconds. ", runtime.count());
-			last_speech_timestamp=std::chrono::steady_clock::now();
+			// last_speech_timestamp=std::chrono::steady_clock::now();
+			DumpThoughts::reset_last_speech_timestamp();
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// 	|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)
