@@ -1,8 +1,9 @@
 #include "log.h"
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
-
 #include "DumpThoughts.h"
+
+#include <unordered_set>
 
 namespace logger = SKSE::log;
 
@@ -634,89 +635,9 @@ public:
         // logger::info("  StrArg: {}", a_event->strArg);
         // logger::info("  NumArg: {}", a_event->numArg);
 		
-		if ( (std::strcmp(a_event->eventName.c_str() , "SKICP_configManagerReady") == 0)  
-		    || (std::strcmp(a_event->eventName.c_str() , "Apropos2GameLoaded") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "Apropos2ConfigClose") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)        // treat our own events with a log entry only.
-			|| (std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_IMPORANT_PlayerThought") == 0)            // treat our own events with a log entry only.
-			|| (std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought") == 0)   // treat our own events with a log entry only.
-			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_hudModeChanged") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_widgetLoaded") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_widgetManagerReady") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_iWantWidgetsReset") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_iWantStatusBarsReady") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "iWantStatusBarsReady") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "iWantWidgetsReset") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "SKICP_modSelected") == 0)   // this is broadcast when the player selects a mod in the SKI Configuration Menu.
-			|| (std::strcmp(a_event->eventName.c_str() , "SKICP_pageSelected") == 0)  // this is broadcast when the player selects a page of a mod configuration in the SKI Configuration Menu.
-			|| (std::strcmp(a_event->eventName.c_str() , "SKICP_optionHighlighted") == 0)   // this is broadcast when the player highlights a configuration option for a mod in the SKI Configuration Menu.
-			|| (std::strcmp(a_event->eventName.c_str() , "SKICP_optionSelected") == 0)   // this is broadcast when the player selects a configuration option for a mod in the SKI Configuration Menu.
-			|| (std::strcmp(a_event->eventName.c_str() , "SKICP_messageDialogClosed") == 0)   // this is broadcast when the player closes a message dialog in the SKI Configuration Menu.
-			|| (std::strcmp(a_event->eventName.c_str() , "SKIWF_widgetError") == 0)            // this is broadcast when a widget error occurs.
-			|| (std::strcmp(a_event->eventName.c_str() , "RSM_CategoriesInitialized") == 0)   // this is some technical event from RaceMenu that we don't care about.
-			|| (std::strcmp(a_event->eventName.c_str() , "RSM_Initialized") == 0)             // this is some technical event from RaceMenu that we don't care about.
-			|| (std::strcmp(a_event->eventName.c_str() , "RSM_SliderChange") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "RSM_Reinitialized") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "RSM_RequestTintSave") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "RSM_RequestTintLoad") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "RSM_HairColorChange") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "RSM_ShadersInvalidated") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "zadRegisterEvents") == 0)   			// This is from zadLibs probably and just a technical event anyway.
-			|| (std::strcmp(a_event->eventName.c_str() , "GagSoundsRegistered") == 0)			// This is from zadLibs probably and just a technical event anyway.
-			|| (std::strcmp(a_event->eventName.c_str() , "SLA_Int_PlayerLoadsGame") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "sla_Int_PlayerLoadsGame") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "sla_UpdateComplete") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "SN_StatusUpdated") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "_SN_StatusUpdated") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "_SN_UIConfigured") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechStarted") == 0)
-			// || (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechCompleted") == 0)
-			// || (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioStarted") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioEnded") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "UD_AfterUIReload") == 0) 			
-			|| (std::strcmp(a_event->eventName.c_str() , "UD_QuestKeywordUpdate") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "UD_GenericKeyUpdate") == 0) 
-			|| (std::strcmp(a_event->eventName.c_str() , "UD_PatchUpdate") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "UIListMenu_LoadMenu") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "UIListMenu_CloseMenu") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "UIListMenu_SelectItemText") == 0)   // this may be useful later, because it indicated player is trying lockpicking now
-			|| (std::strcmp(a_event->eventName.c_str() , "UIListMenu_SelectItem") == 0)
-			// || (std::strcmp(a_event->eventName.c_str() , "UD_SentientDialogue") == 0)  // Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
-			|| (std::strcmp(a_event->eventName.c_str() , "RSM_LoadPlugins") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "SeverActions_CellLoaded") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "SeverActions_FamiliarityTimestamp") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "SeverActions_ReputationAssess") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "ReSchlongify") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "MME_MilkCycleComplete") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "BeeingFemale") == 0)   //  We ignore this for now, maybe later we can do something with it.
-			|| (std::strcmp(a_event->eventName.c_str() , "CBPCPlayerCollisionWithFemaleEvent") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "PlayerChangedCells") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "Obody_ApplyMorph") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "_SN_PlayerConsumes") == 0)  // MOD EVENT:  Name: _SN_PlayerConsumes  StrArg: IsEating  NumArg: 0
-			|| (std::strcmp(a_event->eventName.c_str() , "PlayerOrgasmEnd") == 0)
-			|| (std::strcmp(a_event->eventName.c_str() , "dhlp-Resume") == 0)   // This is technical Devious Helplessness operational stuff, to continue mod processes.
-			|| (std::strcmp(a_event->eventName.c_str() , "dhlp-Suspend") == 0)   // This is technical Devious Helplessness operational stuff, to suspend mod processes.
-			|| (std::strcmp(a_event->eventName.c_str() , "SSL_PREPARE_Thread0") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "SSL_LOCK_Thread0") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "AnimationStarting") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "AnimationStart") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "AnimationStart_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "SSL_READY_Thread0") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "StageStart") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "StageStart_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "StageEnd") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "StageEnd_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "SL_SetSpeed") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "SL_EndScene") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "SSL_CLEAR_Thread0") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnding") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnd") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-			|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnd_MatchMaker") == 0)   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 
-		) {
+		if ( is_known_useless_event(a_event->eventName.c_str()))
+		{
 			// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 			logger::info("=== Mod Event Ignored:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
 			return RE::BSEventNotifyControl::kContinue;
@@ -812,7 +733,12 @@ public:
 		
 
 		// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
-		if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)  ) {
+		if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)  || 
+			(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechCompleted") == 0)  || 
+			(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechStarted") == 0)  ||
+			(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioStarted") == 0) ||
+			(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioEnded") == 0)  ) {			
+
 			auto now = std::chrono::steady_clock::now();
 			// auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
 			auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - DumpThoughts::GetLastSpeechTimestamp());
@@ -856,7 +782,100 @@ public:
         return RE::BSEventNotifyControl::kContinue;
     }
 
+private:
 
+std::unordered_set<std::string> ignored_mod_events = {
+	"SKICP_configManagerReady",
+	"Apropos2GameLoaded",
+	"Apropos2ConfigClose",
+	"SNMI_JustPumpMyStringToPlayerThought",        // treat our own events with a log entry only.
+	"SNMI_Pump_IMPORANT_PlayerThought",            // treat our own events with a log entry only.
+	"SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",   // treat our own events with a log entry only.
+	"SKIWF_hudModeChanged", 
+	"SKIWF_widgetLoaded", 
+	"SKIWF_widgetManagerReady", 
+	"SKIWF_iWantWidgetsReset", 
+	"SKIWF_iWantStatusBarsReady", 
+	"iWantStatusBarsReady", 
+	"iWantWidgetsReset", 
+	"SKICP_modSelected",   // this is broadcast when the player selects a mod in the SKI Configuration Menu.
+	"SKICP_pageSelected",  // this is broadcast when the player selects a page of a mod configuration in the SKI Configuration Menu.
+	"SKICP_optionHighlighted",   // this is broadcast when the player highlights a configuration option for a mod in the SKI Configuration Menu.
+	"SKICP_optionSelected",   // this is broadcast when the player selects a configuration option for a mod in the SKI Configuration Menu.
+	"SKICP_messageDialogClosed",   // this is broadcast when the player closes a message dialog in the SKI Configuration Menu.
+	"SKIWF_widgetError",            // this is broadcast when a widget error occurs.
+	"RSM_CategoriesInitialized",   // this is some technical event from RaceMenu that we don't care about.
+	"RSM_Initialized",             // this is some technical event from RaceMenu that we don't care about.
+	"RSM_SliderChange",
+	"RSM_Reinitialized",
+	"RSM_RequestTintSave",
+	"RSM_RequestTintLoad",
+	"RSM_HairColorChange",
+	"RSM_ShadersInvalidated",
+	"zadRegisterEvents",   			// This is from zadLibs probably and just a technical event anyway.
+	"GagSoundsRegistered",			// This is from zadLibs probably and just a technical event anyway.
+	"SLA_Int_PlayerLoadsGame",
+	"sla_Int_PlayerLoadsGame",
+	"sla_UpdateComplete",
+	"SN_StatusUpdated", 
+	"_SN_StatusUpdated", 
+	"_SN_UIConfigured",
+	//"SkyrimNet_SpeechStarted",
+	//"SkyrimNet_SpeechCompleted",
+	//"SkyrimNet_SpeechComplete",
+	//"SkyrimNet_AudioStarted",
+	//"SkyrimNet_AudioEnded",
+	"UD_AfterUIReload", 			
+	"UD_QuestKeywordUpdate", 
+	"UD_GenericKeyUpdate", 
+	"UD_PatchUpdate",
+	"UIListMenu_LoadMenu",
+	"UIListMenu_CloseMenu",
+	"UIListMenu_SelectItemText",   // this may be useful later, because it indicated player is trying lockpicking now
+	"UIListMenu_SelectItem",
+	// "UD_SentientDialogue",  // Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
+	"RSM_LoadPlugins",
+	"SeverActions_CellLoaded",
+	"SeverActions_FamiliarityTimestamp",
+	"SeverActions_ReputationAssess",
+	"ReSchlongify",
+	"MME_MilkCycleComplete",
+	"BeeingFemale",   //  We ignore this for now, maybe later we can do something with it.
+	"CBPCPlayerCollisionWithFemaleEvent",
+	"PlayerChangedCells",
+	"Obody_ApplyMorph",
+	"_SN_PlayerConsumes",  // MOD EVENT:  Name: _SN_PlayerConsumes  StrArg: IsEating  NumArg: 0
+	"PlayerOrgasmEnd",
+	"dhlp-Resume",   // This is technical Devious Helplessness operational stuff, to continue mod processes.
+	"dhlp-Suspend",   // This is technical Devious Helplessness operational stuff, to suspend mod processes.
+	"SSL_PREPARE_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"SSL_LOCK_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"AnimationStarting",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"AnimationStart",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"AnimationStart_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"AnimationStarting_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"SSL_READY_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"StageStart",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"StageStart_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"StageEnd",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"StageEnd_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"SL_SetSpeed",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"SL_EndScene",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"SSL_CLEAR_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"AnimationEnding",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"AnimationEnding_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"AnimationEnd",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"AnimationEnd_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+};
+
+	bool is_known_useless_event(std::string event_name)
+	{
+		if (ignored_mod_events.contains(event_name)) {
+			return true;
+			// logger::info("Found!");
+		}
+		return false;
+	}
 
 };
 
