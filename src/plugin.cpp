@@ -82,7 +82,7 @@ std::array<std::string, 5> furniture_prompt_triggers = {
     "Grindstone",
     "Workbench",
     "Tanning Rack",
-    "Smelter"  // Arcane Enchanter  // Alchemist's Retort  // Alchemy Lab  //  Staff Enchanter 
+    "Smelter"  // Arcane Enchanter  // Alchemist's Retort  // Alchemy Lab  //  Staff Enchanter   // Bench   // other seats, what about beds and that?
 };
 
 std::array<std::string, 10> list_of_enemy_contracted_sicknesses = {
@@ -106,79 +106,6 @@ std::string previous_milk_string = "No milk string HISTORY defined yet!";
 
 float previous_milk_level = 0;
 float previous_milk_max = 0;
-
-
-
-
-/*
-// ****************************************************************************************************************
-//  Now some utility stuff:  The basic message dumping and queuing for thoughts occurs in different classes, so we refactor it onto a new class here.
-class DumpThoughts
-{
-public:
-	static void throw_out_BACKGROUND_TTS_thought_message(std::string my_message) {
-		// The background channel shouldn't be flooded with text all the time.  Give the real user a chance to relax.  So only bring background stuff, when nothing else is going on.
-		auto now = std::chrono::steady_clock::now();
-		auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
-		SKSE::log::info("Time since last thought-speech on BACKGROUNDCHANNEL OR PRIORITIES CHANNELS: {} seconds", runtime.count());
-		// RE::DebugMessageBox(("Time passed since the last speech: " + std::to_string(runtime.count()) + " seconds").c_str());
-		const int minimum_time_since_last_speech = 90;  // in seconds, so 1.5 minutes
-		if (runtime.count() < minimum_time_since_last_speech) {
-			SKSE::log::info("Not throwing out the BACKGROUNDCHANNEL text as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_speech);
-			// return RE::BSEventNotifyControl::kContinue;
-		} else {
-			//RE::DebugMessageBox(my_message.c_str());
-			SKSE::log::info("The thought for the BACKGROUND TTS channel is: {} ", my_message.c_str());
-			// We want to broadcast mod events.  So we need this event source.
-			std::string  mod_event_name = "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought";
-			std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-			auto eventSource = SKSE::GetModCallbackEventSource();
-			SKSE::ModCallbackEvent my_event(
-				mod_event_name,                        // event name
-				mod_event_string_arg,                  // arbitrary string argument 
-				123.0f,                                // arbitrary float argument
-				RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-			);
-			eventSource->SendEvent(&my_event);
-			last_speech_timestamp=std::chrono::steady_clock::now();  // only reset the timer if real speech has been produced
-		}
-	}	
-	static void throw_out_TTS_thought_message(std::string my_message) {
-		// RE::DebugMessageBox(my_message.c_str());
-		SKSE::log::info("The thought for the NORMAL THOUGHT channel is: {} ", my_message.c_str());
-		// We want to broadcast mod events.  So we need this event source.
-		std::string  mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";  //  was, but was probably wrong:   SNMI_PlayerActivatedSomething";
-		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-		auto eventSource = SKSE::GetModCallbackEventSource();
-		SKSE::ModCallbackEvent my_event(
-			mod_event_name,                        // event name
-			mod_event_string_arg,                  // arbitrary string argument 
-			123.0f,                                // arbitrary float argument
-			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-		);
-		eventSource->SendEvent(&my_event);
-		last_speech_timestamp=std::chrono::steady_clock::now();		
-	}
-
-	static void throw_out_IMPORTANT_TTS_thought_message(std::string my_message) {
-		// RE::DebugMessageBox(my_message.c_str());
-		SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: {} ", my_message.c_str());
-		// We want to broadcast mod events.  So we need this event source.
-		std::string  mod_event_name = "SNMI_Pump_IMPORANT_PlayerThought";
-		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-		auto eventSource = SKSE::GetModCallbackEventSource();
-		SKSE::ModCallbackEvent my_event(
-			mod_event_name,                        // event name
-			mod_event_string_arg,                  // arbitrary string argument 
-			123.0f,                                // arbitrary float argument
-			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-		);
-		eventSource->SendEvent(&my_event);
-		last_speech_timestamp=std::chrono::steady_clock::now();
-	}
-};
-
-*/
 
 
 
@@ -276,13 +203,12 @@ public:
         targetUID(uid),
         found(nullptr)
     {}
-
+	
     RE::BSContainer::ForEachResult Accept(RE::ActiveEffect* effect) override
     {
         if (!effect) {
             return RE::BSContainer::ForEachResult::kContinue;
         }
-
         // 🔑 THIS is the key comparison
         if (effect->usUniqueID == targetUID)
         {
@@ -298,15 +224,12 @@ public:
             }
             return RE::BSContainer::ForEachResult::kStop;
         }
-
         return RE::BSContainer::ForEachResult::kContinue;
     }
-
     RE::ActiveEffect* GetResult() const
     {
         return found;
     }
-
 private:
     std::uint16_t targetUID;
     RE::ActiveEffect* found;
