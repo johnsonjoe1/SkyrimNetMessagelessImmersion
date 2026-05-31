@@ -12,5 +12,7 @@ public:
 	static void throw_out_IMPORTANT_TTS_thought_message(std::string my_message);
 	static std::chrono::steady_clock::time_point GetLastSpeechTimestamp();
 	static void reset_last_speech_timestamp();
+	static void reset_last_game_load_or_reload_timestamp();
+	static bool too_early_after_game_load();
 };
 

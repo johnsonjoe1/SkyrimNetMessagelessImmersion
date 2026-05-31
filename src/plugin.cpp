@@ -154,13 +154,13 @@ void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
     SKSE::log::info("Note:  Milk level updated VIA PUSH FROM PAPYRUS: {}", a_value);
 	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
 	if ( (previous_milk_level > 0.15 ) && (a_value <= 0.15) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are now sucked dry and have no more milk!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response!");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are now sucked dry and have no more milk!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk inside of your breasts in your response!");
 	}
 	if ( (previous_milk_level < 0.5f * milk_max) &&  (previous_milk_level > 0.01f ) && (a_value >= 0.5f * milk_max) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached half of their capacity, so you may soon require to be milked!  Say so and let us know what you are thinking!  And make it clear that you speak about your breasts and the milk in your response!");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached half of their capacity, so you may soon require to be milked!  Say so and let us know what you are thinking!  And make it clear that you speak about your breasts and the milk inside of your breasts in your response!");
 	}
 	if ( (previous_milk_level < milk_max) && (a_value >= milk_max) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached their maximum capacity so your breasts need to be milked in order to relieve the pressure and the weight!  Milk might start to leak from your breasts at any time now.  Say so and let us know how you feel about that!  And make it clear that you speak about your breasts and the milk in your response!");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached their maximum capacity so your breasts need to be milked in order to relieve the pressure and the weight!  Milk might start to leak from your breasts at any time now.  Say so and let us know how you feel about that!  And make it clear that you speak about your breasts and the milk inside of your breasts in your response!");
 	}	
 	previous_milk_level = a_value;  // update the previous level for the next check
 }
@@ -179,10 +179,10 @@ void SNMIPapyrus::SetLactacidLevel(RE::StaticFunctionTag*, float a_value)
     SKSE::log::info("Note:  Lactacid level updated VIA PUSH FROM PAPYRUS: {}", a_value);
 	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
 	if ( (previous_lactacid_level <= 0 ) && (a_value > 0) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received lactacid into your body, which you didn't have before!  This means that your breasts are going to start producing milk now!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response as well as the lactacid, that's causing it all!");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received lactacid into your body, which you didn't have before!  This means that your breasts are going to start producing milk now!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
 	}
 	if ( (previous_lactacid_level > 0 ) &&  (a_value > previous_lactacid_level) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received more lactacid into your body on top of the level you had already!  This means that your breasts are going to be producing milk for even longer time!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response as well as the lactacid, that's causing it all!");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received more lactacid into your body on top of the level you had already!  This means that your breasts are going to be producing milk for even longer time!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
 	}
 	previous_lactacid_level = a_value;  // update the previous level for the next check
 }
@@ -1062,12 +1062,16 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		break;
 
 	case SKSE::MessagingInterface::kPostLoad:
+		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		break;
 	case SKSE::MessagingInterface::kPreLoadGame:
+		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		break;
 	case SKSE::MessagingInterface::kPostLoadGame:
+		DumpThoughts::reset_last_game_load_or_reload_timestamp();
         break;
 	case SKSE::MessagingInterface::kNewGame:
+		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		break;
 	};
 }
