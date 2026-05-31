@@ -105,7 +105,9 @@ std::string my_active_effect_description_string = "Nothing yet!";
 std::string previous_milk_string = "No milk string HISTORY defined yet!";
 
 float previous_milk_level = 0;
-float previous_milk_max = 0;
+float previous_lactacid_level = 1000000;  // simply don't speak of an increase at game start (given no saved values from previous save)
+float previous_lactacid_max_level = 1000000;  // simply don't speak of an increase at game start (given no saved values from previous save)
+float previous_milk_max_level = 1000000;  // simply don't speak of an increase at game start (given no saved values from previous save)
 
 
 
@@ -116,13 +118,21 @@ class SNMIPapyrus
 public:
     static bool Register(RE::BSScript::IVirtualMachine*);
     static void SetMilkLevel(RE::StaticFunctionTag*, float a_value);
+	static void SetMilkMax(RE::StaticFunctionTag*, float a_value);
+	static void SetLactacidLevel(RE::StaticFunctionTag*, float a_value);
+	static void SetLactacidMax(RE::StaticFunctionTag*, float a_value);
 	static void SetMilkString(RE::StaticFunctionTag*, std::string a_value);
     static float GetMilkLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
+	static float GetMilkMax();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
+	
     static std::string GetMilkString();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
     static void SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value);
     static float GetKeepaliveLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
 private:
-    static inline float _milkLevel = 123.0f;
+    static inline float _milkLevel = 124356.0f;
+	static inline float _milkMax = 123456.0f;
+	static inline float _lactacidLevel = 0.0f;
+	static inline float _lactacidMax = 0.0f;
 	static inline std::string _milkString = "No milk string defined IN PLUGIN yet!";
 	static inline float _keepaliveLevel = 0.0f;
 };
@@ -130,20 +140,73 @@ private:
 void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
 {
     _milkLevel = a_value;
-	float milk_max = 4.0;
+	// float milk_max = 4.0;
+	float milk_max = SNMIPapyrus::GetMilkMax();
+	if (milk_max == 0) {
+		milk_max = 4.0f;  // avoid division by zero, and put in default starting MME user level, only for this function locally
+	}
+
+	// maybe the mod isn't even installed.  in that case the level and previous level would be 0 and nothing needs to be done
+	if (_milkLevel == 0 && previous_milk_level == 0) {
+		return;
+	}
+
     SKSE::log::info("Note:  Milk level updated VIA PUSH FROM PAPYRUS: {}", a_value);
 	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
 	if ( (previous_milk_level > 0.15 ) && (a_value <= 0.15) ) {
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are now sucked dry and have no more milk!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response!");
 	}
 	if ( (previous_milk_level < 0.5f * milk_max) &&  (previous_milk_level > 0.01f ) && (a_value >= 0.5f * milk_max) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached half of their capacity!  Say so and let us know what you are thinking!  And make it clear that you speak about your breasts and the milk in your response!");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached half of their capacity, so you may soon require to be milked!  Say so and let us know what you are thinking!  And make it clear that you speak about your breasts and the milk in your response!");
 	}
 	if ( (previous_milk_level < milk_max) && (a_value >= milk_max) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached their maximum capacity!  Milk might start to leak from your breasts at any time now.  Say so and let us know how you feel about that!  And make it clear that you speak about your breasts and the milk in your response!");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached their maximum capacity so your breasts need to be milked in order to relieve the pressure and the weight!  Milk might start to leak from your breasts at any time now.  Say so and let us know how you feel about that!  And make it clear that you speak about your breasts and the milk in your response!");
 	}	
 	previous_milk_level = a_value;  // update the previous level for the next check
 }
+
+void SNMIPapyrus::SetMilkMax(RE::StaticFunctionTag*, float a_value)
+{
+    _milkMax = a_value;
+    SKSE::log::info("Note:  Milk MAXIMUM-LEVEL updated VIA PUSH FROM PAPYRUS: {}", a_value);
+	previous_milk_max_level = a_value;  // update the previous level for the next check
+}
+
+void SNMIPapyrus::SetLactacidLevel(RE::StaticFunctionTag*, float a_value)
+{
+    _lactacidLevel = a_value;
+	// float lactacid_max = 4.0;
+    SKSE::log::info("Note:  Lactacid level updated VIA PUSH FROM PAPYRUS: {}", a_value);
+	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
+	if ( (previous_lactacid_level <= 0 ) && (a_value > 0) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received lactacid into your body, which you didn't have before!  This means that your breasts are going to start producing milk now!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response as well as the lactacid, that's causing it all!");
+	}
+	if ( (previous_lactacid_level > 0 ) &&  (a_value > previous_lactacid_level) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received more lactacid into your body on top of the level you had already!  This means that your breasts are going to be producing milk for even longer time!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response as well as the lactacid, that's causing it all!");
+	}
+	previous_lactacid_level = a_value;  // update the previous level for the next check
+}
+
+void SNMIPapyrus::SetLactacidMax(RE::StaticFunctionTag*, float a_value)
+{
+    _lactacidMax = a_value;
+	// float lactacid_max = 4.0;
+    SKSE::log::info("Note:  Lactacid MAXIMUM-LEVEL updated VIA PUSH FROM PAPYRUS: {}", a_value);
+/*	if ( (previous_lactacid_max_level > 0.15 ) && (a_value <= 0.15) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are now sucked dry and have no more milk!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response!");
+	}
+	if ( (previous_lactacid_max_level < 0.5f * lactacid_max) &&  (previous_lactacid_max_level > 0.01f ) && (a_value >= 0.5f * lactacid_max) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached half of their capacity!  Say so and let us know what you are thinking!  And make it clear that you speak about your breasts and the milk in your response!");
+	}
+	if ( (previous_lactacid_max_level < lactacid_max) && (a_value >= lactacid_max) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached their maximum capacity!  Milk might start to leak from your breasts at any time now.  Say so and let us know how you feel about that!  And make it clear that you speak about your breasts and the milk in your response!");
+	}	
+*/	
+	previous_lactacid_max_level = a_value;  // update the previous level for the next check
+}
+
+
+
 void SNMIPapyrus::SetMilkString(RE::StaticFunctionTag*, std::string s_value)
 {
     _milkString = s_value;
@@ -152,6 +215,8 @@ void SNMIPapyrus::SetMilkString(RE::StaticFunctionTag*, std::string s_value)
 
 float SNMIPapyrus::GetMilkLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
 {    return _milkLevel;   }
+float SNMIPapyrus::GetMilkMax()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
+{    return _milkMax;   }
 std::string SNMIPapyrus::GetMilkString()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
 {    return _milkString;   }
 void SNMIPapyrus::SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value)
@@ -164,9 +229,10 @@ float SNMIPapyrus::GetKeepaliveLevel()     //  Here we must NOT use static.  Tha
 bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 {
     a_vm->RegisterFunction("SetMilkLevel", "SNMI_Native", SetMilkLevel);
+    a_vm->RegisterFunction("SetLactacidLevel", "SNMI_Native", SetLactacidLevel);	
+	a_vm->RegisterFunction("SetLactacidMax", "SNMI_Native", SetLactacidMax);		
 	a_vm->RegisterFunction("SetMilkString", "SNMI_Native", SetMilkString);
     a_vm->RegisterFunction("SetKeepaliveLevel", "SNMI_Native", SetKeepaliveLevel);
-
     return true;
 }
 

@@ -5,6 +5,7 @@ float keepalive_value = 1.01
 float current_milk_value = 15.5
 float max_milk_value = 15.5
 float current_lactacid = 13.3
+float max_lactacid = 13.3
 string milk_string = "No milk_string defined yet!"
 ; int MilkCnt = 1
 
@@ -17,9 +18,11 @@ EndEvent
 Event OnUpdate()
 
     keepalive_value += 1.0
-    current_milk_value = StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkCount")
-    max_milk_value     = StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkMaximum")
-    current_lactacid   = StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.LactacidCount")
+    current_milk_value =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkCount")      ; FROM MME_Storage.psc
+    max_milk_value     =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkMaximum")    ; FROM MME_Storage.psc
+    current_lactacid   =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.LactacidCount")  ; FROM MME_Storage.psc
+	max_lactacid       = (StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.Level") + 2) / 2 + 4           ; FROM MME_Storage.psc
+
 
     Int MilkCnt = Math.Floor(current_milk_value)
 	Int MilkMax = Math.Floor(max_milk_value)
@@ -42,6 +45,9 @@ Event OnUpdate()
 
 
     SNMI_Native.SetMilkLevel(current_milk_value)
+    SNMI_Native.SetMilkMax(max_milk_value)
+	SNMI_Native.SetLactacidLevel(current_lactacid)
+	SNMI_Native.SetLactacidMax(max_lactacid)
     SNMI_Native.SetMilkString(milk_string)
     SNMI_Native.SetKeepaliveLevel(keepalive_value)
 
