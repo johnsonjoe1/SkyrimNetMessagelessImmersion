@@ -109,6 +109,8 @@ float previous_lactacid_level = 1000000;  // simply don't speak of an increase a
 float previous_lactacid_max_level = 1000000;  // simply don't speak of an increase at game start (given no saved values from previous save)
 float previous_milk_max_level = 1000000;  // simply don't speak of an increase at game start (given no saved values from previous save)
 
+float previous_iNeed_fatigue_level = 1000000;  // this will not trigger any getting-more-tired messages at game start
+
 
 
 // FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
@@ -515,9 +517,54 @@ public:
 		}
 
 
+
+		// THIS SECTION OF THE CODE SHOULD BE CALLED VERY FREQUENTLY IN THE COURSE OF MAGIC EFFECTS.
+		// THIS MEANS WE CAN PUT SOME EXPERIMENTAL EFFECTS HERE.
+		//
+		// We have from another mod:
+		//
+		// GlobalVariable function GetINeedFatigue() global
+    	// return Game.GetFormFromFile(0x12DC, "iNeed.esp") as GlobalVariable
+		// endFunction
+		//
+		// This should allow for direct native access to the same from C++:
+		//
 		// 
+		auto* fatigueGV =
+			RE::TESDataHandler::GetSingleton()
+				->LookupForm<RE::TESGlobal>(0x12DC, "iNeed.esp");
 
+		if (fatigueGV) {
+			float fatigue = fatigueGV->value;
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: value={}", fatigue);
+			if (fatigue == 0) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means NO FATIGUE AT ALL, NOTHING! ");
+				if (fatigue < previous_iNeed_fatigue_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are full rested from sleep and you are completely rid of your fatigue now!  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
+				}							
+			} else if (fatigue == 1) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means MILD FATIGUE! ");
+				if (fatigue > previous_iNeed_fatigue_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling mild fatigue.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
+				}
+			} else if (fatigue == 2) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means MODERATE FATIGUE! ");
+				if (fatigue > previous_iNeed_fatigue_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling moderate fatigue.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
+				}				
+			} else if (fatigue == 3) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means SEVERE FATIGUE! ");
+				if (fatigue > previous_iNeed_fatigue_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling severe fatigue!  This is not just a little bit, but really severe fatigue that is impairing your abilities.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
+				}				
+			} else {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means some unknown level of fatigue! ");
+			}
+			// We only update fatigue, if the whole iNeed stuff worked.
+			previous_iNeed_fatigue_level = fatigue;					
+		}
 
+		
 				/*
 Effect APPLIED on Beea | UID=10
 [2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:150] Effect ptr=0x12896d8a8e0 base=Movement Speed Penalty
@@ -1062,10 +1109,12 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		break;
 
 	case SKSE::MessagingInterface::kPostLoad:
-		DumpThoughts::reset_last_game_load_or_reload_timestamp();
+		// DANGER HERE:  The player name may not be availabe.  This might crash!!	
+		//  DumpThoughts::reset_last_game_load_or_reload_timestamp();	
 		break;
 	case SKSE::MessagingInterface::kPreLoadGame:
-		DumpThoughts::reset_last_game_load_or_reload_timestamp();
+		// DANGER HERE:  The player name may not be availabe.  This might crash!!	
+		//  DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		break;
 	case SKSE::MessagingInterface::kPostLoadGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();

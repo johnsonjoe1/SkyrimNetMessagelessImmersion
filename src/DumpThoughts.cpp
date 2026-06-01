@@ -25,6 +25,7 @@ void DumpThoughts::reset_last_speech_timestamp() {
 }
 void DumpThoughts::reset_last_game_load_or_reload_timestamp() {
 	// For DEBUGGING and TESTING we can't have the wait time after a reload.  So based on Player-name this is again skipped.
+	
 	if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
 	{
 		RE::DebugMessageBox("SNMI:  Player 'LILLITH' is detected, so skipping the silence after game (re)load.");
