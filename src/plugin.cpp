@@ -663,132 +663,6 @@ public:
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Player dirtiness global variable not found.");
 		}
 
-		// We have from another mod:
-		//	; Bathing In Skyrim:  NOTE:  THIS IS *NOT* THE BATHING IN SKYRIM RENEWED ESP, but probably the precursor one.
-		// MagicEffect function GetBISDirtinessStage2Effect() global
-		//     return Game.GetFormFromFile(0xE55C, "Bathing in Skyrim - Main.esp") as MagicEffect
-		// endFunction
-		// MagicEffect function GetBISDirtinessStage3Effect() global
-		//     return Game.GetFormFromFile(0xE55D, "Bathing in Skyrim - Main.esp") as MagicEffect
-		// endFunction
-		// MagicEffect function GetBISDirtinessStage4Effect() global
-		//     return Game.GetFormFromFile(0xE55E, "Bathing in Skyrim - Main.esp") as MagicEffect
-		// endFunction
-		//
-		// This should allow for direct native access to the same from C++:
-		//	
-		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>STARTING THE NEW Bathing in Skyrim - Main.esp: QUERY!!!! HOPE THIS WORKS!>>>>>>>>>>>>>>>>>>> ");
-		auto* dirtinessEffect =
-			RE::TESDataHandler::GetSingleton()
-				->LookupForm<RE::EffectSetting>(
-					0xE55C,
-					"Bathing in Skyrim - Main.esp");
-
-		if (dirtinessEffect) {
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Found effect: {}", dirtinessEffect->GetName());
-		} else {
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: NEW CODE ALSO FAILED! ");
-		}
-
-		auto* BISDirtynessStage2EffectGV =
-			RE::TESDataHandler::GetSingleton()
-				->LookupForm<RE::TESGlobal>(0xE55C, "Bathing in Skyrim - Main.esp");
-		if (BISDirtynessStage2EffectGV) {
-			float BISDirtynessStage2Effect = BISDirtynessStage2EffectGV->value;
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage2Effect found: value={}", BISDirtynessStage2Effect);
-		} else {
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage2Effect NOT found! ");
-		}
-		auto* BISDirtynessStage3EffectGV =
-			RE::TESDataHandler::GetSingleton()
-				->LookupForm<RE::TESGlobal>(0xE55D, "Bathing in Skyrim - Main.esp");
-		if (BISDirtynessStage3EffectGV) {
-			float BISDirtynessStage3Effect = BISDirtynessStage3EffectGV->value;
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage3Effect found: value={}", BISDirtynessStage3Effect);
-		} else {
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage3Effect NOT found! ");
-		}
-		auto* BISDirtynessStage4EffectGV =
-			RE::TESDataHandler::GetSingleton()
-				->LookupForm<RE::TESGlobal>(0xE55E, "Bathing in Skyrim - Main.esp");
-		if (BISDirtynessStage4EffectGV) {
-			float BISDirtynessStage4Effect = BISDirtynessStage4EffectGV->value;
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage4Effect found: value={}", BISDirtynessStage4Effect);
-		} else {
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage4Effect NOT found! ");
-		}
-
-
-
-
-
-		
-				/*
-Effect APPLIED on Beea | UID=10
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:150] Effect ptr=0x12896d8a8e0 base=Movement Speed Penalty
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:274] Base name: Movement Speed Penalty
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:275] Base ptr: 0x12163e2fe40
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:276] Base-FormID: 66030BDA
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:278] Base-Form Type: 18   (This means: MGEF) 
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:279] base-Effect EDID: yps_effPenaltySpeedMult
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:280] Source pointer: 0x12163e59c00
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:282] Caster: Beea
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:284] Source ptr: 0x12163e59c00
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:287] Magnitude: -10
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:288] Duration: 0
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:292] Source name: High Heel Novice
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:293] Source FormID: 66031C03
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:294] Source EDID: ypsSpellSpeedDebuff10
-[2026-05-16 17:06:54.777] [log] [info] [plugin.cpp:307] Form with ID 66030BDA found: Movement Speed Penalty
-
-
-
-
-
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:206] Effect APPLIED on Beea | UID=19
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:148] Effect ptr=0x13c3b010e00 base=SpeedMult Penalty
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:230] Effect ptr: 0x13c3b010e00
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:231] UID: 19
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:253] Base name: SpeedMult Penalty
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:254] Base ptr: 0x136e8560100
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:255] Base-FormID: 1401332D
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:257] Base-Form Type: 18   (This means: MGEF) 
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:258] base-Effect EDID: zadx_effPenaltySpeedMult
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:259] Source pointer: 0x136e826f4c0
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:261] Caster: Beea
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:263] Source ptr: 0x136e826f4c0
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:266] Magnitude: -20
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:267] Duration: 0
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:271] Source name: BootSlow-Enchant
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:272] Source FormID: 1401332E
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:273] Source EDID: zadx_EnchSlowBoots
-[2026-05-15 12:07:15.265] [log] [info] [plugin.cpp:286] Form with ID 1401332D found: SpeedMult Penalty
-
-
-
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:205] ========== Found an effect, that is actually about the Player.  Let's go into more details below! =============
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:206] Effect APPLIED on Beea | UID=8
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:148] Effect ptr=0x1fcb7fae2a0 base=SpeedMult Penalty
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:230] Effect ptr: 0x1fcb7fae2a0
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:231] UID: 8
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:253] Base name: SpeedMult Penalty
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:254] Base ptr: 0x1f769311d00
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:255] Base-FormID: 1401332D
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:257] Base-Form Type: 18   (This means: MGEF) 
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:258] base-Effect EDID: zadx_effPenaltySpeedMult
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:259] Source pointer: 0x1f768e3f4c0
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:261] Caster: Beea
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:263] Source ptr: 0x1f768e3f4c0
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:266] Magnitude: -20
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:267] Duration: 0
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:271] Source name: BootSlow-Enchant
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:272] Source FormID: 1401332E
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:273] Source EDID: zadx_EnchSlowBoots
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:286] Form with ID 1401332D found: SpeedMult Penalty
-[2026-05-15 22:49:42.524] [log] [info] [plugin.cpp:300] xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx NOT THE DRUNK STUMBLE SCRIPT!
-[2026-05-15 22:49:42.607] [log] [info] [plugin.cpp:495] MOD EVENT:  Name: DeviceEquippedBallet Boots  StrArg: Beea  NumArg: 1
-
-*/
 		SKSE::log::info(".");
 		SKSE::log::info(".");
 		SKSE::log::info("ABOVE IS A POTENTIALLY UNHANDLED MAGIC EFFECT??? CHECK THE BASE NAME AND SOURCE NAME TO SEE IF IT'S SOMETHING YOU WANT TO REACT TO, OR IF IT'S SOME RANDOM EFFECT THAT YOU DON'T CARE ABOUT.  IF IT'S THE LATTER, THEN YOU PROBABLY WANT TO ADD A NEW IF-STATEMENT FOR THIS EFFECT IN THIS HANDLER, SO THAT IT DOESN'T GET LOGGED IN SUCH DETAIL ANY MORE, BECAUSE THAT WOULD BE ANNOYING.  CHECK THE BASE NAME AND SOURCE NAME TO SEE WHAT EFFECT THIS IS ABOUT.  IF IT'S AN EFFECT YOU CARE ABOUT, THEN CONSIDER ADDING A CUSTOM MESSAGE FOR IT IN THIS HANDLER, SO THAT YOUR TTS CAN REACT TO IT IN A MEANINGFUL WAY! ");
@@ -933,6 +807,9 @@ public:
 			(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioStarted") == 0) ||
 			(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioEnded") == 0)  ) {			
 
+				// Let's also check, if it was player thoughts or player diagloge
+
+
 			auto now = std::chrono::steady_clock::now();
 			// auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
 			auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - DumpThoughts::GetLastSpeechTimestamp());
@@ -1072,7 +949,6 @@ std::unordered_set<std::string> ignored_mod_events = {
 		}
 		return false;
 	}
-
 };
 
 
