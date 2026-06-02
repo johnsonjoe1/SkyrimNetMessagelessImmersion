@@ -110,7 +110,8 @@ float previous_lactacid_max_level = 1000000;  // simply don't speak of an increa
 float previous_milk_max_level = 1000000;  // simply don't speak of an increase at game start (given no saved values from previous save)
 
 float previous_iNeed_fatigue_level = 1000000;  // this will not trigger any getting-more-tired messages at game start
-
+float previous_iNeed_thirst_level = 1000000;  // this will not trigger any getting-more-thirsty messages at game start
+float previous_iNeed_hunger_level = 1000000;  // this will not trigger any getting-more-hungry messages at game start
 
 
 // FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
@@ -533,7 +534,6 @@ public:
 		auto* fatigueGV =
 			RE::TESDataHandler::GetSingleton()
 				->LookupForm<RE::TESGlobal>(0x12DC, "iNeed.esp");
-
 		if (fatigueGV) {
 			float fatigue = fatigueGV->value;
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: value={}", fatigue);
@@ -563,6 +563,89 @@ public:
 			// We only update fatigue, if the whole iNeed stuff worked.
 			previous_iNeed_fatigue_level = fatigue;					
 		}
+		// We have from another mod:
+		//
+		//GlobalVariable function GetINeedThirst() global
+		//    return Game.GetFormFromFile(0x4378, "iNeed.esp") as GlobalVariable
+		//endFunction
+		//
+		// This should allow for direct native access to the same from C++:
+		//		
+		auto* thirstGV =
+			RE::TESDataHandler::GetSingleton()
+				->LookupForm<RE::TESGlobal>(0x4378, "iNeed.esp");
+		if (thirstGV) {
+			float thirst = thirstGV->value;
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: value={}", thirst);
+			if (thirst == 0) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means NO thirst AT ALL, NOTHING! ");
+				if (thirst < previous_iNeed_thirst_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You completely rid of your thirst now!  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
+				}							
+			} else if (thirst == 1) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means MILD thirst! ");
+				if (thirst > previous_iNeed_thirst_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling mild thirst.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
+				}
+			} else if (thirst == 2) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means MODERATE thirst! ");
+				if (thirst > previous_iNeed_thirst_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling moderate thirst.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
+				}				
+			} else if (thirst == 3) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means SEVERE thirst! ");
+				if (thirst > previous_iNeed_thirst_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling severe thirst!  This is not just a little bit, but really severe thirst that is impairing your abilities.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
+				}				
+			} else {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means some unknown level of thirst! ");
+			}
+			// We only update thirst, if the whole iNeed stuff worked.
+			previous_iNeed_thirst_level = thirst;					
+		}
+
+		// We have from another mod:
+		//
+		// GlobalVariable function GetINeedHunger() global
+		//     return Game.GetFormFromFile(0x12DB, "iNeed.esp") as GlobalVariable
+		// endFunction
+		//
+		// This should allow for direct native access to the same from C++:
+		//		
+		auto* hungerGV =
+			RE::TESDataHandler::GetSingleton()
+				->LookupForm<RE::TESGlobal>(0x12DB, "iNeed.esp");
+		if (hungerGV) {
+			float hunger = hungerGV->value;
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: value={}", hunger);
+			if (hunger == 0) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means NO hunger AT ALL, NOTHING! ");
+				if (hunger < previous_iNeed_hunger_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are completely rid of your hunger now!  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
+				}							
+			} else if (hunger == 1) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means MILD hunger! ");
+				if (hunger > previous_iNeed_hunger_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling mild hunger.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
+				}
+			} else if (hunger == 2) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means MODERATE hunger! ");
+				if (hunger > previous_iNeed_hunger_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling moderate hunger.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
+				}				
+			} else if (hunger == 3) {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means SEVERE hunger! ");
+				if (hunger > previous_iNeed_hunger_level) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling severe hunger!  This is not just a little bit, but really severe hunger that is impairing your abilities.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
+				}				
+			} else {
+				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means some unknown level of hunger! ");
+			}
+			// We only update hunger, if the whole iNeed stuff worked.
+			previous_iNeed_hunger_level = hunger;					
+		}
+
+
 
 		
 				/*
