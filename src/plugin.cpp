@@ -646,6 +646,81 @@ public:
 		}
 
 
+		// We have from another mod:
+		// PlayerDirt = Game.GetFormFromFile(0x000DA8, "Bathing in Skyrim.esp") as GlobalVariable
+		//
+		// This should allow for direct native access to the same from C++:
+		//	
+		auto* playerDirt =
+			RE::TESDataHandler::GetSingleton()
+				->LookupForm<RE::TESGlobal>(
+					0x000DA8,
+					"Bathing in Skyrim.esp");
+		if (playerDirt) {
+			float dirtValue = playerDirt->value;
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Player dirtiness: {}", dirtValue);
+		} else {
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Player dirtiness global variable not found.");
+		}
+
+		// We have from another mod:
+		//	; Bathing In Skyrim:  NOTE:  THIS IS *NOT* THE BATHING IN SKYRIM RENEWED ESP, but probably the precursor one.
+		// MagicEffect function GetBISDirtinessStage2Effect() global
+		//     return Game.GetFormFromFile(0xE55C, "Bathing in Skyrim - Main.esp") as MagicEffect
+		// endFunction
+		// MagicEffect function GetBISDirtinessStage3Effect() global
+		//     return Game.GetFormFromFile(0xE55D, "Bathing in Skyrim - Main.esp") as MagicEffect
+		// endFunction
+		// MagicEffect function GetBISDirtinessStage4Effect() global
+		//     return Game.GetFormFromFile(0xE55E, "Bathing in Skyrim - Main.esp") as MagicEffect
+		// endFunction
+		//
+		// This should allow for direct native access to the same from C++:
+		//	
+		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>STARTING THE NEW Bathing in Skyrim - Main.esp: QUERY!!!! HOPE THIS WORKS!>>>>>>>>>>>>>>>>>>> ");
+		auto* dirtinessEffect =
+			RE::TESDataHandler::GetSingleton()
+				->LookupForm<RE::EffectSetting>(
+					0xE55C,
+					"Bathing in Skyrim - Main.esp");
+
+		if (dirtinessEffect) {
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Found effect: {}", dirtinessEffect->GetName());
+		} else {
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: NEW CODE ALSO FAILED! ");
+		}
+
+		auto* BISDirtynessStage2EffectGV =
+			RE::TESDataHandler::GetSingleton()
+				->LookupForm<RE::TESGlobal>(0xE55C, "Bathing in Skyrim - Main.esp");
+		if (BISDirtynessStage2EffectGV) {
+			float BISDirtynessStage2Effect = BISDirtynessStage2EffectGV->value;
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage2Effect found: value={}", BISDirtynessStage2Effect);
+		} else {
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage2Effect NOT found! ");
+		}
+		auto* BISDirtynessStage3EffectGV =
+			RE::TESDataHandler::GetSingleton()
+				->LookupForm<RE::TESGlobal>(0xE55D, "Bathing in Skyrim - Main.esp");
+		if (BISDirtynessStage3EffectGV) {
+			float BISDirtynessStage3Effect = BISDirtynessStage3EffectGV->value;
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage3Effect found: value={}", BISDirtynessStage3Effect);
+		} else {
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage3Effect NOT found! ");
+		}
+		auto* BISDirtynessStage4EffectGV =
+			RE::TESDataHandler::GetSingleton()
+				->LookupForm<RE::TESGlobal>(0xE55E, "Bathing in Skyrim - Main.esp");
+		if (BISDirtynessStage4EffectGV) {
+			float BISDirtynessStage4Effect = BISDirtynessStage4EffectGV->value;
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage4Effect found: value={}", BISDirtynessStage4Effect);
+		} else {
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bathing in Skyrim - Main.esp: Stage4Effect NOT found! ");
+		}
+
+
+
+
 
 		
 				/*
@@ -957,6 +1032,7 @@ std::unordered_set<std::string> ignored_mod_events = {
 	"SeverActions_CellLoaded",
 	"SeverActions_FamiliarityTimestamp",
 	"SeverActions_ReputationAssess",
+	"SeverActions_AmbientBanterReady",
 	"ReSchlongify",
 	"MME_MilkCycleComplete",
 	"BeeingFemale",   //  We ignore this for now, maybe later we can do something with it.
@@ -985,6 +1061,7 @@ std::unordered_set<std::string> ignored_mod_events = {
 	"AnimationEnding_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 	"AnimationEnd",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 	"AnimationEnd_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"CaptiveDefeatInit"  // This is called every time a new cell is entered and merely a technical event,  probably for CaptivePlayer.
 };
 
 	bool is_known_useless_event(std::string event_name)

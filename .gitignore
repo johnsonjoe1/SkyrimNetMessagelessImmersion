@@ -9,3 +9,4 @@ release/SKSE/Plugins/SkyrimNetMessagelessImmersion.dll
 release/SNMI_release_*.zip
 MODDER RESOURCES FOR YPS FASHION M.txt
 SkyrimNetMessagelessImmersion_LOG_WITH_SOME_YPS_EVENTS_AT_GAME_STARTUP.log
+src/legacy_code_not_to_be_committed.cpp
