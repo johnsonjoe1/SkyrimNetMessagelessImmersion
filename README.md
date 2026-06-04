@@ -48,6 +48,7 @@ At present there is some content from YPS fashion mod:
 * Thoughts upon Milk level status changes (empty, half-full, full).
 * Thoughts upon Lactacid level changes (reaching 0 Lactacid, adding fresh Lactacid)
 
+There is some sensitivity to overall SkyrimNet talk going on, so as to not babble too much when others are speaking, but on the other hand, give some updates and hopefully immersion and mental self-talk when it's otherwise quiet and alone time in the woods.
 
 # Usage/Configuration
 Everything is hard-coded at the moment.  There are no config-files or MCMs or anything like that.
