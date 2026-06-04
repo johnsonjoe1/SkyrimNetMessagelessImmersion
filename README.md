@@ -45,6 +45,8 @@ At present there is some content from YPS fashion mod:
 
 At present there is some content from YPS fashion mod:
 * Thoughts upon using Milk-Mod-Economy furniture Milk Pumps.
+* Thoughts upon Milk level status changes (empty, half-full, full).
+* Thoughts upon Lactacid level changes (reaching 0 Lactacid, adding fresh Lactacid)
 
 
 # Usage/Configuration
