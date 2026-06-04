@@ -113,6 +113,7 @@ float previous_iNeed_fatigue_level = 1000000;  // this will not trigger any gett
 float previous_iNeed_thirst_level = 1000000;  // this will not trigger any getting-more-thirsty messages at game start
 float previous_iNeed_hunger_level = 1000000;  // this will not trigger any getting-more-hungry messages at game start
 
+float previous_dirt_value = 100000;  // some impossible value, so that no message occurs (unless dirt value 0, which wouldn't likely be the case in mid-game)
 
 // FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
 
@@ -662,7 +663,7 @@ public:
 				->LookupForm<RE::TESGlobal>(
 					0x000DA8,
 					"Bathing in Skyrim.esp");
-		float previous_dirt_value = 100000;  // some impossible value, so that we always trigger the first time.					
+						
 		if (playerDirt) {
 			float dirtValue = playerDirt->value;
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Player dirtiness: {} (previous value: {} )", dirtValue, previous_dirt_value);

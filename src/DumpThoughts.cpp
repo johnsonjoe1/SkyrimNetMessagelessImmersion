@@ -56,7 +56,7 @@ bool DumpThoughts::too_early_for_next_lactacid_speech()
 	auto now = std::chrono::steady_clock::now();
 	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_lactacid_added_speech_timestamp);
 	SKSE::log::info("Time since last lactacid added speech: {} seconds", runtime.count());
-	const int minimum_time_since_last_lactacid_added_speech = 30;  // in 30 seconds 
+	const int minimum_time_since_last_lactacid_added_speech = 60;  // in 60 seconds 
 	if (runtime.count() < minimum_time_since_last_lactacid_added_speech) {
 		SKSE::log::info("It is too early for the next lactacid added speech, because only {} seconds have passed since the last lactacid added speech, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_lactacid_added_speech);
 		return true;
