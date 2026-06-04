@@ -10,6 +10,7 @@ namespace logger = SKSE::log;
 
 static auto last_speech_timestamp = std::chrono::steady_clock::now();
 static auto last_game_load_or_reload_timestamp = std::chrono::steady_clock::now();
+static auto last_lactacid_added_speech_timestamp = std::chrono::steady_clock::now();
 
 // ****************************************************************************************************************
 //  Now some utility stuff:  The basic message dumping functions and message queuing function for thoughts are all
@@ -19,6 +20,9 @@ static auto last_game_load_or_reload_timestamp = std::chrono::steady_clock::now(
 
 std::chrono::steady_clock::time_point DumpThoughts::GetLastSpeechTimestamp() {
 	return last_speech_timestamp;
+}
+void DumpThoughts::reset_lactacid_added_speech_timestamp() {
+	last_lactacid_added_speech_timestamp = std::chrono::steady_clock::now();
 }
 void DumpThoughts::reset_last_speech_timestamp() {
 	last_speech_timestamp = std::chrono::steady_clock::now();
@@ -42,6 +46,19 @@ bool DumpThoughts::too_early_after_game_load()
 	const int minimum_time_since_last_game_load_or_reload = 60;  // in seconds, so 1 minute
 	if (runtime.count() < minimum_time_since_last_game_load_or_reload) {
 		SKSE::log::info("////////BLOCKING THOUGHT OUTPUT/////////It is too early after game load or reload to throw out thoughts, because only {} seconds have passed since the last game load or reload, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_game_load_or_reload);
+		return true;
+	} else {
+		return false;
+	}
+}
+bool DumpThoughts::too_early_for_next_lactacid_speech()
+{
+	auto now = std::chrono::steady_clock::now();
+	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_lactacid_added_speech_timestamp);
+	SKSE::log::info("Time since last lactacid added speech: {} seconds", runtime.count());
+	const int minimum_time_since_last_lactacid_added_speech = 30;  // in 30 seconds 
+	if (runtime.count() < minimum_time_since_last_lactacid_added_speech) {
+		SKSE::log::info("It is too early for the next lactacid added speech, because only {} seconds have passed since the last lactacid added speech, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_lactacid_added_speech);
 		return true;
 	} else {
 		return false;

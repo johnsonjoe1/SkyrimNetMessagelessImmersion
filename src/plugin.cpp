@@ -183,9 +183,13 @@ void SNMIPapyrus::SetLactacidLevel(RE::StaticFunctionTag*, float a_value)
 	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
 	if ( (previous_lactacid_level <= 0 ) && (a_value > 0) ) {
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received lactacid into your body, which you didn't have before!  This means that your breasts are going to start producing milk now!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
+		DumpThoughts::reset_lactacid_added_speech_timestamp();  // reset the timestamp for the last speech about lactacid being added, so that we can later check if the player is talking about it in a timely manner.
 	}
 	if ( (previous_lactacid_level > 0 ) &&  (a_value > previous_lactacid_level) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received more lactacid into your body on top of the level you had already!  This means that your breasts are going to be producing milk for even longer time!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
+		if (!DumpThoughts::too_early_for_next_lactacid_speech()) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received more lactacid into your body on top of the level you had already!  This means that your breasts are going to be producing milk for even longer time!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
+			DumpThoughts::reset_lactacid_added_speech_timestamp();  // reset the timestamp for the last speech about lactacid being added, so that we can later check if the player is talking about it in a timely manner.
+		}
 	}
 	previous_lactacid_level = a_value;  // update the previous level for the next check
 }
@@ -648,7 +652,9 @@ public:
 
 		// We have from another mod:
 		// PlayerDirt = Game.GetFormFromFile(0x000DA8, "Bathing in Skyrim.esp") as GlobalVariable
+		// DirtString = " Dirt: " + ((Bis.GetPlayerDirt() * 100.0) as Int) + "%"
 		//
+		// So this should be a value between 0 and 1, and 1 meaning 100% dirty, and 0 meaning completely clean.
 		// This should allow for direct native access to the same from C++:
 		//	
 		auto* playerDirt =
@@ -656,9 +662,17 @@ public:
 				->LookupForm<RE::TESGlobal>(
 					0x000DA8,
 					"Bathing in Skyrim.esp");
+		float previous_dirt_value = 100000;  // some impossible value, so that we always trigger the first time.					
 		if (playerDirt) {
 			float dirtValue = playerDirt->value;
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Player dirtiness: {}", dirtValue);
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Player dirtiness: {} (previous value: {} )", dirtValue, previous_dirt_value);
+			
+			if ((previous_dirt_value < 0.6f) && (dirtValue >= 0.6f)) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are getting really dirty now! This is not just a little bit, but really dirty so that you are not as charming when talking to people and maybe you also could get sick more easily.  Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!"));
+			} else if ((previous_dirt_value >= 0.01f) && (dirtValue < 0.01f)) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are finally fresh and clean and no longer dirty! People won't dislike you anymore for being dirty! Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!", static_cast<int>(dirtValue * 100)));
+			}
+			previous_dirt_value = dirtValue;  // Update the previous dirt value for the
 		} else {
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Player dirtiness global variable not found.");
 		}
