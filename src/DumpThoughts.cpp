@@ -32,7 +32,8 @@ void DumpThoughts::reset_last_game_load_or_reload_timestamp() {
 	
 	if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
 	{
-		RE::DebugMessageBox("SNMI:  Player 'LILLITH' is detected, so skipping the silence after game (re)load.");
+		//RE::DebugMessageBox("SNMI:  Player 'LILLITH' is detected, so skipping the silence after game (re)load.");
+		SKSE::log::info("SNMI:  Player 'LILLITH' is detected, so skipping the silence after game (re)load.");
 		return;
 	} 
 	// We reset the game-reloaded-timestamp for silence and thus avoiding messages from reload-induced changes

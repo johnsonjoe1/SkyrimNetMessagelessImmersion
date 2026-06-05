@@ -517,7 +517,7 @@ public:
 		{
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UD BONDAGE-BOOTS SLOWDOWN REMOVAL! ", base_name);
 			// RE::DebugMessageBox(stomach_rot_status.c_str());	
-			SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWAN REMOVAL!");
+			SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWN REMOVAL!");
 			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into bondage boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking bondage devices on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
@@ -544,7 +544,7 @@ public:
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: value={}", fatigue);
 			if (fatigue == 0) {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means NO FATIGUE AT ALL, NOTHING! ");
-				if (fatigue < previous_iNeed_fatigue_level) {
+				if ( (fatigue < previous_iNeed_fatigue_level) & (previous_iNeed_fatigue_level != 1000000 ) ) {
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are full rested from sleep and you are completely rid of your fatigue now!  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
 				}							
 			} else if (fatigue == 1) {
@@ -678,6 +678,28 @@ public:
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Player dirtiness global variable not found.");
 		}
 
+
+		auto* player = RE::PlayerCharacter::GetSingleton();
+
+		if (player) {
+			auto& data = player->GetPlayerRuntimeData();
+			logger::info(
+				"CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//closestConversation={} runningConversation={}",
+				data.closestConversation != nullptr,
+				data.aiConversationRunning != nullptr);
+			if (data.closestConversation) {
+				//  NOTE:  This message box never fires, because that happens actually inside a dialoge-UI with talk options and all that, at least I think that's why.
+				RE::DebugMessageBox("closestConversation IS NOT NULL ANY MORE!!!!");
+			}
+			if (data.aiConversationRunning) {
+				RE::DebugMessageBox("aiConversationRunning IS NOT NULL ANY MORE!!!!");
+			}
+		} else {
+			logger::info(
+				"CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK// NO PLAYER??? NO PLAYER???NO PLAYER???NO PLAYER???NO PLAYER???NO PLAYER???");
+		}
+
+
 		SKSE::log::info(".");
 		SKSE::log::info(".");
 		SKSE::log::info("ABOVE IS A POTENTIALLY UNHANDLED MAGIC EFFECT??? CHECK THE BASE NAME AND SOURCE NAME TO SEE IF IT'S SOMETHING YOU WANT TO REACT TO, OR IF IT'S SOME RANDOM EFFECT THAT YOU DON'T CARE ABOUT.  IF IT'S THE LATTER, THEN YOU PROBABLY WANT TO ADD A NEW IF-STATEMENT FOR THIS EFFECT IN THIS HANDLER, SO THAT IT DOESN'T GET LOGGED IN SUCH DETAIL ANY MORE, BECAUSE THAT WOULD BE ANNOYING.  CHECK THE BASE NAME AND SOURCE NAME TO SEE WHAT EFFECT THIS IS ABOUT.  IF IT'S AN EFFECT YOU CARE ABOUT, THEN CONSIDER ADDING A CUSTOM MESSAGE FOR IT IN THIS HANDLER, SO THAT YOUR TTS CAN REACT TO IT IN A MEANINGFUL WAY! ");
@@ -697,6 +719,51 @@ public:
 		}
 		return -1;
 	}
+};
+
+class DialogueHook
+{
+public:
+    static void Install()
+    {
+
+		logger::info("SNMI:  CHECK//CHECK//CHECH//CHECK//CHECK//CHECK//CHECH//CHECK//CHECK//CHECK//CHECH//CHECK Installing DialogueHook.");
+        REL::Relocation<std::uintptr_t> vtbl{ RE::VTABLE_Actor[0] };
+
+        _SetDialogueWithPlayer =
+            vtbl.write_vfunc(0x041, SetDialogueWithPlayer);
+
+		logger::info("SNMI:  CHECK//CHECK//CHECH//CHECK//CHECK//CHECK//CHECH//CHECK//CHECK//CHECK//CHECH//CHECK DialogueHook installed.");
+
+    }
+
+private:
+    static bool SetDialogueWithPlayer(
+        RE::Actor* a_actor,
+        bool a_flag,
+        bool a_forceGreet,
+        RE::TESTopicInfo* a_topic)
+    {
+        if (a_actor) {
+            logger::info(
+                "Actor {} dialogue forceGreet={} topic={:08X}",
+                a_actor->GetName(),
+                a_forceGreet,
+                a_topic ? a_topic->GetFormID() : 0);
+			RE::DebugMessageBox("SetDialogueWithPlayer TRIGGERED!!!!");
+			logger::info(
+				"DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK:  Did the SetDialogueWithPlayer really trigger?  ");
+        }
+
+        return _SetDialogueWithPlayer(
+            a_actor,
+            a_flag,
+            a_forceGreet,
+            a_topic);
+    }
+
+    inline static REL::Relocation<
+        decltype(SetDialogueWithPlayer)> _SetDialogueWithPlayer;
 };
 
 
@@ -736,8 +803,10 @@ public:
 		SKSE::log::info("Current milk string is: {}", current_milk_string);
 		SKSE::log::info("PREVIOUS milk string is: {}", previous_milk_string);
 		// We check if there is a change in the milk string
-		if ( (std::strcmp(current_milk_string.c_str() , previous_milk_string.c_str()) == 0)  ) {
-			// There was no change in milk string
+
+		if ( (std::strcmp(current_milk_string.c_str() , previous_milk_string.c_str()) == 0)   |  (std::strcmp(previous_milk_string.c_str() , "No milk string HISTORY defined yet!") == 0)  ) {
+			// There was no change in milk string OR it was still the startup value, so nothing much to do here, except kill the startup value.
+			previous_milk_string = current_milk_string;  // Update the previous milk string to the current one for the next comparison.
 		} else {
 			// There was a change in milk string
 			DumpThoughts::throw_out_TTS_thought_message("Due to milk slowly accumulating in her breasts, " + current_milk_string);
@@ -843,6 +912,8 @@ public:
 		// MORE THINGS TO HANDLE: (This is from the ass-slap or tit-slap in Spank-that-Ass / Devious Followers Mod) Name: DF-ResistanceLoss  StrArg:   NumArg: 1
 
 
+
+		
 		// IF the MOD-EVENT really WASNT HANDLED BY THIS POINT, IT IS MAYBE SOMETHING NEW, AND THEREFORE WE MAKE A MESSAGEBOX-ANNOUNCEMENT OF it.
 		if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
 		{
@@ -911,6 +982,7 @@ std::unordered_set<std::string> ignored_mod_events = {
 	//"SkyrimNet_SpeechComplete",
 	//"SkyrimNet_AudioStarted",
 	//"SkyrimNet_AudioEnded",
+	"SkyrimNet_MemoryCreated",  // No need to respond to this, as it's internal memory creation and not relevant to direct game status.
 	"UD_AfterUIReload", 			
 	"UD_QuestKeywordUpdate", 
 	"UD_GenericKeyUpdate", 
@@ -925,6 +997,7 @@ std::unordered_set<std::string> ignored_mod_events = {
 	"SeverActions_FamiliarityTimestamp",
 	"SeverActions_ReputationAssess",
 	"SeverActions_AmbientBanterReady",
+	"SeverActions_ForcedCombatEnded",   // No need to respond to this, I guess?
 	"ReSchlongify",
 	"MME_MilkCycleComplete",
 	"BeeingFemale",   //  We ignore this for now, maybe later we can do something with it.
@@ -935,6 +1008,7 @@ std::unordered_set<std::string> ignored_mod_events = {
 	"PlayerOrgasmEnd",
 	"dhlp-Resume",   // This is technical Devious Helplessness operational stuff, to continue mod processes.
 	"dhlp-Suspend",   // This is technical Devious Helplessness operational stuff, to suspend mod processes.
+	"dhlp-maintenance",   // This is technical Devious Helplessness operational stuff, for maintenance purposes.
 	"SSL_PREPARE_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 	"SSL_LOCK_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 	"AnimationStarting",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
@@ -948,6 +1022,7 @@ std::unordered_set<std::string> ignored_mod_events = {
 	"StageEnd_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 	"SL_SetSpeed",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 	"SL_EndScene",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"SL_AdvanceScene",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 	"SSL_CLEAR_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 	"AnimationEnding",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 	"AnimationEnding_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
@@ -1156,6 +1231,9 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		// auto* mod_event_source = SKSE::GetModCallbackEventSource();
 		// mod_event_source->AddEventSink(&g_mod_event_handler);
 		SKSE::GetModCallbackEventSource()->AddEventSink(&g_mod_event_handler);
+
+		// Try something new, register for dialogue, so we can form a better player-thought timing.
+		DialogueHook::Install();
 
 		break;
 

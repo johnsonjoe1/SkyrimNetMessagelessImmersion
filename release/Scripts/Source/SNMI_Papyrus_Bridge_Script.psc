@@ -7,7 +7,9 @@ float max_milk_value = 15.5
 float current_lactacid = 13.3
 float max_lactacid = 13.3
 string milk_string = "No milk_string defined yet!"
-; int MilkCnt = 1
+
+float LVSK_Euphoria = 0.0
+int LVSK_IsLovesick = 0
 
 Event OnInit()
     RegisterForSingleUpdate(10.0)
@@ -22,6 +24,10 @@ Event OnUpdate()
     max_milk_value     =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkMaximum")    ; FROM MME_Storage.psc
     current_lactacid   =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.LactacidCount")  ; FROM MME_Storage.psc
 	max_lactacid       = (StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.Level") + 2) / 2 + 4           ; FROM MME_Storage.psc
+
+	; Let's also track the lovesickness exposed variables
+	LVSK_IsLovesick = StorageUtil.GetIntValue(Game.GetPlayer(), "LVSK_IsLovesick", 0); 1 = true, 0 = false
+	LVSK_Euphoria = StorageUtil.GetFloatValue(Game.GetPlayer(), "LVSK_Euphoria", 0.0); percentage, updated every game hour
 
 
     Int MilkCnt = Math.Floor(current_milk_value)
@@ -53,7 +59,7 @@ Event OnUpdate()
 
     ; Only the DEBUG-Player will receive these extra notifications, so as to make them invisible for players in the release.
     if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
-         Debug.Notification("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", Counter: " + Math.Floor(keepalive_value))
+         Debug.Notification("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
 	Else
         Debug.Trace("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", Counter: " + Math.Floor(keepalive_value))
     endif 
