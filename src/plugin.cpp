@@ -2,6 +2,7 @@
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 #include "DumpThoughts.h"
+#include "handle_AND_modesty.h"
 
 #include <unordered_set>
 
@@ -727,7 +728,7 @@ public:
 				"CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK// NO PLAYER??? NO PLAYER???NO PLAYER???NO PLAYER???NO PLAYER???NO PLAYER???");
 		}
 
-		handle_AND_modesty_and_nakedness_stuff();
+		handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff();
 		
 		SKSE::log::info(".");
 		SKSE::log::info(".");
@@ -749,35 +750,6 @@ public:
 		return -1;
 	}
 
-	void handle_AND_modesty_and_nakedness_stuff()
-	{
-		auto* player = RE::PlayerCharacter::GetSingleton();
-		if (!player) {
-			logger::info("SEVERE ERROR: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
-			return;
-		}
-		auto* nudeFaction =
-			RE::TESForm::LookupByEditorID<RE::TESFaction>(
-				"AND_NudeActorFaction");
-		if (!nudeFaction) {
-			logger::info("SEVERE ERROR: AND_NudeActorFaction doesn't seem to exist!!");
-			return;
-		}				
-		auto* topModestyFaction =
-			RE::TESForm::LookupByEditorID<RE::TESFaction>(
-				"AND_TopModestyFaction");
-		if (!topModestyFaction) {
-			logger::info("SEVERE ERROR: AND_TopModestyFaction doesn't seem to exist!!");
-			return;
-		}
-
-		int rank = player->GetFactionRank(nudeFaction, true);
-		bool isNude = (rank == 1);
-		logger::info("SUCCESSFULLY QUERIED AND Factions: nudeFaction={}, isNude={}", nudeFaction->GetFormID(), isNude);
-		rank = player->GetFactionRank(topModestyFaction, true);
-		bool isModest = (rank == 1);
-		logger::info("SUCCESSFULLY QUERIED AND Factions: topModestyFaction={}, isModest={}", topModestyFaction->GetFormID(), isModest);
-	}
 
 };
 
