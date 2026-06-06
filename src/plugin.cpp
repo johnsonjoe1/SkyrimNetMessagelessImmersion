@@ -159,12 +159,15 @@ void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
 	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
 	if ( (previous_milk_level > 0.15 ) && (a_value <= 0.15) ) {
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are now sucked dry and have no more milk!  Say so and let us know how that makes you feel!  And make it clear that you speak about the milk inside of your breasts in your response!");
+		SKSE::log::info("Note:  Milk-level-update thought 1 was delivered.");
 	}
 	if ( (previous_milk_level < 0.5f * milk_max) &&  (previous_milk_level > 0.01f ) && (a_value >= 0.5f * milk_max) ) {
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached half of their capacity, so you may soon require to be milked!  Say so and let us know what you are thinking!  And make it clear that you speak about the milk inside of your breasts in your response!");
+		SKSE::log::info("Note:  Milk-level-update thought 2 was delivered.");
 	}
 	if ( (previous_milk_level < milk_max) && (a_value >= milk_max) ) {
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached their maximum capacity.  So your breasts need to be milked in order to relieve the pressure in your breasts.  Your breasts need to be milked.  You need to be milked.  Otherwise the milk might start to leak from your breasts at any time now.  Let us know how you feel about that!  And make it clear that you speak about the milk inside of your breasts in your response!");
+		SKSE::log::info("Note:  Milk-level-update thought 3 was delivered.");
 	}	
 	previous_milk_level = a_value;  // update the previous level for the next check
 }
@@ -185,11 +188,13 @@ void SNMIPapyrus::SetLactacidLevel(RE::StaticFunctionTag*, float a_value)
 	if ( (previous_lactacid_level <= 0 ) && (a_value > 0) ) {
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received lactacid into your body, which you didn't have before!  This means that your breasts are going to start producing milk now!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
 		DumpThoughts::reset_lactacid_added_speech_timestamp();  // reset the timestamp for the last speech about lactacid being added, so that we can later check if the player is talking about it in a timely manner.
+		SKSE::log::info("Note:  Milk-level-update thought 1 was delivered.");
 	}
 	if ( (previous_lactacid_level > 0 ) &&  (a_value > previous_lactacid_level) ) {
 		if (!DumpThoughts::too_early_for_next_lactacid_speech()) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received more lactacid into your body on top of the level you had already!  This means that your breasts are going to be producing milk for even longer time!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
 			DumpThoughts::reset_lactacid_added_speech_timestamp();  // reset the timestamp for the last speech about lactacid being added, so that we can later check if the player is talking about it in a timely manner.
+			SKSE::log::info("Note:  Lactacid-level-update thought 2 was delivered.");
 		}
 	}
 	previous_lactacid_level = a_value;  // update the previous level for the next check
@@ -308,6 +313,11 @@ private:
     std::uint16_t targetUID;
     RE::ActiveEffect* found;
 };
+
+
+
+
+
 
 //  Here comes teh code for hooking into the active effect application and removal, i.e. the list of currently active effects.
 class ChangesToTheActiveMagicEffectListEventHandler :
@@ -546,21 +556,25 @@ public:
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means NO FATIGUE AT ALL, NOTHING! ");
 				if ( (fatigue < previous_iNeed_fatigue_level) & (previous_iNeed_fatigue_level != 1000000 ) ) {
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are full rested from sleep and you are completely rid of your fatigue now!  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
+					SKSE::log::info("Note:  Fatigue-level-update thought 1 was delivered.");
 				}							
 			} else if (fatigue == 1) {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means MILD FATIGUE! ");
 				if (fatigue > previous_iNeed_fatigue_level) {
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling mild fatigue.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
+					SKSE::log::info("Note:  Fatigue-level-update thought 2 was delivered.");
 				}
 			} else if (fatigue == 2) {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means MODERATE FATIGUE! ");
 				if (fatigue > previous_iNeed_fatigue_level) {
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling moderate fatigue.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
+					SKSE::log::info("Note:  Fatigue-level-update thought 3 was delivered.");
 				}				
 			} else if (fatigue == 3) {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means SEVERE FATIGUE! ");
 				if (fatigue > previous_iNeed_fatigue_level) {
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling severe fatigue!  This is not just a little bit, but really severe fatigue that is impairing your abilities.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
+					SKSE::log::info("Note:  Fatigue-level-update thought 4 was delivered.");
 				}				
 			} else {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means some unknown level of fatigue! ");
@@ -586,21 +600,25 @@ public:
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means NO thirst AT ALL, NOTHING! ");
 				if (thirst < previous_iNeed_thirst_level) {
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You completely rid of your thirst now!  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
+					SKSE::log::info("Note:  Thirst-level-update thought 1 was delivered.");
 				}							
 			} else if (thirst == 1) {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means MILD thirst! ");
 				if (thirst > previous_iNeed_thirst_level) {
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling mild thirst.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
+					SKSE::log::info("Note:  Thirst-level-update thought 2 was delivered.");
 				}
 			} else if (thirst == 2) {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means MODERATE thirst! ");
 				if (thirst > previous_iNeed_thirst_level) {
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling moderate thirst.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
+					SKSE::log::info("Note:  Thirst-level-update thought 3 was delivered.");
 				}				
 			} else if (thirst == 3) {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means SEVERE thirst! ");
 				if (thirst > previous_iNeed_thirst_level) {
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling severe thirst!  This is not just a little bit, but really severe thirst that is impairing your abilities.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
+					SKSE::log::info("Note:  Thirst-level-update thought 4 was delivered.");
 				}				
 			} else {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means some unknown level of thirst! ");
@@ -626,21 +644,25 @@ public:
 			if (hunger == 0) {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means NO hunger AT ALL, NOTHING! ");
 				if (hunger < previous_iNeed_hunger_level) {
+					SKSE::log::info("Note:  Hunger-level-update thought 0 was delivered.");
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are completely rid of your hunger now!  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
 				}							
 			} else if (hunger == 1) {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means MILD hunger! ");
 				if (hunger > previous_iNeed_hunger_level) {
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling mild hunger.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
+					SKSE::log::info("Note:  Hunger-level-update thought 1 was delivered.");
 				}
 			} else if (hunger == 2) {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means MODERATE hunger! ");
 				if (hunger > previous_iNeed_hunger_level) {
+					SKSE::log::info("Note:  Hunger-level-update thought 2 was delivered.");
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling moderate hunger.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
 				}				
 			} else if (hunger == 3) {
 				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means SEVERE hunger! ");
 				if (hunger > previous_iNeed_hunger_level) {
+					SKSE::log::info("Note:  Hunger-level-update thought 3 was delivered.");
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling severe hunger!  This is not just a little bit, but really severe hunger that is impairing your abilities.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
 				}				
 			} else {
@@ -649,6 +671,8 @@ public:
 			// We only update hunger, if the whole iNeed stuff worked.
 			previous_iNeed_hunger_level = hunger;					
 		}
+
+
 
 
 		// We have from another mod:
@@ -670,8 +694,10 @@ public:
 			
 			if ((previous_dirt_value < 0.6f) && (dirtValue >= 0.6f)) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are getting really dirty now! This is not just a little bit, but really dirty so that you are not as charming when talking to people and maybe you also could get sick more easily.  Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!"));
+				SKSE::log::info("Note:  Dirtyness-level-update thought 1 was delivered.");
 			} else if ((previous_dirt_value >= 0.01f) && (dirtValue < 0.01f)) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are finally fresh and clean and no longer dirty! People won't dislike you anymore for being dirty! Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!", static_cast<int>(dirtValue * 100)));
+				SKSE::log::info("Note:  Dirtyness-level-update thought 2 was delivered.");
 			}
 			previous_dirt_value = dirtValue;  // Update the previous dirt value for the
 		} else {
@@ -690,16 +716,19 @@ public:
 			if (data.closestConversation) {
 				//  NOTE:  This message box never fires, because that happens actually inside a dialoge-UI with talk options and all that, at least I think that's why.
 				RE::DebugMessageBox("closestConversation IS NOT NULL ANY MORE!!!!");
+				SKSE::log::info("Note:  closestConversation IS NOT NULL ANY MORE!!!!");
 			}
 			if (data.aiConversationRunning) {
 				RE::DebugMessageBox("aiConversationRunning IS NOT NULL ANY MORE!!!!");
+				SKSE::log::info("Note:  aiConversationRunning IS NOT NULL ANY MORE!!!!");
 			}
 		} else {
 			logger::info(
 				"CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK// NO PLAYER??? NO PLAYER???NO PLAYER???NO PLAYER???NO PLAYER???NO PLAYER???");
 		}
 
-
+		handle_AND_modesty_and_nakedness_stuff();
+		
 		SKSE::log::info(".");
 		SKSE::log::info(".");
 		SKSE::log::info("ABOVE IS A POTENTIALLY UNHANDLED MAGIC EFFECT??? CHECK THE BASE NAME AND SOURCE NAME TO SEE IF IT'S SOMETHING YOU WANT TO REACT TO, OR IF IT'S SOME RANDOM EFFECT THAT YOU DON'T CARE ABOUT.  IF IT'S THE LATTER, THEN YOU PROBABLY WANT TO ADD A NEW IF-STATEMENT FOR THIS EFFECT IN THIS HANDLER, SO THAT IT DOESN'T GET LOGGED IN SUCH DETAIL ANY MORE, BECAUSE THAT WOULD BE ANNOYING.  CHECK THE BASE NAME AND SOURCE NAME TO SEE WHAT EFFECT THIS IS ABOUT.  IF IT'S AN EFFECT YOU CARE ABOUT, THEN CONSIDER ADDING A CUSTOM MESSAGE FOR IT IN THIS HANDLER, SO THAT YOUR TTS CAN REACT TO IT IN A MEANINGFUL WAY! ");
@@ -719,6 +748,37 @@ public:
 		}
 		return -1;
 	}
+
+	void handle_AND_modesty_and_nakedness_stuff()
+	{
+		auto* player = RE::PlayerCharacter::GetSingleton();
+		if (!player) {
+			logger::info("SEVERE ERROR: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
+			return;
+		}
+		auto* nudeFaction =
+			RE::TESForm::LookupByEditorID<RE::TESFaction>(
+				"AND_NudeActorFaction");
+		if (!nudeFaction) {
+			logger::info("SEVERE ERROR: AND_NudeActorFaction doesn't seem to exist!!");
+			return;
+		}				
+		auto* topModestyFaction =
+			RE::TESForm::LookupByEditorID<RE::TESFaction>(
+				"AND_TopModestyFaction");
+		if (!topModestyFaction) {
+			logger::info("SEVERE ERROR: AND_TopModestyFaction doesn't seem to exist!!");
+			return;
+		}
+
+		int rank = player->GetFactionRank(nudeFaction, true);
+		bool isNude = (rank == 1);
+		logger::info("SUCCESSFULLY QUERIED AND Factions: nudeFaction={}, isNude={}", nudeFaction->GetFormID(), isNude);
+		rank = player->GetFactionRank(topModestyFaction, true);
+		bool isModest = (rank == 1);
+		logger::info("SUCCESSFULLY QUERIED AND Factions: topModestyFaction={}, isModest={}", topModestyFaction->GetFormID(), isModest);
+	}
+
 };
 
 class DialogueHook
@@ -871,7 +931,7 @@ public:
 		}
 		// MOD EVENT:  YPS Thoughts:  Those will be pushed to the background channel.
 		if ( (std::strcmp(a_event->eventName.c_str() , "YPS_ThoughtEvent") == 0)  ) {
-			std::string  thought_message = std::format("=============== ************************************ LETS STOP HERE.  STOP NOW.  LETS STOP NOW AND CUT THIS SHORT:  THERE IS ONLY ONE THING REQUIRED RIGHT NOW:  GIVE BACK THE THOUGHT, THAT \"{{ player.name }}  WAS THINKING.  AND WHAT WAS SHE THINKING?  THE INFORMATION IS RIGHT HERE, BECAUSE WE KNOW THE FOLLWING SENTENCE:  {}  NOW THAT YOU HAVE THE INFORMATION, FORGET ALL THE REST AND JUST GIVE BACK THE RIGHT ANSWER!!! You can paraphrase and adapt it a little bit, but you don't have to.  THE REST BELOW CAN ALSO BE IGNORED, but any afterthought or narrator comment should then be in third person afterwards! ************************************ ================== ", a_event->strArg.c_str());
+			std::string  thought_message = std::format("=============== ************************************ LETS STOP HERE.  STOP NOW.  LETS STOP NOW AND CUT THIS SHORT:  THERE IS ONLY ONE THING REQUIRED RIGHT NOW:  GIVE BACK THE THOUGHT, THAT {{ player.name }}  WAS THINKING.  AND WHAT WAS SHE THINKING?  THE INFORMATION IS RIGHT HERE, BECAUSE WE KNOW THE FOLLWING SENTENCE:  {}  NOW THAT YOU HAVE THE INFORMATION, FORGET ALL THE REST AND JUST GIVE BACK THE RIGHT ANSWER!!! You can paraphrase and adapt it a little bit, but you don't have to.  THE REST BELOW CAN ALSO BE IGNORED, but any afterthought or narrator comment should then be in third person afterwards! ************************************ ================== ", a_event->strArg.c_str());
 			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(thought_message);   // this shouldn't be overdone, but hte background code makes sure of that.
 			return RE::BSEventNotifyControl::kContinue;
 		}
