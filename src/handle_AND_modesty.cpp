@@ -136,8 +136,10 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 				// RE::DebugMessageBox(AND_rank_status_update_string.c_str());	// This is so rare, it can afford to have a message box.
 			}
 		} else {
-			std::string AND_rank_status_update_string = std::format("NOTE:  SIGNIFICANT UNUSUAL CHANGE IN AND-Modesty-Factions: ONE OF THE DEEPER CATEGORIES HAS JUST CHANGES:  Player changed rank from previously {} to now {} in faction {}!", AND_previous_faction_rank_sorted[my_i], rank, AND_faction_list_sorted[my_i]);
-			RE::DebugMessageBox(AND_rank_status_update_string.c_str());	// This is so rare, it can afford to have a message box.
+			if (rank != AND_previous_faction_rank_sorted[my_i]) {
+				std::string AND_rank_status_update_string = std::format("NOTE:  SIGNIFICANT UNUSUAL CHANGE IN AND-Modesty-Factions: ONE OF THE DEEPER CATEGORIES HAS JUST CHANGES:  Player changed rank from previously {} to now {} in faction {}!", AND_previous_faction_rank_sorted[my_i], rank, AND_faction_list_sorted[my_i]);
+				RE::DebugMessageBox(AND_rank_status_update_string.c_str());	// This is so rare, it can afford to have a message box.
+			}
 		}
 
 		// We update the previous faction rank for each faction.
