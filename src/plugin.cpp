@@ -1,15 +1,20 @@
-
-
 #include "log.h"
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 #include "DumpThoughts.h"
 #include "handle_AND_modesty.h"
 #include "misc.h"
-
+#include "papyrus_interface.h"
 #include <unordered_set>
 
 namespace logger = SKSE::log;
+
+float previous_iNeed_fatigue_level = 1000000;  // this will not trigger any getting-more-tired messages at game start
+float previous_iNeed_thirst_level = 1000000;  // this will not trigger any getting-more-thirsty messages at game start
+float previous_iNeed_hunger_level = 1000000;  // this will not trigger any getting-more-hungry messages at game start
+
+float previous_dirt_value = 100000;  // some impossible value, so that no message occurs (unless dirt value 0, which wouldn't likely be the case in mid-game)
+
 
 // static auto last_speech_timestamp = std::chrono::steady_clock::now();
 
@@ -106,6 +111,11 @@ std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Food Poisoning"
 };
 std::string my_active_effect_description_string = "Nothing yet!";
+
+
+/*
+
+
 std::string previous_milk_string = "No milk string HISTORY defined yet!";
 
 float previous_milk_level = 0;
@@ -236,16 +246,7 @@ void SNMIPapyrus::SetLactacidMax(RE::StaticFunctionTag*, float a_value)
     _lactacidMax = a_value;
 	// float lactacid_max = 4.0;
     SKSE::log::info("Note:  Lactacid MAXIMUM-LEVEL updated VIA PUSH FROM PAPYRUS: {}", a_value);
-/*	if ( (previous_lactacid_max_level > 0.15 ) && (a_value <= 0.15) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are now sucked dry and have no more milk!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response!");
-	}
-	if ( (previous_lactacid_max_level < 0.5f * lactacid_max) &&  (previous_lactacid_max_level > 0.01f ) && (a_value >= 0.5f * lactacid_max) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached half of their capacity!  Say so and let us know what you are thinking!  And make it clear that you speak about your breasts and the milk in your response!");
-	}
-	if ( (previous_lactacid_max_level < lactacid_max) && (a_value >= lactacid_max) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached their maximum capacity!  Milk might start to leak from your breasts at any time now.  Say so and let us know how you feel about that!  And make it clear that you speak about your breasts and the milk in your response!");
-	}	
-*/	
+
 	previous_lactacid_max_level = a_value;  // update the previous level for the next check
 }
 
@@ -287,7 +288,7 @@ bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
     return true;
 }
 
-
+*/
 
 // ****************************************************************************************************************
 // This is the handling of Active Magic Effects and everything related to it.
@@ -860,32 +861,9 @@ public:
 			return RE::BSEventNotifyControl::kContinue;
 		}
 
-		// Now, PERIODICALLY, we take care of changes in the values of other mods.  We put this here, because this gets
-		// triggered reasonably often.  
-		float current_milk = SNMIPapyrus::GetMilkLevel();
-		float current_keepalive = SNMIPapyrus::GetKeepaliveLevel();
-		float current_maid_level = SNMIPapyrus::GetMaidLevel();
-		
-		std::string current_milk_string = SNMIPapyrus::GetMilkString();
-		SKSE::log::info("Current Keepalive: {}", current_keepalive);  
-		SKSE::log::info("Current milk level is: {}", current_milk);
-		SKSE::log::info("Current maid level is: {}", current_maid_level);
-		SKSE::log::info("Current milk string is: {}", current_milk_string);
-		SKSE::log::info("PREVIOUS milk string is: {}", previous_milk_string);
-		// We check if there is a change in the milk string
+		SNMIPapyrus::handle_mme_milk_value_changes_and_produce_thoughts_from_them();
 
-		// 
 
-		if ( (std::strcmp(current_milk_string.c_str() , previous_milk_string.c_str()) == 0)   |  (std::strcmp(previous_milk_string.c_str() , "No milk string HISTORY defined yet!") == 0)  |  (std::strcmp(previous_milk_string.c_str() , "No milk string defined IN PLUGIN yet!") == 0)) {
-			// There was no change in milk string OR it was still the startup value, so nothing much to do here, except kill the startup value.
-			previous_milk_string = current_milk_string;  // Update the previous milk string to the current one for the next comparison.
-		} else {
-			// There was a change in milk string
-			DumpThoughts::throw_out_TTS_thought_message("Due to milk slowly accumulating in her breasts, " + current_milk_string);
-			previous_milk_string = current_milk_string;  // Update the previous milk string to the current one for the next comparison.			
-		}
-
-		
 
 		// We log all other mod events, because they might be interesting for us to react to and turn into immersive player thoughts
 		logger::info("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
@@ -1038,6 +1016,9 @@ std::unordered_set<std::string> ignored_mod_events = {
 	"SKICP_messageDialogClosed",   // this is broadcast when the player closes a message dialog in the SKI Configuration Menu.
 	"SKICP_menuSelected",
 	"SKICP_menuAccepted",
+	"SKICP_inputSelected",
+	"SKICP_inputAccepted",
+	"SKICP_keymapChanged",   // this is broadcast when the player changes a keymap in the SKI Configuration Menu.
 	"SKIWF_widgetError",            // this is broadcast when a widget error occurs.
 	"RSM_CategoriesInitialized",   // this is some technical event from RaceMenu that we don't care about.
 	"RSM_Initialized",             // this is some technical event from RaceMenu that we don't care about.
