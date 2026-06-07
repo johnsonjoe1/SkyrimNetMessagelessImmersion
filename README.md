@@ -19,10 +19,11 @@ When the disease gets worse, it should trigger another reaction.
 If an items has some magic effects attached to it, that could trigger more responses by the player-character in game.
 
 # Installation instructions
-There is currently no release package.  If want to make one, but building with the .pdb file still gives me some trouble, and that should be part of any release, so your crashes can be understood better. 
+There are now some release packages.  
 
-Requirements/Versions:  The Skyrim version I'm using is Skyrim AE latest version 1.6.1170, Skyrim SKSE the latest version as of 2026, and SkyrimNet (20.2+ version or any version that still has trigger yaml-files, but they don't change that much).
+Requirements/Versions:  The Skyrim version I'm using is Skyrim AE latest version 1.6.1170, Skyrim SKSE the latest version as of 2026, and SkyrimNet (21.2+ version or any later version that still has trigger yaml-files, but they don't change that much).
 Any other mods, that would benefit from the plugin are not required, as it doesn't change them, it just listens to them and reads out stuff from them. 
+
 
 # Features list
 At present, there are some hooks into the activation of furniture, like Tanning Rack and Blacksmith forge, that should trigger player thought.
@@ -42,11 +43,13 @@ At present there is some content from Devious Devices / Unforgiving Devices:
 
 At present there is some content from YPS fashion mod:
 * Thoughts upon (recurring) slowdown penalty applied from YPS fashion mod and the current training status (Untrained feet and High Heels novice only so far).
+* 0.4.0:  YPS thoughts being piped through SkyrimNet player-voice system, but with a minimum time in between, so as to not overwhelm the TTS-channel.
 
 At present there is some content from MME Milk mod:
 * Thoughts upon using Milk-Mod-Economy furniture Milk Pumps.
 * Thoughts upon Milk level status changes (empty, half-full, full).
-* Thoughts upon Lactacid level changes (reaching 0 Lactacid, adding fresh Lactacid)
+* Thoughts upon Lactacid level changes (reaching 0 Lactacid, adding fresh Lactacid).
+* 0.4.0:  Thoughts upon reaching a new MME Maid Level.
 
 At present there is some support for Advanced-Nudity-Detection (AND) mod:
 * Thoughts upon changing the nakedness for a particular body section for the 17 basic on-off factions of the AND modesty system.

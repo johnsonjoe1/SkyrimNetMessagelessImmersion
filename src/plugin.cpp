@@ -118,7 +118,7 @@ float previous_iNeed_thirst_level = 1000000;  // this will not trigger any getti
 float previous_iNeed_hunger_level = 1000000;  // this will not trigger any getting-more-hungry messages at game start
 
 float previous_dirt_value = 100000;  // some impossible value, so that no message occurs (unless dirt value 0, which wouldn't likely be the case in mid-game)
-
+float previous_maid_level = -1.0f; 
 // FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
 
 
@@ -131,9 +131,12 @@ public:
 	static void SetLactacidLevel(RE::StaticFunctionTag*, float a_value);
 	static void SetLactacidMax(RE::StaticFunctionTag*, float a_value);
 	static void SetMilkString(RE::StaticFunctionTag*, std::string a_value);
+	static void SetMaidLevel(RE::StaticFunctionTag*, float a_value);
+
     static float GetMilkLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
 	static float GetMilkMax();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
-	
+	static float GetMaidLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
+
     static std::string GetMilkString();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
     static void SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value);
     static float GetKeepaliveLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
@@ -144,6 +147,7 @@ private:
 	static inline float _lactacidMax = 0.0f;
 	static inline std::string _milkString = "No milk string defined IN PLUGIN yet!";
 	static inline float _keepaliveLevel = 0.0f;
+	static inline float _maidLevel = 1.0f;
 };
 
 void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
@@ -175,6 +179,28 @@ void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
 		SKSE::log::info("Note:  Milk-level-update thought 3 was delivered.");
 	}	
 	previous_milk_level = a_value;  // update the previous level for the next check
+}
+
+void SNMIPapyrus::SetMaidLevel(RE::StaticFunctionTag*, float a_value)
+{
+    _maidLevel = a_value;
+
+	// maybe the mod isn't even installed.  in that case the level and previous level would be 0 and nothing needs to be done
+	if (_maidLevel == 0 && previous_maid_level == 0) {
+		return;
+	}
+	if (previous_maid_level == -1.0f) {  // This is the initial value, so we just set it without any checks, to avoid any weird messages at game start.
+		previous_maid_level = _maidLevel;
+		return;
+	}	
+
+    SKSE::log::info("Note:  Maid level updated VIA PUSH FROM PAPYRUS: {}", a_value);
+	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
+	if ( (previous_maid_level < _maidLevel) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts have suddenly gained capacity and advanced to a new milk level!  Say so and let us know how that makes you feel!  And make it clear that you speak about the milk capacity of your breasts and that you might resembe a 'better milk maid' now in your response!");
+		SKSE::log::info("Note:  Maid-level-update thought was delivered.");
+	}
+	previous_maid_level = _maidLevel;  // update the previous level for the next check
 }
 
 void SNMIPapyrus::SetMilkMax(RE::StaticFunctionTag*, float a_value)
@@ -233,6 +259,12 @@ void SNMIPapyrus::SetMilkString(RE::StaticFunctionTag*, std::string s_value)
 
 float SNMIPapyrus::GetMilkLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
 {    return _milkLevel;   }
+
+float SNMIPapyrus::GetMaidLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
+{    return _maidLevel;   }
+
+
+
 float SNMIPapyrus::GetMilkMax()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
 {    return _milkMax;   }
 std::string SNMIPapyrus::GetMilkString()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
@@ -251,6 +283,7 @@ bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 	a_vm->RegisterFunction("SetLactacidMax", "SNMI_Native", SetLactacidMax);		
 	a_vm->RegisterFunction("SetMilkString", "SNMI_Native", SetMilkString);
     a_vm->RegisterFunction("SetKeepaliveLevel", "SNMI_Native", SetKeepaliveLevel);
+	a_vm->RegisterFunction("SetMaidLevel", "SNMI_Native", SetMaidLevel);
     return true;
 }
 
@@ -831,14 +864,19 @@ public:
 		// triggered reasonably often.  
 		float current_milk = SNMIPapyrus::GetMilkLevel();
 		float current_keepalive = SNMIPapyrus::GetKeepaliveLevel();
+		float current_maid_level = SNMIPapyrus::GetMaidLevel();
+		
 		std::string current_milk_string = SNMIPapyrus::GetMilkString();
 		SKSE::log::info("Current Keepalive: {}", current_keepalive);  
 		SKSE::log::info("Current milk level is: {}", current_milk);
+		SKSE::log::info("Current maid level is: {}", current_maid_level);
 		SKSE::log::info("Current milk string is: {}", current_milk_string);
 		SKSE::log::info("PREVIOUS milk string is: {}", previous_milk_string);
 		// We check if there is a change in the milk string
 
-		if ( (std::strcmp(current_milk_string.c_str() , previous_milk_string.c_str()) == 0)   |  (std::strcmp(previous_milk_string.c_str() , "No milk string HISTORY defined yet!") == 0)  ) {
+		// 
+
+		if ( (std::strcmp(current_milk_string.c_str() , previous_milk_string.c_str()) == 0)   |  (std::strcmp(previous_milk_string.c_str() , "No milk string HISTORY defined yet!") == 0)  |  (std::strcmp(previous_milk_string.c_str() , "No milk string defined IN PLUGIN yet!") == 0)) {
 			// There was no change in milk string OR it was still the startup value, so nothing much to do here, except kill the startup value.
 			previous_milk_string = current_milk_string;  // Update the previous milk string to the current one for the next comparison.
 		} else {
@@ -998,6 +1036,8 @@ std::unordered_set<std::string> ignored_mod_events = {
 	"SKICP_optionHighlighted",   // this is broadcast when the player highlights a configuration option for a mod in the SKI Configuration Menu.
 	"SKICP_optionSelected",   // this is broadcast when the player selects a configuration option for a mod in the SKI Configuration Menu.
 	"SKICP_messageDialogClosed",   // this is broadcast when the player closes a message dialog in the SKI Configuration Menu.
+	"SKICP_menuSelected",
+	"SKICP_menuAccepted",
 	"SKIWF_widgetError",            // this is broadcast when a widget error occurs.
 	"RSM_CategoriesInitialized",   // this is some technical event from RaceMenu that we don't care about.
 	"RSM_Initialized",             // this is some technical event from RaceMenu that we don't care about.
