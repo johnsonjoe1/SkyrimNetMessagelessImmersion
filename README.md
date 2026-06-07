@@ -43,10 +43,13 @@ At present there is some content from Devious Devices / Unforgiving Devices:
 At present there is some content from YPS fashion mod:
 * Thoughts upon (recurring) slowdown penalty applied from YPS fashion mod and the current training status (Untrained feet and High Heels novice only so far).
 
-At present there is some content from YPS fashion mod:
+At present there is some content from MME Milk mod:
 * Thoughts upon using Milk-Mod-Economy furniture Milk Pumps.
 * Thoughts upon Milk level status changes (empty, half-full, full).
 * Thoughts upon Lactacid level changes (reaching 0 Lactacid, adding fresh Lactacid)
+
+At present there is some support for Advanced-Nudity-Detection (AND) mod:
+* Thoughts upon changing the nakedness for a particular body section for the 17 basic on-off factions of the AND modesty system.
 
 There is some sensitivity to overall SkyrimNet talk going on, so as to not babble too much when others are speaking, but on the other hand, give some updates and hopefully immersion and mental self-talk when it's otherwise quiet and alone time in the woods.
 
