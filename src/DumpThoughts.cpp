@@ -78,9 +78,9 @@ void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_messa
 	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
 	SKSE::log::info("Time since last thought-speech on BACKGROUNDCHANNEL OR PRIORITIES CHANNELS: {} seconds", runtime.count());
 	// RE::DebugMessageBox(("Time passed since the last speech: " + std::to_string(runtime.count()) + " seconds").c_str());
-	const int minimum_time_since_last_speech = 90;  // in seconds, so 1.5 minutes
+	const int minimum_time_since_last_speech = 30;  // in seconds
 	if (runtime.count() < minimum_time_since_last_speech) {
-		SKSE::log::info("Not throwing out the BACKGROUNDCHANNEL text as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_speech);
+		SKSE::log::info("Not throwing out the BACKGROUNDCHANNEL text as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.  But the disgarded message was:\n {}", runtime.count(), minimum_time_since_last_speech, my_message.c_str());
 		// return RE::BSEventNotifyControl::kContinue;
 	} else {
 		//RE::DebugMessageBox(my_message.c_str());

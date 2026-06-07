@@ -25,7 +25,7 @@ Event OnUpdate()
     max_milk_value     =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkMaximum")    ; FROM MME_Storage.psc
     current_lactacid   =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.LactacidCount")  ; FROM MME_Storage.psc
 	max_lactacid       = (StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.Level") + 2) / 2 + 4           ; FROM MME_Storage.psc
-	mme_maid_level     = StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.Level")           ; FROM MME_Storage.psc:  NOTE THAT THIS is stored as a float, even though only int values make sense
+	mme_maid_level     =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.Level")           ; FROM MME_Storage.psc:  NOTE THAT THIS is stored as a float, even though only int values make sense
 	; Beware:
 	;   'MaidLevel' is stored as a float value for historical reasons,
 	;   but fractional values are invalid and potentially break things.

@@ -7,4 +7,6 @@ set(headers ${headers}
     src/DumpThoughts.h
     src/handle_AND_modesty.h
     src/misc.h
+    src/papyrus_interface.h
+    src/handle_iNeed.h
 )
