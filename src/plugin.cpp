@@ -4,6 +4,7 @@
 #include "DumpThoughts.h"
 #include "handle_AND_modesty.h"
 #include "handle_iNeed.h"
+#include "handle_yps.h"
 #include "misc.h"
 #include "papyrus_interface.h"
 #include <unordered_set>
@@ -397,6 +398,8 @@ public:
 		//
 
 		handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff();
+
+		handle_yps::handle_yps_fashion_detection_stuff();
 
 
 		// We have from another mod:

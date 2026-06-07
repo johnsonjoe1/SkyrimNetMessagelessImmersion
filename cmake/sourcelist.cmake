@@ -6,4 +6,5 @@ set(sources ${sources}
     src/misc.cpp
     src/papyrus_interface.cpp
     src/handle_iNeed.cpp
+    src/handle_yps.cpp
 )

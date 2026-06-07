@@ -9,4 +9,5 @@ set(headers ${headers}
     src/misc.h
     src/papyrus_interface.h
     src/handle_iNeed.h
+    src/handle_yps.h
 )
