@@ -36,6 +36,7 @@ void DumpThoughts::reset_last_game_load_or_reload_timestamp() {
 		SKSE::log::info("SNMI:  Player 'LILLITH' is detected, so skipping the silence after game (re)load.");
 		return;
 	} 
+
 	// We reset the game-reloaded-timestamp for silence and thus avoiding messages from reload-induced changes
 	last_game_load_or_reload_timestamp = std::chrono::steady_clock::now();
 }
@@ -51,6 +52,11 @@ bool DumpThoughts::too_early_after_game_load()
 	} else {
 		return false;
 	}
+}
+float DumpThoughts::seconds_since_game_load() {
+	auto now = std::chrono::steady_clock::now();
+	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_game_load_or_reload_timestamp);
+	return runtime.count();
 }
 bool DumpThoughts::too_early_for_next_lactacid_speech()
 {

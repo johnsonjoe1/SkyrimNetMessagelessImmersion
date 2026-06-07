@@ -1,8 +1,11 @@
+
+
 #include "log.h"
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 #include "DumpThoughts.h"
 #include "handle_AND_modesty.h"
+#include "misc.h"
 
 #include <unordered_set>
 
@@ -117,6 +120,7 @@ float previous_iNeed_hunger_level = 1000000;  // this will not trigger any getti
 float previous_dirt_value = 100000;  // some impossible value, so that no message occurs (unless dirt value 0, which wouldn't likely be the case in mid-game)
 
 // FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
+
 
 class SNMIPapyrus
 {
@@ -332,19 +336,19 @@ public:
     {
         // Protect from null pointer access, just in case.
 		if (!a_event) {
-			RE::DebugMessageBox("WOW! Null EVENT POINTER received in the ACTIVE EVENT CHANGE HANDLER!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
+			LillithOnlyBox("WOW! Null EVENT POINTER received in the ACTIVE EVENT CHANGE HANDLER!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's see what this event is about.  Who is the actor and what is the effect?		
 		auto* targetRef = a_event->target.get();
 		if (!targetRef) {
-			RE::DebugMessageBox("WOW! Null TARGET POINTER received in the ACTIVE EVENT CHANGE HANDLER!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
+			LillithOnlyBox("WOW! Null TARGET POINTER received in the ACTIVE EVENT CHANGE HANDLER!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		RE::Actor* actor;
 		actor = targetRef->As<RE::Actor>();
 		if (!actor) {
-			RE::DebugMessageBox("WOW! There in NOT EVEN AN ACTOR in this ACTIVE EVENT CHANGE!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
+			LillithOnlyBox("WOW! There in NOT EVEN AN ACTOR in this ACTIVE EVENT CHANGE!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// ✔ only care about player
@@ -369,13 +373,13 @@ public:
 		if (!effect)		
 		{
 			logger::info("No matching ActiveEffect found for UID {}", a_event->activeEffectUniqueID);
-			RE::DebugMessageBox("WOW! AFTER RUNNING VisitEffects, we got NO MATCHING ACTIVE EFFECT FOUND for the current UID!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
+			LillithOnlyBox("WOW! AFTER RUNNING VisitEffects, we got NO MATCHING ACTIVE EFFECT FOUND for the current UID!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		auto* base = effect->GetBaseObject();
 		if (!base)
 		{
-			RE::DebugMessageBox("WOW! THE BASE OBJECT IS NULL!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
+			LillithOnlyBox("WOW! THE BASE OBJECT IS NULL!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		auto our_form_id = base->GetFormID();
@@ -482,7 +486,7 @@ public:
 		if (base && ( IsAFoodBasedDisease(base_name) != -1) && (a_event->isApplied) )
 		{
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for FOOD-BASED-DISEASE! ", base_name);
-			RE::DebugMessageBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
+			LillithOnlyBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
 			SKSE::log::info("XX-- our event handler for FOOD-BASED-DISEASE!");
 			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate something!  As a total surprise, you now notice, that you may have just contracted the so-called disease '{}' from it!  You need to announce the potential infection in your response, so that the actual player is informed.  You may do that implicitly, in the form of regret, surprise anger or shock.  It is a potentially dangerous condition. Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
@@ -716,12 +720,10 @@ public:
 				data.aiConversationRunning != nullptr);
 			if (data.closestConversation) {
 				//  NOTE:  This message box never fires, because that happens actually inside a dialoge-UI with talk options and all that, at least I think that's why.
-				RE::DebugMessageBox("closestConversation IS NOT NULL ANY MORE!!!!");
-				SKSE::log::info("Note:  closestConversation IS NOT NULL ANY MORE!!!!");
+				LillithOnlyBox("closestConversation IS NOT NULL ANY MORE!!!!");
 			}
 			if (data.aiConversationRunning) {
-				RE::DebugMessageBox("aiConversationRunning IS NOT NULL ANY MORE!!!!");
-				SKSE::log::info("Note:  aiConversationRunning IS NOT NULL ANY MORE!!!!");
+				LillithOnlyBox("aiConversationRunning IS NOT NULL ANY MORE!!!!");
 			}
 		} else {
 			logger::info(
@@ -782,7 +784,7 @@ private:
                 a_actor->GetName(),
                 a_forceGreet,
                 a_topic ? a_topic->GetFormID() : 0);
-			RE::DebugMessageBox("SetDialogueWithPlayer TRIGGERED!!!!");
+			LillithOnlyBox("SetDialogueWithPlayer TRIGGERED!!!!");
 			logger::info(
 				"DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK:  Did the SetDialogueWithPlayer really trigger?  ");
         }
@@ -947,12 +949,16 @@ public:
 
 		
 		// IF the MOD-EVENT really WASNT HANDLED BY THIS POINT, IT IS MAYBE SOMETHING NEW, AND THEREFORE WE MAKE A MESSAGEBOX-ANNOUNCEMENT OF it.
+
+		/*
 		if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
 		{
 			RE::DebugMessageBox(("SNMI:  An unhandled mod-event was discovered: " + debug_message).c_str());
 		} else {
 			SKSE::log::info("SNMI:  An unhandled mod-event was discovered: {}", debug_message);
 		}  
+		*/
+		LillithOnlyBox("An unhandled mod-event was discovered: " + debug_message);
 
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 		/*  IN THE END, WE CANNOT USE THIS, BECAUSE IT GETS TRIGGERED ALL THE TIME FROM E.g. UD ELLBOW BINDER NON-STOP FROM THE IDLE ANIMATION.

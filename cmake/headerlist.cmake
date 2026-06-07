@@ -6,4 +6,5 @@ set(headers ${headers}
     src/settings.h
     src/DumpThoughts.h
     src/handle_AND_modesty.h
+    src/misc.h
 )

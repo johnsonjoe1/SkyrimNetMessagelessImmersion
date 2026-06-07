@@ -5,13 +5,14 @@
 #include "SKSE/SKSE.h"
 #include "DumpThoughts.h"
 #include "handle_AND_modesty.h"
+#include "misc.h"
 
 namespace logger = SKSE::log;
 
 std::array<int, 23> AND_previous_faction_rank_sorted = {
-	0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,
-	0,0,0
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1
 };
 
 std::array<std::string, 23> AND_faction_list_sorted = {
@@ -94,14 +95,30 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 		return;
 	}
 
+	/*
 	int rank = player->GetFactionRank(nudeFaction, true);
 	bool isNude = (rank == 1);
 	logger::info("SUCCESSFULLY QUERIED AND Factions: nudeFaction={}, isNude={}", nudeFaction->GetFormID(), isNude);
 	rank = player->GetFactionRank(topModestyFaction, true);
 	bool isModest = (rank == 1);
 	logger::info("SUCCESSFULLY QUERIED AND Factions: topModestyFaction={}, isModest={}", topModestyFaction->GetFormID(), isModest);
+	*/
 
-
+	if (AND_previous_faction_rank_sorted[0] == -1) {
+		logger::info("AND-Ranks are not initialized yet!!  Initialize them and then return for now and for this round!!");
+		for (std::size_t my_i = 0; my_i < AND_faction_list_sorted.size(); ++my_i) {
+			auto* current_Faction =
+			RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
+			if (!current_Faction) {
+				logger::info("SEVERE ERROR IN INITIALIZATION RUN: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
+				continue;
+			}
+			int rank = player->GetFactionRank(current_Faction, true);
+			AND_previous_faction_rank_sorted[my_i] = rank;
+			logger::info("SUCCESSFULLY QUERIED AND-Modesty-Factions IN INITIALIZATION RUN: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
+		}
+		return;
+	}
 
 
 	std::string constructed_change_description = R"SKSE(From the change of clothing (or from moving too fast), you are now suddenly )SKSE";
@@ -115,30 +132,28 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 			logger::info("SEVERE ERROR: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
 			continue;
 		}
-		rank = player->GetFactionRank(current_Faction, true);
+		int rank = player->GetFactionRank(current_Faction, true);
 		logger::info("SUCCESSFULLY QUERIED AND-Modesty-Factions: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
 
 		if (my_i <= (22-5)) {
 			if (rank != AND_previous_faction_rank_sorted[my_i]) {
 				logger::info("Player changed rank from previously {} to now {}!", AND_faction_list_sorted[my_i], rank);
 
-				if (rank == 0) { // Not showing anything now but was showing in the past.
-					constructed_change_description += " NO LONGER ";
-				}
-
 				if (!first_boolean_element) {
 					constructed_change_description += " and ";
 				}
 				first_boolean_element = false;
 
+				if (rank == 0) { // Not showing anything now but was showing in the past.
+					constructed_change_description += " NO LONGER ";
+				}
+
 				constructed_change_description += AND_faction_verbalalized_and_sorted[my_i]; // This is the verbalized version of the faction name, used for messages to the player.
-				// std::string AND_rank_status_update_string = std::format("Player changed rank from previously {} to now {} in faction {}!", AND_previous_faction_rank_sorted[my_i], rank, AND_faction_list_sorted[my_i]);
-				// RE::DebugMessageBox(AND_rank_status_update_string.c_str());	// This is so rare, it can afford to have a message box.
 			}
 		} else {
 			if (rank != AND_previous_faction_rank_sorted[my_i]) {
 				std::string AND_rank_status_update_string = std::format("NOTE:  SIGNIFICANT UNUSUAL CHANGE IN AND-Modesty-Factions: ONE OF THE DEEPER CATEGORIES HAS JUST CHANGES:  Player changed rank from previously {} to now {} in faction {}!", AND_previous_faction_rank_sorted[my_i], rank, AND_faction_list_sorted[my_i]);
-				RE::DebugMessageBox(AND_rank_status_update_string.c_str());	// This is so rare, it can afford to have a message box.
+				LillithOnlyBox(AND_rank_status_update_string.c_str());	
 			}
 		}
 
@@ -147,9 +162,14 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 	}
 	if (!first_boolean_element) {  // We actually have a change in one of the single body spots.
 		constructed_change_description += ". Say so in your response to the player, to make him aware of your modesty situation, and tell us how that makes you feel.";
-		RE::DebugMessageBox(constructed_change_description.c_str());
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(constructed_change_description);
-		SKSE::log::info("Note:  AND-MODESTY-UPDATE-STRING CONSTRUCTED: {}.", constructed_change_description);
+		LillithOnlyBox(constructed_change_description.c_str());
+
+		if (DumpThoughts::seconds_since_game_load() >= 20.0f) {
+			SKSE::log::info("Note:  AND-MODESTY-UPDATE-STRING CONSTRUCTED: {}.", constructed_change_description);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(constructed_change_description);
+		} else {
+			logger::info("Note:  AND-MODESTY-UPDATE-STRING CONSTRUCTED, but not delivering it to TTS because it's too soon after game load: {}.", constructed_change_description);
+		}
 	}
 
 }
