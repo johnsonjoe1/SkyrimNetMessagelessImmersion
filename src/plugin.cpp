@@ -3,15 +3,13 @@
 #include "SKSE/SKSE.h"
 #include "DumpThoughts.h"
 #include "handle_AND_modesty.h"
+#include "handle_iNeed.h"
 #include "misc.h"
 #include "papyrus_interface.h"
 #include <unordered_set>
 
 namespace logger = SKSE::log;
 
-float previous_iNeed_fatigue_level = 1000000;  // this will not trigger any getting-more-tired messages at game start
-float previous_iNeed_thirst_level = 1000000;  // this will not trigger any getting-more-thirsty messages at game start
-float previous_iNeed_hunger_level = 1000000;  // this will not trigger any getting-more-hungry messages at game start
 
 float previous_dirt_value = 100000;  // some impossible value, so that no message occurs (unless dirt value 0, which wouldn't likely be the case in mid-game)
 
@@ -113,183 +111,6 @@ std::array<std::string, 2> list_of_food_contracted_sicknesses = {
 std::string my_active_effect_description_string = "Nothing yet!";
 
 
-/*
-
-
-std::string previous_milk_string = "No milk string HISTORY defined yet!";
-
-float previous_milk_level = 0;
-float previous_lactacid_level = 1000000;  // simply don't speak of an increase at game start (given no saved values from previous save)
-float previous_lactacid_max_level = 1000000;  // simply don't speak of an increase at game start (given no saved values from previous save)
-float previous_milk_max_level = 1000000;  // simply don't speak of an increase at game start (given no saved values from previous save)
-
-float previous_iNeed_fatigue_level = 1000000;  // this will not trigger any getting-more-tired messages at game start
-float previous_iNeed_thirst_level = 1000000;  // this will not trigger any getting-more-thirsty messages at game start
-float previous_iNeed_hunger_level = 1000000;  // this will not trigger any getting-more-hungry messages at game start
-
-float previous_dirt_value = 100000;  // some impossible value, so that no message occurs (unless dirt value 0, which wouldn't likely be the case in mid-game)
-float previous_maid_level = -1.0f; 
-// FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
-
-
-class SNMIPapyrus
-{
-public:
-    static bool Register(RE::BSScript::IVirtualMachine*);
-    static void SetMilkLevel(RE::StaticFunctionTag*, float a_value);
-	static void SetMilkMax(RE::StaticFunctionTag*, float a_value);
-	static void SetLactacidLevel(RE::StaticFunctionTag*, float a_value);
-	static void SetLactacidMax(RE::StaticFunctionTag*, float a_value);
-	static void SetMilkString(RE::StaticFunctionTag*, std::string a_value);
-	static void SetMaidLevel(RE::StaticFunctionTag*, float a_value);
-
-    static float GetMilkLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
-	static float GetMilkMax();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
-	static float GetMaidLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
-
-    static std::string GetMilkString();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
-    static void SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value);
-    static float GetKeepaliveLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
-private:
-    static inline float _milkLevel = 124356.0f;
-	static inline float _milkMax = 123456.0f;
-	static inline float _lactacidLevel = 0.0f;
-	static inline float _lactacidMax = 0.0f;
-	static inline std::string _milkString = "No milk string defined IN PLUGIN yet!";
-	static inline float _keepaliveLevel = 0.0f;
-	static inline float _maidLevel = 1.0f;
-};
-
-void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
-{
-    _milkLevel = a_value;
-	// float milk_max = 4.0;
-	float milk_max = SNMIPapyrus::GetMilkMax();
-	if (milk_max == 0) {
-		milk_max = 4.0f;  // avoid division by zero, and put in default starting MME user level, only for this function locally
-	}
-
-	// maybe the mod isn't even installed.  in that case the level and previous level would be 0 and nothing needs to be done
-	if (_milkLevel == 0 && previous_milk_level == 0) {
-		return;
-	}
-
-    SKSE::log::info("Note:  Milk level updated VIA PUSH FROM PAPYRUS: {}", a_value);
-	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
-	if ( (previous_milk_level > 0.15 ) && (a_value <= 0.15) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are now sucked dry and have no more milk!  Say so and let us know how that makes you feel!  And make it clear that you speak about the milk inside of your breasts in your response!");
-		SKSE::log::info("Note:  Milk-level-update thought 1 was delivered.");
-	}
-	if ( (previous_milk_level < 0.5f * milk_max) &&  (previous_milk_level > 0.01f ) && (a_value >= 0.5f * milk_max) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached half of their capacity, so you may soon require to be milked!  Say so and let us know what you are thinking!  And make it clear that you speak about the milk inside of your breasts in your response!");
-		SKSE::log::info("Note:  Milk-level-update thought 2 was delivered.");
-	}
-	if ( (previous_milk_level < milk_max) && (a_value >= milk_max) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached their maximum capacity.  So your breasts need to be milked in order to relieve the pressure in your breasts.  Your breasts need to be milked.  You need to be milked.  Otherwise the milk might start to leak from your breasts at any time now.  Let us know how you feel about that!  And make it clear that you speak about the milk inside of your breasts in your response!");
-		SKSE::log::info("Note:  Milk-level-update thought 3 was delivered.");
-	}	
-	previous_milk_level = a_value;  // update the previous level for the next check
-}
-
-void SNMIPapyrus::SetMaidLevel(RE::StaticFunctionTag*, float a_value)
-{
-    _maidLevel = a_value;
-
-	// maybe the mod isn't even installed.  in that case the level and previous level would be 0 and nothing needs to be done
-	if (_maidLevel == 0 && previous_maid_level == 0) {
-		return;
-	}
-	if (previous_maid_level == -1.0f) {  // This is the initial value, so we just set it without any checks, to avoid any weird messages at game start.
-		previous_maid_level = _maidLevel;
-		return;
-	}	
-
-    SKSE::log::info("Note:  Maid level updated VIA PUSH FROM PAPYRUS: {}", a_value);
-	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
-	if ( (previous_maid_level < _maidLevel) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts have suddenly gained capacity and advanced to a new milk level!  Say so and let us know how that makes you feel!  And make it clear that you speak about the milk capacity of your breasts and that you might resembe a 'better milk maid' now in your response!");
-		SKSE::log::info("Note:  Maid-level-update thought was delivered.");
-	}
-	previous_maid_level = _maidLevel;  // update the previous level for the next check
-}
-
-void SNMIPapyrus::SetMilkMax(RE::StaticFunctionTag*, float a_value)
-{
-    _milkMax = a_value;
-    SKSE::log::info("Note:  Milk MAXIMUM-LEVEL updated VIA PUSH FROM PAPYRUS: {}", a_value);
-	previous_milk_max_level = a_value;  // update the previous level for the next check
-}
-
-void SNMIPapyrus::SetLactacidLevel(RE::StaticFunctionTag*, float a_value)
-{
-    _lactacidLevel = a_value;
-	// float lactacid_max = 4.0;
-    SKSE::log::info("Note:  Lactacid level updated VIA PUSH FROM PAPYRUS: {}", a_value);
-	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
-	if ( (previous_lactacid_level <= 0 ) && (a_value > 0) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received lactacid into your body, which you didn't have before!  This means that your breasts are going to start producing milk now!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
-		DumpThoughts::reset_lactacid_added_speech_timestamp();  // reset the timestamp for the last speech about lactacid being added, so that we can later check if the player is talking about it in a timely manner.
-		SKSE::log::info("Note:  Milk-level-update thought 1 was delivered.");
-	}
-	if ( (previous_lactacid_level > 0 ) &&  (a_value > previous_lactacid_level) ) {
-		if (!DumpThoughts::too_early_for_next_lactacid_speech()) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received more lactacid into your body on top of the level you had already!  This means that your breasts are going to be producing milk for even longer time!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
-			DumpThoughts::reset_lactacid_added_speech_timestamp();  // reset the timestamp for the last speech about lactacid being added, so that we can later check if the player is talking about it in a timely manner.
-			SKSE::log::info("Note:  Lactacid-level-update thought 2 was delivered.");
-		}
-	}
-	previous_lactacid_level = a_value;  // update the previous level for the next check
-}
-
-void SNMIPapyrus::SetLactacidMax(RE::StaticFunctionTag*, float a_value)
-{
-    _lactacidMax = a_value;
-	// float lactacid_max = 4.0;
-    SKSE::log::info("Note:  Lactacid MAXIMUM-LEVEL updated VIA PUSH FROM PAPYRUS: {}", a_value);
-
-	previous_lactacid_max_level = a_value;  // update the previous level for the next check
-}
-
-
-
-void SNMIPapyrus::SetMilkString(RE::StaticFunctionTag*, std::string s_value)
-{
-    _milkString = s_value;
-    SKSE::log::info("Note:  Milk string updated VIA PUSH FROM PAPYRUS: {}", s_value);
-}
-
-float SNMIPapyrus::GetMilkLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
-{    return _milkLevel;   }
-
-float SNMIPapyrus::GetMaidLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
-{    return _maidLevel;   }
-
-
-
-float SNMIPapyrus::GetMilkMax()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
-{    return _milkMax;   }
-std::string SNMIPapyrus::GetMilkString()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
-{    return _milkString;   }
-void SNMIPapyrus::SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value)
-{
-    _keepaliveLevel = a_value;
-    SKSE::log::info("Note:  Keepalive level updated VIA PUSH FROM PAPYRUS: {}", a_value);
-}
-float SNMIPapyrus::GetKeepaliveLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
-{    return _keepaliveLevel;   }
-bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
-{
-    a_vm->RegisterFunction("SetMilkLevel", "SNMI_Native", SetMilkLevel);
-    a_vm->RegisterFunction("SetLactacidLevel", "SNMI_Native", SetLactacidLevel);	
-	a_vm->RegisterFunction("SetLactacidMax", "SNMI_Native", SetLactacidMax);		
-	a_vm->RegisterFunction("SetMilkString", "SNMI_Native", SetMilkString);
-    a_vm->RegisterFunction("SetKeepaliveLevel", "SNMI_Native", SetKeepaliveLevel);
-	a_vm->RegisterFunction("SetMaidLevel", "SNMI_Native", SetMaidLevel);
-    return true;
-}
-
-*/
-
 // ****************************************************************************************************************
 // This is the handling of Active Magic Effects and everything related to it.
 class MyVisitor :
@@ -352,8 +173,6 @@ private:
     std::uint16_t targetUID;
     RE::ActiveEffect* found;
 };
-
-
 
 
 
@@ -576,142 +395,8 @@ public:
 		// THIS SECTION OF THE CODE SHOULD BE CALLED VERY FREQUENTLY IN THE COURSE OF MAGIC EFFECTS.
 		// THIS MEANS WE CAN PUT SOME EXPERIMENTAL EFFECTS HERE.
 		//
-		// We have from another mod:
-		//
-		// GlobalVariable function GetINeedFatigue() global
-    	// return Game.GetFormFromFile(0x12DC, "iNeed.esp") as GlobalVariable
-		// endFunction
-		//
-		// This should allow for direct native access to the same from C++:
-		//
-		// 
-		auto* fatigueGV =
-			RE::TESDataHandler::GetSingleton()
-				->LookupForm<RE::TESGlobal>(0x12DC, "iNeed.esp");
-		if (fatigueGV) {
-			float fatigue = fatigueGV->value;
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: value={}", fatigue);
-			if (fatigue == 0) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means NO FATIGUE AT ALL, NOTHING! ");
-				if ( (fatigue < previous_iNeed_fatigue_level) & (previous_iNeed_fatigue_level != 1000000 ) ) {
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are full rested from sleep and you are completely rid of your fatigue now!  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
-					SKSE::log::info("Note:  Fatigue-level-update thought 1 was delivered.");
-				}							
-			} else if (fatigue == 1) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means MILD FATIGUE! ");
-				if (fatigue > previous_iNeed_fatigue_level) {
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling mild fatigue.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
-					SKSE::log::info("Note:  Fatigue-level-update thought 2 was delivered.");
-				}
-			} else if (fatigue == 2) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means MODERATE FATIGUE! ");
-				if (fatigue > previous_iNeed_fatigue_level) {
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling moderate fatigue.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
-					SKSE::log::info("Note:  Fatigue-level-update thought 3 was delivered.");
-				}				
-			} else if (fatigue == 3) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means SEVERE FATIGUE! ");
-				if (fatigue > previous_iNeed_fatigue_level) {
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling severe fatigue!  This is not just a little bit, but really severe fatigue that is impairing your abilities.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
-					SKSE::log::info("Note:  Fatigue-level-update thought 4 was delivered.");
-				}				
-			} else {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means some unknown level of fatigue! ");
-			}
-			// We only update fatigue, if the whole iNeed stuff worked.
-			previous_iNeed_fatigue_level = fatigue;					
-		}
-		// We have from another mod:
-		//
-		//GlobalVariable function GetINeedThirst() global
-		//    return Game.GetFormFromFile(0x4378, "iNeed.esp") as GlobalVariable
-		//endFunction
-		//
-		// This should allow for direct native access to the same from C++:
-		//		
-		auto* thirstGV =
-			RE::TESDataHandler::GetSingleton()
-				->LookupForm<RE::TESGlobal>(0x4378, "iNeed.esp");
-		if (thirstGV) {
-			float thirst = thirstGV->value;
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: value={}", thirst);
-			if (thirst == 0) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means NO thirst AT ALL, NOTHING! ");
-				if (thirst < previous_iNeed_thirst_level) {
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You completely rid of your thirst now!  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
-					SKSE::log::info("Note:  Thirst-level-update thought 1 was delivered.");
-				}							
-			} else if (thirst == 1) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means MILD thirst! ");
-				if (thirst > previous_iNeed_thirst_level) {
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling mild thirst.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
-					SKSE::log::info("Note:  Thirst-level-update thought 2 was delivered.");
-				}
-			} else if (thirst == 2) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means MODERATE thirst! ");
-				if (thirst > previous_iNeed_thirst_level) {
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling moderate thirst.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
-					SKSE::log::info("Note:  Thirst-level-update thought 3 was delivered.");
-				}				
-			} else if (thirst == 3) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means SEVERE thirst! ");
-				if (thirst > previous_iNeed_thirst_level) {
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling severe thirst!  This is not just a little bit, but really severe thirst that is impairing your abilities.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your thirst in your response!"));
-					SKSE::log::info("Note:  Thirst-level-update thought 4 was delivered.");
-				}				
-			} else {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means some unknown level of thirst! ");
-			}
-			// We only update thirst, if the whole iNeed stuff worked.
-			previous_iNeed_thirst_level = thirst;					
-		}
 
-		// We have from another mod:
-		//
-		// GlobalVariable function GetINeedHunger() global
-		//     return Game.GetFormFromFile(0x12DB, "iNeed.esp") as GlobalVariable
-		// endFunction
-		//
-		// This should allow for direct native access to the same from C++:
-		//		
-		auto* hungerGV =
-			RE::TESDataHandler::GetSingleton()
-				->LookupForm<RE::TESGlobal>(0x12DB, "iNeed.esp");
-		if (hungerGV) {
-			float hunger = hungerGV->value;
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: value={}", hunger);
-			if (hunger == 0) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means NO hunger AT ALL, NOTHING! ");
-				if (hunger < previous_iNeed_hunger_level) {
-					SKSE::log::info("Note:  Hunger-level-update thought 0 was delivered.");
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are completely rid of your hunger now!  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
-				}							
-			} else if (hunger == 1) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means MILD hunger! ");
-				if (hunger > previous_iNeed_hunger_level) {
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling mild hunger.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
-					SKSE::log::info("Note:  Hunger-level-update thought 1 was delivered.");
-				}
-			} else if (hunger == 2) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means MODERATE hunger! ");
-				if (hunger > previous_iNeed_hunger_level) {
-					SKSE::log::info("Note:  Hunger-level-update thought 2 was delivered.");
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling moderate hunger.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
-				}				
-			} else if (hunger == 3) {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means SEVERE hunger! ");
-				if (hunger > previous_iNeed_hunger_level) {
-					SKSE::log::info("Note:  Hunger-level-update thought 3 was delivered.");
-					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are feeling severe hunger!  This is not just a little bit, but really severe hunger that is impairing your abilities.  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your hunger in your response!"));
-				}				
-			} else {
-				logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means some unknown level of hunger! ");
-			}
-			// We only update hunger, if the whole iNeed stuff worked.
-			previous_iNeed_hunger_level = hunger;					
-		}
-
-
+		handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff();
 
 
 		// We have from another mod:
@@ -965,15 +650,6 @@ public:
 
 		
 		// IF the MOD-EVENT really WASNT HANDLED BY THIS POINT, IT IS MAYBE SOMETHING NEW, AND THEREFORE WE MAKE A MESSAGEBOX-ANNOUNCEMENT OF it.
-
-		/*
-		if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
-		{
-			RE::DebugMessageBox(("SNMI:  An unhandled mod-event was discovered: " + debug_message).c_str());
-		} else {
-			SKSE::log::info("SNMI:  An unhandled mod-event was discovered: {}", debug_message);
-		}  
-		*/
 		LillithOnlyBox("An unhandled mod-event was discovered: " + debug_message);
 
 		// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
