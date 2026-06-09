@@ -7,3 +7,5 @@ function SetLactacidMax(float a_value) Global Native
 Function SetMilkString(string s_value) Global Native
 Function SetKeepaliveLevel(float a_value) Global Native
 function SetMaidLevel(float a_value) Global Native
+
+Function SetYpsConditionString(string s_value) Global Native

@@ -75,6 +75,33 @@ Event OnUpdate()
         Debug.Trace("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", mme_maid_level: " + mme_maid_level + ", Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
     endif 
     
+
+
+	; Test the YPS-Stuff here
+	int count = StorageUtil.StringListCount(None, "ypsActiveConditionsList")
+
+	; Debug.Notification("Conditions: " + count)
+
+	string allConditions = ""
+	int i = 0
+	while i < count
+		string condition = StorageUtil.StringListGet(None, "ypsActiveConditionsList", i)
+
+		Debug.Trace("YPS Condition[" + i + "] = " + condition)
+		; For testing:
+		; Debug.Notification(condition)
+		if i > 0
+			allConditions += "|"
+		endif
+		allConditions += condition
+		i += 1
+	endWhile	
+	Debug.Notification("Final YPS condition list: " + allConditions )
+	Debug.Trace("[SNMI]  Final YPS condition list: " + allConditions )
+
+
+    SNMI_Native.SetYpsConditionString(allConditions)
+
     RegisterForSingleUpdate(10.0)
 EndEvent
 

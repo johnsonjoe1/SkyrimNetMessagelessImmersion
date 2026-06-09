@@ -15,6 +15,8 @@ public:
 	static void SetMilkString(RE::StaticFunctionTag*, std::string a_value);
 	static void SetMaidLevel(RE::StaticFunctionTag*, float a_value);
 
+	static void SetYpsConditionString(RE::StaticFunctionTag*, std::string a_value);
+
     static float GetMilkLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
 	static float GetMilkMax();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
 	static float GetMaidLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
@@ -23,7 +25,9 @@ public:
     static void SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value);
     static float GetKeepaliveLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
 
-	
+	static std::string GetYpsConditionString();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
+
+
 	static void handle_mme_milk_value_changes_and_produce_thoughts_from_them();
 
 	inline static float previous_milk_level = 0;
@@ -40,5 +44,7 @@ private:
 	static inline std::string _milkString = "No milk string defined IN PLUGIN yet!";
 	static inline float _keepaliveLevel = 0.0f;
 	static inline float _maidLevel = 1.0f;
+
+	static inline std::string _yps_condition_string = "No yps condition string defined IN PLUGIN yet!";
 };
 

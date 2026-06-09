@@ -25,6 +25,23 @@ void handle_yps::handle_yps_fashion_detection_stuff()
 	}
 
 
+	/*
+	auto* storage = StorageUtilAPI::GetSingleton();
+
+	int addictionLevel =
+		storage->GetIntValue(
+			nullptr,
+			"yps_AddictionLevel",
+			0);
+
+	int addictionBuff =
+		storage->GetIntValue(
+			nullptr,
+			"yps_AddictionBuff",
+			0);
+			
+	*/
+
 	// We have from another mod:
 	//
 	// GlobalVariable function GetINeedFatigue() global

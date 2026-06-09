@@ -281,7 +281,7 @@ public:
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS HIGH HEELS NOVICE! ", base_name);
 			// RE::DebugMessageBox(stomach_rot_status.c_str());	
 			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You already have some experience with them, but you are still a High Heels Novice, so they still slow you down a bit. It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
-			return RE::BSEventNotifyControl::kContinue;
+			// return RE::BSEventNotifyControl::kContinue;
 		}
 		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "High Heel Novice") == 0)  ) && (!a_event->isApplied) ) {
 			// We do nothing here.
@@ -549,7 +549,17 @@ public:
 			return RE::BSEventNotifyControl::kContinue;
 		}
 
-		SNMIPapyrus::handle_mme_milk_value_changes_and_produce_thoughts_from_them();
+
+
+		// Now, PERIODICALLY, we take care of changes in the values of other mods.  We put this here, because this gets
+		// triggered reasonably often.  
+		std::string current_yps_condition_string = SNMIPapyrus::GetYpsConditionString();
+
+		
+		SKSE::log::info("Current yps_condition_string: {}", current_yps_condition_string);  
+
+		std::unordered_set<std::string> current_unorderd_yps_set = ParseConditions(current_yps_condition_string);
+
 
 
 
@@ -673,6 +683,28 @@ public:
     }
 
 private:
+
+	std::unordered_set<std::string> ParseConditions(const std::string& str)
+	{
+		std::unordered_set<std::string> result;
+		size_t start = 0;
+		while (start < str.size()) {
+			size_t end = str.find('|', start);
+			if (end == std::string::npos) {
+				end = str.size();
+			}
+			if (end > start) {
+
+				std::string current_substring;
+				current_substring = str.substr(start, end - start);
+				SKSE::log::info("YPS-String-Parsing:  Current substring: {}", current_substring);
+
+				result.emplace(str.substr(start, end - start));
+			}
+			start = end + 1;
+		}
+		return result;
+	}
 
 std::unordered_set<std::string> ignored_mod_events = {
 	"SKICP_configManagerReady",

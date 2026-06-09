@@ -134,6 +134,14 @@ void SNMIPapyrus::SetMilkString(RE::StaticFunctionTag*, std::string s_value)
     SKSE::log::info("Note:  Milk string updated VIA PUSH FROM PAPYRUS: {}", s_value);
 }
 
+void SNMIPapyrus::SetYpsConditionString(RE::StaticFunctionTag*, std::string s_value)
+{
+    _yps_condition_string = s_value;
+    SKSE::log::info("Note:  Yps condition string updated VIA PUSH FROM PAPYRUS: {}", s_value);
+}
+
+
+
 float SNMIPapyrus::GetMilkLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
 {    return _milkLevel;   }
 
@@ -161,8 +169,13 @@ bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 	a_vm->RegisterFunction("SetMilkString", "SNMI_Native", SetMilkString);
     a_vm->RegisterFunction("SetKeepaliveLevel", "SNMI_Native", SetKeepaliveLevel);
 	a_vm->RegisterFunction("SetMaidLevel", "SNMI_Native", SetMaidLevel);
+
+	a_vm->RegisterFunction("SetYpsConditionString", "SNMI_Native", SetYpsConditionString);
     return true;
 }
+
+std::string SNMIPapyrus::GetYpsConditionString()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
+{    return _yps_condition_string;   }
 
 
 void SNMIPapyrus::handle_mme_milk_value_changes_and_produce_thoughts_from_them()
