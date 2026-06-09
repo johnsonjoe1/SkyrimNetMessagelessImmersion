@@ -8,6 +8,8 @@
 #include "misc.h"
 #include "papyrus_interface.h"
 #include <unordered_set>
+#include <optional>
+
 
 namespace logger = SKSE::log;
 
@@ -551,15 +553,7 @@ public:
 
 
 
-		// Now, PERIODICALLY, we take care of changes in the values of other mods.  We put this here, because this gets
-		// triggered reasonably often.  
-		std::string current_yps_condition_string = SNMIPapyrus::GetYpsConditionString();
-
-		
-		SKSE::log::info("Current yps_condition_string: {}", current_yps_condition_string);  
-
-		std::unordered_set<std::string> current_unorderd_yps_set = ParseConditions(current_yps_condition_string);
-
+		// Formerly we had YPS handling here, not the funciton but hte contents of the funciton
 
 
 
@@ -684,27 +678,7 @@ public:
 
 private:
 
-	std::unordered_set<std::string> ParseConditions(const std::string& str)
-	{
-		std::unordered_set<std::string> result;
-		size_t start = 0;
-		while (start < str.size()) {
-			size_t end = str.find('|', start);
-			if (end == std::string::npos) {
-				end = str.size();
-			}
-			if (end > start) {
 
-				std::string current_substring;
-				current_substring = str.substr(start, end - start);
-				SKSE::log::info("YPS-String-Parsing:  Current substring: {}", current_substring);
-
-				result.emplace(str.substr(start, end - start));
-			}
-			start = end + 1;
-		}
-		return result;
-	}
 
 std::unordered_set<std::string> ignored_mod_events = {
 	"SKICP_configManagerReady",
@@ -768,6 +742,7 @@ std::unordered_set<std::string> ignored_mod_events = {
 	"SeverActions_ReputationAssess",
 	"SeverActions_AmbientBanterReady",
 	"SeverActions_ForcedCombatEnded",   // No need to respond to this, I guess?
+	"SeverActions_NewTeammateDetected",
 	"ReSchlongify",
 	"MME_MilkCycleComplete",
 	"BeeingFemale",   //  We ignore this for now, maybe later we can do something with it.
