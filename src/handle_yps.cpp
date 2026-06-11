@@ -11,37 +11,30 @@
 #include <optional>
 
 namespace logger = SKSE::log;
+bool yps_high_heels_thought_flag_on = false;
+
 
 struct ParsedCondition
 {
     std::string name;
     std::optional<int> value;
 };
-
-bool yps_high_heels_thought_flag_on = false;
-
-
 ParsedCondition ParseCondition(const std::string& str)
 {
 	size_t pos = str.size();
-
 	while (pos > 0 && std::isdigit(static_cast<unsigned char>(str[pos - 1]))) {
 		--pos;
 	}
-
 	ParsedCondition result;
 	result.name = str.substr(0, pos);
-
 	if (pos < str.size()) {
 		result.value = std::stoi(str.substr(pos));
 	}
-
 	return result;
 }
-
-
 std::unordered_set<std::string> ParseConditions(const std::string& str)
 {
+	yps_high_heels_thought_flag_on=false;
 	std::unordered_set<std::string> result;
 	size_t start = 0;
 	while (start < str.size()) {
@@ -53,18 +46,25 @@ std::unordered_set<std::string> ParseConditions(const std::string& str)
 
 			std::string current_substring;
 			current_substring = str.substr(start, end - start);
-			SKSE::log::info("YPS-String-Parsing:  Current substring: {}", current_substring);
+			// SKSE::log::info("YPS-String-Parsing:  {}", current_substring);
 			result.emplace(current_substring);
 
 			// Let's handle some special cases or specially interesting variables
 			auto c = ParseCondition(current_substring);
 
-
+			//	SKSE::log::info("YPS-String-Parsing:  {}", str);
+			std::string value_info;
 			
 			logger::info("Name = {}", c.name);
 			if (c.value) {
-				logger::info("Value = {}", *c.value);
-			} else { logger::info("Value = missing / no value supplied"); }
+				value_info = std::format("Value = {}", *c.value);
+				// logger::info("Value = {}", *c.value);
+			} else { value_info = std::format("Value = missing / no value supplied"); }
+			SKSE::log::info("YPS-String-Parsing: {} name: {} value: {}", current_substring, c.name, value_info);
+
+			if (c.name == "ypsHeelsWorn") {
+				yps_high_heels_thought_flag_on = true;
+			}
 		}
 		start = end + 1;
 	}
@@ -98,3 +98,42 @@ void handle_yps::handle_yps_fashion_detection_stuff()
 
 }
 
+
+
+void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRemoveEvent* a_event, RE::ActiveEffect* effect)
+{
+	logger::info("*********************YPS-MAGIC-EFFECT-HANDLER STARTED!!!**********************************");
+	// We got a magic effect.  We check once again everything, even though it has been checked in the calling function.
+
+	auto* base = effect->GetBaseObject();
+	auto* source = effect->spell;
+	auto base_name = base->GetName();
+
+		// Let's try to track YPS-Fashion-High-Heels-slowdown-effect:  this gets activated and deactivated all the time, so we have to keep our messages in check
+		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "High Heel Novice") == 0)  ) && (a_event->isApplied) && (effect->magnitude < 0) )
+		{
+			SKSE::log::info("xxxxxxxxxxx High Heels Novice MAGIC EFFECT PROPERLY DETECTED");
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS HIGH HEELS NOVICE! ", base_name);
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You already have some experience with them, but you are still a High Heels Novice, so they still slow you down a bit. It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			// return RE::BSEventNotifyControl::kContinue;
+		}
+		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "High Heel Novice") == 0)  ) && (!a_event->isApplied) ) {
+			// We do nothing here.
+			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of High Heels Novice MAGIC EFFECT.");
+			// return RE::BSEventNotifyControl::kContinue;
+		}
+		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "Untrained Feet") == 0)  ) && (a_event->isApplied) && (effect->magnitude < 0) )
+		{
+			SKSE::log::info("xxxxxxxxxxx YPS 'Untrained Feet' (high heels) MAGIC EFFECT PROPERLY DETECTED");
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS UNTRAINED FEET! ", base_name);
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now.  It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			// return RE::BSEventNotifyControl::kContinue;
+		}
+		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "Untrained Feet") == 0)  ) && (!a_event->isApplied) ) {
+			// We do nothing here.
+			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of Untrained Feet MAGIC EFFECT.");
+			// return RE::BSEventNotifyControl::kContinue;
+		}
+
+	logger::info("*********************YPS-MAGIC-EFFECT-HANDLER FINISHED!!!**********************************");
+}
