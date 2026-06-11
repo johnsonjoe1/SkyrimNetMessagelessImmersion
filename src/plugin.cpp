@@ -157,12 +157,7 @@ public:
             found = effect;
             auto* base = effect->GetBaseObject();
             if (base) {
-                // logger::info("Effect: {}", base->GetName());
-				logger::info(
-					"Effect ptr={} base={}",
-					(void*)effect,
-					base ? base->GetName() : "NULL"
-				);
+				// logger::info("FROM UIDMatchVisitor we find:  Effect ptr={} base={}", (void*)effect, base ? base->GetName() : "NULL" );
             }
             return RE::BSContainer::ForEachResult::kStop;
         }
@@ -211,12 +206,9 @@ public:
 		if (!actor->IsPlayerRef()) {
 			return RE::BSEventNotifyControl::kContinue;
 		}
-		logger::info("========== Found an effect, that is actually about the Player.  Let's go into more details below! =============");		
-		SKSE::log::info(
-			"Effect {} on {} | UID={}",
-			a_event->isApplied ? "APPLIED" : "REMOVED",
-			actor->GetName(),
-			a_event->activeEffectUniqueID);
+
+
+
 
 		auto* magicTarget = actor->GetMagicTarget();
 		auto* ref = a_event->target.get();
@@ -238,6 +230,8 @@ public:
 			LillithOnlyBox("WOW! THE BASE OBJECT IS NULL!  ABORTING HANDLER (WHICH IS NO BIG PROBLEM FOR YOUR GAME, BY THE WAY)!!!");
 			return RE::BSEventNotifyControl::kContinue;
 		}
+
+
 		auto our_form_id = base->GetFormID();
 		auto base_name = base->GetName();
 		auto caster = effect->caster.get();
@@ -246,36 +240,13 @@ public:
 		// auto* form = RE::TESForm::LookupByID(0x2803BD99);
 		auto* form = RE::TESForm::LookupByID(our_form_id);
 		
-		//  Cell Tracking Effect
-		if ( (std::strcmp(base_name, "Cell Tracking Effect") == 0) || (std::strcmp(base_name, "SCO_CellChangeDetectMgef") == 0) || (std::strcmp(base_name, "SCO_CellChangeBegin") == 0) )  {   // SCO_CellChangeDetectMgef  SCO_CellChangeBegin
-			logger::info("----------------->>>>>>>>>>>>>>> SKIPPING THE REST, BECAUES THIS IS SOME CELL TRACKING FROM MIA's LAIR or some other mod.");
+		
+		if (is_known_irrelevant_magic_effect(base_name))
+		{
+			logger::info("SKIPPING HANDLING OF IRRELEVANT MAGIC EFFECT: {}", base_name);
 			return RE::BSEventNotifyControl::kContinue; 
 		}
-		//  Cell Tracking Effect
-		if (std::strcmp(base_name, "Maintenance") == 0) {
-			logger::info("----------------->>>>>>>>>>>>>>> SKIPPING THE REST, BECAUES THIS IS SOME Hunger-Tracking from RND-Needs-Mod.");
-			return RE::BSEventNotifyControl::kContinue;
-		}
-		//  SOS_Addon_PHF_Recolor
-		if (std::strcmp(base_name, "SOS_Addon_PHF_Recolor") == 0) {
-			logger::info("----------------->>>>>>>>>>>>>>> SKIPPING THE REST, BECAUES THIS IS SOME technicallity from SOS (schlongs-of-skyrim).");
-			return RE::BSEventNotifyControl::kContinue;
-		}
-		//  Automate Hunger Script
-		if (std::strcmp(base_name, "Automate Hunger Script") == 0) {
-			logger::info("----------------->>>>>>>>>>>>>>> SKIPPING THE REST, BECAUES THIS IS SOME technicallity from SOS (schlongs-of-skyrim).");
-			return RE::BSEventNotifyControl::kContinue;
-		}
-		//  Consume Food Portion:  This is actually from CACO
-		if (std::strcmp(base_name, "Consume Food Portion") == 0) {
-			logger::info("----------------->>>>>>>>>>>>>>> SKIPPING THE REST, BECAUES THIS IS SOME technicallity from SOS (schlongs-of-skyrim).");
-			return RE::BSEventNotifyControl::kContinue;
-		}
-		//  RaceMenuHH Scale Effect
-		if (std::strcmp(base_name, "RaceMenuHH Scale Effect") == 0) {
-			logger::info("----------------->>>>>>>>>>>>>>> SKIPPING THE REST, BECAUES THIS IS SOME technicallity from RaceMenuHH.");
-			return RE::BSEventNotifyControl::kContinue;
-		}
+
 
 		// We moved the YPS-Movement-Speed-Stuff to the separate YPS module
 		if (base) {
@@ -286,7 +257,6 @@ public:
 				}
 			}
 		}
-
 
 
 
@@ -522,6 +492,11 @@ public:
 
 		handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff();
 		
+
+		logger::info("========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============");		
+		SKSE::log::info("Effect {} on {} | UID={}", a_event->isApplied ? "APPLIED" : "REMOVED", actor->GetName(), a_event->activeEffectUniqueID);
+
+
 		// logger::info("Effect ptr: {}", (void*)effect);
 		// logger::info("UID: {}", a_event->activeEffectUniqueID);
 		logger::info("Base name: {} | Base ptr: {} | Base-FormID: {:X} | Base-Form Type: {}   (This means: {}) ", base_name, (void*)base, our_form_id, (int)base->GetFormType(),   RE::FormTypeToString(base->GetFormType() ) );
@@ -554,6 +529,30 @@ public:
     }
 	private:
 
+
+	std::array<std::string, 8> irrelevant_effect_list = {
+		"RaceMenuHH Scale Effect"   , 
+		"Consume Food Portion"   , 
+		"Automate Hunger Script"  ,
+		"SOS_Addon_PHF_Recolor" ,
+		"Maintenance" ,
+		"SCO_CellChangeDetectMgef" ,
+		"SCO_CellChangeBegin",
+		"Cell Tracking Effect"
+	};
+		
+	bool is_known_irrelevant_magic_effect(std::string base_name)
+	{
+		for (std::size_t i = 0; i < irrelevant_effect_list.size(); ++i)
+		{
+			if (base_name == irrelevant_effect_list[i])
+			{
+				return true;
+			}
+		}
+		return false;
+	};
+
 	int IsAFoodBasedDisease(std::string_view keyword)
 	{
 		for (std::size_t i = 0; i < list_of_food_contracted_sicknesses.size(); ++i)
@@ -565,8 +564,6 @@ public:
 		}
 		return -1;
 	}
-
-
 };
 
 class DialogueHook
@@ -637,7 +634,7 @@ public:
 		if ( is_known_useless_event(a_event->eventName.c_str()))
 		{
 			// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
-			logger::info("=== Mod Event Ignored:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
+			logger::info("SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
 			return RE::BSEventNotifyControl::kContinue;
 		}
 

@@ -53,9 +53,8 @@ std::unordered_set<std::string> ParseConditions(const std::string& str)
 			auto c = ParseCondition(current_substring);
 
 			//	SKSE::log::info("YPS-String-Parsing:  {}", str);
+
 			std::string value_info;
-			
-			logger::info("Name = {}", c.name);
 			if (c.value) {
 				value_info = std::format("Value = {}", *c.value);
 				// logger::info("Value = {}", *c.value);
