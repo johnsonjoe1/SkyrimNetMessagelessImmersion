@@ -22,7 +22,7 @@ struct ParsedCondition
 ParsedCondition ParseCondition(const std::string& str)
 {
 	size_t pos = str.size();
-	while (pos > 0 && std::isdigit(static_cast<unsigned char>(str[pos - 1]))) {
+	while (pos > 0 &&  (std::isdigit(static_cast<unsigned char>(str[pos - 1])) || (str[pos - 1] == '-'))) {
 		--pos;
 	}
 	ParsedCondition result;
