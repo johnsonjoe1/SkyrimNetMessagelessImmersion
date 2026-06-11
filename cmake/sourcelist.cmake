@@ -7,4 +7,5 @@ set(sources ${sources}
     src/papyrus_interface.cpp
     src/handle_iNeed.cpp
     src/handle_yps.cpp
+    src/handle_fame.cpp
 )

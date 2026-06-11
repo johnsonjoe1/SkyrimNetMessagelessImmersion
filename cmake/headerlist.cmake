@@ -10,4 +10,5 @@ set(headers ${headers}
     src/papyrus_interface.h
     src/handle_iNeed.h
     src/handle_yps.h
+    src/handle_fame.h
 )
