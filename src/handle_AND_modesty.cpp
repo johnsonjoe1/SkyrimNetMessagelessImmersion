@@ -95,14 +95,6 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 		return;
 	}
 
-	/*
-	int rank = player->GetFactionRank(nudeFaction, true);
-	bool isNude = (rank == 1);
-	logger::info("SUCCESSFULLY QUERIED AND Factions: nudeFaction={}, isNude={}", nudeFaction->GetFormID(), isNude);
-	rank = player->GetFactionRank(topModestyFaction, true);
-	bool isModest = (rank == 1);
-	logger::info("SUCCESSFULLY QUERIED AND Factions: topModestyFaction={}, isModest={}", topModestyFaction->GetFormID(), isModest);
-	*/
 
 	if (AND_previous_faction_rank_sorted[0] == -1) {
 		logger::info("AND-Ranks are not initialized yet!!  Initialize them and then return for now and for this round!!");
@@ -121,7 +113,8 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 	}
 
 
-	std::string constructed_change_description = R"SKSE(From the change of clothing (or from moving too fast), you are now suddenly )SKSE";
+	std::string constructed_change_description;
+	
 	bool first_boolean_element = true;
 	for (std::size_t my_i = 0; my_i < AND_faction_list_sorted.size(); ++my_i) {
 		// logger::info("{} = {}", my_i, AND_faction_list_sorted[my_i]);
@@ -134,20 +127,17 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 		}
 		int rank = player->GetFactionRank(current_Faction, true);
 		logger::info("SUCCESSFULLY QUERIED AND-Modesty-Factions: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
-
-		if (my_i <= (22-5)) {
+		bool real_clothes_change = false;
+		if (my_i <= (22-5)) {  // NOTE: Positions 0-7 are REAL CLOTHES CHANGES.  The rest is flashing of body parts.
 			if (rank != AND_previous_faction_rank_sorted[my_i]) {
 				logger::info("Player changed rank from previously {} to now {}!", AND_faction_list_sorted[my_i], rank);
-
 				if (!first_boolean_element) {
 					constructed_change_description += " and ";
 				}
 				first_boolean_element = false;
-
-				if (rank == 0) { // Not showing anything now but was showing in the past.
+				if ((rank == 0) && (my_i <= 7) ){ // Not showing anything now but was showing in the past.  but in case of quick flashing, the no-longer isn't needed either. 
 					constructed_change_description += " NO LONGER ";
 				}
-
 				constructed_change_description += AND_faction_verbalalized_and_sorted[my_i]; // This is the verbalized version of the faction name, used for messages to the player.
 			}
 		} else {
@@ -161,6 +151,18 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 		AND_previous_faction_rank_sorted[my_i] = rank;
 	}
 	if (!first_boolean_element) {  // We actually have a change in one of the single body spots.
+
+		// Now there can be 2 cases:  There was an actual change of wardrobe (0-7) or there was some kind of flashing (8-17).
+		// In case of flashing, the word flashing is always there.  If is wasnt there, then we announce the clothing change.
+		bool this_was_just_flashing = false;
+		if (constructed_change_description.find("flashing") != std::string::npos) {
+			logger::info("FLASHING-KEYWORD FOUND IN OUR AND-RANK-CHANGE-STRING!!!!  THIS MEANS WE HAVE JUST FLASHING AND SAY SO VIA THOUGHTS!!!");
+			constructed_change_description = R"SKSE(From moving so fast, you accidentially flashed your feminine parts to onlookers.  You cannot be sure that anybody saw, but you were clearly )SKSE" + constructed_change_description;	
+		} else {
+			logger::info("FLASHING-KEYWORD *NOT* FOUND IN OUR AND-RANK-CHANGE-STRING!!!!  THIS MEANS WE HAVE REAL WARDROBE CHANGE!!");
+			constructed_change_description = R"SKSE(From the change of clothing, you are now suddenly )SKSE" + constructed_change_description;			
+		}
+
 		constructed_change_description += ". Say so in your response to the player, to make him aware of your modesty situation, and tell us how that makes you feel.";
 		LillithOnlyBox(constructed_change_description.c_str());
 
@@ -170,6 +172,9 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 		} else {
 			logger::info("Note:  AND-MODESTY-UPDATE-STRING CONSTRUCTED, but not delivering it to TTS because it's too soon after game load: {}.", constructed_change_description);
 		}
+	} else {
+
+
 	}
 
 }
