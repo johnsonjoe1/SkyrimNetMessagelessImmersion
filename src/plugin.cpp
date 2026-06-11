@@ -290,28 +290,6 @@ public:
 
 
 
-		// logger::info("Effect ptr: {}", (void*)effect);
-		// logger::info("UID: {}", a_event->activeEffectUniqueID);
-		logger::info("Base name: {} | Base ptr: {} | Base-FormID: {:X} | Base-Form Type: {}   (This means: {}) ", base_name, (void*)base, our_form_id, (int)base->GetFormType(),   RE::FormTypeToString(base->GetFormType() ) );
-		logger::info("base-Effect EDID: {} | Source ptr: {}  |  Caster: {} ", base->GetFormEditorID(), (void*)source, caster ? caster->GetName() : "None");
-		// logger::info("Source pointer: {}", (void*)effect->spell);
-		// logger::info("Source ptr: {}  |  Caster: {} ", (void*)source, caster ? caster->GetName() : "None");
-		// Optional but very useful if available in your build:
-		logger::info("Magnitude: {} | Duration: {}", effect->magnitude, effect->duration);
-		// logger::info("Elapsed: {}", effect->elapsedTime);
-		if (source) {
-			logger::info("Source name: {} | Source FormID: {:X} | Source EDID: {} ", source->GetName(), source->GetFormID(), source->GetFormEditorID());
-		} else {
-			logger::info("No source spell for this effect.");
-		}
-		if (form)
-		{
-			logger::info("Form LookupByID {:X} found: {}", our_form_id, form->GetName());
-		}
-		else
-		{
-			logger::info("Form with ID {:X} not found.", our_form_id);
-		}
 
 		// Let's also track the drunk-stumble-script:  It means the stumble-and-fall animation is playing, 
 		// so we might as well say so.
@@ -333,22 +311,20 @@ public:
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track Unforgiving Devices Struggle Exhaustion here:  FIRST THE APPLICATION OF THE EFFECT.
-		if (base && ( (std::strcmp(base->GetName(), "Exhaustion") == 0)  ) && ( (std::strcmp(source->GetName(), "Struggle exhaustion") == 0)  ) && (a_event->isApplied) )
+		if (base && ( (std::strcmp(base->GetName(), "Exhaustion") == 0)  ) && ( (std::strcmp(source->GetName(), "Struggle exhaustion") == 0)  ) )
 		{
-			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UNFORGIVING-DEVICES STRUGGLE EXHAUSTION! ", base_name);
-			//RE::DebugMessageBox(stomach_rot_status.c_str());	
-			SKSE::log::info("XX-- our event handler for UD STRUGGLE EXHAUSTION APPLICATION!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just tried getting out of your locking bondage devices for a whole while. You may have made some progress, but nevertheless now you are too exhausted to continue.  Say as much in your response.")); //  + standard_thought_instruction;
-			return RE::BSEventNotifyControl::kContinue;
-		}
-		// Let's try to track Unforgiving Devices Struggle Exhaustion here:  NOW THE REMOVAL OF THE EFFECT.
-		if (base && ( (std::strcmp(base->GetName(), "Exhaustion") == 0)  ) && ( (std::strcmp(source->GetName(), "Struggle exhaustion") == 0)  ) && (!a_event->isApplied) )
-		{
-			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UNFORGIVING-DEVICES STRUGGLE EXHAUSTION! ", base_name);
-			// RE::DebugMessageBox(stomach_rot_status.c_str());	
-			SKSE::log::info("XX-- our event handler for UD STRUGGLE EXHAUSTION REMOVAL!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just were trying to get out of your locking bondage devices for a whole while. You may have made some progress, but in any case, that activity had made you exhausted to the point where you couldn't continue any more.  But now time has passed and you're feeling better and you're good to go and maybe could continue trying.  Say as much in your response.")); //  + standard_thought_instruction;
-			return RE::BSEventNotifyControl::kContinue;
+			if (a_event->isApplied)
+			{
+				SKSE::log::info("XX-- our event handler for UD STRUGGLE EXHAUSTION APPLICATION!");
+				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just tried getting out of your locking bondage devices for a whole while. You may have made some progress, but nevertheless now you are too exhausted to continue.  Say as much in your response.")); //  + standard_thought_instruction;
+				return RE::BSEventNotifyControl::kContinue;
+			} 
+			else  // i.e.  (!a_event->isApplied)
+			{
+				SKSE::log::info("XX-- our event handler for UD STRUGGLE EXHAUSTION REMOVAL!");
+				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just were trying to get out of your locking bondage devices for a whole while. You may have made some progress, but in any case, that activity had made you exhausted to the point where you couldn't continue any more.  But now time has passed and you're feeling better and you're good to go and maybe could continue trying.  Say as much in your response.")); //  + standard_thought_instruction;
+				return RE::BSEventNotifyControl::kContinue;
+			}
 		}
 		// Let's try to track UD/US Black-Goo-Application-Effect here:  FIRST THE APPLICATION OF THE EFFECT.
 		if (base && ( (std::strcmp(base->GetName(), "Device Manifest") == 0)  ) && (a_event->isApplied) )
@@ -360,24 +336,21 @@ public:
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		// Let's try to track UD/DD slowdown-effect from bondage boots:  :  NOW THE REMOVAL OF THE EFFECT.
-		if (base && ( (std::strcmp(base->GetName(), "SpeedMult Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "BootSlow-Enchant") == 0)  ) && (a_event->isApplied) )
+		if (base && ( (std::strcmp(base->GetName(), "SpeedMult Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "BootSlow-Enchant") == 0)  ))
 		{
-			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UD BONDAGE-BOOTS SLOWDOWN APPLICATION! ", base_name);
-			// RE::DebugMessageBox(stomach_rot_status.c_str());	
-			SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking bondage boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these heels equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
-			return RE::BSEventNotifyControl::kContinue;
+			if (a_event->isApplied)
+			{
+				SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
+				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking bondage boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these heels equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
+				return RE::BSEventNotifyControl::kContinue;
+			} 
+			else // i.e.  if (!a_event->isApplied) )
+			{
+				SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWN REMOVAL!");
+				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into bondage boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking bondage devices on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
+				return RE::BSEventNotifyControl::kContinue;
+			}
 		}
-		// Let's try to track UD/DD slowdown-effect from bondage boots:  NOW THE REMOVAL OF THE EFFECT.
-		if (base && ( (std::strcmp(base->GetName(), "SpeedMult Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "BootSlow-Enchant") == 0)  ) && (!a_event->isApplied) )
-		{
-			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for UD BONDAGE-BOOTS SLOWDOWN REMOVAL! ", base_name);
-			// RE::DebugMessageBox(stomach_rot_status.c_str());	
-			SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWN REMOVAL!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into bondage boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking bondage devices on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
-			return RE::BSEventNotifyControl::kContinue;
-		}
-
 
 
 		// THIS SECTION OF THE CODE SHOULD BE CALLED VERY FREQUENTLY IN THE COURSE OF MAGIC EFFECTS.
@@ -407,8 +380,6 @@ public:
 		struct FameGlobal
 		{
 			// index-number
-			// previous_value
-			// current_value
 			uint32_t formID;
 			const char* name;
 			RE::TESGlobal* global;
@@ -551,6 +522,30 @@ public:
 
 		handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff();
 		
+		// logger::info("Effect ptr: {}", (void*)effect);
+		// logger::info("UID: {}", a_event->activeEffectUniqueID);
+		logger::info("Base name: {} | Base ptr: {} | Base-FormID: {:X} | Base-Form Type: {}   (This means: {}) ", base_name, (void*)base, our_form_id, (int)base->GetFormType(),   RE::FormTypeToString(base->GetFormType() ) );
+		logger::info("base-Effect EDID: {} | Source ptr: {}  |  Caster: {} ", base->GetFormEditorID(), (void*)source, caster ? caster->GetName() : "None");
+		// logger::info("Source pointer: {}", (void*)effect->spell);
+		// logger::info("Source ptr: {}  |  Caster: {} ", (void*)source, caster ? caster->GetName() : "None");
+		// Optional but very useful if available in your build:
+		logger::info("Magnitude: {} | Duration: {}", effect->magnitude, effect->duration);
+		// logger::info("Elapsed: {}", effect->elapsedTime);
+		if (source) {
+			logger::info("Source name: {} | Source FormID: {:X} | Source EDID: {} ", source->GetName(), source->GetFormID(), source->GetFormEditorID());
+		} else {
+			logger::info("No source spell for this effect.");
+		}
+		if (form)
+		{
+			logger::info("Form LookupByID {:X} found: {}", our_form_id, form->GetName());
+		}
+		else
+		{
+			logger::info("Form with ID {:X} not found.", our_form_id);
+		}
+
+
 		SKSE::log::info(".");
 		SKSE::log::info(".");
 		SKSE::log::info("ABOVE IS A POTENTIALLY UNHANDLED MAGIC EFFECT??? CHECK THE BASE NAME AND SOURCE NAME TO SEE IF IT'S SOMETHING YOU WANT TO REACT TO, OR IF IT'S SOME RANDOM EFFECT THAT YOU DON'T CARE ABOUT.  IF IT'S THE LATTER, THEN YOU PROBABLY WANT TO ADD A NEW IF-STATEMENT FOR THIS EFFECT IN THIS HANDLER, SO THAT IT DOESN'T GET LOGGED IN SUCH DETAIL ANY MORE, BECAUSE THAT WOULD BE ANNOYING.  CHECK THE BASE NAME AND SOURCE NAME TO SEE WHAT EFFECT THIS IS ABOUT.  IF IT'S AN EFFECT YOU CARE ABOUT, THEN CONSIDER ADDING A CUSTOM MESSAGE FOR IT IN THIS HANDLER, SO THAT YOUR TTS CAN REACT TO IT IN A MEANINGFUL WAY! ");
