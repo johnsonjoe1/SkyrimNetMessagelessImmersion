@@ -84,7 +84,7 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 			fame.current_value = fame.global->value;
 		} else {
 			float cur_value = fame.global->value;
-			SKSE::log::info("NEW+NEW+NEW+NEW:   SLSF-GLOBALPointer was already there for: {}  Value was :  {}", fame.name , cur_value);
+			SKSE::log::info("SLSF-GLOBALPointer existed:{}  value={}  previous_value={}", fame.name , cur_value, fame.previous_value);
 			
 			// Assign new value and message-box-report value changes for now
 			fame.current_value = fame.global->value;

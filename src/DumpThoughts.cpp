@@ -77,8 +77,13 @@ void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_messa
 	auto now = std::chrono::steady_clock::now();
 	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
 	SKSE::log::info("Time since last thought-speech on BACKGROUNDCHANNEL OR PRIORITIES CHANNELS: {} seconds", runtime.count());
+	int minimum_time_since_last_speech = 90;  // current default for non-debugging mode is 90 seconds between background thoughts (at least, since other dialogue can delay that further)
+	if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
+	{
+		// If player-name is Lillith, it means I'm debugging the plugin:  then show more messages and more quickly
+		minimum_time_since_last_speech = 20;  // in seconds
+	} 
 	// RE::DebugMessageBox(("Time passed since the last speech: " + std::to_string(runtime.count()) + " seconds").c_str());
-	const int minimum_time_since_last_speech = 30;  // in seconds
 	if (runtime.count() < minimum_time_since_last_speech) {
 		SKSE::log::info("Not throwing out the BACKGROUNDCHANNEL text as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.  But the disgarded message was:\n {}", runtime.count(), minimum_time_since_last_speech, my_message.c_str());
 		// return RE::BSEventNotifyControl::kContinue;
@@ -91,7 +96,7 @@ void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_messa
 		auto eventSource = SKSE::GetModCallbackEventSource();
 
 		if (DumpThoughts::too_early_after_game_load()) {
-			SKSE::log::info("////////BLOCKING BACKGROUO	THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
+			SKSE::log::info("////////BLOCKING BACKGROUND THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
 			return;
 		}
 		SKSE::ModCallbackEvent my_event(

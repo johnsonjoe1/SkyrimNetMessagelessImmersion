@@ -8,5 +8,6 @@ class handle_AND_modesty
 {
 public:
 	static void handle_AND_modesty_and_nakedness_stuff();
+	static void initialize_AND_status();
 };
 

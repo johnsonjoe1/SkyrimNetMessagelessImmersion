@@ -10,10 +10,11 @@
 #include "papyrus_interface.h"
 #include <unordered_set>
 #include <optional>
-
+#include <chrono>
 
 namespace logger = SKSE::log;
 
+static auto last_periodic_check_for_changes = std::chrono::steady_clock::now();
 
 float previous_dirt_value = 100000;  // some impossible value, so that no message occurs (unless dirt value 0, which wouldn't likely be the case in mid-game)
 
@@ -236,6 +237,21 @@ public:
 		// Let's inspect the FormID and hte Form behind the effect, to see if we can identify it.  
 		auto* form = RE::TESForm::LookupByID(our_form_id);
 		
+		// THIS SECTION OF THE CODE SHOULD BE CALLED VERY FREQUENTLY IN THE COURSE OF MAGIC EFFECTS, handled and even unhandled magic effects.
+		// So we put periodic checks here with AT LEAST 5 seconds pause in between.  This should be faily consistent though.
+		//
+		
+		auto now = std::chrono::steady_clock::now();
+		if (now - last_periodic_check_for_changes >= std::chrono::seconds(5)) {
+			last_periodic_check_for_changes = now;
+			logger::info("***************************************************************************5 seconds elapsed:  TIME TO DO PERIODIC CHECKS***********************************************************");
+			handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff();
+			handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff();
+			handle_yps::handle_yps_fashion_detection_stuff();
+			handle_fame::handle_SLSF_Reloaded_fame_stuff();
+		}
+
+
 		if (is_known_irrelevant_magic_effect(base_name))
 		{
 			logger::info("SKIPPING HANDLING OF IRRELEVANT MAGIC EFFECT: {}", base_name);
@@ -251,9 +267,6 @@ public:
 				}
 			}
 		}
-
-
-
 
 		// Let's also track the drunk-stumble-script:  It means the stumble-and-fall animation is playing, 
 		// so we might as well say so.
@@ -317,17 +330,6 @@ public:
 		}
 
 
-		// THIS SECTION OF THE CODE SHOULD BE CALLED VERY FREQUENTLY IN THE COURSE OF MAGIC EFFECTS.
-		// THIS MEANS WE CAN PUT SOME EXPERIMENTAL EFFECTS HERE.
-		// Even though, admittedly, this is not the perfect way to do it.  The frequency is random here.
-		//
-
-		handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff();
-
-		handle_yps::handle_yps_fashion_detection_stuff();
-
-
-		handle_fame::handle_SLSF_Reloaded_fame_stuff();
 
 		// We have from another mod:
 		// PlayerDirt = Game.GetFormFromFile(0x000DA8, "Bathing in Skyrim.esp") as GlobalVariable
@@ -374,8 +376,6 @@ public:
 				"CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK//CHECK// NO PLAYER??? NO PLAYER???NO PLAYER???NO PLAYER???NO PLAYER???NO PLAYER???");
 		}
 
-		handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff();
-		
 
 		logger::info("========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============");		
 		SKSE::log::info("Effect {} on {} | UID={}", a_event->isApplied ? "APPLIED" : "REMOVED", actor->GetName(), a_event->activeEffectUniqueID);
@@ -963,9 +963,11 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		break;
 	case SKSE::MessagingInterface::kPostLoadGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
+		handle_AND_modesty::initialize_AND_status();
         break;
 	case SKSE::MessagingInterface::kNewGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
+		handle_AND_modesty::initialize_AND_status();
 		break;
 	};
 }
