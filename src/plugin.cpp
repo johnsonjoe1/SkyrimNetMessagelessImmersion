@@ -841,7 +841,7 @@ public:
 			}
 			LillithOnlyBox(combined_string);
 
-			std::string thought_string = std::format("This " , armor->GetName() );
+			std::string thought_string = std::format("This {} is " , armor->GetName() );
 
 			if (keywordSet.contains("ArmorHeavy")) {
 				thought_string += " a piece of heavy armour";
@@ -851,26 +851,40 @@ public:
 
 
 			if (keywordSet.contains("ypsClothingUgly")) {
-				thought_string += " and it's very ugly, according to fashion vendor YPS.";
+				thought_string += " and it's very ugly, according to the fashion vendor Y.P.S.";
 			} else if (keywordSet.contains("ypsClothingOrdinary")) {
-				thought_string += " and I would surely be looking really ordinary with that on.";
+				thought_string += " and I would surely be looking really ordinary with that on, according to the fashion vendor Y.P.S.";
 			} else if (keywordSet.contains("ypsClothingCute")) {
-				thought_string += " and it would be looking kind of cute on me";
+				thought_string += " and it would be looking kind of cute on me, according to the fashion vendor Y.P.S.";
 			} else if (keywordSet.contains("ypsClothingFashion")) {
-				thought_string += " and would make me look really fashionabe, for sure.";
+				thought_string += " and would make me look really fashionabe, for sure, according to the fashion vendor Y.P.S.";
 			} else if (keywordSet.contains("ypsClothingSexy")) {
-				thought_string += " and would make me look outright sexy in that.";
-			}
+				thought_string += " and would make me look outright sexy, according to the fashion vendor Y.P.S.";
+			} else { thought_string += ".";  }
+
 
 			if (keywordSet.contains("ypsFingerlessGloves")) {
 				thought_string += " This is also an original fingerless glove, that could be worn even with very long nails, so a true keeper.";
 			}
 			
-			
+			if ( (keywordSet.contains("AND_PelvicFlashRisk")) |
+				(keywordSet.contains("AND_PelvicFlashRiskExtreme")) |
+				(keywordSet.contains("AND_PelvicFlashRiskHigh")) |
+				(keywordSet.contains("AND_PelvicFlashRiskLow")) |
+				(keywordSet.contains("AND_AssFlashRisk")) |
+				(keywordSet.contains("AND_AssFlashRiskHigh")) |
+				(keywordSet.contains("AND_AssFlashRiskExtreme")) |
+				(keywordSet.contains("AND_AssFlashRiskLow")) ) 
+			{
+				thought_string += " I bet that with this thing on, I would have a risk of flashing my ass or pelvis upon every move. ";
+			}
+
 
 
 			LillithOnlyBox(thought_string);
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_string);
+			// 
+			// DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_string);
+			DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(thought_string);
 
 /*
 0B27037D ypsClothingUgly
