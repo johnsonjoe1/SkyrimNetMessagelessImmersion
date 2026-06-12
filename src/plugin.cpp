@@ -11,6 +11,7 @@
 #include <unordered_set>
 #include <optional>
 #include <chrono>
+#include <string>
 
 namespace logger = SKSE::log;
 
@@ -786,9 +787,8 @@ public:
         if (!base)
             return RE::BSEventNotifyControl::kContinue;
 
-        SKSE::log::info("[SkyrimNetMessagelessImmersion] =================== New activation Event noticed ===================.");
-        SKSE::log::info(
-            "[SkyrimNetMessagelessImmersion] Player activated: {}",
+        SKSE::log::info("=================== New activation Event noticed ===================.");
+        SKSE::log::info("Player activated: {}",
             base->GetName()
         );
 
@@ -796,8 +796,229 @@ public:
         auto formType = base->GetFormType();
         if (formType == RE::FormType::Furniture)
         {
-            SKSE::log::info("[SkyrimNetMessagelessImmersion] That activated object seems to be furniture, so we can proceed.");
-        } else {
+            SKSE::log::info("That activated object seems to be furniture, so we can proceed.");
+        } else if (formType == RE::FormType::Armor) {
+            SKSE::log::info("That activated object seems to be an armour item, so we will handle it (though not much so far).");
+			LillithOnlyBox("plugin.cpp:   Some piece of arour was activated!!!!");
+
+			auto armor = base->As<RE::TESObjectARMO>();
+			if (!armor) {
+				LillithOnlyBox("plugin.cpp:   SEVERE ERROR!! CASTING the armour item at TESObjectARMO failed!!!  Exiting this handler!");
+				return RE::BSEventNotifyControl::kContinue;
+			}
+
+			// State the name of the armour piece
+			SKSE::log::info("Armor item: {}", armor->GetName());
+			// std::string name_string = std::format("FOUND and Armor item named: {} " , armor->GetName());
+			
+			std::string combined_string = std::format("FOUND and Armor item named: {} with keywords: " , armor->GetName());
+			// LillithOnlyBox(std::format("FOUND and Armor item named: {} " , armor->GetName()));
+
+
+
+			// Let's put all the keywords into an unordered set...
+			std::unordered_set<std::string> keywordSet;
+			for (auto keyword : armor->GetKeywords()) {
+				if (!keyword) {
+					continue;
+				}
+				auto edid = keyword->GetFormEditorID();
+				if (edid) {
+					keywordSet.insert(edid);
+				}
+			}
+
+			// run through the list of keywords
+			const auto& keywords = armor->GetKeywords();
+			for (auto keyword : keywords) {
+				if (!keyword) {
+					continue;
+				} 
+				combined_string += keyword->GetFormEditorID();
+				combined_string += " , ";
+				//LillithOnlyBox(std::format("Keyword: {} ({:08X})", keyword->GetFormEditorID(), keyword->GetFormID()));
+				SKSE::log::info("Keyword: {} ({:08X})", keyword->GetFormEditorID(), keyword->GetFormID() );
+			}
+			LillithOnlyBox(combined_string);
+
+			std::string thought_string = std::format("This " , armor->GetName() );
+
+			if (keywordSet.contains("ArmorHeavy")) {
+				thought_string += " a piece of heavy armour";
+			} else if (keywordSet.contains("ArmorLight")) {
+				thought_string += " a piece of light armour";
+			}
+
+
+			if (keywordSet.contains("ypsClothingUgly")) {
+				thought_string += " and it's very ugly, according to fashion vendor YPS.";
+			} else if (keywordSet.contains("ypsClothingOrdinary")) {
+				thought_string += " and I would surely be looking really ordinary with that on.";
+			} else if (keywordSet.contains("ypsClothingCute")) {
+				thought_string += " and it would be looking kind of cute on me";
+			} else if (keywordSet.contains("ypsClothingFashion")) {
+				thought_string += " and would make me look really fashionabe, for sure.";
+			} else if (keywordSet.contains("ypsClothingSexy")) {
+				thought_string += " and would make me look outright sexy in that.";
+			}
+
+			if (keywordSet.contains("ypsFingerlessGloves")) {
+				thought_string += " This is also an original fingerless glove, that could be worn even with very long nails, so a true keeper.";
+			}
+			
+			
+
+
+			LillithOnlyBox(thought_string);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_string);
+
+/*
+0B27037D ypsClothingUgly
+0B27037E ypsClothingOrdinary
+0B27037F ypsClothingCute
+0B270380 ypsClothingFashion
+0B270381 ypsClothingSexy
+0B270382 ypsFingerlessGloves
+*/
+
+/*
+"AND_ChestFlashRisk" , 
+"AND_ChestFlashRiskLow" , 
+"AND_ChestFlashRiskHigh" , 
+"AND_ChestFlashRiskExtreme" , 
+"AND_Bra" , 
+"AND_Underwear" , 
+"AND_ChestCurtain" , 
+"AND_CoversAll" , 
+"AND_CStringT" , 
+"AND_CString" , 
+"AND_ChestCurtainT" , 
+"AND_AssCurtain" , 
+"AND_PelvicFlashRisk" , 
+"AND_PelvicFlashRiskExtreme" , 
+"AND_PelvicFlashRiskHigh" , 
+"AND_PelvicFlashRiskLow" , 
+"AND_AssFlashRisk" , 
+"AND_AssFlashRiskHigh" , 
+"AND_AssFlashRiskExtreme" , 
+"AND_AssFlashRiskLow" , 
+"AND_AssCurtainT" , 
+"AND_PelvicCurtainT" , 
+"AND_ShowgirlSkirt" , 
+"AND_MiniskirtT" , 
+"AND_ShowgirlSkirtT" , 
+"AND_PelvicFlashRiskUltra" , 
+"AND_ChestFlashRiskUltra" , 
+"AND_AssFlashRiskUltra" , 
+"AND_BraT" , 
+"AND_UnderwearT" , 
+"AND_Thong" , 
+"AND_ThongT" , 
+"AND_Miniskirt" , 
+"AND_PelvicCurtain" , 
+"AND_Microskirt" , 
+"AND_NearlyNaked" , 
+"AND_NipplePasties" , 
+"AND_VaginaPasties" , 
+"AND_Hotpants" , 
+"AND_HotpantsT" , 
+"AND_ArmorTop" , 
+"AND_ArmorTopT" , 
+"AND_ArmorBottom" , 
+"AND_ArmorBottomT" , 
+"AND_Ignore" , 
+"AND_Bra_NoCover" , 
+"AND_Underwear_NoCover" , 
+"AND_ArmorTop_NoCover" , 
+"AND_ArmorBottom_NoCover" , 
+"AND_Thong_NoCover" , 
+"AND_UnderwearT_High_Male" , 
+"AND_ArmorBottomT_Low" , 
+"AND_ArmorBottomT_High" , 
+"AND_ArmorBottomT_Low_Male" , 
+"AND_ArmorBottomT_High_Male" , 
+"AND_ArmorTopT_Low" , 
+"AND_ArmorTopT_High" , 
+"AND_ArmorTopT_Low_Male" , 
+"AND_ArmorTopT_High_Male" , 
+"AND_BananaHammockT_Low" , 
+"AND_BananaHammockT_High" , 
+"AND_BraT_Low" , 
+"AND_BraT_High" , 
+"AND_BraT_Low_Male" , 
+"AND_BraT_High_Male" , 
+"AND_CStringT_Low" , 
+"AND_CStringT_High , 
+"AND_HimboSkirtT_Low" , 
+"AND_HimboSkirtT_High" , 
+"AND_HotpantsT_Low" , 
+"AND_HotpantsT_High" , 
+"AND_HotpantsT_Low_Male" , 
+"AND_HotpantsT_High_Male" , 
+"AND_AssFlashRiskLow_Male" , 
+"AND_AssFlashRisk_Male" , 
+"AND_AssFlashRiskHigh_Male" , 
+"AND_AssFlashRiskExtreme_Male" , 
+"AND_ShowgirlSkirtT_Low" , 
+"AND_ShowgirlSkirtT_High" , 
+"AND_ThongT_Low" , 
+"AND_ThongT_High" , 
+"AND_ThongT_Low_Male" , 
+"AND_ThongT_High_Male" , 
+"AND_UnderwearT_Low" , 
+"AND_UnderwearT_High" , 
+"AND_UnderwearT_Low_Male" , 
+"AND_AssFlashRiskUltra_Male" , 
+"AND_ChestFlashRiskLow_Male" , 
+"AND_ChestFlashRisk_Male" , 
+"AND_ChestFlashRiskHigh_Male" , 
+"AND_ChestFlashRiskExtreme_Male" , 
+"AND_ChestFlashRiskUltra_Male" , 
+"AND_PelvicFlashRiskLow_Male" , 
+"AND_PelvicFlashRisk_Male" , 
+"AND_PelvicFlashRiskHigh_Male" , 
+"AND_PelvicFlashRiskExtreme_Male" , 
+"AND_PelvicFlashRiskUltra_Male" , 
+"AND_EffectivelyNaked" , 
+"AND_ArmorTopT_Male" , 
+"AND_AssCurtain_Male" , 
+"AND_AssCurtainT_Male" , 
+"AND_Bra_Male" , 
+"AND_Bra_NoCover_Male" , 
+"AND_BraT_Male" , 
+"AND_ChestCurtain_Male" , 
+"AND_ChestCurtainT_Male" , 
+"AND_CoversAll_Male" , 
+"AND_BananaHammockT" , 
+"AND_EffectivelyNaked_Male" , 
+"AND_Hotpants_Male" , 
+"AND_HotpantsT_Male" , 
+"AND_Microskirt_Male" , 
+"AND_Miniskirt_Male" , 
+"AND_MiniskirtT_Male" , 
+"AND_NearlyNaked_Male" , 
+"AND_NipplePasties_Male" , 
+"AND_PelvicCurtain_Male" , 
+"AND_PelvicCurtainT_Male" , 
+"AND_HimboSkirt" , 
+"AND_HimboSkirtT" , 
+"AND_Thong_Male" , 
+"AND_Thong_NoCover_Male" , 
+"AND_ThongT_Male" , 
+"AND_Underwear_Male" , 
+"AND_Underwear_NoCover_Male" , 
+"AND_UnderwearT_Male" , 
+"AND_BananaHammock" , 
+"AND_ArmorBottom_Male" , 
+"AND_ArmorBottom_NoCover_Male" , 
+"AND_ArmorBottomT_Male" , 
+"AND_ArmorTop_Male" , 
+"AND_ArmorTop_NoCover_Male" , 
+
+*/
+            return RE::BSEventNotifyControl::kContinue;
+		} else
+		{
             SKSE::log::info("[SkyrimNetMessagelessImmersion] That activated object does not seem to be furniture, so we ignore it.");
             return RE::BSEventNotifyControl::kContinue;
         }
