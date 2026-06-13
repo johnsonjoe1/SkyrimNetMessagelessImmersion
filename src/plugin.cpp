@@ -177,8 +177,8 @@ private:
 
 
 
+//  Here comes the code for hooking into the active effect application and removal, i.e. the list of currently active effects.
 
-//  Here comes teh code for hooking into the active effect application and removal, i.e. the list of currently active effects.
 class ChangesToTheActiveMagicEffectListEventHandler :
     public RE::BSTEventSink<RE::TESActiveEffectApplyRemoveEvent>
 {
@@ -284,7 +284,7 @@ public:
 		{
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for FOOD-BASED-DISEASE! ", base_name);
 			LillithOnlyBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
-			SKSE::log::info("XX-- our event handler for FOOD-BASED-DISEASE!");
+			SKSE::log::info("Event handler for FOOD-BASED-DISEASE!");
 			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate something!  As a total surprise, you now notice, that you may have just contracted the so-called disease '{}' from it!  You need to announce the potential infection in your response, so that the actual player is informed.  You may do that implicitly, in the form of regret, surprise anger or shock.  It is a potentially dangerous condition. Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
@@ -293,13 +293,13 @@ public:
 		{
 			if (a_event->isApplied)
 			{
-				SKSE::log::info("XX-- our event handler for UD STRUGGLE EXHAUSTION APPLICATION!");
+				SKSE::log::info("Event handler for UD STRUGGLE EXHAUSTION APPLICATION!");
 				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just tried getting out of your locking bondage devices for a whole while. You may have made some progress, but nevertheless now you are too exhausted to continue.  Say as much in your response.")); //  + standard_thought_instruction;
 				return RE::BSEventNotifyControl::kContinue;
 			} 
 			else  // i.e.  (!a_event->isApplied)
 			{
-				SKSE::log::info("XX-- our event handler for UD STRUGGLE EXHAUSTION REMOVAL!");
+				SKSE::log::info("Event handler for UD STRUGGLE EXHAUSTION REMOVAL!");
 				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just were trying to get out of your locking bondage devices for a whole while. You may have made some progress, but in any case, that activity had made you exhausted to the point where you couldn't continue any more.  But now time has passed and you're feeling better and you're good to go and maybe could continue trying.  Say as much in your response.")); //  + standard_thought_instruction;
 				return RE::BSEventNotifyControl::kContinue;
 			}
@@ -309,7 +309,7 @@ public:
 		{
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for BLACK-GOO-APPLICATION! ", base_name);
 			// RE::DebugMessageBox(stomach_rot_status.c_str());	
-			SKSE::log::info("XX-- our event handler for BLACK-GOO-APPLICATION!");
+			SKSE::log::info("Event handler for BLACK-GOO-APPLICATION!");
 			DumpThoughts::throw_out_TTS_thought_message(std::format("Some substance called black goo just came in contact with you, and, to your horror, it manifested into a bondage device, thus trapping you as the victim now locked into said device.  What are you thinking in the face of this situation? ")); //  + standard_thought_instruction;
 			return RE::BSEventNotifyControl::kContinue;
 		}
@@ -318,13 +318,13 @@ public:
 		{
 			if (a_event->isApplied)
 			{
-				SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
+				SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
 				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking bondage boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these heels equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
 				return RE::BSEventNotifyControl::kContinue;
 			} 
 			else // i.e.  if (!a_event->isApplied) )
 			{
-				SKSE::log::info("XX-- our event handler for UD BONDAGE BOOTS SLOWDOWN REMOVAL!");
+				SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN REMOVAL!");
 				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into bondage boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking bondage devices on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
 				return RE::BSEventNotifyControl::kContinue;
 			}
@@ -380,8 +380,6 @@ public:
 
 		logger::info("========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============");		
 		SKSE::log::info("Effect {} on {} | UID={}", a_event->isApplied ? "APPLIED" : "REMOVED", actor->GetName(), a_event->activeEffectUniqueID);
-
-
 		// logger::info("Effect ptr: {}", (void*)effect);
 		// logger::info("UID: {}", a_event->activeEffectUniqueID);
 		logger::info("Base name: {} | Base ptr: {} | Base-FormID: {:X} | Base-Form Type: {}   (This means: {}) ", base_name, (void*)base, our_form_id, (int)base->GetFormType(),   RE::FormTypeToString(base->GetFormType() ) );
@@ -404,8 +402,6 @@ public:
 		{
 			logger::info("Form with ID {:X} not found.", our_form_id);
 		}
-
-
 		SKSE::log::info(".");
 		SKSE::log::info(".");
 		SKSE::log::info("ABOVE IS A POTENTIALLY UNHANDLED MAGIC EFFECT??? CHECK THE BASE NAME AND SOURCE NAME TO SEE IF IT'S SOMETHING YOU WANT TO REACT TO, OR IF IT'S SOME RANDOM EFFECT THAT YOU DON'T CARE ABOUT.  IF IT'S THE LATTER, THEN YOU PROBABLY WANT TO ADD A NEW IF-STATEMENT FOR THIS EFFECT IN THIS HANDLER, SO THAT IT DOESN'T GET LOGGED IN SUCH DETAIL ANY MORE, BECAUSE THAT WOULD BE ANNOYING.  CHECK THE BASE NAME AND SOURCE NAME TO SEE WHAT EFFECT THIS IS ABOUT.  IF IT'S AN EFFECT YOU CARE ABOUT, THEN CONSIDER ADDING A CUSTOM MESSAGE FOR IT IN THIS HANDLER, SO THAT YOUR TTS CAN REACT TO IT IN A MEANINGFUL WAY! ");
@@ -415,19 +411,24 @@ public:
 	private:
 
 
-	std::array<std::string, 8> irrelevant_effect_list = {
-		"RaceMenuHH Scale Effect"   , 
-		"Consume Food Portion"   , 
-		"Automate Hunger Script"  ,
-		"SOS_Addon_PHF_Recolor" ,
-		"Maintenance" ,
-		"SCO_CellChangeDetectMgef" ,
-		"SCO_CellChangeBegin",
-		"Cell Tracking Effect"
-	};
+
 		
 	bool is_known_irrelevant_magic_effect(std::string base_name)
 	{
+		static const std::array<std::string, 12> irrelevant_effect_list = {
+			"RaceMenuHH Scale Effect"   , 
+			"Consume Food Portion"   , 
+			"Automate Hunger Script"  ,
+			"SOS_Addon_PHF_Recolor" ,
+			"Maintenance" ,
+			"SCO_CellChangeDetectMgef" ,
+			"SCO_CellChangeBegin",
+			"Cell Tracking Effect",
+			"UIWheelMenu_LoadMenu",
+			"UIWheelMenu_SetOption",
+			"UIWheelMenu_CloseMenu",
+			"UIWheelMenu_ChooseOption"
+		};		
 		for (std::size_t i = 0; i < irrelevant_effect_list.size(); ++i)
 		{
 			if (base_name == irrelevant_effect_list[i])
@@ -510,10 +511,7 @@ public:
         if (!a_event) {
             return RE::BSEventNotifyControl::kContinue;
         }
-        // logger::info("MOD EVENT:");
-        // logger::info("  Name: {}", a_event->eventName);
-        // logger::info("  StrArg: {}", a_event->strArg);
-        // logger::info("  NumArg: {}", a_event->numArg);
+
 		
 
 		if ( is_known_useless_event(a_event->eventName.c_str()))
@@ -522,12 +520,6 @@ public:
 			logger::info("SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
 			return RE::BSEventNotifyControl::kContinue;
 		}
-
-
-
-		// Formerly we had YPS handling here, not the funciton but hte contents of the funciton
-
-
 
 		// We log all other mod events, because they might be interesting for us to react to and turn into immersive player thoughts
 		logger::info("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
@@ -597,6 +589,21 @@ public:
 			return RE::BSEventNotifyControl::kContinue;
 		}
 		
+		// MOD EVENT:  From SpankThatAss, we have the following event (running up and spanking, in contrast to bump-spanks, which seem not to trigger any mod event unfortunately)
+		if ( (std::strcmp(a_event->eventName.c_str() , "_STA_RandomRunUpAndSpankComplete") == 0)  ) {
+			// Name: _STA_RandomRunUpAndSpankComplete  StrArg:   NumArg: 0
+			std::string  thought_message = std::format("Someone just ran up behind you and spanked your ass with full force! Let us know your response. ");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+			return RE::BSEventNotifyControl::kContinue;
+		}		
+		// MOD EVENT:  From SpankThatAss, we have the following event:  spanking of any kind, and then we have this resistance loss by one, but we don't do anything on that for now)
+		if ( (std::strcmp(a_event->eventName.c_str() , "DF-ResistanceLoss") == 0)  ) {
+			// Name: DF-ResistanceLoss  StrArg:   NumArg: 1
+			// std::string  thought_message = std::format("Someone just spanked your ass with full force or groped your tits outright! Let us know your response. ");
+			// DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+			return RE::BSEventNotifyControl::kContinue;
+		}		
+
 
 		// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
 		if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)  || 
@@ -605,8 +612,8 @@ public:
 			(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioStarted") == 0) ||
 			(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioEnded") == 0)  ) {			
 
-				// Let's also check, if it was player thoughts or player diagloge
-
+			// Let's also check, if it was player thoughts or player diagloge
+			
 
 			auto now = std::chrono::steady_clock::now();
 			// auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
@@ -745,6 +752,15 @@ std::unordered_set<std::string> ignored_mod_events = {
 	"AnimationEnding_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 	"AnimationEnd",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 	"AnimationEnd_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+	"StageEnd_",                            //  This might be from The-Ancient-Profession.
+	"StageStart_",                          //  This might be from The-Ancient-Profession.
+	"AnimationStarting_TAPPlayerFreelance", //  This might be from The-Ancient-Profession.
+	"AnimationStart_TAPPlayerFreelance",    //  This might be from The-Ancient-Profession.
+	"AnimationEnding_TAPPlayerFreelance",   //  This might be from The-Ancient-Profession.
+	"AnimationEnd_TAPPlayerFreelance",      //  This might be from The-Ancient-Profession.
+	"StageStart_TAPPlayerFreelance",        //  This might be from The-Ancient-Profession.
+	"StageEnd_TAPPlayerFreelance",          //  This might be from The-Ancient-Profession.
+	"Helpless_RemoveSpell",  // Unknown what this is
 	"CaptiveDefeatInit"  // This is called every time a new cell is entered and merely a technical event,  probably for CaptivePlayer.
 };
 
@@ -795,12 +811,12 @@ public:
         {
             SKSE::log::info("That activated object seems to be furniture, so we can proceed.");
         } else if (formType == RE::FormType::Armor) {
-            SKSE::log::info("That activated object seems to be an armour item, so we will handle it (though not much so far).");
-			LillithOnlyBox("plugin.cpp:   Some piece of arour was activated!!!!");
+            SKSE::log::info("That activated object seems to be an armor item, so we will handle it (though not much so far).");
+			// LillithOnlyBox("plugin.cpp:   Some piece of arour was activated!!!!");
 
 			auto armor = base->As<RE::TESObjectARMO>();
 			if (!armor) {
-				LillithOnlyBox("plugin.cpp:   SEVERE ERROR!! CASTING the armour item at TESObjectARMO failed!!!  Exiting this handler!");
+				LillithOnlyBox("plugin.cpp:   SEVERE ERROR!! CASTING the armor item at TESObjectARMO failed!!!  Exiting this handler!");
 				return RE::BSEventNotifyControl::kContinue;
 			}
 
@@ -808,7 +824,7 @@ public:
 			SKSE::log::info("Armor item: {}", armor->GetName());
 			// std::string name_string = std::format("FOUND and Armor item named: {} " , armor->GetName());
 			
-			std::string combined_string = std::format("FOUND and Armor item named: {} with keywords: " , armor->GetName());
+			std::string combined_string = std::format("ACTIVATED and Armor item named: {} with keywords: " , armor->GetName());
 			// LillithOnlyBox(std::format("FOUND and Armor item named: {} " , armor->GetName()));
 
 			// Let's put all the keywords into an unordered set...
@@ -838,187 +854,90 @@ public:
 
 			std::string thought_string = std::format("This {} is " , armor->GetName() );
 
+			bool we_have_something_interesting_to_say = false;
+
 			if (keywordSet.contains("ArmorHeavy")) {
-				thought_string += " a piece of heavy armour";
+				thought_string += " a piece of heavy armor";
 			} else if (keywordSet.contains("ArmorLight")) {
-				thought_string += " a piece of light armour";
+				thought_string += " a piece of light armor";
+			} else if (keywordSet.contains("ArmorClothing")) {
+				thought_string += " a piece of clothing";
 			}
 
 
+
+			// Handle YPS special case of specific fashion purpose attributes
 			if (keywordSet.contains("ypsClothingUgly")) {
 				thought_string += " and it's very ugly, according to the fashion vendor Y.P.S.";
+				we_have_something_interesting_to_say = true;
 			} else if (keywordSet.contains("ypsClothingOrdinary")) {
 				thought_string += " and I would surely be looking really ordinary with that on, according to the fashion vendor Y.P.S.";
+				we_have_something_interesting_to_say = true;
 			} else if (keywordSet.contains("ypsClothingCute")) {
 				thought_string += " and it would be looking kind of cute on me, according to the fashion vendor Y.P.S.";
+				we_have_something_interesting_to_say = true;
 			} else if (keywordSet.contains("ypsClothingFashion")) {
 				thought_string += " and would make me look really fashionabe, for sure, according to the fashion vendor Y.P.S.";
+				we_have_something_interesting_to_say = true;
 			} else if (keywordSet.contains("ypsClothingSexy")) {
 				thought_string += " and would make me look outright sexy, according to the fashion vendor Y.P.S.";
+				we_have_something_interesting_to_say = true;
 			} else { thought_string += ".";  }
-
+			// Handle YPS special case of fingerless gloves
 			if (keywordSet.contains("ypsFingerlessGloves")) {
 				thought_string += " This is also an original fingerless glove, that could be worn even with very long nails, so a true keeper.";
+				we_have_something_interesting_to_say = true;
 			}
 			
+			if (keywordSet.contains("SLA_ArmorSpendex")) {
+				thought_string += " This is made from some kind of spandex material.";
+				we_have_something_interesting_to_say = true;
+			}
+			if (keywordSet.contains("SLA_ArmorLewdLeotard")) {
+				thought_string += " It is shaped as a lewd leotard.";
+				we_have_something_interesting_to_say = true;
+			}			
+			if (keywordSet.contains("EroticArmor")) {
+				thought_string += " I guess it could be called an erotic armor.";
+				we_have_something_interesting_to_say = true;
+			}	
+			if (keywordSet.contains("bikini")) {
+				thought_string += " It is part of a bikini armor outfit.";
+				we_have_something_interesting_to_say = true;
+			}	
+
 			if ( (keywordSet.contains("AND_PelvicFlashRisk")) |
-				(keywordSet.contains("AND_PelvicFlashRiskExtreme")) |
-				(keywordSet.contains("AND_PelvicFlashRiskHigh")) |
-				(keywordSet.contains("AND_PelvicFlashRiskLow")) |
-				(keywordSet.contains("AND_PelvicFlashRiskUltra")) |				
-				(keywordSet.contains("AND_AssFlashRisk")) |
-				(keywordSet.contains("AND_AssFlashRiskHigh")) |
-				(keywordSet.contains("AND_AssFlashRiskExtreme")) |
-				(keywordSet.contains("AND_AssFlashRiskUltra")) |				
-				(keywordSet.contains("AND_AssFlashRiskLow")) ) 
+			 	 (keywordSet.contains("AND_PelvicFlashRiskExtreme")) |
+		 		 (keywordSet.contains("AND_PelvicFlashRiskHigh")) |
+				 (keywordSet.contains("AND_PelvicFlashRiskLow")) |
+				 (keywordSet.contains("AND_PelvicFlashRiskUltra")) |				
+				 (keywordSet.contains("AND_AssFlashRisk")) |
+				 (keywordSet.contains("AND_AssFlashRiskHigh")) |
+				 (keywordSet.contains("AND_AssFlashRiskExtreme")) |
+				 (keywordSet.contains("AND_AssFlashRiskUltra")) |				
+				 (keywordSet.contains("AND_AssFlashRiskLow")) ) 
 			{
 				thought_string += " I bet that with this thing on, I would have a risk of flashing my ass or pelvis upon every move. ";
+				we_have_something_interesting_to_say = true;
 			}
-
+			if ( (keywordSet.contains("AND_ChestFlashRisk")) |
+				 (keywordSet.contains("AND_ChestFlashRiskLow")) |
+				 (keywordSet.contains("AND_ChestFlashRiskHigh")) |
+				 (keywordSet.contains("AND_ChestFlashRiskExtreme")) |
+				 (keywordSet.contains("AND_ChestFlashRiskUltra")) ) 
+			{
+				thought_string += " I bet that with this thing on, I would have a risk of flashing my ass or pelvis upon every move. ";
+				we_have_something_interesting_to_say = true;
+			}
 
 
 			LillithOnlyBox(thought_string);
 			// 
 			// DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_string);
-			DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(thought_string);
-
-
-
-/*
-"AND_ChestFlashRisk" , 
-"AND_ChestFlashRiskLow" , 
-"AND_ChestFlashRiskHigh" , 
-"AND_ChestFlashRiskExtreme" , 
-"AND_Bra" , 
-"AND_Underwear" , 
-"AND_ChestCurtain" , 
-"AND_CoversAll" , 
-"AND_CStringT" , 
-"AND_CString" , 
-"AND_ChestCurtainT" , 
-"AND_AssCurtain" , 
-"AND_PelvicFlashRisk" , 
-"AND_PelvicFlashRiskExtreme" , 
-"AND_PelvicFlashRiskHigh" , 
-"AND_PelvicFlashRiskLow" , 
-"AND_AssFlashRisk" , 
-"AND_AssFlashRiskHigh" , 
-"AND_AssFlashRiskExtreme" , 
-"AND_AssFlashRiskLow" , 
-"AND_AssCurtainT" , 
-"AND_PelvicCurtainT" , 
-"AND_ShowgirlSkirt" , 
-"AND_MiniskirtT" , 
-"AND_ShowgirlSkirtT" , 
-"AND_PelvicFlashRiskUltra" , 
-"AND_ChestFlashRiskUltra" , 
-"AND_AssFlashRiskUltra" , 
-"AND_BraT" , 
-"AND_UnderwearT" , 
-"AND_Thong" , 
-"AND_ThongT" , 
-"AND_Miniskirt" , 
-"AND_PelvicCurtain" , 
-"AND_Microskirt" , 
-"AND_NearlyNaked" , 
-"AND_NipplePasties" , 
-"AND_VaginaPasties" , 
-"AND_Hotpants" , 
-"AND_HotpantsT" , 
-"AND_ArmorTop" , 
-"AND_ArmorTopT" , 
-"AND_ArmorBottom" , 
-"AND_ArmorBottomT" , 
-"AND_Ignore" , 
-"AND_Bra_NoCover" , 
-"AND_Underwear_NoCover" , 
-"AND_ArmorTop_NoCover" , 
-"AND_ArmorBottom_NoCover" , 
-"AND_Thong_NoCover" , 
-"AND_UnderwearT_High_Male" , 
-"AND_ArmorBottomT_Low" , 
-"AND_ArmorBottomT_High" , 
-"AND_ArmorBottomT_Low_Male" , 
-"AND_ArmorBottomT_High_Male" , 
-"AND_ArmorTopT_Low" , 
-"AND_ArmorTopT_High" , 
-"AND_ArmorTopT_Low_Male" , 
-"AND_ArmorTopT_High_Male" , 
-"AND_BananaHammockT_Low" , 
-"AND_BananaHammockT_High" , 
-"AND_BraT_Low" , 
-"AND_BraT_High" , 
-"AND_BraT_Low_Male" , 
-"AND_BraT_High_Male" , 
-"AND_CStringT_Low" , 
-"AND_CStringT_High , 
-"AND_HimboSkirtT_Low" , 
-"AND_HimboSkirtT_High" , 
-"AND_HotpantsT_Low" , 
-"AND_HotpantsT_High" , 
-"AND_HotpantsT_Low_Male" , 
-"AND_HotpantsT_High_Male" , 
-"AND_AssFlashRiskLow_Male" , 
-"AND_AssFlashRisk_Male" , 
-"AND_AssFlashRiskHigh_Male" , 
-"AND_AssFlashRiskExtreme_Male" , 
-"AND_ShowgirlSkirtT_Low" , 
-"AND_ShowgirlSkirtT_High" , 
-"AND_ThongT_Low" , 
-"AND_ThongT_High" , 
-"AND_ThongT_Low_Male" , 
-"AND_ThongT_High_Male" , 
-"AND_UnderwearT_Low" , 
-"AND_UnderwearT_High" , 
-"AND_UnderwearT_Low_Male" , 
-"AND_AssFlashRiskUltra_Male" , 
-"AND_ChestFlashRiskLow_Male" , 
-"AND_ChestFlashRisk_Male" , 
-"AND_ChestFlashRiskHigh_Male" , 
-"AND_ChestFlashRiskExtreme_Male" , 
-"AND_ChestFlashRiskUltra_Male" , 
-"AND_PelvicFlashRiskLow_Male" , 
-"AND_PelvicFlashRisk_Male" , 
-"AND_PelvicFlashRiskHigh_Male" , 
-"AND_PelvicFlashRiskExtreme_Male" , 
-"AND_PelvicFlashRiskUltra_Male" , 
-"AND_EffectivelyNaked" , 
-"AND_ArmorTopT_Male" , 
-"AND_AssCurtain_Male" , 
-"AND_AssCurtainT_Male" , 
-"AND_Bra_Male" , 
-"AND_Bra_NoCover_Male" , 
-"AND_BraT_Male" , 
-"AND_ChestCurtain_Male" , 
-"AND_ChestCurtainT_Male" , 
-"AND_CoversAll_Male" , 
-"AND_BananaHammockT" , 
-"AND_EffectivelyNaked_Male" , 
-"AND_Hotpants_Male" , 
-"AND_HotpantsT_Male" , 
-"AND_Microskirt_Male" , 
-"AND_Miniskirt_Male" , 
-"AND_MiniskirtT_Male" , 
-"AND_NearlyNaked_Male" , 
-"AND_NipplePasties_Male" , 
-"AND_PelvicCurtain_Male" , 
-"AND_PelvicCurtainT_Male" , 
-"AND_HimboSkirt" , 
-"AND_HimboSkirtT" , 
-"AND_Thong_Male" , 
-"AND_Thong_NoCover_Male" , 
-"AND_ThongT_Male" , 
-"AND_Underwear_Male" , 
-"AND_Underwear_NoCover_Male" , 
-"AND_UnderwearT_Male" , 
-"AND_BananaHammock" , 
-"AND_ArmorBottom_Male" , 
-"AND_ArmorBottom_NoCover_Male" , 
-"AND_ArmorBottomT_Male" , 
-"AND_ArmorTop_Male" , 
-"AND_ArmorTop_NoCover_Male" , 
-
-*/
+			if (we_have_something_interesting_to_say) {
+				DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(thought_string);
+			}
+			// Return control, no question
             return RE::BSEventNotifyControl::kContinue;
 		} else
 		{
