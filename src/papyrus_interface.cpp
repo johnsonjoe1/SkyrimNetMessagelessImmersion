@@ -75,6 +75,58 @@ void SNMIPapyrus::SetMaidLevel(RE::StaticFunctionTag*, float a_value)
 	previous_maid_level = _maidLevel;  // update the previous level for the next check
 }
 
+void SNMIPapyrus::set_yps_AddictionLevel(RE::StaticFunctionTag*, float a_value)
+{
+    _yps_AddictionLevel = a_value;
+
+	// maybe the mod isn't even installed.  in that case the level and previous level would be 0 and nothing needs to be done
+	if (_yps_AddictionLevel == 0 && previous_yps_AddictionLevel == 0) {
+		return;
+	}
+	if (previous_yps_AddictionLevel == -1.0f) {  // This is the initial value, so we just set it without any checks, to avoid any weird messages at game start.
+		previous_yps_AddictionLevel = _yps_AddictionLevel;
+		return;
+	}	
+
+    SKSE::log::info("Note:  yps_AddictionLevel updated VIA PUSH FROM PAPYRUS: {}", a_value);
+	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
+	if ( (previous_yps_AddictionLevel < _yps_AddictionLevel) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just gained a level in overall fashion addiction according to the YPS fashion vendor!  Say so and let us know how that makes you feel!");
+		SKSE::log::info("Note:  Fashion-Addiction-level-GAIN thought was delivered.");
+	}
+	if ( (previous_yps_AddictionLevel > _yps_AddictionLevel) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just lost a level in overall fashion addiction according to the YPS fashion vendor!  Say so and let us know how that makes you feel!");
+		SKSE::log::info("Note:  Fashion-Addiction-level-LOSS thought was delivered.");
+	}	
+	previous_yps_AddictionLevel = _yps_AddictionLevel;  // update the previous level for the next check
+}
+void SNMIPapyrus::set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value)
+{
+    _yps_AddictionBuff = a_value;
+
+	// maybe the mod isn't even installed.  in that case the level and previous level would be 0 and nothing needs to be done
+	if (_yps_AddictionBuff == 0 && previous_yps_AddictionBuff == 0) {
+		return;
+	}
+	if (previous_yps_AddictionBuff == -1.0f) {  // This is the initial value, so we just set it without any checks, to avoid any weird messages at game start.
+		previous_yps_AddictionBuff = _yps_AddictionBuff;
+		return;
+	}	
+
+    SKSE::log::info("Note:  yps_AddicitonBuff updated VIA PUSH FROM PAPYRUS: {}", a_value);
+	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
+	if ( (previous_yps_AddictionBuff < _yps_AddictionBuff) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just gained a stronger boost from your YPS fashion addiction!  You appear even more radiant and people will respond more favorable to you this way!  Say so and let us know how that makes you feel!");
+		SKSE::log::info("Note:  yps_AddictionBuff-update thought was delivered.");
+	}
+	if ( (previous_yps_AddictionBuff > _yps_AddictionBuff) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just LOST some of your YPS fashion addiction buff!  You appear LESS radiant and people will respond LESS favorable to you this way!  Say so and let us know how that makes you feel!");
+		SKSE::log::info("Note:  yps_AddictionBuff-update thought was delivered.");
+	}
+	previous_yps_AddictionBuff = _yps_AddictionBuff;  // update the previous level for the next check
+}
+
+
 void SNMIPapyrus::SetMilkMax(RE::StaticFunctionTag*, float a_value)
 {
     _milkMax = a_value;
@@ -164,6 +216,12 @@ bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 	a_vm->RegisterFunction("SetMilkString", "SNMI_Native", SetMilkString);
     a_vm->RegisterFunction("SetKeepaliveLevel", "SNMI_Native", SetKeepaliveLevel);
 	a_vm->RegisterFunction("SetMaidLevel", "SNMI_Native", SetMaidLevel);
+
+	a_vm->RegisterFunction("set_yps_AddictionLevell", "SNMI_Native", set_yps_AddictionLevel);
+	a_vm->RegisterFunction("set_yps_AddictionBuff", "SNMI_Native", set_yps_AddictionBuff);
+
+	// function set_yps_AddictionLevel(float a_value) Global Native
+	// function set_yps_AddictionBuff(float a_value) Global Native
 
 	a_vm->RegisterFunction("SetYpsConditionString", "SNMI_Native", SetYpsConditionString);
     return true;

@@ -926,7 +926,7 @@ public:
 				 (keywordSet.contains("AND_ChestFlashRiskExtreme")) |
 				 (keywordSet.contains("AND_ChestFlashRiskUltra")) ) 
 			{
-				thought_string += " I bet that with this thing on, I would have a risk of flashing my ass or pelvis upon every move. ";
+				thought_string += " I bet that with this thing on, I would have a risk of flashing my chest upon every move. ";
 				we_have_something_interesting_to_say = true;
 			}
 

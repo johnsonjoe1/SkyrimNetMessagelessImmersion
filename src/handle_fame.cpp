@@ -93,14 +93,17 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 				if ( fame.name == "SLSF_Reloaded_NPCScanSucess" ) {
 					continue;  // This event is not so interesting
 				}
+				if ( fame.name == "SLSF_AllowComment" ) {
+					continue;  // This event is not so interesting
+				}
 				if ( fame.current_value > fame.previous_value ) {
 					// Increase:  say as much
-					SKSE::log::info("SLSF-Handling: Detected and INCREASE in: {}  from {} to {}.", fame.name, fame.previous_value, fame.current_value);
-					LillithOnlyBox(std::format("SLSF-Handling: Detected and INCREASE in: {} from {} to {}." , fame.name , fame.previous_value , fame.current_value));
+					SKSE::log::info("SLSF-Handling: Detected an INCREASE in: {}  from {} to {}.", fame.name, fame.previous_value, fame.current_value);
+					LillithOnlyBox(std::format("SLSF-Handling: Detected an INCREASE in: {} from {} to {}." , fame.name , fame.previous_value , fame.current_value));
 				} else {
 					// Decrease:  say as much
-					SKSE::log::info("SLSF-Handling: Detected and INCREASE in: {}  from {} to {}.", fame.name, fame.previous_value, fame.current_value);
-					LillithOnlyBox(std::format("SLSF-Handling: Detected and DECREASE in: {} from {} to {}." , fame.name , fame.previous_value , fame.current_value));
+					SKSE::log::info("SLSF-Handling: Detected a DECREASE in: {}  from {} to {}.", fame.name, fame.previous_value, fame.current_value);
+					LillithOnlyBox(std::format("SLSF-Handling: Detected a DECREASE in: {} from {} to {}." , fame.name , fame.previous_value , fame.current_value));
 				}
 			}
 			fame.previous_value = fame.global->value;

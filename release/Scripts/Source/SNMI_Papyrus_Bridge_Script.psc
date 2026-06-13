@@ -18,9 +18,7 @@ Event OnInit()
 
 EndEvent
 
-Event OnUpdate()
-
-    keepalive_value += 1.0
+function push_all_MME_variables_to_the_plugin()
     current_milk_value =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkCount")      ; FROM MME_Storage.psc
     max_milk_value     =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkMaximum")    ; FROM MME_Storage.psc
     current_lactacid   =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.LactacidCount")  ; FROM MME_Storage.psc
@@ -34,11 +32,6 @@ Event OnUpdate()
 	; 	Debug.Trace("MME_Storage: Triggered getMaidLevel() for actor " + akActor.GetLeveledActorBase().GetName())
 	; 	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level") as int
 	; endfunction
-
-	; Let's also track the lovesickness exposed variables
-	LVSK_IsLovesick = StorageUtil.GetIntValue(Game.GetPlayer(), "LVSK_IsLovesick", 0); 1 = true, 0 = false
-	LVSK_Euphoria = StorageUtil.GetFloatValue(Game.GetPlayer(), "LVSK_Euphoria", 0.0); percentage, updated every game hour
-
 
     Int MilkCnt = Math.Floor(current_milk_value)
 	Int MilkMax = Math.Floor(max_milk_value)
@@ -59,14 +52,27 @@ Event OnUpdate()
     ; debug.Notification(formatString(milk_string, Game.GetPlayer().GetLeveledActorBase().GetName()))
     ; debug.Notification(milk_string)
 
-
     SNMI_Native.SetMilkLevel(current_milk_value)
     SNMI_Native.SetMilkMax(max_milk_value)
 	SNMI_Native.SetLactacidLevel(current_lactacid)
 	SNMI_Native.SetLactacidMax(max_lactacid)
     SNMI_Native.SetMilkString(milk_string)
-    SNMI_Native.SetKeepaliveLevel(keepalive_value)
 	SNMI_Native.SetMaidLevel(mme_maid_level)
+endfunction
+
+Event OnUpdate()
+
+    keepalive_value += 1.0    ; This is just an internal counter, that will count the number of times this has run so far
+    SNMI_Native.SetKeepaliveLevel(keepalive_value)
+
+	push_all_MME_variables_to_the_plugin()
+
+	; Let's also track the lovesickness exposed variables
+	LVSK_IsLovesick = StorageUtil.GetIntValue(Game.GetPlayer(), "LVSK_IsLovesick", 0); 1 = true, 0 = false
+	LVSK_Euphoria = StorageUtil.GetFloatValue(Game.GetPlayer(), "LVSK_Euphoria", 0.0); percentage, updated every game hour
+
+
+
 
     ; Only the DEBUG-Player will receive these extra notifications, so as to make them invisible for players in the release.
     if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
@@ -77,16 +83,13 @@ Event OnUpdate()
     
 
 
-	; Test the YPS-Stuff here
+	; We take the list of current YPS-Conditions (for thoughts) and put them all into a single string, so that we can then push it to the C++ plugin
 	int count = StorageUtil.StringListCount(None, "ypsActiveConditionsList")
-
 	; Debug.Notification("Conditions: " + count)
-
 	string allConditions = ""
 	int i = 0
 	while i < count
 		string condition = StorageUtil.StringListGet(None, "ypsActiveConditionsList", i)
-
 		Debug.Trace("YPS Condition[" + i + "] = " + condition)
 		; For testing:
 		; Debug.Notification(condition)
@@ -98,11 +101,11 @@ Event OnUpdate()
 	endWhile	
 	Debug.Notification("Final YPS condition list: " + allConditions )
 	Debug.Trace("[SNMI]  Final YPS condition list: " + allConditions )
-
-
     SNMI_Native.SetYpsConditionString(allConditions)
 
-    RegisterForSingleUpdate(10.0)
+
+	
+    RegisterForSingleUpdate(10.0)  ; Restart the same function in 10 seconds
 EndEvent
 
 

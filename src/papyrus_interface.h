@@ -15,6 +15,8 @@ public:
 	static void SetMilkString(RE::StaticFunctionTag*, std::string a_value);
 	static void SetMaidLevel(RE::StaticFunctionTag*, float a_value);
 
+	static void set_yps_AddictionLevel(RE::StaticFunctionTag*, float a_value);
+	static void set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value);	
 	static void SetYpsConditionString(RE::StaticFunctionTag*, std::string a_value);
 
     static float GetMilkLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
@@ -36,7 +38,10 @@ public:
 	inline static float previous_milk_max_level = 1000000;  // simply don't speak of an increase at game start (given no saved values from previous save)
 	inline static float previous_maid_level = -1.0f; 
 
-private:
+	inline static float previous_yps_AddictionLevel = 0;
+	inline static float previous_yps_AddictionBuff = 0;
+
+	private:
     static inline float _milkLevel = 124356.0f;
 	static inline float _milkMax = 123456.0f;
 	static inline float _lactacidLevel = 0.0f;
@@ -44,6 +49,11 @@ private:
 	static inline std::string _milkString = "No milk string defined IN PLUGIN yet!";
 	static inline float _keepaliveLevel = 0.0f;
 	static inline float _maidLevel = 1.0f;
+
+	static inline float _yps_AddictionLevel = 0;
+
+	static inline float _yps_AddictionBuff = 0;
+	
 
 	static inline std::string _yps_condition_string = "No yps condition string defined IN PLUGIN yet!";
 };
