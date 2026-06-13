@@ -1,0 +1,811 @@
+
+Keywords taken from the .esp file
+/*
+0B27037D ypsClothingUgly
+0B27037E ypsClothingOrdinary
+0B27037F ypsClothingCute
+0B270380 ypsClothingFashion
+0B270381 ypsClothingSexy
+0B270382 ypsFingerlessGloves
+*/
+
+
+;MODDER RESOURCES FOR YPS FASHION MOD
+
+;Several functions of this mod can be called by a initiating a ModEvent. A few StorageUtil variables are available as well. 
+See the code examples below. Feel free to contact me if you need further functions.
+
+
+; MAKEUP
+
+SendModEvent("yps-LipstickEvent", string ColorName, int ColorRGBCode)  
+SendModEvent("yps-EyeshadowEvent", string ColorName, int ColorRGBCode)    
+; apply makeup: send name of color as string (e.g. "red", for in-game text messages), and ColorRGBCode as a 0xRRGGBB value.
+; see below for color code examples
+
+SendModEvent("yps-FingerNailsEvent", "", int ColorCode)
+SendModEvent("yps-ToeNailsEvent",  "", int ColorCode)
+; choose a ColorCode between 1 and 58 to apply nail polish, for codes see spoiler below
+; send ColorCode 0 to remove nail polish, the string value does not matter but must be there
+
+SendModEvent("yps-FingerNailsEvent", "immediate", int ColorCode)
+SendModEvent("yps-ToeNailsEvent",  “immediate”, int ColorCode)
+; adding the string "immediate" will cause nailpolish to dry immediately
+
+SendModEvent("yps-LockMakeupEvent")
+; prevents the player from manually removing/applying makeup
+; default = unlocked
+SendModEvent("yps-UnlockMakeupEvent")
+
+SendModEvent("yps-PermanentMakeupEvent")
+; if permanent, makeup will no longer wear off over time
+; default = NoPermanent
+SendModEvent("yps-NoPermanentMakeupEvent")
+
+SendModEvent("yps-DisableSmudgingEvent")
+SendModEvent("yps-EnableSmudgingEvent")
+; enable/disable makeup smudging (nail polish, lipstick, eyeshadow), default = enabled
+; disabling it will override the MCM smudge setting (no smudging at all)
+; enabling it will not override the MCM setting (will smudge according to MCM)
+
+string StorageUtil.GetStringValue(None, "yps_LipstickColor") ; no lipstick worn yields "" as result, otherwise the color name as string
+bool StorageUtil.GetIntValue(None, "yps_LipstickSmudged") ; 1 = smudged
+string StorageUtil.GetStringValue(None, "yps_EyeShadowColor")
+bool StorageUtil.GetIntValue(None, "yps_EyeShadowSmudged")
+
+string StorageUtil.GetStringValue(None, "yps_FingerNailPolishColor")
+int StorageUtil.GetIntValue(None, "yps_FingerNailPolishStage")
+string StorageUtil.GetStringValue(None, "yps_ToeNailPolishColor")
+int StorageUtil.GetIntValue(None, "yps_ToeNailPolishStage")
+; nail polish stages are: 0 = no nail polish, 10 = in process of applying nail polish, 20 = applied and drying, 30 = smudged,
+; 40 = dried and ok (will last a week), 50 = manicured (will last a month), 60 = starts chipping off, 70 = some remains left
+
+
+; PIERCINGS
+
+SendModEvent("yps-LockPiercingsEvent")
+; prevents the player from removing any piercings, including 3rd party piercings
+; default = unlocked
+SendModEvent("yps-UnlockPiercingsEvent")
+
+SendModEvent("yps-PiercingEvent", string ActorName, int PiercingSlot)
+; will play a piercing sequence, chose a PiercingSlot between 1 and 11 (see list below)
+; standard gold ball studs will be used, if the slot is already pierced there will be no effect
+; If negative PiercingSlot is given, there will be no piercing sequence, no piercings will be equipped, the piercings will count immediately as fully healed.
+; If negative PiercingSlot is given, the ActorName string can be used to set healing stages:
+; ActorString == "1": starter piercing, no grace period (cannot leave piercing slot empty, or it will heal up);
+; ActorString == "2": can wear only studs, short grace period;
+; ActorString == "3": can wear all Piercings, longer grace period; this is recommended, if 3rd party mods want to forceequip a piercing
+; anything other ActorString will count as "4": permanently pierced
+
+; query piercing stages like this:
+SendModEvent("yps-QueryPiercingStage", "", int PiercingSlot)
+Utility.Wait(0.1) ; need to wait a bit until the result is ready
+StorageUtil.GetIntValue(None, "yps-QueryPiercingStageResult")
+; possible results: -1: slot has never been pierced; 0: currently not pierced; 1: starter piercing, no grace period; 2: only studs, short grace period; 3: all Piercings, longer grace period; 4: permanent
+
+; query names of currently worn piercings (don’t use these queries too often, due to considerable papyrus load)
+SendModEvent("yps-QueryPiercingWornName", "", int PiercingSlot)
+Utility.Wait(0.1)
+StorageUtil.GetStringValue(None, "yps-QueryPiercingWornNameResult")
+
+StorageUtil.IntListGet(None, "yps_PiercingsStatus", Slot, bool Equipped as Int) ; true if piercing studs are worn (does not detect other kinds of piercings -- don't use this unless you understand what piercing studs are in this mod)
+
+
+; HIGH HEELS
+
+SendModEvent("yps-ArchedFeetEvent") ; will give player "arched feet" immediately
+SendModEvent("yps-BondageFeetEvent") ; will give player "bondage feet" immediately
+
+
+; STOCKINGS
+
+; stockings are armor items, use the corresponding GetFormFromFile command to create and equip them
+
+bool storageutil.GetIntValue(NONE,"ypsNylonsLock", int value) ; 0 = unlocked, 1 = locked, can also set the value with setIntValue
+bool storageutil.GetIntValue(NONE,"ypsNylonsCurrentlyWorn")
+form StorageUtil.GetFormValue(None, "yps_Stockings", Stockings) ; currently worn stockings item, NONE if no stockings worn
+
+
+; HAIR
+
+SendModEvent("yps-HaircutEvent", string HairstyleID, int HairLengthStage)
+; will set a new hair length stage (see elow for a list)
+; will only apply styles not longer than current hair
+; also will apply the hairstyle <HairstyleID> to the player
+; if HairstyleID is an empty string, the default hairstyle of the corresponding length will be applied
+
+SendModEvent("yps-SetHaircutEvent", string HairstyleID, int HairLengthStage)
+; same as above, but will set new hairlength, even if it is longer than current
+; for a "silent" hair length change (without any player notifications), give a negative number, e.g. HairLengthStage = -5 for silent change to ear length
+
+SendModEvent("yps-ForcePermEvent", string HairStyleID, int HairLengthStage)
+SendModEvent("yps-ForceBuzzedNapeEvent", string HairStyleID, int HairLengthStage)
+SendModEvent("yps-ForceBroadMohawkEvent", string HairStyleID, int HairLengthStage)
+SendModEvent("yps-ForceNarrowMohawkEvent", string HairStyleID, int HairLengthStage)
+; same as above, but the new haircut will count as perm, buzzed nape or mohawk (with all consequences)
+; HairstyleID may not be empty, and should of course match the hairstyle type
+
+SendModEvent("yps-HairColorBaseEvent", string HairColorName, int HairColorRGBValue)
+; will permanently change the natural hair color; for HairColorRGBValue see predefined samples below
+
+SendModEvent("yps-HairColorDyeEvent", string HairColorName, int HairColorRGBValue)
+; will dye the players hair to a given color, which will fade or grow out as set in MCM
+
+SendModEvent("yps-DisableHairgrowthEvent")
+SendModEvent("yps-EnableHairgrowthEvent") ; default: enabled
+SendModEvent("yps-DisableHairmakeoverEvent"); will prevent hair makeovers and the usage of hair styling items
+SendModEvent("yps-EnableHairmakeoverEvent") ; default: enabled
+
+int StorageUtil.GetIntValue(none, "YpsCurrentHairLengthStage")
+
+bool StorageUtil.GetIntValue(none, "ypsHairControlEnabled") ; check whether YPS mod is set to actively control hair styles
+
+int StorageUtil.GetIntValue(None, "yps_HairDyeColourInt") ; see list below
+string StorageUtil.GetStringValue(None, "yps_HairDyeColourName")
+
+bool StorageUtil.GetIntValue(None, "yps_CanChangeHairColour") ; whether player is allowed to change color according to grace period set in MCM
+bool StorageUtil.GetIntValue(None, "yps_CanRedyeHair")
+bool StorageUtil.GetIntValue(None, "yps_ShouldRedyeHair")
+
+
+; FASHION CHANGE MOD EVENT
+
+; called by the mod upon any fashion change
+SendFashionChangeEvent(String ChangeType, Float numArg = 0.0)
+; ChangeTypes: "Lipstick", "Eyeshadow", "FingerNailPolish", "ToeNailPolish", "Stockings", "Piercings"
+; numArg (only for piercings): piercing slot value (see list below)
+
+
+; PUBIC HAIR
+
+storageutil.SetIntValue(NONE,"ypsPubicHairGrowthEnabled", int value)
+storageutil.SetIntValue(NONE,"ypsArmpitHairGrowthEnabled", int value)
+; enable or disable armpit/pubic hair growth (value 0 is off, 1 is on); also can use GetIntValue here
+
+SendModEvent("yps-SetPubicHairLengthEvent", "", int HairLengthStage)
+SendModEvent("yps-SetArmpitsHairLengthEvent", "", int HairLengthStage)
+; sets length of player pubic or armpit hair
+; HairLengthStage: 0 = shaved, 5 = full bush (or anything in between)
+; calling the event with HairLengthStage = -1 will have armpits/pubes hair permanently removed, and will set the above GrowthEnabled variables to false,
+
+int StorageUtil.GetIntValue(None, "yps_PubicHairStage")
+int StorageUtil.GetIntValue(None, "yps_ArmpitHairStage")
+
+int StorageUtil.GetIntValue(none, "ypsPubicHairEnabled") ; will return 1, if the corresponding variabls in MCM are set, otherwise 0
+int StorageUtil.GetIntValue(none, "ypsArmpitHairEnabled")
+
+; FASHION ADDICTION
+
+StorageUtil.GetIntValue(None, "yps_AddictionLevel") ; current Fashion Addiction level (0-11)
+StorageUtil.GetIntValue(None, "yps_AddictionBuff"); level of current Fashion Addiction buff
+SendModEvent("yps-SetFashionAddictionLevel", "", int newFashionAddictionLevel) ; level 0-11 is allowed
+
+; GENDER AND NAME CHANGE
+
+SendModEvent("yps-SetPlayerGenderEvent", string NewGender, int Permanence = 0)
+; will set the player gender (and force player to change it when necessary)
+; values for NewGender: "male", "female"
+; if the value of Permanence != 0, the change will be permanent (and never again be changed by future mod events or potions)
+
+SendModEvent("yps-SetPlayerNameEvent", string NewPlayerName, int RandomName)
+; RandomName = 0: will set player name to NewPlayerName
+; RandomName = 1: set player name to random male name (ignore NewPlayerName)
+; RandomName = 2: set player name to random female name (ignore NewPlayerName)
+; (list of random names is stored in ../ypsFashion/ypsNames.json)
+
+SendModEvent("yps-LockPlayerNameEvent", "", int LockName)
+; lock name means: YPS will continuously overwrite the player name with the stored "locked" name, thus overriding name changes by other mods or racemenu
+; LockName = 0: unlock name; LockName = 1: lock name
+
+
+; QUERY VERSION
+
+; can query the version as string (e.g. "6.5") and int value of the last version date (e.g. 230608 for 08 June 2023 → easier to compare) with these commands:
+JsonUtil.Load("../ypsFashion/ypsData.json")
+string ypsVersion = JsonUtil.StringListGet("../ypsFashion/ypsData.json","versionstring",0 )
+int ypsVersionDate = JsonUtil.IntListGet("../ypsFashion/ypsData.json","versiondate",0 )
+
+; ADDITIONAL DATA
+
+; Lists of piercing slots:
+; [1] = earlobes, [2] = left nostril, [3] = septum, [4] = snake bites, [5] = right labret, [6] = labret, [7] = right eyebrow, [8] = nose bridge, [9] = navel, [10] = nipples, [11] = clitoris
+
+;List of nail polish colors:
+;aqua 1; black 2; blue 3; brightred 4; darkred 5; gold 6; green 7; pink 8; purple 9; kaw silver 10; clear 11; grey tips 12; zebra red 13; blood red 14; dark blue 15; dark green 16; clear extension 17; black 18; blue 19; gold 20; green 21; red 22; gold glitter 23; shimmer-aqua 24; shimmer-black 25; shimmer-blackcherry 26; shimmer-blue 27; shimmer-brightcherry 28; shimmer-brightpink 29; shimmer-cherry 30; shimmer-clear 31; shimmer-clear1 32; shimmer-clear2 33; shimmer-darkblue 34; shimmer-darkgreen 35; shimmer-grass 36; shimmer-grey 37; shimmer-ivory 38; shimmer-lemon 39; shimmer-lightgreen 40; shimmer-magenta 41; shimmer-orange 42; shimmer-purple 43; shimmer-rosepink 44; shimmer-silver 45; shimmer-skyblue 46; shimmer-white 47; silver glitter 48; red glitter 49; shimmer-darkcherry 50;himmer-violet 51; glitter-apricot 52; glitter-copper 53; glitter-green 54; glitter-blue 55; smudged-cherry-swirl 56; red-white-dots 57; white-red-dots 58
+
+;Sample RGB color codes for eyeshadow:
+;Azure 007fff; Black 000000; Chocolate 7b3f00; Cinnabar e34234; Emerald Green 50c878; Grape 6f2da8; Honey a98307; Jade Green 00a86b; Lilac c8a2c8; Midnight Blue 191970; Pink ffc0cb; Plum dda0dd; Silver c0c0c0; Steel Blue 4682b4
+
+; Sample RGB color codes for lipstick:
+; Alizarin Crimson e32636; Amaranth e52b50; Crimson dc143c; American Rose ff033e; Auburn a52a2a; Burgundy 900020; Cardinal c41e3a; Carmine 960018; Carnelian b31b1b; Cerise de3163; Coquelicot ff3800; Red ff0000; Dark Red 8b0000; Electric Crimson ff003f; Fire Brick b22222; Flame e25822; Folly ff004f; French Red c41230; Fuchsia fa00a1; Indian Red cd5c5c; Lava cf1020; Lust e62020; Magenta ff00ff; Maroon 800000; Mahogany c04000; Oxblood 800020; Pink ffc0db; Raspberry e30b5c; Red-violet c71585; Redwood a45a52; Rose ff007f; Rosewood 65000b; Rosso Corsa cc0000; Ruby e0155f; Rust b7410e; Scarlet ff2400; Terra Cotta e2725b; Turkey Red a91101; Tuscan Red 7c3030; Tyrian Purple 66023c; Venetian Red c80815; Vermilion e34234; Wine 722f37
+
+; List of predefined hair color rgb codes:
+;[2]="Black", [3]="Off Black", [4]="Dark Gray", [5]="Medium Gray", [6]="Light Gray", [7]="Platinum Blonde", [8]="Bleached Blonde", [9]="White Blonde", [10]="Light Blonde", [11]="Golden Blonde", [12]="Ash Blonde", [13]="Honey Blonde", [14]="Strawberry Blonde", [15]="Light Red", [16]="Dark Red", [17]="Light Auburn (Red)", [18]="Dark Auburn (Red)", [19]="Dark Brown", [20]="Golden Brown", [21]="Medium Brown", [22]="Chestnut Brown", [23]="Brown", [24]="Light Brown", [25]="Ash Brown", [26]="Light Blue", [27]="Light Green", [28]="Pink (Red)", [29]="Magenta (Red)", [30]="Aubergine (Red)", [31]="Medium Blue", [32]="Medium Green", [33]="Dark Blue", [34]="Dark Green", [35]="Light Turquoise (Blue Green)", [36]="Medium Turquoise (Blue Green)", [37]="Dark Turquoise (Blue Green)", [38]="Burgundy Red"
+;[2]=0x00040403, [3]=0x00090909, [4]=0x00202326, [5]=0x002A2D31, [6]=0x00515B70, [7]=0x00CABFB1, [8]=0x00DCD0BA, [9]=0x0050585C, [10]=0x00726454, [11]=0x00736754, [12]=0x00DEBC99, [13]=0x005C4B3C, [14]=0x00523523, [15]=0x005A291C, [16]=0x00260A02, [17]=0x00482A1E, [18]=0x00291E19, [19]=0x001D1812, [20]=0x002A241C, [21]=0x0027211F, [22]=0x00282222, [23]=0x00352721, [24]=0x00534235, [25]=0x004B3C30, [26]=0x0000007F, [27]=0x00007F00, [28]=0x007F6065, [29]=0x007F007F, [30]=0x00301340, [31]=0x00000033, [32]=0x00002F00, [33]=0x00000022, [34]=0x00001600, [35]=0x00207067, [36]=0x00103733, [37]=0x000A2422, [38]=0x0020000A
+
+; List of hair length stages:
+; [1] = "bald", [2] = "short stubbles", [3] = "long stubbles", [4] = "cropped", [5] = "ear length", [6] = "chin length", [7] = "neck length", [8] = "shoulder length", [9] = "armpit length", [10] = "bra strap length", [11] = "mid back length", [12] = "waist length", [13] = "hip length", [14] = "tailbone length", [15] = "classic length", [16] = "mid-thigh length", [17] = "knee length", [18] = "calf length", [19] = "ankle length", [20] = "floor length", [21] = "rapunzel length".
+; Minimum length in cm:
+; [1] = 0.0, [2] = 0.3, [3] = 1.0, [4] = 3.0, [5] = 6.0, [6] = 12.0, [7] = 20.0, [8] = 30.0, [9] = 37.0, [10] = 45.0, [11] = 52.0, [12] = 60.0, [13] = 75.0, [14] = 90.0, [15] = 105.0, [16] = 120.0, [17] = 135.0, [18] = 145.0, [19] = 160.0, [20] = 180.0, [21] = 210.0
+
+====================================================================================================================================================================
+====================================================================================================================================================================
+====================================================================================================================================================================
+====================================================================================================================================================================
+====================================================================================================================================================================
+
+https://www.loverslab.com/topic/56627-immersive-hair-growth-and-styling-yps-devious-immersive-fashion-2025-06-08/page/139/#findComment-4305170
+Commented list of YPS papyrus (storageutil) variables that can be used with the thought system (v. 6.2.2):
+
+active fashion buff, strength level 0 to 11:
+"yps_FashionAddictionBuffLevel0", "yps_FashionAddictionBuffLevel1", "yps_FashionAddictionBuffLevel2", "yps_FashionAddictionBuffLevel3", "yps_FashionAddictionBuffLevel4", 
+"yps_FashionAddictionBuffLevel5", "yps_FashionAddictionBuffLevel6", "yps_FashionAddictionBuffLevel7", "yps_FashionAddictionBuffLevel8", "yps_FashionAddictionBuffLevel9", 
+"yps_FashionAddictionBuffLevel10", "yps_FashionAddictionBuffLevel11",
+
+active fashion debuff, strength level 1 to 10:
+"yps_FashionAddictionBuffLevel-1", "yps_FashionAddictionBuffLevel-2", "yps_FashionAddictionBuffLevel-3", "yps_FashionAddictionBuffLevel-4", "yps_FashionAddictionBuffLevel-5", 
+"yps_FashionAddictionBuffLevel-6", "yps_FashionAddictionBuffLevel-7", "yps_FashionAddictionBuffLevel-8", "yps_FashionAddictionBuffLevel-9", "yps_FashionAddictionBuffLevel-10",
+
+Nylons:
+"ypsNylonsCurrentlyWorn"
+
+Nail polish:
+"ypsToenailPolishWorn", "ypsToenailPolishSmudged", "ypsToenailPolishChippingOff", "ypsFingernailPolishWorn", "ypsFingernailPolishSmudged", "ypsFingernailPolishProfessional", 
+"ypsFingernailPolishChippingOff", "ypsPerfectManicure"
+
+Other makeup:
+"ypsLipstickWorn", "yps_LipstickSmudged", "ypsLipBalmWorn", "ypsAntiAgingCreamWorn", "ypsFingerNailOilWorn", "ypsEyeshadowWorn", "yps_EyeShadowSmudged", "ypsPerfumeWorn", "ypsPerfectMakeup"
+
+Ear piercing stages:  -1: ears have never been pierced; 0: ears not pierced; 1: starter piercing, no grace period; 2: only studs, short grace period; 3: all Piercings, longer grace period; 4: permanent
+"ypsEarPiercingStage-1", "ypsEarPiercingStage0", "ypsEarPiercingStage1", "ypsEarPiercingStage2", "ypsEarPiercingStage3", "ypsEarPiercingStage4", "ypsEarringsWorn",
+
+; worn piercing in piercing slots: 2 left nostril, 3 septum, 4 snake bites, 5 right labret, 6 labret, 7 right eyebrow, 8 nose bridge, 9 navel, 10 nipples, 11 clitoris (need to enable "piercing monitor" in MCM to make these work)
+"ypsPiercingWornSlot2","ypsPiercingWornSlot3","ypsPiercingWornSlot4","ypsPiercingWornSlot5","ypsPiercingWornSlot6","ypsPiercingWornSlot7","ypsPiercingWornSlot8","ypsPiercingWornSlot9","ypsPiercingWornSlot10","ypsPiercingWornSlot11",
+
+Armpit / pubic hair stages: 0 = no hair, 5 = full hair
+"ypsArmpitHairStage0", "ypsArmpitHairStage1", "ypsArmpitHairStage2", "ypsArmpitHairStage3", "ypsArmpitHairStage4", "ypsArmpitHairStage5",
+"ypsPubicHairStage0", "ypsPubicHairStage1", "ypsPubicHairStage2", "ypsPubicHairStage3", "ypsPubicHairStage4", "ypsPubicHairStage5",
+
+Heels and heel training status: 0 = untrained; 10 = high heel novice; 20 = flexible feet; 30 = high heel walker; 40 = arched feet; 50 = slave feet
+"ypsHeelsWorn", "ypsHeelTrainingStatus0", "ypsHeelTrainingStatus10", "ypsHeelTrainingStatus20", "ypsHeelTrainingStatus30", "ypsHeelTrainingStatus40", "ypsHeelTrainingStatus50",
+
+Hair length stages: ; 1 = bald, 2 = short stubbles, 3 = long stubbles, 4 = cropped, 5 = ear length, 6 = chin length, 7 = neck length, 8 = shoulder length, 9 = armpit length, 10 = bra strap length, 11 = mid back length, 12 = waist length, 13 = hip length, 14 = tailbone length, 15 = classic length, 16 = mid-thigh length, 17 = knee length, 18 = calf length, 19 = ankle length, 20 = floor length, 21 = rapunzel length.
+"ypsHairlengthStage1", "ypsHairlengthStage2", "ypsHairlengthStage3", "ypsHairlengthStage4", "ypsHairlengthStage5", "ypsHairlengthStage6", "ypsHairlengthStage7", "ypsHairlengthStage8", "ypsHairlengthStage9", "ypsHairlengthStage10", "ypsHairlengthStage11",
+"ypsHairlengthStage12", "ypsHairlengthStage13", "ypsHairlengthStage14", "ypsHairlengthStage15", "ypsHairlengthStage16", "ypsHairlengthStage17", "ypsHairlengthStage18", "ypsHairlengthStage19", "ypsHairlengthStage20", "ypsHairlengthStage21",
+
+Combined hair stages:
+"ypsHasShortHair" (up to neck length, = stage 7)
+"ypsHasLongHair" (bra-strap length = stage 10 and up)
+
+Special hair types: 0 = standard, 1 = permed, 2 = braided, 3 = ponytail, 4 = buzzed nape, 5 = broad mohawk, 6 = narrow mohawk
+"ypsHairDyed", "ypsSpecialHairType0", "ypsSpecialHairType1", "ypsSpecialHairType2", "ypsSpecialHairType3", "ypsSpecialHairType4", "ypsSpecialHairType5", "ypsSpecialHairType6"
+
+When it's about time to refresh your style: "ypsHairDyeReminder", "ypsNapeBuzzReminder"
+
+Love Status: 0 = none (default), 1 = young love (has bf/gf), 2 = being loved (has bf/gf), 3 = in a relationship (has bf/gf), 4 = lovesick (relationship broken up), 5 = lonely (relationship broken up), 6 = lost opportunity (relationship broken up)
+"ypsCurrentLoveState0", "ypsCurrentLoveState1", "ypsCurrentLoveState2", "ypsCurrentLoveState3", "ypsCurrentLoveState4", "ypsCurrentLoveState5", "ypsCurrentLoveState6",
+
+Player sexual orientation: 0 = hetero, 1 = bi, 2 = homosexual
+"ypsSexualOrientation0", "ypsSexualOrientation1",  "ypsSexualOrientation2"
+
+Variables denoting previous states (which were previously true, but currently no longer):
+"ypsHadShortHair", "ypsHadLongHair"
+"ypsHadHairDyed", "ypsHadSpecialHairType0", "ypsHadSpecialHairType0", "ypsHadSpecialHairType2", "ypsHadSpecialHairType3", "ypsHadSpecialHairType4", "ypsHadSpecialHairType5", "ypsHadSpecialHairType6",
+"ypsHadHairDyed", "ypsHadNylons"
+"ypsHadLipstick", "ypsHadEyeshadow"
+"ypsHadFingernailPolish" (refering to normal nail polish; not professional)
+"ypsHadFingernailPolishProfessional"
+"ypsHadToenailPolish"
+"ypsHadLipBalm","ypsHadFingerNailOil","ypsHadAntiAgingCream","ypsHadPerfume",
+"ypsHadShavedArmpits","ypsHadShavedPubic",
+
+Sexlab arousal conditions:
+"ypsSLAdistracted" (SLA level ≥ 50), "ypsSLAaroused" (≥ 70), "ypsSLAneedsex" (≥ 90)
+
+Quest variables:
+"ypsShemale", "ypsPostopMTF",  "ypsInfibulated"
+
+General conditions:
+"ypsGeneral": Always true, for thoughts to be played wihout a specific condition.
+
+
+
+==============================================================================================================================================================
+
+
+ypsDibellaQuest.psc:82:	StorageUtil.SetStringValue(none,"ypsTransformationFileName","../ypsThoughts/ypsTransformationstoriesDibellaQuest.json")
+ypsDibellaQuest.psc:226:		StorageUtil.SetFloatValue(Game.GetPlayer(), "SLAroused.ActorExposure",0) 
+ypsDibellaQuest.psc:315:	StorageUtil.SetIntValue(Game.Getplayer(), "zad_RemovalToken" + yps_SlaveBoots, 1)
+ypsDibellaQuest.psc:379:	StorageUtil.SetIntValue(Game.Getplayer(), "zad_RemovalToken" + yps_zadx_chastitybelt_Padded_LS_White_Inventory, 1)
+ypsDibellaQuest.psc:463:	StorageUtil.SetIntValue(Game.Getplayer(), "zad_RemovalToken" + yps_chastitybra, 1)
+ypsDibellaQuest.psc:512:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsDibellaQuest.psc:533:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsDibellaQuest.psc:547:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsDibellaQuest.psc:589:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsDibellaQuest.psc:613:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsDibellaQuest.psc:700:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsDibellaQuest.psc:871:	StorageUtil.SetIntValue(Game.Getplayer(), "zad_RemovalToken" + yps_chastitybelt, 1)
+ypsDibellaQuest.psc:942:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsDibellaQuest.psc:947:	StorageUtil.SetIntValue(None, "ypsPostopMTF", ypsPlayerIsPostOpMTF.GetValueInt())
+ypsDibellaQuest.psc:948:	StorageUtil.SetIntValue(None, "ypsShemale",ypsPlayerIsShemale.GetValueInt())
+ypsDibellaQuest.psc:958:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsDibellaQuest.psc:973:	StorageUtil.SetIntValue(Game.Getplayer(), "zad_RemovalToken" + yps_zadx_chastitybelt_Padded_LS_White_Inventory, 1)
+ypsDibellaQuest.psc:992:	StorageUtil.SetIntValue(Game.Getplayer(), "zad_RemovalToken" + ypsDilatorInventory1, 1)
+ypsDibellaQuest.psc:1024:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsDibellaQuest.psc:1056:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsDibellaQuest.psc:1071:	StorageUtil.SetIntValue(Game.Getplayer(), "zad_RemovalToken" + yps_zadx_chastitybelt_Padded_LS_White_Inventory, 1)
+ypsDibellaQuest.psc:1109:	StorageUtil.SetIntValue(Game.Getplayer(), "zad_RemovalToken" + ypsDilatorInventory1, 1)
+ypsDibellaQuest.psc:1145:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsDibellaQuest.psc:1153:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsDibellaQuest.psc:1159:	StorageUtil.SetIntValue(Game.Getplayer(), "zad_RemovalToken" + yps_zadx_chastitybelt_Padded_LS_White_Inventory, 1)
+ypsDibellaQuest.psc:1183:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsDibellaQuest.psc:1190:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsDibellaQuest.psc:1206:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsFlirt.psc:274:	StorageUtil.SetIntValue(None, "ypsCurrentLoveState"+CurrentLoveState, 1)
+ypsFlirt.psc:277:			StorageUtil.SetIntValue(None, "ypsLoverMale", 1)
+ypsFlirt.psc:279:			StorageUtil.SetIntValue(None, "ypsLoverFemale", 1)
+ypsFlirt.psc:285:	StorageUtil.SetIntValue(None, "ypsCurrentLoveState"+CurrentLoveState, 0)
+ypsFlirt.psc:287:	StorageUtil.SetIntValue(None, "ypsCurrentLoveState"+CurrentLoveState, 1)
+ypsFlirt.psc:300:		StorageUtil.SetIntValue(None, "ypsLoverMale", 1)
+ypsFlirt.psc:301:		StorageUtil.SetIntValue(None, "ypsLoverFemale", 0)
+ypsFlirt.psc:307:		StorageUtil.SetIntValue(None, "ypsLoverFemale", 1)
+ypsFlirt.psc:308:		StorageUtil.SetIntValue(None, "ypsLoverMale", 0)
+ypsHairScript.psc:263:		StorageUtil.SetIntValue(None, "ypsSpecialHairType"+PlayerSpecialHairtype, 0)
+ypsHairScript.psc:264:		StorageUtil.SetIntValue(None, "ypsHadSpecialHairType"+PlayerSpecialHairtype, 1)
+ypsHairScript.psc:267:		StorageUtil.SetIntValue(None, "ypsSpecialHairType"+PlayerSpecialHairtype, 1)
+ypsHairScript.psc:268:		StorageUtil.SetIntValue(None, "ypsHadSpecialHairType"+PlayerSpecialHairtype, 0)
+ypsHairScript.psc:306:		StorageUtil.StringListClear(none,"ypsUIEList")
+ypsHairScript.psc:307:        StorageUtil.StringListAdd(none,"ypsUIEList","[random]")
+ypsHairScript.psc:311:			StorageUtil.StringListAdd(none,"ypsUIEList",HairStageName[i])
+ypsHairScript.psc:379:		StorageUtil.StringListClear(none,"ypsUIEList")
+ypsHairScript.psc:380:        StorageUtil.StringListAdd(none,"ypsUIEList","[random]")
+ypsHairScript.psc:383:			StorageUtil.StringListAdd(none,"ypsUIEList",HairColorName[i])
+ypsHairScript.psc:574:		StorageUtil.StringListClear(none,"ypsUIEList")
+ypsHairScript.psc:582:					StorageUtil.StringListAdd(none,"ypsUIEList",MCMValues.CustomHairStyleName[i])
+ypsHairScript.psc:619:				StorageUtil.StringListClear(none,"ypsUIEList") ; preparing hairstyle list
+ypsHairScript.psc:621:					StorageUtil.StringListAdd(none,"ypsUIEList","[finish selection]")
+ypsHairScript.psc:623:				StorageUtil.StringListAdd(none,"ypsUIEList","[random]")
+ypsHairScript.psc:631:							StorageUtil.StringListAdd(none,"ypsUIEList",JsonUtil.StringListGet(HairModListName,StageAndType,j))
+ypsHairScript.psc:648:                	int ListCount = StorageUtil.StringListCount(none,"ypsUIEList")
+ypsHairScript.psc:651:	                    	SelectionResult = StorageUtil.StringListGet(none,"ypsUIEList",Utility.RandomInt(2,ListCount - 1)) ; first 2 items are finish selection, surprise me
+ypsHairScript.psc:657:							SelectionResult = StorageUtil.StringListGet(none,"ypsUIEList",Utility.RandomInt(1,ListCount - 1)) ; first items is surprise me
+ypsHairScript.psc:719:	StorageUtil.SetIntValue(None, "ypsHairlengthStage"+CurrentHairLengthStage, 0)
+ypsHairScript.psc:720:	StorageUtil.SetIntValue(None, "ypsHasShortHair", 0)
+ypsHairScript.psc:721:	StorageUtil.SetIntValue(None, "ypsHasLongHair", 0)
+ypsHairScript.psc:723:		StorageUtil.SetIntValue(None, "ypsHadShortHair", 1)
+ypsHairScript.psc:726:		StorageUtil.SetIntValue(None, "ypsHadLongHair", 1)
+ypsHairScript.psc:730:		StorageUtil.SetIntValue(None, "ypsHasShortHair", 1)
+ypsHairScript.psc:731:		StorageUtil.SetIntValue(None, "ypsHadShortHair", 0)
+ypsHairScript.psc:733:		StorageUtil.SetIntValue(None, "ypsHasLongHair", 1)
+ypsHairScript.psc:734:		StorageUtil.SetIntValue(None, "ypsHadLongHair", 0)
+ypsHairScript.psc:736:	StorageUtil.SetIntValue(None, "ypsHairlengthStage"+CurrentHairLengthStage, 1)
+ypsHairScript.psc:737:	StorageUtil.SetIntValue(none, "YpsCurrentHairLengthStage", NewStage)
+ypsHairScript.psc:804:			StorageUtil.SetIntValue(None, "ypsHadShortHair", 0)
+ypsHairScript.psc:805:			StorageUtil.SetIntValue(None, "ypsHadLongHair", 0)
+ypsHairScript.psc:824:			StorageUtil.SetIntValue(none, "YpsCurrentHairLengthStage", CurrentHairLengthStage)
+ypsHairScript.psc:826:			StorageUtil.SetIntValue(None, "ypsHairlengthStage"+CurrentHairLengthStage, 1)
+ypsHairScript.psc:828:				StorageUtil.SetIntValue(None, "ypsHasShortHair", 1)
+ypsHairScript.psc:830:				StorageUtil.SetIntValue(None, "ypsHasLongHair", 1)
+ypsHairScript.psc:989:			StorageUtil.SetIntValue(None, "ypsHairDyeReminder", 1)
+ypsHairScript.psc:991:			StorageUtil.SetIntValue(None, "ypsHairDyeReminder", 0)
+ypsHairScript.psc:995:		If StorageUtil.GetIntValue(None, "yps_ShouldRedyeHair", Missing = 0) != HairDyeReminder
+ypsHairScript.psc:1000:			StorageUtil.SetIntValue(None, "ypsNapeBuzzReminder", 1)
+ypsHairScript.psc:1002:			StorageUtil.SetIntValue(None, "ypsNapeBuzzReminder", 0)
+ypsHairScript.psc:1061:	If HairRedyePossible != StorageUtil.GetIntValue(None, "yps_CanRedyeHair", Missing = 0)
+ypsHairScript.psc:1064:		StorageUtil.SetIntValue(None, "yps_CanRedyeHair", HairRedyePossible as Int)
+ypsHairScript.psc:1068:	If CanChangeHairColour != StorageUtil.GetIntValue(None, "yps_CanChangeHairColour", Missing = 1)
+ypsHairScript.psc:1071:		StorageUtil.SetIntValue(None, "yps_CanChangeHairColour", CanChangeHairColour as Int)
+ypsHairScript.psc:1263:	StorageUtil.SetIntValue(None, "yps_CurrentHairColour", Result)
+ypsHairScript.psc:2306:	StorageUtil.SetIntValue(None, "ytfThoughtsDisabled",1)
+ypsHairScript.psc:2775:	StorageUtil.SetIntValue(None, "ytfThoughtsDisabled",0)
+ypsHairScript.psc:2782:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1) ; stop the ticker
+ypsHairScript.psc:3156:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0) ; reactivate the ticker
+ypsHairScript.psc:3285:	StorageUtil.SetIntValue(None, "ypsHairlengthStage"+CurrentHairLengthStage, 1)
+ypsHairScript.psc:3286:	StorageUtil.SetIntValue(None, "ypsSpecialHairType"+PlayerSpecialHairtype, 1)
+YpsHeelsNio.psc:97:		StorageUtil.SetIntValue(None, "ypsHeelsWorn", 0)
+YpsHeelsNio.psc:102:		StorageUtil.SetIntValue(None, "ypsHeelsWorn", 1)
+YpsHeelsNio.psc:109:		StorageUtil.SetIntValue(None, "ypsHeelsWorn", 1)
+YpsHeelsNio.psc:111:		StorageUtil.SetIntValue(None, "ypsHeelsWorn", 0)
+YpsHeelsNio.psc:146:	if (playeractor.HasMagicEffect(ypsEffPerfectManicure) || StorageUtil.GetIntValue(None, "ypsBrokenNailtips") ) && (!akSourceContainer || !MCMValues.DropOnlyWorldObjects) && (akSourceContainer != Game.GetPlayer()) && 
+(akBaseItem.haskeyword(VendorItemClutter) || akBaseItem.haskeyword(VendorItemGem) || akBaseItem.haskeyword(VendorItemSoulGem) || akBaseItem.haskeyword(VendorItemTool))  ; received item from world or a container
+YpsHeelsTicker.psc:124:	StorageUtil.SetIntValue(None, "ypsHeelTrainingStatus0", 0)
+YpsHeelsTicker.psc:226:		StorageUtil.SetIntValue(None, "ypsHeelTrainingStatus"+HeelTrainingStatus, 0)
+YpsHeelsTicker.psc:238:		StorageUtil.SetIntValue(None, "ypsHeelTrainingStatus"+HeelTrainingStatus, 1)
+YpsHeelsTicker.psc:268:		StorageUtil.SetIntValue(None, "ypsHeelTrainingStatus"+HeelTrainingStatus, 0)
+YpsHeelsTicker.psc:278:		StorageUtil.SetIntValue(None, "ypsHeelTrainingStatus"+HeelTrainingStatus, 1)
+ypsNylonsAlias.psc:46:	StorageUtil.FormListInsert(StockingActor, "yps_StockingQueue", 0, akBaseObject)
+ypsNylonsAlias.psc:47:	StorageUtil.IntListInsert(StockingActor, "yps_StockingQueue", 0, Equipped as Int)
+ypsNylonsAlias.psc:54:	While StorageUtil.FormListCount(StockingActor, "yps_StockingQueue") > 0
+ypsNylonsAlias.psc:55:		Equipped = StorageUtil.IntListPop(StockingActor, "yps_StockingQueue")
+ypsNylonsAlias.psc:56:		akBaseObject = StorageUtil.FormListPop(StockingActor, "yps_StockingQueue")
+ypsNylonsAlias.psc:77:	;StorageUtil.FormListClear(akActor, "yps_StockingQueue")
+ypsNylonsAlias.psc:78:	;StorageUtil.IntListClear(akActor, "yps_StockingQueue")
+ypsPiercingTicker.psc:416:	StorageUtil.IntListResize(None, "yps_PiercingsStatus", toLength = 16, filler = 0)
+ypsPiercingTicker.psc:417:	StorageUtil.SetFloatValue(None, "YPS_TweakVersion", 2.0)
+ypsPiercingTicker.psc:733:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0) ; reactivate the ticker
+ypsPiercingTicker.psc:765:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:767:	StorageUtil.SetIntValue(None, "ytfThoughtsDisabled",1)
+ypsPiercingTicker.psc:827:	StorageUtil.SetIntValue(None, "ytfThoughtsDisabled",0)
+ypsPiercingTicker.psc:828:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0) ; reactivate the ticker
+ypsPiercingTicker.psc:1184:			StorageUtil.SetIntValue(None, "ypsEarringsWorn", 0) ; first clear earrings, will be set a few lines below
+ypsPiercingTicker.psc:1186:			StorageUtil.SetIntValue(None, "ypsPiercingWornSlot"+PSlot, 0) ; other piercings
+ypsPiercingTicker.psc:1210:					StorageUtil.SetIntValue(None, "ypsEarringsWorn", 1)
+ypsPiercingTicker.psc:1212:					StorageUtil.SetIntValue(None, "ypsPiercingWornSlot"+PSlot, 1)
+ypsPiercingTicker.psc:1254:	playanims = playanims && (StorageUtil.GetIntValue(PlayerActor,"DCUR_SceneRunning") == 0) && !PlayerActor.IsBleedingOut() && !PlayerActor.IsUnconscious() && (ypsSuspendAnimations.GetValueInt() == 0)
+ypsPiercingTicker.psc:1657:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:1712:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0) ; reactivate the ticker
+ypsPiercingTicker.psc:1727:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:1768:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0) ; reactivate the ticker
+ypsPiercingTicker.psc:1843:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:1877:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0) ; reactivate the ticker
+ypsPiercingTicker.psc:2011:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:2060:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:2068:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:2139:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:2155:	int CurseEnabled = StorageUtil.GetIntValue(none, "CC_IsBimboCurseEnabled") 
+ypsPiercingTicker.psc:2309:	StorageUtil.SetIntValue(None, "ypsFingernailPolishWorn",0)
+ypsPiercingTicker.psc:2310:	StorageUtil.SetIntValue(None, "ypsFingernailPolishSmudged",0)
+ypsPiercingTicker.psc:2311:	StorageUtil.SetIntValue(None, "ypsFingernailPolishProfessional",0)
+ypsPiercingTicker.psc:2312:	StorageUtil.SetIntValue(None, "ypsFingernailPolishChippingOff",0)
+ypsPiercingTicker.psc:2313:	StorageUtil.SetIntValue(None, "ypsBrokenNailtips",0)
+ypsPiercingTicker.psc:2314:	StorageUtil.SetIntValue(None, "ypsDamagedNails",0)
+ypsPiercingTicker.psc:2315:	StorageUtil.SetIntValue(None, "ypsNeedNailRefill",0)
+ypsPiercingTicker.psc:2317:		StorageUtil.SetIntValue(None, "ypsFingernailPolishSmudged",1)
+ypsPiercingTicker.psc:2319:		StorageUtil.SetIntValue(None, "ypsPerfectManicure",0)
+ypsPiercingTicker.psc:2321:		StorageUtil.SetIntValue(None, "ypsFingernailPolishWorn",1)
+ypsPiercingTicker.psc:2322:		StorageUtil.SetIntValue(None, "ypsHadFingernailPolish",0)
+ypsPiercingTicker.psc:2324:		StorageUtil.SetIntValue(None, "ypsFingernailPolishProfessional",1)
+ypsPiercingTicker.psc:2325:		StorageUtil.SetIntValue(None, "ypsHadFingernailPolishProfessional",0)
+ypsPiercingTicker.psc:2327:		StorageUtil.SetIntValue(None, "ypsBrokenNailtips",1)
+ypsPiercingTicker.psc:2328:		StorageUtil.SetIntValue(None, "ypsNeedNailRefill",1)
+ypsPiercingTicker.psc:2332:		StorageUtil.SetIntValue(None, "ypsFingernailPolishChippingOff",1)
+ypsPiercingTicker.psc:2333:		StorageUtil.SetIntValue(None, "ypsPerfectManicure",0)
+ypsPiercingTicker.psc:2336:		StorageUtil.SetIntValue(None, "ypsDamagedNails",1)
+ypsPiercingTicker.psc:2342:		StorageUtil.SetIntValue(None, "ypsPerfectManicure",0)
+ypsPiercingTicker.psc:2356:		StorageUtil.SetIntValue(None, "ypsHadFingernailPolish",1)
+ypsPiercingTicker.psc:2359:		StorageUtil.SetIntValue(None, "ypsHadFingernailPolishProfessional",1)
+ypsPiercingTicker.psc:2362:			StorageUtil.SetIntValue(None, "ypsBimboNailtipLengthSufficient",0)
+ypsPiercingTicker.psc:2364:			StorageUtil.SetIntValue(None, "ypsBimboNailtipLengthSufficient",1)
+ypsPiercingTicker.psc:2635:				StorageUtil.StringListClear(none,"ypsUIEList")
+ypsPiercingTicker.psc:2636:				StorageUtil.StringListAdd(none,"ypsUIEList","(be a nail model)")
+ypsPiercingTicker.psc:2654:									StorageUtil.StringListAdd(none,"ypsUIEList",ShapeAndLength)
+ypsPiercingTicker.psc:2661:				if (StorageUtil.StringListCount(none,"ypsUIEList") == 1) ; && ( YPS04DibellaFollower.Getstage() != 410 )
+ypsPiercingTicker.psc:2683:								StringResult = StorageUtil.StringListGet(none,"ypsUIEList",Utility.RandomInt(2,StorageUtil.StringListCount(none,"ypsUIEList")) - 1)
+ypsPiercingTicker.psc:2709:				StorageUtil.StringListClear(none,"ypsUIEList")
+ypsPiercingTicker.psc:2713:;					StorageUtil.StringListAdd(none,"ypsUIEList",JsonUtil.GetStringValue(ypsItemsFile,"dibellaquestnailcolor")) ; fixed color
+ypsPiercingTicker.psc:2718:							StorageUtil.StringListAdd(none,"ypsUIEList",ColorToAdd)
+ypsPiercingTicker.psc:2723:				if StorageUtil.StringListCount(none,"ypsUIEList") == 0
+ypsPiercingTicker.psc:2738:								ProfessionalNailColorname = StorageUtil.StringListGet(none,"ypsUIEList",Utility.RandomInt(1,StorageUtil.StringListCount(none,"ypsUIEList")) - 1)
+ypsPiercingTicker.psc:2850:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:3042:							StorageUtil.SetIntValue(None, "ypsPerfectManicure",1)
+ypsPiercingTicker.psc:3197:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:3335:	StorageUtil.SetIntValue(None, "ytfThoughtsDisabled",1)
+ypsPiercingTicker.psc:3336:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:3795:						StorageUtil.SetIntValue(None, "ypsBimboNailtipLengthSufficient",0)
+ypsPiercingTicker.psc:3797:						StorageUtil.SetIntValue(None, "ypsBimboNailtipLengthSufficient",1)
+ypsPiercingTicker.psc:4006:					StorageUtil.SetIntValue(None, "ypsBimboNailtipLengthSufficient",0)
+ypsPiercingTicker.psc:4008:					StorageUtil.SetIntValue(None, "ypsBimboNailtipLengthSufficient",1)
+ypsPiercingTicker.psc:4056:				StorageUtil.SetIntValue(None, "ypsHadFingerNailOil", 1)
+ypsPiercingTicker.psc:4059:			StorageUtil.SetIntValue(None, "ypsFingerNailOilWorn", 0)
+ypsPiercingTicker.psc:4087:			StorageUtil.SetIntValue(None, "ypsPerfectManicure",1)
+ypsPiercingTicker.psc:4146:				StorageUtil.SetIntValue(None, "ypsHadFingerNailOil", 1)
+ypsPiercingTicker.psc:4149:			StorageUtil.SetIntValue(None, "ypsFingerNailOilWorn", 0)
+ypsPiercingTicker.psc:4159:	StorageUtil.SetIntValue(None, "ytfThoughtsDisabled",0)
+ypsPiercingTicker.psc:4170:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:4304:			if (StorageUtil.GetIntValue(None, "ypsNeedNailRefill") == 0) && (ypsCurrentNailtipLength.GetValueInt() > 0) && (TimeDiff >= (MCMValues.NailPolishDurationProfessional * 0.6))
+ypsPiercingTicker.psc:4305:				StorageUtil.SetIntValue(None, "ypsNeedNailRefill",1)
+ypsPiercingTicker.psc:4551:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:4580:			StorageUtil.SetIntValue(None, "ypsLipstickWorn", 0)
+ypsPiercingTicker.psc:4581:			StorageUtil.SetIntValue(None, "ypsHadLipstick", 1)			
+ypsPiercingTicker.psc:4585:			StorageUtil.SetIntValue(None, "ypsLipstickWorn", 0)
+ypsPiercingTicker.psc:4586:			StorageUtil.SetIntValue(None, "ypsHadLipstick", 1)			
+ypsPiercingTicker.psc:4590:			StorageUtil.SetIntValue(None, "ypsLipstickWorn", 0)
+ypsPiercingTicker.psc:4591:			StorageUtil.SetIntValue(None, "ypsHadLipstick", 1)			
+ypsPiercingTicker.psc:4617:		StorageUtil.SetIntValue(None, "ypsPerfectMakeup",0)
+ypsPiercingTicker.psc:4618:		StorageUtil.SetIntValue(None, "ypsLipstickWorn", 1)
+ypsPiercingTicker.psc:4619:		StorageUtil.SetIntValue(None, "ypsHadLipstick", 0)
+ypsPiercingTicker.psc:4621:			StorageUtil.SetIntValue(None, "ypsHadLipBalm", 1)
+ypsPiercingTicker.psc:4624:		StorageUtil.SetIntValue(None, "ypsLipBalmWorn", 0)
+ypsPiercingTicker.psc:4638:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:4642:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:4690:		StorageUtil.SetIntValue(None, "ypsLipstickWorn", 0)
+ypsPiercingTicker.psc:4691:		StorageUtil.SetIntValue(None, "ypsHadLipstick", 1)
+ypsPiercingTicker.psc:4695:		StorageUtil.SetIntValue(None, "ypsPerfectMakeup",0)
+ypsPiercingTicker.psc:4701:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:4731:			StorageUtil.SetIntValue(None, "ypsLipstickWorn", 0)
+ypsPiercingTicker.psc:4732:			StorageUtil.SetIntValue(None, "ypsHadLipstick", 1)
+ypsPiercingTicker.psc:4734:			StorageUtil.SetIntValue(None, "ypsPerfectMakeup",0)
+ypsPiercingTicker.psc:4751:		StorageUtil.SetIntValue(None, "ypsPerfectMakeup",0)
+ypsPiercingTicker.psc:4752:		StorageUtil.SetIntValue(None, "ypsLipstickWorn", 0)
+ypsPiercingTicker.psc:4753:		StorageUtil.SetIntValue(None, "ypsHadLipstick", 1)
+ypsPiercingTicker.psc:4820:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:4843:			StorageUtil.SetIntValue(None, "ypsEyeshadowWorn", 0)
+ypsPiercingTicker.psc:4844:			StorageUtil.SetIntValue(None, "ypsHadEyeshadow", 1)
+ypsPiercingTicker.psc:4848:			StorageUtil.SetIntValue(None, "ypsEyeshadowWorn", 0)
+ypsPiercingTicker.psc:4849:			StorageUtil.SetIntValue(None, "ypsHadEyeshadow", 1)
+ypsPiercingTicker.psc:4853:			StorageUtil.SetIntValue(None, "ypsEyeshadowWorn", 0)
+ypsPiercingTicker.psc:4854:			StorageUtil.SetIntValue(None, "ypsHadEyeshadow", 1)
+ypsPiercingTicker.psc:4886:		StorageUtil.SetIntValue(None, "ypsPerfectMakeup",0)
+ypsPiercingTicker.psc:4887:		StorageUtil.SetIntValue(None, "ypsEyeshadowWorn", 1)
+ypsPiercingTicker.psc:4888:		StorageUtil.SetIntValue(None, "ypsHadEyeshadow", 0)
+ypsPiercingTicker.psc:4890:			StorageUtil.SetIntValue(None, "ypsHadAntiAgingCream", 1)
+ypsPiercingTicker.psc:4893:		StorageUtil.SetIntValue(None, "ypsAntiAgingCreamWorn", 0)
+ypsPiercingTicker.psc:4907:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:4913:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:4953:		StorageUtil.SetIntValue(None, "ypsEyeshadowWorn", 0)
+ypsPiercingTicker.psc:4954:		StorageUtil.SetIntValue(None, "ypsHadEyeshadow", 1)
+ypsPiercingTicker.psc:4959:		StorageUtil.SetIntValue(None, "ypsPerfectMakeup",0)
+ypsPiercingTicker.psc:4964:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:4987:			StorageUtil.IntListClear(none,"ypsEyeshadowChoiceNumber")
+ypsPiercingTicker.psc:4988:			StorageUtil.StringListClear(none,"ypsEyeshadowChoiceNames")
+ypsPiercingTicker.psc:4999:					StorageUtil.IntListAdd(none,"ypsEyeshadowChoiceNumber",i - 1)
+ypsPiercingTicker.psc:5000:					StorageUtil.StringListAdd(none,"ypsEyeshadowChoiceNames",SingleName)
+ypsPiercingTicker.psc:5009:				ApplyEyeshadow(" "+StorageUtil.StringListGet(none,"ypsEyeshadowChoiceNames",i),EyeshadowRGBColors[StorageUtil.IntListGet(none,"ypsEyeshadowChoiceNumber",i)], ypsEyeshadows.GetAt(StorageUtil.IntListGet(none,"ypsEyeshadowChoiceNumber",i)) 
+as MiscObject)
+ypsPiercingTicker.psc:5012:			StorageUtil.StringListClear(none,"ypsUIEList")
+ypsPiercingTicker.psc:5018:			StorageUtil.IntListClear(none,"ypsEyeshadowChoiceNumber")
+ypsPiercingTicker.psc:5019:			StorageUtil.StringListClear(none,"ypsEyeshadowChoiceNames")
+ypsPiercingTicker.psc:5029:					StorageUtil.StringListAdd(none,"ypsUIEList",SingleName)
+ypsPiercingTicker.psc:5030:					StorageUtil.IntListAdd(none,"ypsEyeshadowChoiceNumber",i - 1)
+ypsPiercingTicker.psc:5031:					StorageUtil.StringListAdd(none,"ypsEyeshadowChoiceNames",SingleName)
+ypsPiercingTicker.psc:5040:					ApplyEyeshadow(" "+StorageUtil.StringListGet(none,"ypsEyeshadowChoiceNames",i),EyeshadowRGBColors[StorageUtil.IntListGet(none,"ypsEyeshadowChoiceNumber",i)], ypsEyeshadows.GetAt(StorageUtil.IntListGet(none,"ypsEyeshadowChoiceNumber",i)) 
+as MiscObject)
+ypsPiercingTicker.psc:5076:			StorageUtil.SetIntValue(None, "ypsPerfectMakeup",0)
+ypsPiercingTicker.psc:5077:			StorageUtil.SetIntValue(None, "ypsEyeshadowWorn", 0)
+ypsPiercingTicker.psc:5078:			StorageUtil.SetIntValue(None, "ypsHadEyeshadow", 1)
+ypsPiercingTicker.psc:5095:		StorageUtil.SetIntValue(None, "ypsPerfectMakeup",0)
+ypsPiercingTicker.psc:5096:		StorageUtil.SetIntValue(None, "ypsEyeshadowWorn", 0)
+ypsPiercingTicker.psc:5097:		StorageUtil.SetIntValue(None, "ypsHadEyeshadow", 1)
+ypsPiercingTicker.psc:5152:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:5186:				StorageUtil.SetIntValue(None, "ypsFingerNailOilWorn", 1)
+ypsPiercingTicker.psc:5187:				StorageUtil.SetIntValue(None, "ypsHadFingerNailOil", 0)
+ypsPiercingTicker.psc:5224:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:5228:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:5245:		StorageUtil.SetIntValue(None, "ypsLipBalmWorn", 1)
+ypsPiercingTicker.psc:5246:		StorageUtil.SetIntValue(None, "ypsHadLipBalm", 0)
+ypsPiercingTicker.psc:5251:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:5255:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:5272:		StorageUtil.SetIntValue(None, "ypsAntiAgingCreamWorn", 1)
+ypsPiercingTicker.psc:5273:		StorageUtil.SetIntValue(None, "ypsHadAntiAgingCream", 0)
+ypsPiercingTicker.psc:5278:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:5282:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:5299:		StorageUtil.SetIntValue(None, "ypsPerfumeWorn", 1)
+ypsPiercingTicker.psc:5300:		StorageUtil.SetIntValue(None, "ypsHadPerfume", 0)
+ypsPiercingTicker.psc:5308:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:5321:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:5345:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:5357:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:5385:				StorageUtil.SetIntValue(None, "ypsPerfectMakeup",1)
+ypsPiercingTicker.psc:5394:				StorageUtil.SetIntValue(None, "ypsPerfectMakeup",1)
+ypsPiercingTicker.psc:5407:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)	
+ypsPiercingTicker.psc:5457:	StorageUtil.SetIntValue(None, "ypsToenailPolishWorn",0)
+ypsPiercingTicker.psc:5458:	StorageUtil.SetIntValue(None, "ypsToenailPolishSmudged",0)
+ypsPiercingTicker.psc:5459:	StorageUtil.SetIntValue(None, "ypsToenailPolishChippingOff",0)
+ypsPiercingTicker.psc:5461:		StorageUtil.SetIntValue(None, "ypsToenailPolishSmudged",1)
+ypsPiercingTicker.psc:5463:		StorageUtil.SetIntValue(None, "ypsToenailPolishWorn",1)
+ypsPiercingTicker.psc:5464:		StorageUtil.SetIntValue(None, "ypsHadToenailPolish",0)
+ypsPiercingTicker.psc:5466:		StorageUtil.SetIntValue(None, "ypsToenailPolishChippingOff",1)
+ypsPiercingTicker.psc:5478:		StorageUtil.SetIntValue(None, "ypsHadToenailPolish",1)
+ypsPiercingTicker.psc:5553:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:5670:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:6058:			storageutil.SetIntValue(NONE,"ypsPubicHairGrowthEnabled",0)
+ypsPiercingTicker.psc:6079:		StorageUtil.SetIntValue(None, "ypsPubicHairStage"+OldPubicHairStage, 0)
+ypsPiercingTicker.psc:6080:		StorageUtil.SetIntValue(None, "ypsPubicHairStage"+NewPubicHairStage, 1)
+ypsPiercingTicker.psc:6082:			StorageUtil.SetIntValue(None, "ypsHadShavedPubic", 1)
+ypsPiercingTicker.psc:6084:			StorageUtil.SetIntValue(None, "ypsHadShavedPubic", 0)
+ypsPiercingTicker.psc:6108:	if (storageutil.GetIntValue(NONE,"ypsPubicHairGrowthEnabled") == 1) && ((Utility.GetCurrentGameTime() - PubicHairStageSince) >= MCMValues.PubicHairGrowthTime)
+ypsPiercingTicker.psc:6119:	elseif MCMValues.PubicHairItching && (PubicHairStage<4) && (Utility.Randomint(1,10) <= PubicHairStage) && (StorageUtil.GetIntValue(PlayerActor,"DCUR_SceneRunning") == 0) && (ypsSuspendAnimations.GetValueInt() == 0)
+ypsPiercingTicker.psc:6182:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:6270:		StorageUtil.SetIntValue(None, "ypsPubicHairStage"+PubicHairStage, 0)
+ypsPiercingTicker.psc:6271:		StorageUtil.SetIntValue(None, "ypsHadShavedPubic", 0)
+ypsPiercingTicker.psc:6272:		StorageUtil.SetIntValue(None, "ypsPubicHairStage0", 1)
+ypsPiercingTicker.psc:6279:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:6307:			storageutil.SetIntValue(NONE,"ypsArmpitHairGrowthEnabled",0)
+ypsPiercingTicker.psc:6322:		StorageUtil.SetIntValue(None, "ypsArmpitHairStage"+OldArmpitHairStage, 0)
+ypsPiercingTicker.psc:6323:		StorageUtil.SetIntValue(None, "ypsArmpitHairStage"+NewArmpitsHairStage, 1)
+ypsPiercingTicker.psc:6325:			StorageUtil.SetIntValue(None, "ypsHadShavedArmpits", 1)
+ypsPiercingTicker.psc:6327:			StorageUtil.SetIntValue(None, "ypsHadShavedArmpits", 0)
+ypsPiercingTicker.psc:6347:	if (storageutil.GetIntValue(NONE,"ypsArmpitHairGrowthEnabled") == 1) && ((Utility.GetCurrentGameTime() - ArmpitsHairStageSince) >= MCMValues.PubicHairGrowthTime)
+ypsPiercingTicker.psc:6356:	elseif MCMValues.PubicHairItching && (ArmpitsHairStage<4) && (Utility.Randomint(1,10) <= ArmpitsHairStage) && (StorageUtil.GetIntValue(PlayerActor,"DCUR_SceneRunning") == 0) && (ypsSuspendAnimations.GetValueInt() == 0)
+ypsPiercingTicker.psc:6381:	StorageUtil.SetIntValue(None, "ypsDisableTicker",1)
+ypsPiercingTicker.psc:6473:		StorageUtil.SetIntValue(None, "ypsArmpitHairStage"+ArmpitsHairStage, 0)
+ypsPiercingTicker.psc:6474:		StorageUtil.SetIntValue(None, "ypsArmpitHairStage0", 1)
+ypsPiercingTicker.psc:6475:		StorageUtil.SetIntValue(None, "ypsHadShavedArmpits", 0)
+ypsPiercingTicker.psc:6487:	StorageUtil.SetIntValue(None, "ypsDisableTicker",0)
+ypsPiercingTicker.psc:6575:		storageutil.SetIntValue(NONE,"ypsNylonsCurrentlyWorn", 0)
+ypsPiercingTicker.psc:6576:		storageutil.SetIntValue(NONE,"ypsHadNylons", 1)
+ypsPiercingTicker.psc:6589:		storageutil.SetIntValue(NONE,"ypsNylonsCurrentlyWorn", 1)
+ypsPiercingTicker.psc:6590:		storageutil.SetIntValue(NONE,"ypsHadNylons", 0)
+ypsPiercingTicker.psc:6642:			storageutil.SetIntValue(NONE,"ypsNylonsCurrentlyWorn", 0)
+ypsPiercingTicker.psc:6643:			storageutil.SetIntValue(NONE,"ypsHadNylons", 1)			
+ypsPiercingTicker.psc:6697:			storageutil.SetIntValue(NONE,"ypsNylonsCurrentlyWorn", 1)
+ypsPiercingTicker.psc:6698:			storageutil.SetIntValue(NONE,"ypsHadNylons", 0)
+ypsPiercingTicker.psc:6730:			storageutil.SetIntValue(NONE,"ypsNylonsCurrentlyWorn", 0)
+ypsPiercingTicker.psc:6731:			storageutil.SetIntValue(NONE,"ypsHadNylons", 1)
+ypsPiercingTicker.psc:6774:			storageutil.SetIntValue(NONE,"ypsNylonsCurrentlyWorn", 1)
+ypsPiercingTicker.psc:6775:			storageutil.SetIntValue(NONE,"ypsHadNylons", 0)
+ypsPiercingTicker.psc:6852:	elseif (storageutil.GetIntValue(NONE,"ypsNylonsLock") == 1)
+ypsPiercingTicker.psc:6890:		elseif (storageutil.GetIntValue(NONE,"ypsNylonsLock") == 1)
+ypsPiercingTicker.psc:6895:			storageutil.SetIntValue(NONE,"ypsNylonsCurrentlyWorn", 0)
+ypsPiercingTicker.psc:6896:			storageutil.SetIntValue(NONE,"ypsHadNylons", 1)
+ypsPiercingTicker.psc:6962:			storageutil.SetIntValue(NONE,"ypsNylonsCurrentlyWorn", 1)
+ypsPiercingTicker.psc:6963:			storageutil.SetIntValue(NONE,"ypsHadNylons", 0)
+ypsPiercingTicker.psc:6992:					StorageUtil.SetIntValue(None, "ypsPubicHairStage"+PubicHairStage, 0)
+ypsPiercingTicker.psc:6994:					StorageUtil.SetIntValue(None, "ypsPubicHairStage"+PubicHairStage, 1)
+ypsPiercingTicker.psc:7161:			if StorageUtil.GetIntValue(None, "ypsPerfectManicure") == 1
+ypsPiercingTicker.psc:7185:			if MCMValues.AddictionEyeshadow && (StorageUtil.GetIntValue(None, "ypsPerfectMakeup") == 1) ; conditions for perfect makeup met
+ypsPiercingTicker.psc:7274:			StorageUtil.SetIntValue(None, "yps_FashionAddictionBuffLevel"+FashionAddictionBuffLevel, 0)
+ypsPiercingTicker.psc:7276:			StorageUtil.SetIntValue(None, "yps_FashionAddictionBuffLevel"+FashionAddictionBuffLevel, 1)
+ypsPiercingTicker.psc:7411:		float PlayerExposure = StorageUtil.GetFloatValue(PlayerActor, "SLAroused.ActorExposure")
+ypsPiercingTicker.psc:7417:			StorageUtil.SetFloatValue(PlayerActor, "SLAroused.ActorExposure",PlayerExposure)
+ypsPiercingTicker.psc:7480:		StorageUtil.SetIntValue(None, "ypsLipstickWorn", 0)
+ypsPiercingTicker.psc:7481:		StorageUtil.SetIntValue(None, "ypsHadLipstick", 1)		
+ypsPiercingTicker.psc:7498:		StorageUtil.SetIntValue(None, "ypsPerfectMakeup",0)
+ypsPiercingTicker.psc:7499:		StorageUtil.SetIntValue(None, "ypsLipstickWorn", 1)
+ypsPiercingTicker.psc:7500:		StorageUtil.SetIntValue(None, "ypsHadLipstick", 0)
+ypsPiercingTicker.psc:7502:			StorageUtil.SetIntValue(None, "ypsHadLipBalm", 1)
+ypsPiercingTicker.psc:7505:		StorageUtil.SetIntValue(None, "ypsLipBalmWorn", 0)
+ypsPiercingTicker.psc:7531:		StorageUtil.SetIntValue(None, "ypsEyeshadowWorn", 0)
+ypsPiercingTicker.psc:7532:		StorageUtil.SetIntValue(None, "ypsHadEyeshadow", 1)
+ypsPiercingTicker.psc:7547:			StorageUtil.SetIntValue(None, "ypsEyeshadowWorn", 0)
+ypsPiercingTicker.psc:7548:			StorageUtil.SetIntValue(None, "ypsHadEyeshadow", 1)
+ypsPiercingTicker.psc:7554:		StorageUtil.SetIntValue(None, "ypsPerfectMakeup",0)
+ypsPiercingTicker.psc:7555:		StorageUtil.SetIntValue(None, "ypsEyeshadowWorn", 1)
+ypsPiercingTicker.psc:7556:		StorageUtil.SetIntValue(None, "ypsHadEyeshadow", 0)
+ypsPiercingTicker.psc:7558:			StorageUtil.SetIntValue(None, "ypsHadAntiAgingCream", 1)
+ypsPiercingTicker.psc:7561:		StorageUtil.SetIntValue(None, "ypsAntiAgingCreamWorn", 0)
+ypsPiercingTicker.psc:7610:				StorageUtil.SetIntValue(None, "ypsHadFingerNailOil", 1)
+ypsPiercingTicker.psc:7613:			StorageUtil.SetIntValue(None, "ypsFingerNailOilWorn", 0)
+ypsPiercingTicker.psc:7776:				StorageUtil.SetIntValue(None, "ypsHadFingerNailOil", 1)
+ypsPiercingTicker.psc:7779:			StorageUtil.SetIntValue(None, "ypsFingerNailOilWorn", 0)
+ypsPiercingTicker.psc:7783:			StorageUtil.SetIntValue(None, "ypsPerfectManicure",1)
+ypsPiercingTicker.psc:7796:		StorageUtil.SetIntValue(None, "ypsBimboNailtipLengthSufficient",0)
+ypsPiercingTicker.psc:7799:		StorageUtil.SetIntValue(None, "ypsBimboNailtipLengthSufficient",1)
+ypsPiercingTicker.psc:8001:	StorageUtil.SetIntValue(None, "yps-QueryPiercingStageResult",PiercingStage[PSlotFloat as int])
+ypsPiercingTicker.psc:8007:	StorageUtil.SetIntValue(None, "yps-QueryPiercingWornResult",PiercingWornInQueriedSlot as int)
+ypsPiercingTicker.psc:8013:	StorageUtil.SetIntValue(None, "yps-QueryPiercingWornResult",PiercingWornInQueriedSlot as int)
+ypsPiercingTicker.psc:8059:			StorageUtil.SetStringValue(None, "yps-QueryPiercingWornNameResult",FindPiercingName)
+ypsPiercingTicker.psc:8061:			StorageUtil.SetStringValue(None, "yps-QueryPiercingWornNameResult","")
+ypsPiercingTicker.psc:8064:		StorageUtil.SetStringValue(None, "yps-QueryPiercingWornNameResult","")
+ypsPiercingTicker.psc:8168:	If StorageUtil.GetFloatValue(None, "yps_TweakVersion", Missing = -1.0) < 2.0
+ypsPiercingTicker.psc:8169:		If StorageUtil.GetFloatValue(None, "yps_TweakVersion", Missing = -1.0) < 1.0
+ypsPiercingTicker.psc:8170:			StorageUtil.SetFloatValue(None, "yps_TweakVersion", 1.0)
+ypsPiercingTicker.psc:8174:		If StorageUtil.GetFloatValue(None, "yps_TweakVersion", Missing = -1.0) < 1.1
+ypsPiercingTicker.psc:8177:			StorageUtil.SetFloatValue(None, "yps_TweakVersion", 1.1)
+ypsPiercingTicker.psc:8181:		If StorageUtil.GetFloatValue(None, "yps_TweakVersion", Missing = -1.0) < 1.2
+ypsPiercingTicker.psc:8182:			StorageUtil.SetIntValue(None, "yps_PubicHairStage", PubicHairStage)
+ypsPiercingTicker.psc:8183:			StorageUtil.SetFloatValue(None, "yps_TweakVersion", 1.2)
+ypsPiercingTicker.psc:8187:		If StorageUtil.GetFloatValue(None, "yps_TweakVersion", Missing = -1.0) < 2.0
+ypsPiercingTicker.psc:8189:			StorageUtil.IntListResize(None, "yps_PiercingsStatus", toLength = 16, filler = 0)
+ypsPiercingTicker.psc:8191:				StorageUtil.IntListSet(None, "yps_PiercingsStatus", i, PiercingStudWorn[i] as Int)
+ypsPiercingTicker.psc:8194:			;Debug.Messagebox(StorageUtil.IntListToArray(None, "yps_PiercingsStatus"))
+ypsPiercingTicker.psc:8196:			StorageUtil.SetFloatValue(None, "yps_TweakVersion", 2.0)
+ypsPiercingTicker.psc:8203:	StorageUtil.SetIntValue(None, "ytfThoughtsDisabled",1)
+ypsPiercingTicker.psc:8262:	StorageUtil.SetIntValue(None, "ytfThoughtsDisabled",0)
+ypsPiercingTicker.psc:8301:				StorageUtil.SetIntValue(None, "ypsPermanentGenderChange",1)
+ypsPiercingTicker.psc:8324:		string transformationstoryfile = StorageUtil.GetStringValue(none,"ypsTransformationFileName")
+ypsPiercingTicker.psc:8343:		StorageUtil.SetStringValue(none,"ypsTransformationFileName","")
+ypsPiercingTicker.psc:8479:	int DoingNails = StorageUtil.GetIntValue(None, "ypsDisableTicker")
+ypsPiercingTicker.psc:8488:			storageutil.SetIntValue(NONE,"ypsPubicHairGrowthEnabled",1)
+ypsPiercingTicker.psc:8489:			storageutil.SetIntValue(NONE,"ypsArmpitHairGrowthEnabled",1)
+ypsPiercingTicker.psc:8490:			storageutil.SetIntValue(NONE,"ypsNylonsLock",0)
+ypsPiercingTicker.psc:8491:			storageutil.SetIntValue(NONE,"ypsNylonsCurrentlyWorn", 0)
+ypsPiercingTicker.psc:8515:			StorageUtil.SetIntValue(None, "ypsGeneral", 1) ; always set to 1, for thoughts to be played without condition
+ypsPiercingTicker.psc:8516:			StorageUtil.SetIntValue(None, "yps_FashionAddictionBuffLevel"+FashionAddictionBuffLevel, 1)
+ypsPiercingTicker.psc:8520:				StorageUtil.SetIntValue(None, "ypsLipstickWorn", 1)
+ypsPiercingTicker.psc:8523:				StorageUtil.SetIntValue(None, "ypsEyeshadowWorn", 1)
+ypsPiercingTicker.psc:8526:				StorageUtil.SetIntValue(None, "ypsLipBalmWorn", 1)
+ypsPiercingTicker.psc:8529:				StorageUtil.SetIntValue(None, "ypsAntiAgingCreamWorn", 1)
+ypsPiercingTicker.psc:8532:				StorageUtil.SetIntValue(None, "ypsFingerNailOilWorn", 1)
+ypsPiercingTicker.psc:8535:				StorageUtil.SetIntValue(None, "ypsPerfumeWorn", 1)
+ypsPiercingTicker.psc:8537:			StorageUtil.SetIntValue(None, "ypsEarPiercingStage"+PiercingStage[1], 1)
+ypsPiercingTicker.psc:8538:			StorageUtil.SetIntValue(None, "ypsArmpitHairStage"+ArmpitsHairStage, 1)
+ypsPiercingTicker.psc:8539:			StorageUtil.SetIntValue(None, "ypsPubicHairStage"+PubicHairStage, 1)
+ypsPiercingTicker.psc:8543:			StorageUtil.SetIntValue(None, "ypsSexualOrientation"+MCMValues.FemaleSexualOrientation, 1)
+ypsPiercingTicker.psc:8546:				StorageUtil.SetIntValue(None, "ypsInfibulated", 1)
+ypsPiercingTicker.psc:8626:				StorageUtil.SetIntValue(None, "ypsLipBalmWorn", 0)
+ypsPiercingTicker.psc:8627:				StorageUtil.SetIntValue(None, "ypsHadLipBalm", 1)
+ypsPiercingTicker.psc:8632:				StorageUtil.SetIntValue(None, "ypsAntiAgingCreamWorn", 0)
+ypsPiercingTicker.psc:8633:				StorageUtil.SetIntValue(None, "ypsHadAntiAgingCream", 1)
+ypsPiercingTicker.psc:8638:				StorageUtil.SetIntValue(None, "ypsPerfumeWorn", 0)
+ypsPiercingTicker.psc:8639:				StorageUtil.SetIntValue(None, "ypsHadPerfume", 1)
+ypsPiercingTicker.psc:8644:				StorageUtil.SetIntValue(None, "ypsFingerNailOilWorn", 0)
+ypsPiercingTicker.psc:8645:				StorageUtil.SetIntValue(None, "ypsHadFingerNailOil", 1)
+ypsPiercingTicker.psc:8665:			if (BimboNailStage > 0) && ( StorageUtil.GetIntValue(None, "ypsBimboNailtipLengthSufficient") == 0)
+ypsPiercingTicker.psc:8737:				float currentarousal = StorageUtil.GetFloatValue(PlayerActor, "SLAroused.ActorExposure")
+ypsPiercingTicker.psc:8770:				StorageUtil.SetFloatValue(PlayerActor, "SLAroused.ActorExposure",newarousal)
+ypsPiercingTicker.psc:8859:				StorageUtil.SetIntValue(None, "ypsEarPiercingStage-1", 0)
+ypsPiercingTicker.psc:8860:				StorageUtil.SetIntValue(None, "ypsEarPiercingStage0", 0)
+ypsPiercingTicker.psc:8861:				StorageUtil.SetIntValue(None, "ypsEarPiercingStage1", 0)
+ypsPiercingTicker.psc:8862:				StorageUtil.SetIntValue(None, "ypsEarPiercingStage2", 0)
+ypsPiercingTicker.psc:8863:				StorageUtil.SetIntValue(None, "ypsEarPiercingStage3", 0)
+ypsPiercingTicker.psc:8864:				StorageUtil.SetIntValue(None, "ypsEarPiercingStage4", 0)
+ypsPiercingTicker.psc:8866:				StorageUtil.SetIntValue(None, "ypsEarPiercingStage"+EarPiercingStage, 1)
+ypsPiercingTicker.psc:8940:			StorageUtil.SetIntValue(None, "ypsHairDyed", 1)
+ypsPiercingTicker.psc:8941:			StorageUtil.SetIntValue(None, "ypsHadHairDyed", 0)
+ypsPiercingTicker.psc:8943:			StorageUtil.SetIntValue(None, "ypsHairDyed", 0)
+ypsPiercingTicker.psc:8944:			StorageUtil.SetIntValue(None, "ypsHadHairDyed", 1)
+ypsPiercingTicker.psc:8948:			StorageUtil.SetIntValue(None, "ypsSLAdistracted", 0)
+ypsPiercingTicker.psc:8949:			StorageUtil.SetIntValue(None, "ypsSLAaroused", 0)
+ypsPiercingTicker.psc:8950:			StorageUtil.SetIntValue(None, "ypsSLAneedsex", 1)
+ypsPiercingTicker.psc:8952:			StorageUtil.SetIntValue(None, "ypsSLAdistracted", 0)
+ypsPiercingTicker.psc:8953:			StorageUtil.SetIntValue(None, "ypsSLAaroused", 1)
+ypsPiercingTicker.psc:8954:			StorageUtil.SetIntValue(None, "ypsSLAneedsex", 0)
+ypsPiercingTicker.psc:8956:			StorageUtil.SetIntValue(None, "ypsSLAdistracted", 1)
+ypsPiercingTicker.psc:8957:			StorageUtil.SetIntValue(None, "ypsSLAaroused", 0)
+ypsPiercingTicker.psc:8958:			StorageUtil.SetIntValue(None, "ypsSLAneedsex", 0)
+ypsPiercingTicker.psc:8960:			StorageUtil.SetIntValue(None, "ypsSLAdistracted", 0)
+ypsPiercingTicker.psc:8961:			StorageUtil.SetIntValue(None, "ypsSLAaroused", 0)
+ypsPiercingTicker.psc:8962:			StorageUtil.SetIntValue(None, "ypsSLAneedsex", 0)
+ypsPiercingTicker.psc:8977:	StorageUtil.SetStringValue(None, "yps_LipstickColor", LipColor)
+ypsPiercingTicker.psc:8978:	;StorageUtil.SetStringValue(None, "yps_LipstickSmudged", Smudged)
+ypsPiercingTicker.psc:8979:	StorageUtil.SetIntValue(None, "yps_LipstickSmudged", Smudged)
+ypsPiercingTicker.psc:8984:	StorageUtil.SetStringValue(None, "yps_EyeShadowColor", EyeShadowColor)
+ypsPiercingTicker.psc:8985:	;StorageUtil.SetStringValue(None, "yps_EyeShadowSmudged", Smudged)
+ypsPiercingTicker.psc:8986:	StorageUtil.SetIntValue(None, "yps_EyeShadowSmudged", Smudged)
+ypsPiercingTicker.psc:8991:	StorageUtil.SetStringValue(None, "yps_FingerNailPolishColor", NailColor)
+ypsPiercingTicker.psc:8992:	;StorageUtil.SetStringValue(None, "yps_FingerNailPolishStage", Smudged)
+ypsPiercingTicker.psc:8993:	StorageUtil.SetIntValue(None, "yps_FingerNailPolishStage", NailPolishStage)
+ypsPiercingTicker.psc:9004:	StorageUtil.SetStringValue(None, "yps_ToeNailPolishColor", NailColor)
+ypsPiercingTicker.psc:9005:	;StorageUtil.SetStringValue(None, "yps_ToeNailPolishStage", Smudged)
+ypsPiercingTicker.psc:9006:	StorageUtil.SetIntValue(None, "yps_ToeNailPolishStage", ToenailPolishStage)
+ypsPiercingTicker.psc:9016:	StorageUtil.SetFormValue(None, "yps_Stockings", Stockings)
+ypsPiercingTicker.psc:9021:	StorageUtil.IntListSet(None, "yps_PiercingsStatus", Slot, Equipped as Int)
+ypsPiercingTicker.psc:9025:; Tweak mod events and StorageUtil variables ==============================================
+ypsPiercingTicker.psc:9028:	; StorageUtil.GetIntValue(None, "YpsCurrentHairLengthStage") ; Player's current hair stage. Looks like max hair stage is 21 - Rapunzel
+ypsPiercingTicker.psc:9029:	SendModEvent(eventName = "yps_HairStageChange", strArg = "", numArg = StorageUtil.GetIntValue(None, "YpsCurrentHairLengthStage") as Float)
+ypsPiercingTicker.psc:9033:	StorageUtil.SetIntValue(None, "yps_PubicHairStage", PubicHairStage)
+ypsPiercingTicker.psc:9038:	StorageUtil.SetIntValue(None, "yps_ArmpitHairStage", ArmpitsHairStage)
+ypsPiercingTicker.psc:9043:	StorageUtil.SetIntValue(None, "yps_AddictionBuff", FashionAddictionBuffLevel)
+ypsPiercingTicker.psc:9048:	StorageUtil.SetIntValue(None, "yps_AddictionLevel", MakeupAddictionLevel as int)
+ypsPiercingTicker.psc:9055:	; Current actual hair colour - StorageUtil.GetIntValue(None, "yps_CurrentHairColour")
+ypsPiercingTicker.psc:9057:	StorageUtil.SetIntValue(None, "yps_HairDyeColourInt", Colour)
+ypsPiercingTicker.psc:9058:	StorageUtil.SetStringValue(None, "yps_HairDyeColourName", ColourName)
+ypsPiercingTicker.psc:9064:	StorageUtil.SetIntValue(None, "yps_CanChangeHairColour", CanChangeHairColour as Int)
+ypsPiercingTicker.psc:9070:	StorageUtil.SetIntValue(None, "yps_CanRedyeHair", CanRedyeHair as Int)
+ypsPiercingTicker.psc:9076:	StorageUtil.SetIntValue(None, "yps_ShouldRedyeHair", ShouldRedyeHair as Int)
+ypsPiercingTicker.psc:9084:	 		StorageUtil.GetStringValue(None, "yps_LipstickColor")
+ypsPiercingTicker.psc:9085:	 		StorageUtil.GetIntValue(None, "yps_LipstickSmudged") ; 0 = Not smudged, 1 = Smudged
+ypsPiercingTicker.psc:9088:			StorageUtil.GetStringValue(None, "yps_EyeShadowColor")
+ypsPiercingTicker.psc:9089:			StorageUtil.GetIntValue(None, "yps_EyeShadowSmudged") ; 0 = Not smudged, 1 = Smudged
+ypsPiercingTicker.psc:9092:			StorageUtil.GetStringValue(None, "yps_FingerNailPolishColor")
+ypsPiercingTicker.psc:9093:			StorageUtil.GetIntValue(None, "yps_FingerNailPolishStage")
+ypsPiercingTicker.psc:9096:			StorageUtil.GetStringValue(None, "yps_ToeNailPolishColor")
+ypsPiercingTicker.psc:9097:			StorageUtil.GetIntValue(None, "yps_ToeNailPolishStage")
+ypsPiercingTicker.psc:9100:			StorageUtil.GetFormValue(None, "yps_Stockings")
+ypsPiercingTicker.psc:9103:			StorageUtil.IntListGet(None, "yps_PiercingsStatus", i)
+ypsThoughts.psc:14:  if Game.IsLookingControlsEnabled() && !UI.IsMenuOpen("Dialogue Menu") && !(StorageUtil.GetIntValue(None, "ytfThoughtsDisabled") == 1 )  ; don't play anything during dialogue
+ypsThoughts.psc:25:	StorageUtil.StringListClear(none,"ypsActiveConditionsList")
+ypsThoughts.psc:32:			if StorageUtil.GetIntValue(None, PapyrusValue) 
+ypsThoughts.psc:34:					StorageUtil.StringListAdd(none,"ypsActiveConditionsList",PapyrusValue)
+ypsThoughts.psc:49:						StorageUtil.StringListAdd(none,"ypsActiveConditionsList",LocTypeString)
+ypsThoughts.psc:56:			StorageUtil.StringListAdd(none,"ypsActiveConditionsList","loctypewilderness")
+ypsThoughts.psc:67:					StorageUtil.StringListAdd(none,"ypsActiveConditionsList",WornKeywordsString)
+ypsThoughts.psc:81:			StorageUtil.StringListAdd(none,"ypsActiveConditionsList",PlayerConditionString)
+ypsThoughts.psc:130:						ValidOrConditionFound = StorageUtil.GetIntValue(None, SingleConditionToCheck) 
+ypsThoughts.psc:139:				StorageUtil.StringListAdd(none,"ypsActiveConditionsList",ConditionsString)
+ypsThoughts.psc:147:	int ThoughtChoicesCount = StorageUtil.StringListCount(none,"ypsActiveConditionsList")
+ypsThoughts.psc:150:		string ThoughtChoiceString = StorageUtil.StringListGet(none,"ypsActiveConditionsList", ThoughtChoice)
+ypsUIExtensionsScript.psc:10:	int ListCount = StorageUtil.StringListCount(none,"ypsUIEList")
+ypsUIExtensionsScript.psc:13:		listmenu.AddEntryItem(StorageUtil.StringListGet(none,"ypsUIEList",index))
+ypsUIExtensionsScript.psc:27:	int ListCount = StorageUtil.StringListCount(none,"ypsUIEList")
+ypsUIExtensionsScript.psc:48:	    	listmenu.AddEntryItem(StorageUtil.StringListGet(none,"ypsUIEList",i))
+yps_HairGrowthPotion.psc:8:		Float HairStage = StorageUtil.GetIntValue(none, "YpsCurrentHairLengthStage", Missing = 0) as Float
+yps_PC_MCM.psc:556:	StorageUtil.SetIntValue(none, "ypsHairControlEnabled", HairControlEnabled as int)
+yps_PC_MCM.psc:557:	StorageUtil.SetIntValue(none, "ypsPubicHairEnabled", PubicHairEnabled as int)
+yps_PC_MCM.psc:558:	StorageUtil.SetIntValue(none, "ypsArmpitHairEnabled", ArmpitHairEnabled as int)
+yps_PC_MCM.psc:735:			StorageUtil.SetIntValue(none, "ypsHairControlEnabled", HairControlEnabled as int)
+yps_PC_MCM.psc:1106:		StorageUtil.SetIntValue(none, "ypsHairControlEnabled", HairControlEnabled as int)
+yps_PC_MCM.psc:1184:		StorageUtil.SetIntValue(none, "ypsPubicHairEnabled", PubicHairEnabled as int)
+yps_PC_MCM.psc:1202:		StorageUtil.SetIntValue(none, "ypsArmpitHairEnabled", ArmpitHairEnabled as int)
+yps_PC_MCM.psc:2263:		StorageUtil.SetIntValue(None, "ypsSexualOrientation0", 0)
+yps_PC_MCM.psc:2264:		StorageUtil.SetIntValue(None, "ypsSexualOrientation1", 0)
+yps_PC_MCM.psc:2265:		StorageUtil.SetIntValue(None, "ypsSexualOrientation2", 0)
+yps_PC_MCM.psc:2266:		StorageUtil.SetIntValue(None, "ypsSexualOrientation"+FemaleSexualOrientation, 1)
+yps_PC_MCM.psc:2286:	StorageUtil.SetIntValue(None, "ypsSexualOrientation0", 0)
+yps_PC_MCM.psc:2287:	StorageUtil.SetIntValue(None, "ypsSexualOrientation1", 0)
+yps_PC_MCM.psc:2288:	StorageUtil.SetIntValue(None, "ypsSexualOrientation2", 0)
+yps_PC_MCM.psc:2289:	StorageUtil.SetIntValue(None, "ypsSexualOrientation"+FemaleSexualOrientation, 1)
+
+
