@@ -9,9 +9,6 @@
 
 namespace logger = SKSE::log;
 
-
-
-
 std::string previous_milk_string = "No milk string HISTORY defined yet!";
 
 /*
@@ -23,8 +20,6 @@ float SNMIPapyrus::previous_maid_level = -1.0f;
 
 */
 // FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
-
-
 
 
 void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)

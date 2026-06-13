@@ -8,6 +8,6 @@ class handle_AND_modesty
 {
 public:
 	static void handle_AND_modesty_and_nakedness_stuff();
-	static void initialize_AND_status();
+	static void reset_previous_rank_to_current_rank();
 };
 

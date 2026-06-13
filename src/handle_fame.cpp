@@ -89,6 +89,10 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 			// Assign new value and message-box-report value changes for now
 			fame.current_value = fame.global->value;
 			if (fame.current_value != fame.previous_value) {
+
+				if ( fame.name == "SLSF_Reloaded_NPCScanSucess" ) {
+					continue;  // This event is not so interesting
+				}
 				if ( fame.current_value > fame.previous_value ) {
 					// Increase:  say as much
 					SKSE::log::info("SLSF-Handling: Detected and INCREASE in: {}  from {} to {}.", fame.name, fame.previous_value, fame.current_value);

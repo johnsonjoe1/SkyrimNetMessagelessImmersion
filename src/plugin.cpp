@@ -759,11 +759,8 @@ std::unordered_set<std::string> ignored_mod_events = {
 };
 
 
-
-
 //  Here comes the code for hooking into the furniture usage events, or even all usage events, but for now we focus on furniture.
-class ActivateEventHandler :
-    public RE::BSTEventSink<RE::TESActivateEvent>
+class ActivateEventHandler : public RE::BSTEventSink<RE::TESActivateEvent>
 {
 public:
     RE::BSEventNotifyControl ProcessEvent(
@@ -814,8 +811,6 @@ public:
 			std::string combined_string = std::format("FOUND and Armor item named: {} with keywords: " , armor->GetName());
 			// LillithOnlyBox(std::format("FOUND and Armor item named: {} " , armor->GetName()));
 
-
-
 			// Let's put all the keywords into an unordered set...
 			std::unordered_set<std::string> keywordSet;
 			for (auto keyword : armor->GetKeywords()) {
@@ -862,7 +857,6 @@ public:
 				thought_string += " and would make me look outright sexy, according to the fashion vendor Y.P.S.";
 			} else { thought_string += ".";  }
 
-
 			if (keywordSet.contains("ypsFingerlessGloves")) {
 				thought_string += " This is also an original fingerless glove, that could be worn even with very long nails, so a true keeper.";
 			}
@@ -871,9 +865,11 @@ public:
 				(keywordSet.contains("AND_PelvicFlashRiskExtreme")) |
 				(keywordSet.contains("AND_PelvicFlashRiskHigh")) |
 				(keywordSet.contains("AND_PelvicFlashRiskLow")) |
+				(keywordSet.contains("AND_PelvicFlashRiskUltra")) |				
 				(keywordSet.contains("AND_AssFlashRisk")) |
 				(keywordSet.contains("AND_AssFlashRiskHigh")) |
 				(keywordSet.contains("AND_AssFlashRiskExtreme")) |
+				(keywordSet.contains("AND_AssFlashRiskUltra")) |				
 				(keywordSet.contains("AND_AssFlashRiskLow")) ) 
 			{
 				thought_string += " I bet that with this thing on, I would have a risk of flashing my ass or pelvis upon every move. ";
@@ -886,14 +882,7 @@ public:
 			// DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_string);
 			DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(thought_string);
 
-/*
-0B27037D ypsClothingUgly
-0B27037E ypsClothingOrdinary
-0B27037F ypsClothingCute
-0B270380 ypsClothingFashion
-0B270381 ypsClothingSexy
-0B270382 ypsFingerlessGloves
-*/
+
 
 /*
 "AND_ChestFlashRisk" , 
@@ -1198,11 +1187,11 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		break;
 	case SKSE::MessagingInterface::kPostLoadGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
-		handle_AND_modesty::initialize_AND_status();
+		handle_AND_modesty::reset_previous_rank_to_current_rank();
         break;
 	case SKSE::MessagingInterface::kNewGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
-		handle_AND_modesty::initialize_AND_status();
+		handle_AND_modesty::reset_previous_rank_to_current_rank();
 		break;
 	};
 }

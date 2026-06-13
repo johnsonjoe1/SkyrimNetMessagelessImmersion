@@ -85,7 +85,6 @@ std::string RemoveAllOccurrences(std::string str, const std::string& toRemove)
 // ****************************************************************************************************************
 //  Note to self:  static keyword only belongs in the header, not in the .cpp file.
 //  Note to self:  public: private: keywords only belong in the header, not in the .cpp file.  
-
 bool hard_change_in_slots_0_to_7()
 {
 	logger::info("handle_AND_modesty -- checking change in slots 0 to 7 of AND!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -94,7 +93,6 @@ bool hard_change_in_slots_0_to_7()
 		logger::info("SEVERE ERROR: Querying the player failed in the handle_AND_modesty--change_in_slots_0_to_7 function!!");
 		return false;
 	}
-
 	// "AND_FlashingChestCurtain",    // 8
 	// "AND_FlashingPelvicCurtain",   // 9
 	// "AND_FlashingAssCurtain",      // 10
@@ -104,7 +102,6 @@ bool hard_change_in_slots_0_to_7()
 	int flashing_pelvis = player->GetFactionRank(current_Faction, true);
 	current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[10].c_str());
 	int flashing_ass = player->GetFactionRank(current_Faction, true);
-
 
 	bool found_change = false;
 	for (std::size_t my_i = 0; my_i <= 7; ++my_i) {  // The first 0-7 slots are REAL CLOTHING CHANGES!!!
@@ -148,6 +145,29 @@ bool hard_change_in_slots_0_to_7()
 	return found_change;
 }
 
+void debug_boxes_for_flashing_state_understanding()
+{
+	logger::info("DEBUG BOXES FOR FLASHING STATE UNDERSTANDING");
+	auto* player = RE::PlayerCharacter::GetSingleton();
+	if (!player) {
+		logger::info("SEVERE ERROR: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
+		return;
+	}
+	int my_i = 10;  // Flashing-Ass, nothing else
+	auto* current_Faction =
+	RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
+	if (!current_Faction) {
+		logger::info("SEVERE ERROR IN INITIALIZATION RUN: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
+		return;
+	}
+	int rank = player->GetFactionRank(current_Faction, true);
+	logger::info("SUCCESSFULLY QUERIED AND-Modesty-Factions IN INITIALIZATION RUN: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
+	if (rank != AND_previous_faction_rank_sorted[my_i]) {
+		LillithOnlyBox(std::format("CHANGE DETECTED IN AND-Modesty-Factions: {}'s rank changed from {} to {}", 
+			AND_faction_list_sorted[my_i], AND_previous_faction_rank_sorted[my_i], rank));
+	}
+}
+
 void handle_hard_change_in_slots_0_to_7()
 {
 	auto* player = RE::PlayerCharacter::GetSingleton();
@@ -172,8 +192,6 @@ void handle_hard_change_in_slots_0_to_7()
 		if ( (rank != AND_previous_faction_rank_sorted[my_i])  ) {
 			logger::info("Player changed rank from previously {} to now {}!", AND_previous_faction_rank_sorted[my_i], rank);
 
-
-
 			if (!first_boolean_element) {
 				constructed_change_description += " and you are ";
 			}
@@ -183,8 +201,6 @@ void handle_hard_change_in_slots_0_to_7()
 			}
 			constructed_change_description += AND_faction_verbalalized_and_sorted[my_i]; // This is the verbalized version of the faction name, used for messages to the player.
 		} 
-		// We update the previous faction rank for each faction, so we don't repeatedly announce the same change of clothes.
-		AND_previous_faction_rank_sorted[my_i] = rank;
 	}
 	constructed_change_description += ". Say so in your response to the player, to make him aware of your modesty situation, and tell us how that makes you feel.";
 	LillithOnlyBox(constructed_change_description.c_str());
@@ -196,31 +212,33 @@ void handle_hard_change_in_slots_0_to_7()
 	}
 }
 
-void handle_AND_modesty::initialize_AND_status()
+void handle_AND_modesty::reset_previous_rank_to_current_rank()
 {
+	logger::info("AND-Modesty-Factions:  STARTING TO RESET ALL PREVIOUS-RANKS TO CURRENT-RANKS");
 	auto* player = RE::PlayerCharacter::GetSingleton();
 	if (!player) {
-		logger::info("SEVERE ERROR: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
+		logger::info("AND-Modesty-Factions:  SEVERE ERROR: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
 		return;
 	}
 	for (std::size_t my_i = 0; my_i < AND_faction_list_sorted.size(); ++my_i) {
 		auto* current_Faction =
 		RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
 		if (!current_Faction) {
-			logger::info("SEVERE ERROR IN INITIALIZATION RUN: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
+			logger::info("AND-Modesty-Factions:  SEVERE ERROR:  IN reset_previous_rank_to_current_rank: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
 			continue;
 		}
 		int rank = player->GetFactionRank(current_Faction, true);
 		AND_previous_faction_rank_sorted[my_i] = rank;
-		logger::info("SUCCESSFULLY QUERIED AND-Modesty-Factions IN INITIALIZATION RUN: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
+		// logger::info("SUCCESSFULLY QUERIED AND-Modesty-Factions IN INITIALIZATION RUN: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
 	}
+	logger::info("AND-Modesty-Factions:  FINISHED RESETTING ALL PREVIOUS-RANKS TO CURRENT-RANKS");
 }
 
 void handle_current_flashing_state()
 {
 	auto* player = RE::PlayerCharacter::GetSingleton();
 	if (!player) {
-		logger::info("SEVERE ERROR: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
+		logger::info("AND-Modesty-Factions:  SEVERE ERROR: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
 		return;
 	}
 
@@ -231,11 +249,11 @@ void handle_current_flashing_state()
 		auto* current_Faction =
 		RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
 		if (!current_Faction) {
-			logger::info("SEVERE ERROR: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
+			logger::info("AND-Modesty-Factions:  SEVERE ERROR: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
 			continue;
 		}
 		int rank = player->GetFactionRank(current_Faction, true);
-		logger::info("SUCCESSFULLY QUERIED FOR SOFT-AND-FLASHING-Factions: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
+		logger::info("AND-Modesty-Factions:  SUCCESSFULLY QUERIED FOR SOFT-AND-FLASHING-Factions: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
 		bool real_clothes_change = false;
 
 		if (rank) {
@@ -246,8 +264,6 @@ void handle_current_flashing_state()
 			first_boolean_element = false;
 			constructed_change_description += AND_faction_verbalalized_and_sorted[my_i]; // This is the verbalized version of the faction name, used for messages to the player.
 		}
-		// We update the previous faction rank for each faction.
-		AND_previous_faction_rank_sorted[my_i] = rank;
 	}
 	constructed_change_description = R"SKSE(Due to wind and movement, you are currently )SKSE" + constructed_change_description;			
 	constructed_change_description += ". Say so in your response to the player, to make him aware of your modesty situation, and tell us how that makes you feel.";
@@ -258,27 +274,29 @@ void handle_current_flashing_state()
 		DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(constructed_change_description);
 		// DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(constructed_change_description);
 	} else {
-		logger::info("Note:  AND-MODESTY-UPDATE-STRING CONSTRUCTED, but not delivering it to TTS because it's too soon after game load: {}.", constructed_change_description);
+		logger::info("AND-Modesty-Factions:  Note:  AND-MODESTY-UPDATE-STRING CONSTRUCTED, but not delivering it to TTS because it's too soon after game load: {}.", constructed_change_description);
 	}
 }
 void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 {
 	auto* player = RE::PlayerCharacter::GetSingleton();
 	if (!player) {
-		logger::info("SEVERE ERROR: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
+		logger::info("AND-Modesty-Factions:  SEVERE ERROR: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
 		return;
 	}
 	// Make sure the game is initialized and we don't get confused at game startup.
 	if (AND_previous_faction_rank_sorted[0] == -1) {
-		logger::info("AND-Ranks are not initialized yet!!  Initialize them and then return for now and for this round!!");
-		initialize_AND_status();
+		logger::info("AND-Modesty-Factions:  AND-Ranks are not initialized yet!!  Initialize them and then return for now and for this round!!");
+		reset_previous_rank_to_current_rank();
 		return;
 	}
+
+	// Manual addition for debuggin/understanding the flashing-rank in more detail:
+	debug_boxes_for_flashing_state_understanding();
 
 	// FIRST we check for actual clothing changes (ie. on slots 0-7).  If something happens there, that is the message and the rest is irrelevant anyway.
 	if (hard_change_in_slots_0_to_7()) {
 		handle_hard_change_in_slots_0_to_7();
-		return;
 	}
 
 	// Now we know, there is no pure change of clothing, but rather the constant ON-OFF of the flashing system
@@ -286,6 +304,9 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 		//  disable that for now, just to test.  
 		handle_current_flashing_state();
 	}
+	
+	// The resetting of ranks is done here and not in any subhandler any more.
+	reset_previous_rank_to_current_rank();
 
 }
 
