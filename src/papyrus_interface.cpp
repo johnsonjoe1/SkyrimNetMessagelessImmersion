@@ -21,6 +21,24 @@ float SNMIPapyrus::previous_maid_level = -1.0f;
 */
 // FIRST WE INSERT THE PAPYRUS INTERACTION, because this will be triggered by papyrus and we later query the values from here, so the definition must come first.
 
+void SNMIPapyrus::set_lovesickness_flag(RE::StaticFunctionTag*, float a_value)
+{
+    _lovesickness_flag = a_value;
+	SKSE::log::info("Note:  Lovesickness_flag:  {}  previous_lovesickness_flag: {}", _lovesickness_flag, previous_lovesickness_flag);	
+	if ( (_lovesickness_flag > previous_lovesickness_flag ) ) {
+		SKSE::log::info("Note: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> LOVESICKNESS-STATEMENT TRIGGERED !!!!!!!!!!!!!!!!!!!!");	
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("The sex was so great, you are filled with euphoria.  But something else is the matter:  You think you might be falling in love right now.  Say so and let us know how you feel about that!  And make it clear that you speak about your imminent lovesickness in your response!");
+		SKSE::log::info("Note:  Milk-level-update thought 3 was delivered.");
+	}  else {
+		SKSE::log::info("Note: No increase in values, so no LOVESICKNESS-STATEMENT triggerd.");	
+	}
+	previous_lovesickness_flag = a_value;  // update the previous level for the next check	
+}
+void SNMIPapyrus::set_lovesickness_euphoria(RE::StaticFunctionTag*, float a_value)
+{
+    _lovesickness_euphoria = a_value;
+}
+
 
 void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
 {
@@ -217,8 +235,12 @@ bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
     a_vm->RegisterFunction("SetKeepaliveLevel", "SNMI_Native", SetKeepaliveLevel);
 	a_vm->RegisterFunction("SetMaidLevel", "SNMI_Native", SetMaidLevel);
 
-	a_vm->RegisterFunction("set_yps_AddictionLevell", "SNMI_Native", set_yps_AddictionLevel);
+	a_vm->RegisterFunction("set_yps_AddictionLevel", "SNMI_Native", set_yps_AddictionLevel);
 	a_vm->RegisterFunction("set_yps_AddictionBuff", "SNMI_Native", set_yps_AddictionBuff);
+
+	a_vm->RegisterFunction("set_lovesickness_flag", "SNMI_Native", set_lovesickness_flag);
+	a_vm->RegisterFunction("set_lovesickness_euphoria", "SNMI_Native", set_lovesickness_euphoria);
+
 
 	// function set_yps_AddictionLevel(float a_value) Global Native
 	// function set_yps_AddictionBuff(float a_value) Global Native

@@ -19,6 +19,9 @@ public:
 	static void set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value);	
 	static void SetYpsConditionString(RE::StaticFunctionTag*, std::string a_value);
 
+	static void set_lovesickness_flag(RE::StaticFunctionTag*, float a_value);
+	static void set_lovesickness_euphoria(RE::StaticFunctionTag*, float a_value);
+
     static float GetMilkLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
 	static float GetMilkMax();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
 	static float GetMaidLevel();    // make this static, so that we can call it without an instance of the class SNMIPapyrus.
@@ -51,9 +54,11 @@ public:
 	static inline float _maidLevel = 1.0f;
 
 	static inline float _yps_AddictionLevel = 0;
-
 	static inline float _yps_AddictionBuff = 0;
 	
+	static inline float _lovesickness_flag=0;
+	static inline float previous_lovesickness_flag=0;
+	static inline float _lovesickness_euphoria=0;
 
 	static inline std::string _yps_condition_string = "No yps condition string defined IN PLUGIN yet!";
 };

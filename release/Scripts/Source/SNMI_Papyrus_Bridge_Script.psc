@@ -10,7 +10,7 @@ float mme_maid_level = 1.0
 string milk_string = "No milk_string defined yet!"
 
 float LVSK_Euphoria = 0.0
-int LVSK_IsLovesick = 0
+float LVSK_IsLovesick = 0.0
 
 Event OnInit()
     RegisterForSingleUpdate(10.0)
@@ -58,30 +58,16 @@ function push_all_MME_variables_to_the_plugin()
 	SNMI_Native.SetLactacidMax(max_lactacid)
     SNMI_Native.SetMilkString(milk_string)
 	SNMI_Native.SetMaidLevel(mme_maid_level)
+
+    if False ;  Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
+         Debug.Notification("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", mme_maid_level: " + mme_maid_level )
+	Else
+        Debug.Trace("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", mme_maid_level: " + mme_maid_level )
+    endif 
+
 endfunction
 
-Event OnUpdate()
-
-    keepalive_value += 1.0    ; This is just an internal counter, that will count the number of times this has run so far
-    SNMI_Native.SetKeepaliveLevel(keepalive_value)
-
-	push_all_MME_variables_to_the_plugin()
-
-	; Let's also track the lovesickness exposed variables
-	LVSK_IsLovesick = StorageUtil.GetIntValue(Game.GetPlayer(), "LVSK_IsLovesick", 0); 1 = true, 0 = false
-	LVSK_Euphoria = StorageUtil.GetFloatValue(Game.GetPlayer(), "LVSK_Euphoria", 0.0); percentage, updated every game hour
-
-
-
-
-    ; Only the DEBUG-Player will receive these extra notifications, so as to make them invisible for players in the release.
-    if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
-         Debug.Notification("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", mme_maid_level: " + mme_maid_level + ", Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
-	Else
-        Debug.Trace("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", mme_maid_level: " + mme_maid_level + ", Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
-    endif 
-    
-
+function push_all_YPS_variables_to_the_plugin()
 
 	; We take the list of current YPS-Conditions (for thoughts) and put them all into a single string, so that we can then push it to the C++ plugin
 	int count = StorageUtil.StringListCount(None, "ypsActiveConditionsList")
@@ -103,8 +89,39 @@ Event OnUpdate()
 	Debug.Trace("[SNMI]  Final YPS condition list: " + allConditions )
     SNMI_Native.SetYpsConditionString(allConditions)
 
+	float yps_AddictionLevel = StorageUtil.GetIntValue(None, "yps_AddictionLevel") ; current Fashion Addiction level (0-11)
+	float yps_AddictionBuff = StorageUtil.GetIntValue(None, "yps_AddictionBuff"); level of current Fashion Addiction buff
+	SNMI_Native.set_yps_AddictionLevel(yps_AddictionLevel)
+	SNMI_Native.set_yps_AddictionBuff(yps_AddictionBuff)	
+endfunction
 
-	
+function push_lovesick_variables_to_the_plugin()
+	; Let's also track the lovesickness exposed variables
+	LVSK_IsLovesick = StorageUtil.GetIntValue(Game.GetPlayer(), "LVSK_IsLovesick", 0); 1 = true, 0 = false
+	LVSK_Euphoria = StorageUtil.GetFloatValue(Game.GetPlayer(), "LVSK_Euphoria", 0.0); percentage, updated every game hour
+
+    ; Only the DEBUG-Player will receive these extra notifications, so as to make them invisible for players in the release.
+    if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
+         Debug.Notification("[SNMI] 10-sec-update: Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
+	Else
+        Debug.Trace("[SNMI] 10-sec-update: Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
+    endif 
+	SNMI_Native.set_lovesickness_flag(LVSK_IsLovesick)
+	SNMI_Native.set_lovesickness_euphoria(LVSK_Euphoria)
+
+endfunction
+
+Event OnUpdate()
+
+    keepalive_value += 1.0    ; This is just an internal counter, that will count the number of times this has run so far
+    SNMI_Native.SetKeepaliveLevel(keepalive_value)
+
+	push_all_MME_variables_to_the_plugin()
+
+	push_all_YPS_variables_to_the_plugin()
+
+	push_lovesick_variables_to_the_plugin()
+	    
     RegisterForSingleUpdate(10.0)  ; Restart the same function in 10 seconds
 EndEvent
 

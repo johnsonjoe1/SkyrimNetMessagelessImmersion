@@ -45,7 +45,16 @@ bool DumpThoughts::too_early_after_game_load()
 	auto now = std::chrono::steady_clock::now();
 	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_game_load_or_reload_timestamp);
 	SKSE::log::info("Time since last game load or reload: {} seconds", runtime.count());
-	const int minimum_time_since_last_game_load_or_reload = 60;  // in seconds, so 1 minute
+
+	const int minimum_time_since_last_game_load_or_reload = 30;  // in seconds 
+
+	// We make the timeout again dependend on the player name
+	if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
+	{
+		SKSE::log::info("OVERRIDING natural timeout-after-game-load, because it's LILLITH, the debug character playing.", runtime.count(), minimum_time_since_last_game_load_or_reload);
+		return false; 
+	} 
+
 	if (runtime.count() < minimum_time_since_last_game_load_or_reload) {
 		SKSE::log::info("////////BLOCKING THOUGHT OUTPUT/////////It is too early after game load or reload to throw out thoughts, because only {} seconds have passed since the last game load or reload, which is less than the minimum of {} seconds.", runtime.count(), minimum_time_since_last_game_load_or_reload);
 		return true;
