@@ -10,4 +10,5 @@ set(sources ${sources}
     src/handle_fame.cpp
     src/handle_armor_activation.cpp
     src/handle_furniture_activation.cpp
+    src/handle_mod_broadcasts.cpp
 )

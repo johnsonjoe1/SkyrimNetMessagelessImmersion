@@ -13,4 +13,5 @@ set(headers ${headers}
     src/handle_fame.h
     src/handle_armor_activation.h
     src/handle_furniture_activation.h
+    src/handle_mod_broadcasts.h
 )
