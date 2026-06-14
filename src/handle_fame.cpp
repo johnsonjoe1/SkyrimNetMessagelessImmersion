@@ -96,6 +96,9 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 				if ( fame.name == "SLSF_AllowComment" ) {
 					continue;  // This event is not so interesting
 				}
+				if ( fame.name == "SLSF_Reloaded_CurrentTattooFame" ) {
+					continue;  // The Tattoo fame seems to increase also from whipping marks and from dirt (which is a SlaveTat in many cases) as well, so this is very prone to error.  Ignore it.
+				}
 				if ( fame.current_value > fame.previous_value ) {
 					// Increase:  say as much
 					SKSE::log::info("SLSF-Handling: Detected an INCREASE in: {}  from {} to {}.", fame.name, fame.previous_value, fame.current_value);
@@ -105,6 +108,17 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 					SKSE::log::info("SLSF-Handling: Detected a DECREASE in: {}  from {} to {}.", fame.name, fame.previous_value, fame.current_value);
 					LillithOnlyBox(std::format("SLSF-Handling: Detected a DECREASE in: {} from {} to {}." , fame.name , fame.previous_value , fame.current_value));
 				}
+
+				if ((fame.current_value > 50) && (fame.previous_value <= 50)) {
+					LillithOnlyBox(std::format("SLSF-Handling: CROSSING the 50 THRESHOLD:   TRIGGERING A THOUGHT VALUE FOR: {}.", fame.name));
+					std::string fame_thought_message = std::format(
+R"SKSE(YOU, the player, noticed people starting to talk about you behind your back and whispering.  
+Because of your actions, you are now famed in the following category:  {}. 
+What are you thinking now based on this? How do you feel about it?  
+And let us know from your response, that you speak about your fame in the given category.
+)SKSE", fame.name);
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
+				} 
 			}
 			fame.previous_value = fame.global->value;
 		}
