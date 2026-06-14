@@ -11,5 +11,6 @@ set(headers ${headers}
     src/handle_iNeed.h
     src/handle_yps.h
     src/handle_fame.h
-    src/handle_armor_activation.cpp
+    src/handle_armor_activation.h
+    src/handle_furniture_activation.h
 )
