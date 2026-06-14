@@ -15,9 +15,10 @@ bool is_known_useless_event(std::string event_name)
 		"SKICP_configManagerReady",
 		"Apropos2GameLoaded",
 		"Apropos2ConfigClose",
-		"SNMI_JustPumpMyStringToPlayerThought",        // treat our own events with a log entry only.
-		"SNMI_Pump_IMPORANT_PlayerThought",            // treat our own events with a log entry only.
-		"SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",   // treat our own events with a log entry only.
+		"SNMI_JustPumpMyStringToPlayerThought",             // treat our own events with a log entry only.
+		"SNMI_Pump_IMPORANT_PlayerThought",                 // treat our own events with a log entry only.
+		"SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",        // treat our own events with a log entry only.
+		"SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought",  // treat our own events with a log entry only.
 		"SKIWF_hudModeChanged", 
 		"SKIWF_widgetLoaded", 
 		"SKIWF_widgetManagerReady", 
