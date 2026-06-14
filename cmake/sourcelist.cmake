@@ -8,4 +8,5 @@ set(sources ${sources}
     src/handle_iNeed.cpp
     src/handle_yps.cpp
     src/handle_fame.cpp
+    src/handle_armor_activation.cpp
 )
