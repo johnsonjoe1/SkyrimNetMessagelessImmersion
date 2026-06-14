@@ -630,7 +630,6 @@ public:
 
 		// MORE THINGS TO HANDLE: Name: yps_FashionChange  StrArg: FingerNailPolish  NumArg: 0
 
-		// MORE THINGS TO HANDLE: (This is from the ass-slap or tit-slap in Spank-that-Ass / Devious Followers Mod) Name: DF-ResistanceLoss  StrArg:   NumArg: 1
 
 
 
@@ -656,122 +655,6 @@ public:
     }
 
 private:
-
-
-
-std::unordered_set<std::string> ignored_mod_events = {
-	"SKICP_configManagerReady",
-	"Apropos2GameLoaded",
-	"Apropos2ConfigClose",
-	"SNMI_JustPumpMyStringToPlayerThought",        // treat our own events with a log entry only.
-	"SNMI_Pump_IMPORANT_PlayerThought",            // treat our own events with a log entry only.
-	"SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",   // treat our own events with a log entry only.
-	"SKIWF_hudModeChanged", 
-	"SKIWF_widgetLoaded", 
-	"SKIWF_widgetManagerReady", 
-	"SKIWF_iWantWidgetsReset", 
-	"SKIWF_iWantStatusBarsReady", 
-	"iWantStatusBarsReady", 
-	"iWantWidgetsReset", 
-	"SKICP_modSelected",   // this is broadcast when the player selects a mod in the SKI Configuration Menu.
-	"SKICP_pageSelected",  // this is broadcast when the player selects a page of a mod configuration in the SKI Configuration Menu.
-	"SKICP_optionHighlighted",   // this is broadcast when the player highlights a configuration option for a mod in the SKI Configuration Menu.
-	"SKICP_optionSelected",   // this is broadcast when the player selects a configuration option for a mod in the SKI Configuration Menu.
-	"SKICP_messageDialogClosed",   // this is broadcast when the player closes a message dialog in the SKI Configuration Menu.
-	"SKICP_menuSelected",
-	"SKICP_menuAccepted",
-	"SKICP_inputSelected",
-	"SKICP_inputAccepted",
-	"SKICP_keymapChanged",   // this is broadcast when the player changes a keymap in the SKI Configuration Menu.
-	"SKIWF_widgetError",            // this is broadcast when a widget error occurs.
-	"RSM_CategoriesInitialized",   // this is some technical event from RaceMenu that we don't care about.
-	"RSM_Initialized",             // this is some technical event from RaceMenu that we don't care about.
-	"RSM_SliderChange",
-	"RSM_Reinitialized",
-	"RSM_RequestTintSave",
-	"RSM_RequestTintLoad",
-	"RSM_HairColorChange",
-	"RSM_ShadersInvalidated",
-	"zadRegisterEvents",   			// This is from zadLibs probably and just a technical event anyway.
-	"GagSoundsRegistered",			// This is from zadLibs probably and just a technical event anyway.
-	"SLA_Int_PlayerLoadsGame",
-	"sla_Int_PlayerLoadsGame",
-	"sla_UpdateComplete",
-	"SN_StatusUpdated", 
-	"_SN_StatusUpdated", 
-	"_SN_UIConfigured",
-	//"SkyrimNet_SpeechStarted",
-	//"SkyrimNet_SpeechCompleted",
-	//"SkyrimNet_SpeechComplete",
-	//"SkyrimNet_AudioStarted",
-	//"SkyrimNet_AudioEnded",
-	"SkyrimNet_MemoryCreated",  // No need to respond to this, as it's internal memory creation and not relevant to direct game status.
-	"UD_AfterUIReload", 			
-	"UD_QuestKeywordUpdate", 
-	"UD_GenericKeyUpdate", 
-	"UD_PatchUpdate",
-	"UIListMenu_LoadMenu",
-	"UIListMenu_CloseMenu",
-	"UIListMenu_SelectItemText",   // this may be useful later, because it indicated player is trying lockpicking now
-	"UIListMenu_SelectItem",
-	// "UD_SentientDialogue",  // Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
-	"RSM_LoadPlugins",
-	"SeverActions_CellLoaded",
-	"SeverActions_FamiliarityTimestamp",
-	"SeverActions_ReputationAssess",
-	"SeverActions_AmbientBanterReady",
-	"SeverActions_ForcedCombatEnded",   // No need to respond to this, I guess?
-	"SeverActions_NewTeammateDetected",
-	"ReSchlongify",
-	"MME_MilkCycleComplete",
-	"BeeingFemale",   //  We ignore this for now, maybe later we can do something with it.
-	"CBPCPlayerCollisionWithFemaleEvent",
-	"PlayerChangedCells",
-	"Obody_ApplyMorph",
-	"_SN_PlayerConsumes",  // MOD EVENT:  Name: _SN_PlayerConsumes  StrArg: IsEating  NumArg: 0
-	"PlayerOrgasmEnd",
-	"dhlp-Resume",   // This is technical Devious Helplessness operational stuff, to continue mod processes.
-	"dhlp-Suspend",   // This is technical Devious Helplessness operational stuff, to suspend mod processes.
-	"dhlp-maintenance",   // This is technical Devious Helplessness operational stuff, for maintenance purposes.
-	"SSL_PREPARE_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"SSL_LOCK_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"AnimationStarting",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"AnimationStart",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"AnimationStart_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"AnimationStarting_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"SSL_READY_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"StageStart",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"StageStart_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"StageEnd",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"StageEnd_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"SL_SetSpeed",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"SL_EndScene",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"SL_AdvanceScene",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"SSL_CLEAR_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"AnimationEnding",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"AnimationEnding_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"AnimationEnd",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"AnimationEnd_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-	"StageEnd_",                            //  This might be from The-Ancient-Profession.
-	"StageStart_",                          //  This might be from The-Ancient-Profession.
-	"AnimationStarting_TAPPlayerFreelance", //  This might be from The-Ancient-Profession.
-	"AnimationStart_TAPPlayerFreelance",    //  This might be from The-Ancient-Profession.
-	"AnimationEnding_TAPPlayerFreelance",   //  This might be from The-Ancient-Profession.
-	"AnimationEnd_TAPPlayerFreelance",      //  This might be from The-Ancient-Profession.
-	"StageStart_TAPPlayerFreelance",        //  This might be from The-Ancient-Profession.
-	"StageEnd_TAPPlayerFreelance",          //  This might be from The-Ancient-Profession.
-	"Helpless_RemoveSpell",  // Unknown what this is
-	"CaptiveDefeatInit"  // This is called every time a new cell is entered and merely a technical event,  probably for CaptivePlayer.
-};
-
-	bool is_known_useless_event(std::string event_name)
-	{
-		if (ignored_mod_events.contains(event_name)) {
-			return true;
-			// logger::info("Found!");
-		}
-		return false;
-	}
 };
 
 
@@ -811,13 +694,117 @@ public:
         {
             SKSE::log::info("That activated object seems to be furniture, so we can proceed.");
         } else if (formType == RE::FormType::Armor) {
+
+			handle_armor_item_activation(base);
+
+			// Return control, no question
+            return RE::BSEventNotifyControl::kContinue;
+		} else
+		{
+            SKSE::log::info("[SkyrimNetMessagelessImmersion] That activated object does not seem to be Furniture and also not an Armor item, so we ignore it.");
+            return RE::BSEventNotifyControl::kContinue;
+        }
+
+        // We want to broadcast mod events.  So we need this event source.
+        auto eventSource = SKSE::GetModCallbackEventSource();
+
+        // Since the activation event happend, we can start broadcasting the mod event right away.
+        if (eventSource)
+        {
+            // auto furniture_name = base->GetName();
+            const char* furniture_name = base->GetName();
+            if (!furniture_name) {
+                SKSE::log::error("[SkyrimNetMessagelessImmersion] The furniture name was null!  Emergency abort!");
+                return RE::BSEventNotifyControl::kContinue;
+            }
+            std::string  mod_event_name = "Nothing so far";
+            std::string  mod_event_string_arg = "Mod event string not set yet";
+
+            if (std::strcmp(furniture_name , "Milk Pump") == 0) {
+                SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated the Milk Pump!  THIS GETS A SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
+				auto* player = RE::PlayerCharacter::GetSingleton();
+				auto furniture = player->GetOccupiedFurniture().get();
+				if (furniture) {
+					// player is using furniture
+					mod_event_string_arg = milk_pump_prompt_2;
+					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 2nd Event for Milk Pump! " + mod_event_string_arg ).c_str());
+					SKSE::log::info("THIS IS THE 2nd Event for Milk Pump! {} " , mod_event_string_arg );
+				}		else {
+					mod_event_string_arg = milk_pump_prompt_1;
+					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for Milk Pump! " + mod_event_string_arg ).c_str());
+					SKSE::log::info("THIS IS THE 1st Event for Milk Pump! {} " , mod_event_string_arg );
+				}
+                mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
+            } else if (GetKeywordIndex(furniture_name) != -1) {
+				SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated a piece of furniture that is in our list of special furniture!  This gets a SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
+			
+				auto* player = RE::PlayerCharacter::GetSingleton();
+				auto furniture = player->GetOccupiedFurniture().get();
+				if (furniture) {
+					// player is already using furniture, so this is probably the second event.  No comment on this for all the furnitures in this standard list.
+					SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated a furniture from the list of special furniture, but this is probably the second furniture event, so we EXIT without no message and no further ado now!!!!");
+        			return RE::BSEventNotifyControl::kContinue;
+				} else {
+					mod_event_string_arg = furniture_prompt_list[GetKeywordIndex(furniture_name)];
+					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for this furnitures item (because player not in a furniture already! " + mod_event_string_arg ).c_str());
+					SKSE::log::info("THIS IS THE 1st Event for this furniture item (because player not in a furniture already)! {} " , mod_event_string_arg );
+				}
+                mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
+			} else {
+
+				//  LATER:  Add special treatment for:  Bench
+				//  LATER:  Add special treatment for:  Wood Chopping Block
+
+
+                mod_event_name = "SNMI_PlayerActivatedSomething";
+                mod_event_string_arg = furniture_name;
+                SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated SOMETHING THAT IS NOT A MILK PUMP AT ALL!!  This gets normal treatment.");
+				auto* player = RE::PlayerCharacter::GetSingleton();
+				auto furniture = player->GetOccupiedFurniture().get();
+				if (furniture) {
+					// player is already using furniture, so this is probably the second event.  No comment on this in the blacksmith forge case.
+					SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated SOME FURNITURE ITEM, but this is probably the second furniture event, so we EXIT without no message and no further ado now!!!!");
+        			return RE::BSEventNotifyControl::kContinue;
+				}	else {
+
+					std::string generic_furniture_prompt_1 = R"SKSE(Now the situation is this: YOU, the player, are about to use a )SKSE";
+					generic_furniture_prompt_1 = generic_furniture_prompt_1 + furniture_name;
+					generic_furniture_prompt_1 = generic_furniture_prompt_1 + R"SKSE(. )SKSE" + standard_thought_instruction;
+
+					mod_event_string_arg = generic_furniture_prompt_1;
+					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for SOME FURNITURE ITEM! " + mod_event_string_arg ).c_str());
+					SKSE::log::info("THIS IS THE 1st Event for SOME FURNITURE ITEM! {} " , mod_event_string_arg );
+				}				
+            }
+            
+            SKSE::ModCallbackEvent my_event(
+                mod_event_name,                        // event name
+                mod_event_string_arg,                  // arbitrary string argument 
+                123.0f,                                // arbitrary float argument
+                RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+            );
+            eventSource->SendEvent(&my_event);
+            // This seems to have worked, so we say as much in the log.
+            spdlog::info("[SkyrimNetMessagelessImmersion] Mod-event string:  {}", base->GetName());
+            spdlog::info("[SkyrimNetMessagelessImmersion] Mod-event sender:  {}", RE::PlayerCharacter::GetSingleton()->GetName());
+            spdlog::info("[SkyrimNetMessagelessImmersion] ********************** Sent mod event: {} completed.", mod_event_name);
+        } else {
+            SKSE::log::error("[SkyrimNetMessagelessImmersion] Failed to get mod event broadcast callback event source!");
+        };
+
+        return RE::BSEventNotifyControl::kContinue;
+    };
+	private:
+
+void handle_armor_item_activation(RE::TESBoundObject *base)
+			{
             SKSE::log::info("That activated object seems to be an armor item, so we will handle it (though not much so far).");
 			// LillithOnlyBox("plugin.cpp:   Some piece of arour was activated!!!!");
 
 			auto armor = base->As<RE::TESObjectARMO>();
 			if (!armor) {
 				LillithOnlyBox("plugin.cpp:   SEVERE ERROR!! CASTING the armor item at TESObjectARMO failed!!!  Exiting this handler!");
-				return RE::BSEventNotifyControl::kContinue;
+				return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 			}
 
 			// State the name of the armour piece
@@ -937,104 +924,9 @@ public:
 			if (we_have_something_interesting_to_say) {
 				DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(thought_string);
 			}
-			// Return control, no question
-            return RE::BSEventNotifyControl::kContinue;
-		} else
-		{
-            SKSE::log::info("[SkyrimNetMessagelessImmersion] That activated object does not seem to be furniture, so we ignore it.");
-            return RE::BSEventNotifyControl::kContinue;
-        }
 
-        // We want to broadcast mod events.  So we need this event source.
-        auto eventSource = SKSE::GetModCallbackEventSource();
+			}
 
-        // Since the activation event happend, we can start broadcasting the mod event right away.
-        if (eventSource)
-        {
-            // auto furniture_name = base->GetName();
-            const char* furniture_name = base->GetName();
-            if (!furniture_name) {
-                SKSE::log::error("[SkyrimNetMessagelessImmersion] The furniture name was null!  Emergency abort!");
-                return RE::BSEventNotifyControl::kContinue;
-            }
-            std::string  mod_event_name = "Nothing so far";
-            std::string  mod_event_string_arg = "Mod event string not set yet";
-
-            if (std::strcmp(furniture_name , "Milk Pump") == 0) {
-                SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated the Milk Pump!  THIS GETS A SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
-				auto* player = RE::PlayerCharacter::GetSingleton();
-				auto furniture = player->GetOccupiedFurniture().get();
-				if (furniture) {
-					// player is using furniture
-					mod_event_string_arg = milk_pump_prompt_2;
-					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 2nd Event for Milk Pump! " + mod_event_string_arg ).c_str());
-					SKSE::log::info("THIS IS THE 2nd Event for Milk Pump! {} " , mod_event_string_arg );
-				}		else {
-					mod_event_string_arg = milk_pump_prompt_1;
-					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for Milk Pump! " + mod_event_string_arg ).c_str());
-					SKSE::log::info("THIS IS THE 1st Event for Milk Pump! {} " , mod_event_string_arg );
-				}
-                mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
-            } else if (GetKeywordIndex(furniture_name) != -1) {
-				SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated a piece of furniture that is in our list of special furniture!  This gets a SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
-			
-				auto* player = RE::PlayerCharacter::GetSingleton();
-				auto furniture = player->GetOccupiedFurniture().get();
-				if (furniture) {
-					// player is already using furniture, so this is probably the second event.  No comment on this for all the furnitures in this standard list.
-					SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated a furniture from the list of special furniture, but this is probably the second furniture event, so we EXIT without no message and no further ado now!!!!");
-        			return RE::BSEventNotifyControl::kContinue;
-				} else {
-					mod_event_string_arg = furniture_prompt_list[GetKeywordIndex(furniture_name)];
-					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for this furnitures item (because player not in a furniture already! " + mod_event_string_arg ).c_str());
-					SKSE::log::info("THIS IS THE 1st Event for this furniture item (because player not in a furniture already)! {} " , mod_event_string_arg );
-				}
-                mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
-			} else {
-
-				//  LATER:  Add special treatment for:  Bench
-				//  LATER:  Add special treatment for:  Wood Chopping Block
-
-
-                mod_event_name = "SNMI_PlayerActivatedSomething";
-                mod_event_string_arg = furniture_name;
-                SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated SOMETHING THAT IS NOT A MILK PUMP AT ALL!!  This gets normal treatment.");
-				auto* player = RE::PlayerCharacter::GetSingleton();
-				auto furniture = player->GetOccupiedFurniture().get();
-				if (furniture) {
-					// player is already using furniture, so this is probably the second event.  No comment on this in the blacksmith forge case.
-					SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated SOME FURNITURE ITEM, but this is probably the second furniture event, so we EXIT without no message and no further ado now!!!!");
-        			return RE::BSEventNotifyControl::kContinue;
-				}	else {
-
-					std::string generic_furniture_prompt_1 = R"SKSE(Now the situation is this: YOU, the player, are about to use a )SKSE";
-					generic_furniture_prompt_1 = generic_furniture_prompt_1 + furniture_name;
-					generic_furniture_prompt_1 = generic_furniture_prompt_1 + R"SKSE(. )SKSE" + standard_thought_instruction;
-
-					mod_event_string_arg = generic_furniture_prompt_1;
-					// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for SOME FURNITURE ITEM! " + mod_event_string_arg ).c_str());
-					SKSE::log::info("THIS IS THE 1st Event for SOME FURNITURE ITEM! {} " , mod_event_string_arg );
-				}				
-            }
-            
-            SKSE::ModCallbackEvent my_event(
-                mod_event_name,                        // event name
-                mod_event_string_arg,                  // arbitrary string argument 
-                123.0f,                                // arbitrary float argument
-                RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-            );
-            eventSource->SendEvent(&my_event);
-            // This seems to have worked, so we say as much in the log.
-            spdlog::info("[SkyrimNetMessagelessImmersion] Mod-event string:  {}", base->GetName());
-            spdlog::info("[SkyrimNetMessagelessImmersion] Mod-event sender:  {}", RE::PlayerCharacter::GetSingleton()->GetName());
-            spdlog::info("[SkyrimNetMessagelessImmersion] ********************** Sent mod event: {} completed.", mod_event_name);
-        } else {
-            SKSE::log::error("[SkyrimNetMessagelessImmersion] Failed to get mod event broadcast callback event source!");
-        };
-
-        return RE::BSEventNotifyControl::kContinue;
-    };
-	private:
 	int GetKeywordIndex(std::string_view keyword)
 	{
 		for (std::size_t i = 0; i < furniture_prompt_triggers.size(); ++i)
