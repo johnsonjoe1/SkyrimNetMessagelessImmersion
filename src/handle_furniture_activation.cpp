@@ -56,8 +56,7 @@ and the necessary smithing skill to do so.  It is not possible to create new ite
 std::string tanning_rack_prompt_1 = R"SKSE(
 Now the situation is this: YOU, the player, are about to use a Tanning Rack. 
 Tanning Racks allow you to break down items from your inventory into basic leather or leather stripes or simple components like that.
-If you have raw hides or old leather items, you can make basic leather components from them. But you must have the right materials
-It is not possible to create new armour or complex items here. Also improvements to items are not possible.
+If you have raw hides or old leather items, you can make basic leather components from them. You may also be able to craft clothing items.
 )SKSE" + standard_thought_instruction;
 
 std::string smelter_prompt_1 = R"SKSE(

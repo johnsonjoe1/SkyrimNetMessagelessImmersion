@@ -53,8 +53,10 @@ At present there is some content from MME Milk mod:
 
 At present there is some support for Advanced-Nudity-Detection (AND) mod:
 * Thoughts upon changing the nakedness for a particular body section for the 17 basic on-off factions of the AND modesty system.
+  Unfortunately at present this does not work so well, when items have the flashing-risk-property enabled, but otherise it should be fine.
 
-* 0.5.0:  Vanilla armours of all types will be commented on based on keywords supplied.  (for some known keywords, not everything of course)
+Upon picking up items:
+* 0.5.0:  If there are special keywords, such as a YPS-fashion-level or an AND-flash-risk keyword or a SL-Survival-bikini keyword, thoughts upon that implication will be raised.
 
 There is some sensitivity to overall SkyrimNet talk going on, so as to not babble too much when others are speaking, but on the other hand, give some updates and hopefully immersion and mental self-talk when it's otherwise quiet and alone time in the woods.
 
