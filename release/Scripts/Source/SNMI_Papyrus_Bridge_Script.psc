@@ -85,7 +85,7 @@ function push_all_YPS_variables_to_the_plugin()
 		allConditions += condition
 		i += 1
 	endWhile	
-	Debug.Notification("Final YPS condition list: " + allConditions )
+	; Debug.Notification("Final YPS condition list: " + allConditions )
 	Debug.Trace("[SNMI]  Final YPS condition list: " + allConditions )
     SNMI_Native.SetYpsConditionString(allConditions)
 
@@ -102,7 +102,8 @@ function push_lovesick_variables_to_the_plugin()
 
     ; Only the DEBUG-Player will receive these extra notifications, so as to make them invisible for players in the release.
     if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
-         Debug.Notification("[SNMI] 10-sec-update: Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
+         ; Debug.Notification("[SNMI] 10-sec-update: Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
+		 Debug.Trace("[SNMI] 10-sec-update: Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
 	Else
         Debug.Trace("[SNMI] 10-sec-update: Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
     endif 
