@@ -229,6 +229,7 @@ float SNMIPapyrus::GetKeepaliveLevel()     //  Here we must NOT use static.  Tha
 bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 {
     a_vm->RegisterFunction("SetMilkLevel", "SNMI_Native", SetMilkLevel);
+	a_vm->RegisterFunction("SetMilkMax", "SNMI_Native", SetMilkMax);
     a_vm->RegisterFunction("SetLactacidLevel", "SNMI_Native", SetLactacidLevel);	
 	a_vm->RegisterFunction("SetLactacidMax", "SNMI_Native", SetLactacidMax);		
 	a_vm->RegisterFunction("SetMilkString", "SNMI_Native", SetMilkString);
@@ -242,8 +243,6 @@ bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 	a_vm->RegisterFunction("set_lovesickness_euphoria", "SNMI_Native", set_lovesickness_euphoria);
 
 
-	// function set_yps_AddictionLevel(float a_value) Global Native
-	// function set_yps_AddictionBuff(float a_value) Global Native
 
 	a_vm->RegisterFunction("SetYpsConditionString", "SNMI_Native", SetYpsConditionString);
     return true;
