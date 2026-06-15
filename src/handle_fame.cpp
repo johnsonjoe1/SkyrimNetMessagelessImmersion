@@ -9,8 +9,10 @@
 #include <unordered_set>
 #include <optional>
 
-
 namespace logger = SKSE::log;
+
+const std::string fame_log_level = "change_only";
+
 
 // ****************************************************************************************************************
 //  We handle changes of the fame-Status here.
@@ -75,6 +77,7 @@ static std::vector<FameGlobal> fameGlobals = {
 
 void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 {
+	bool some_fame_change_happend = false;
 	for (auto& fame : fameGlobals) {
 		if (!fame.global) {
 			fame.global = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESGlobal>( fame.formID, "SLSF Reloaded.esp");
@@ -84,7 +87,16 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 			fame.current_value = fame.global->value;
 		} else {
 			float cur_value = fame.global->value;
-			SKSE::log::info("SLSF-GLOBALPointer existed:{}  value={}  previous_value={}", fame.name , cur_value, fame.previous_value);
+
+			if ( fame_log_level == "change_only" ) {
+				if ( cur_value != fame.previous_value ) {
+					SKSE::log::info("SLSF-GLOBALPointer existed:{}  value={}  previous_value={}", fame.name , cur_value, fame.previous_value);
+					some_fame_change_happend = true;
+				}
+			} else {
+				SKSE::log::info("SLSF-GLOBALPointer existed:{}  value={}  previous_value={}", fame.name , cur_value, fame.previous_value);
+			}
+			
 			
 			// Assign new value and message-box-report value changes for now
 			fame.current_value = fame.global->value;
@@ -122,6 +134,9 @@ And let us know from your response, that you speak about your fame in the given 
 			}
 			fame.previous_value = fame.global->value;
 		}
+	}
+	if (!some_fame_change_happend){
+		SKSE::log::info("SLSF-handing:  Checked for changes in all fame-categories, but no changes detected.");
 	}
 }
 

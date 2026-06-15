@@ -28,7 +28,7 @@ int IsAFoodBasedDisease(std::string_view keyword)
 
 bool is_known_irrelevant_magic_effect(std::string base_name)
 {
-	static const std::array<std::string, 12> irrelevant_effect_list = {
+	static const std::array<std::string, 13> irrelevant_effect_list = {
 		"RaceMenuHH Scale Effect"   , 
 		"Consume Food Portion"   , 
 		"Automate Hunger Script"  ,
@@ -40,7 +40,8 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"UIWheelMenu_LoadMenu",
 		"UIWheelMenu_SetOption",
 		"UIWheelMenu_CloseMenu",
-		"UIWheelMenu_ChooseOption"
+		"UIWheelMenu_ChooseOption",
+		"CC NPCBimboCheckerCloakEffect"
 	};		
 	for (std::size_t i = 0; i < irrelevant_effect_list.size(); ++i)
 	{

@@ -120,11 +120,11 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 				// player is using furniture
 				mod_event_string_arg = milk_pump_prompt_2;
 				// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 2nd Event for Milk Pump! " + mod_event_string_arg ).c_str());
-				SKSE::log::info("THIS IS THE 2nd Event for Milk Pump! {} " , mod_event_string_arg );
+				SKSE::log::info("THIS IS THE 2nd Event for ACTIVATION of Milk Pump!");
 			}		else {
 				mod_event_string_arg = milk_pump_prompt_1;
 				// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for Milk Pump! " + mod_event_string_arg ).c_str());
-				SKSE::log::info("THIS IS THE 1st Event for Milk Pump! {} " , mod_event_string_arg );
+				SKSE::log::info("THIS IS THE 1st Event for ACTIVATION of Milk Pump!");
 			}
 			mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
 		} else if (get_furniture_list_index(furniture_name) != -1) {
@@ -165,7 +165,7 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 
 				mod_event_string_arg = generic_furniture_prompt_1;
 				// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for SOME FURNITURE ITEM! " + mod_event_string_arg ).c_str());
-				SKSE::log::info("THIS IS THE 1st Event for SOME FURNITURE ITEM! {} " , mod_event_string_arg );
+				SKSE::log::info("THIS IS THE 1st Event for SOME FURNITURE ITEM!");
 			}				
 		}
 		

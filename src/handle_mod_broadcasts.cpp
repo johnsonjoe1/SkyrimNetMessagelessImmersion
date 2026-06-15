@@ -8,6 +8,16 @@
 
 namespace logger = SKSE::log;
 
+bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
+		static const std::unordered_set<std::string> ignored_mod_events = {
+		"SKIWF_widgetLoaded",
+		"SeverActions_CellLoaded"
+	};		
+	if (ignored_mod_events.contains(event_name)) {
+		return true;
+	}
+	return false;
+}
 
 bool is_known_useless_event(std::string event_name)
 {
@@ -15,10 +25,10 @@ bool is_known_useless_event(std::string event_name)
 		"SKICP_configManagerReady",
 		"Apropos2GameLoaded",
 		"Apropos2ConfigClose",
-		"SNMI_JustPumpMyStringToPlayerThought",             // treat our own events with a log entry only.
-		"SNMI_Pump_IMPORANT_PlayerThought",                 // treat our own events with a log entry only.
-		"SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",        // treat our own events with a log entry only.
-		"SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought",  // treat our own events with a log entry only.
+		// "SNMI_JustPumpMyStringToPlayerThought",             // treat our own events with a log entry only.
+		// "SNMI_Pump_IMPORANT_PlayerThought",                 // treat our own events with a log entry only.
+		// "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",        // treat our own events with a log entry only.
+		// "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought",  // treat our own events with a log entry only.
 		"SKIWF_hudModeChanged", 
 		"SKIWF_widgetLoaded", 
 		"SKIWF_widgetManagerReady", 
@@ -118,7 +128,6 @@ bool is_known_useless_event(std::string event_name)
 	};		
 	if (ignored_mod_events.contains(event_name)) {
 		return true;
-		// logger::info("Found!");
 	}
 	return false;
 }
@@ -126,13 +135,30 @@ bool is_known_useless_event(std::string event_name)
 
 void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 {
-	
+
+	if ( is_known_SUPERIRRELEVANT_mod_event(a_event->eventName.c_str())) {
+		// This mod event is so frequent it clutters up the log even if we just dedicate one line to it, so we will just dismiss this one silently.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 	if ( is_known_useless_event(a_event->eventName.c_str()))
 	{
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 		logger::info("SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+
+	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)  | 
+		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_IMPORANT_PlayerThought") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought") == 0) ) 
+	{
+		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
+		logger::info(".\n.\n.\nWe really push out a thought now.  From: {}\n{}\n.", a_event->eventName.c_str(), a_event->strArg.c_str());  
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
+
+
 
 	// We log all other mod events, because they might be interesting for us to react to and turn into immersive player thoughts
 	logger::info("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
