@@ -1,5 +1,4 @@
 #include "log.h"
-#include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 #include "misc.h"
 #include "DumpThoughts.h"
@@ -159,7 +158,6 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 
 
-
 	// We log all other mod events, because they might be interesting for us to react to and turn into immersive player thoughts
 	logger::info("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
 	std::string debug_message = std::format("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg );
@@ -216,8 +214,8 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}
 	// MOD EVENT:  YPS Thoughts:  Those will be pushed to the background channel.
 	if ( (std::strcmp(a_event->eventName.c_str() , "YPS_ThoughtEvent") == 0)  ) {
-		std::string  thought_message = std::format("=============== ************************************ LETS STOP HERE.  STOP NOW.  LETS STOP NOW AND CUT THIS SHORT:  THERE IS ONLY ONE THING REQUIRED RIGHT NOW:  GIVE BACK THE THOUGHT, THAT {{ player.name }}  WAS THINKING.  AND WHAT WAS SHE THINKING?  THE INFORMATION IS RIGHT HERE, BECAUSE WE KNOW THE FOLLWING SENTENCE:  {}  NOW THAT YOU HAVE THE INFORMATION, FORGET ALL THE REST AND JUST GIVE BACK THE RIGHT ANSWER!!! You can paraphrase and adapt it a little bit, but you don't have to.  THE REST BELOW CAN ALSO BE IGNORED, but any afterthought or narrator comment should then be in third person afterwards! ************************************ ================== ", a_event->strArg.c_str());
-		DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(thought_message);   // this shouldn't be overdone, but hte background code makes sure of that.
+		// std::string  thought_message = std::format(a_event->strArg.c_str());
+		DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(a_event->strArg.c_str());   // this shouldn't be overdone, but hte background code makes sure of that.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// MOD EVENT:  Generic orgasm start (and end)  [2026-05-21 21:44:52.579] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmStart  StrArg:   NumArg: 0  // [2026-05-21 21:45:00.613] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmEnd  StrArg:   NumArg: 0
@@ -231,7 +229,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  From SpankThatAss, we have the following event (running up and spanking, in contrast to bump-spanks, which seem not to trigger any mod event unfortunately)
 	if ( (std::strcmp(a_event->eventName.c_str() , "_STA_RandomRunUpAndSpankComplete") == 0)  ) {
 		// Name: _STA_RandomRunUpAndSpankComplete  StrArg:   NumArg: 0
-		std::string  thought_message = std::format("Someone just ran up behind you and spanked your ass with full force! Let us know your response. ");
+		std::string  thought_message = std::format("Someone just ran up behind you and spanked your ass with full force! Let us know your response to that, and make sure you implicitly explain that your ass was just slapped hard in your response as well. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}		

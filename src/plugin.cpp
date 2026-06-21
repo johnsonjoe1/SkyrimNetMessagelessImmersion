@@ -19,28 +19,30 @@
 
 namespace logger = SKSE::log;
 
+/*  TODO-LIST   
+** Check more UD-Mod-Events:  For different devices, there must be more events
+** Build the periodic check status-thought-message:
+   --  YPS Thought:  Take the latest one queued from the YPS thought mod event and bring it forward
+   --  YPS Shoes Penalty
+   --  Thirst-Max-Reached
+   --  Fatigue-Max-Reached
+   --  Hunger-Max-Reached
+   --  Milk-Max-Reached
+   --  Dirtyness
+   --  Fame:  Take the highest of all fame values and create a thought
+   --  Sickness:  Do we have a status there?  Maybe from active magic effect hook?
+   --  Nakedness/Flashing:  
+
+*/
+
+
+
+
 static auto last_periodic_check_for_changes = std::chrono::steady_clock::now();
 
 float previous_dirt_value = 100000;  // some impossible value, so that no message occurs (unless dirt value 0, which wouldn't likely be the case in mid-game)
 
 // static auto last_speech_timestamp = std::chrono::steady_clock::now();
-
-
-std::array<std::string, 10> list_of_enemy_contracted_sicknesses = {
-    "Ataxia",
-    "Bone Break Fever",
-    "Brain Rot",
-    "Brown Rot",
-    "Droops",
-	"Greenspore",
-	"Rattles",
-	"Rockjoint",
-	"Gutworm",
-	"Witbane"
-};
-
-std::string my_active_effect_description_string = "Nothing yet!";
-
 
 
 void handle_check_for_close_conversations()

@@ -14,6 +14,19 @@ std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Food Poisoning"
 };
 
+std::array<std::string, 10> list_of_enemy_contracted_sicknesses = {
+    "Ataxia",
+    "Bone Break Fever",
+    "Brain Rot",
+    "Brown Rot",
+    "Droops",
+	"Greenspore",
+	"Rattles",
+	"Rockjoint",
+	"Gutworm",
+	"Witbane"
+};
+
 int IsAFoodBasedDisease(std::string_view keyword)
 {
 	for (std::size_t i = 0; i < list_of_food_contracted_sicknesses.size(); ++i)
