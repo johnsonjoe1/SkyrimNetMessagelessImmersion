@@ -41,7 +41,7 @@ int IsAFoodBasedDisease(std::string_view keyword)
 
 bool is_known_irrelevant_magic_effect(std::string base_name)
 {
-	static const std::array<std::string, 13> irrelevant_effect_list = {
+	static const std::array<std::string, 16> irrelevant_effect_list = {
 		"RaceMenuHH Scale Effect"   , 
 		"Consume Food Portion"   , 
 		"Automate Hunger Script"  ,
@@ -54,7 +54,10 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"UIWheelMenu_SetOption",
 		"UIWheelMenu_CloseMenu",
 		"UIWheelMenu_ChooseOption",
-		"CC NPCBimboCheckerCloakEffect"
+		"CC NPCBimboCheckerCloakEffect",
+		"_STA_DroolCooldownSpell",   // This is interesting, because it's from spank-that-ass a drool effect, but it seems to be too numerous and frequent to really be useful for anything at present
+		"_STA_TearsCooldownMgef",    // This is interesting, because it's from spank-that-ass tears effect, but it seems to be too numerous and frequent to really be useful for anything at present
+		"_STA_DialogOutputMgef"      // This is some spank-that-ass sex scene comments, but I guess SkyrimNet will do much better on it's own than those crude old comments
 	};		
 	for (std::size_t i = 0; i < irrelevant_effect_list.size(); ++i)
 	{
@@ -186,12 +189,22 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	// We moved the YPS-Movement-Speed-Stuff to the separate YPS module
 	if (base) {
 		if (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0) {
-			if ( (std::strcmp(source->GetName(), "High Heel Novice") == 0) || (std::strcmp(source->GetName(), "Untrained Feet") == 0) ) {
+			if ( (std::strcmp(source->GetName(), "High Heel Novice") == 0) || (std::strcmp(source->GetName(), "Untrained Feet") == 0) 
+				|| (std::strcmp(source->GetName(), "Flexible Feet") == 0) || (std::strcmp(source->GetName(), "High Heel Walker") == 0) 
+				|| (std::strcmp(source->GetName(), "Arched Feet") == 0) || (std::strcmp(source->GetName(), "Bondage Feet") == 0) )
+			{
 				handle_yps::handle_yps_magic_effect_stuff(a_event, effect);  // const RE::TESActiveEffectApplyRemoveEvent* a_event,
 				return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 			}
 		}
 	}
+	/* 	
+	HeelTrainingStatusName[0] = "Untrained Feet"
+	HeelTrainingStatusName[1] = "High Heel Novice"
+	HeelTrainingStatusName[2] = "Flexible Feet"
+	HeelTrainingStatusName[3] = "High Heel Walker"
+	HeelTrainingStatusName[4] = "Arched Feet"
+	HeelTrainingStatusName[5] = "Bondage Feet"  */
 
 	// Let's also track the drunk-stumble-script:  It means the stumble-and-fall animation is playing, 
 	// so we might as well say so.
@@ -254,6 +267,25 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		}
 	}
 
+	if (base && ( (std::strcmp(base->GetName(), "CreatureBearEffect") == 0)  ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for CREATURE BEAR EFFECT APPLICATION!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just summoned a Bear.  And the bear is a male bear and it seems to be horny too, looking for mates, and that includes you too!  Say as much in your response and make it clear that you speak about your freshly summoned bear in your response.")); //  + standard_thought_instruction;
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} 
+	}	
+	
+	if (base && ( (std::strcmp(base->GetName(), "Irresistible Attraction") == 0)  ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for IRRESISTIBLE ATTRACTION EFFECT APPLICATION!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just became irresistibly attractive from some magic you used.  Others may be drawn to you and fuck you, or if not, you will just do it for yourself, because you are just to irresistile also to yourself!  Say as much in your response.")); //  + standard_thought_instruction;
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} 
+	}	
 
 
 

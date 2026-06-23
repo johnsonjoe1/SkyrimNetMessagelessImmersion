@@ -20,7 +20,8 @@
 namespace logger = SKSE::log;
 
 /*  TODO-LIST   
-** Check more UD-Mod-Events:  For different devices, there must be more events
+** Many more UD-Mod-Events for different devices being applied could be commented.
+** Many more Creature-Summoner-Creatures could be commented upon summoning them.
 ** Build the periodic check status-thought-message:
    --  YPS Thought:  Take the latest one queued from the YPS thought mod event and bring it forward
    --  YPS Shoes Penalty
@@ -88,10 +89,13 @@ void handle_player_dirt()
 		
 		if ((previous_dirt_value < 0.6f) && (dirtValue >= 0.6f)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are getting really dirty now! This is not just a little bit, but really dirty so that you are not as charming when talking to people and maybe you also could get sick more easily.  Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!"));
-			SKSE::log::info("Note:  Dirtyness-level-update thought 1 was delivered.");
-		} else if ((previous_dirt_value >= 0.01f) && (dirtValue < 0.01f)) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are finally fresh and clean and no longer dirty! People won't dislike you anymore for being dirty! Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!", static_cast<int>(dirtValue * 100)));
-			SKSE::log::info("Note:  Dirtyness-level-update thought 2 was delivered.");
+			SKSE::log::info("Note:  Dirtiness-level-update thought 1 was delivered.");
+		} else if ((previous_dirt_value > 0.2f) && (dirtValue <= 0.2f)  && (dirtValue >= 0.19f)) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("Finally some of the dirt on your body has washed off.  It's not as clean as washing with soap, but you are still more fresh and clean than before!  Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!", static_cast<int>(dirtValue * 100)));
+			SKSE::log::info("Note:  Update according to empirical values:  some swimming brings dirtiness down to 0.2 absolute it seems.");
+		} else if ((previous_dirt_value > 0.01f) && (dirtValue <= 0.01f) ) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("Finally you are completely clean, like only a nice bath with soap can achieve!  Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!", static_cast<int>(dirtValue * 100)));
+			SKSE::log::info("Note:  Dirtiness-level-update thought 2 was delivered.");
 		}
 		previous_dirt_value = dirtValue;  // Update the previous dirt value for the
 	} else {

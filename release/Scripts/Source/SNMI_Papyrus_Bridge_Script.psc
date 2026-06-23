@@ -12,6 +12,18 @@ string milk_string = "No milk_string defined yet!"
 float LVSK_Euphoria = 0.0
 float LVSK_IsLovesick = 0.0
 
+
+; ypsPiercingTicker Property PETicker Auto
+; 
+; int Function GetYpsFashionLevel()
+;    if PETicker
+;        return PETicker.CurrentFashionLevel()
+;    endif
+;    return 0
+; EndFunction
+
+
+
 Event OnInit()
     RegisterForSingleUpdate(10.0)
 	Debug.Notification("[SNMI] INITIAL ONINIT FOR THE Periodic 10 second update FINISHED.")
@@ -67,6 +79,7 @@ function push_all_MME_variables_to_the_plugin()
 
 endfunction
 
+
 function push_all_YPS_variables_to_the_plugin()
 
 	; We take the list of current YPS-Conditions (for thoughts) and put them all into a single string, so that we can then push it to the C++ plugin
@@ -90,9 +103,21 @@ function push_all_YPS_variables_to_the_plugin()
     SNMI_Native.SetYpsConditionString(allConditions)
 
 	float yps_AddictionLevel = StorageUtil.GetIntValue(None, "yps_AddictionLevel") ; current Fashion Addiction level (0-11)
-	float yps_AddictionBuff = StorageUtil.GetIntValue(None, "yps_AddictionBuff"); level of current Fashion Addiction buff
+	float yps_AddictionBuff = StorageUtil.GetIntValue(None, "yps_AddictionBuff")   ; level of current Fashion Addiction buff
+
+	float yps_HeelsWorn = StorageUtil.GetIntValue(None, "ypsHeelsWorn")            ;
+
 	SNMI_Native.set_yps_AddictionLevel(yps_AddictionLevel)
 	SNMI_Native.set_yps_AddictionBuff(yps_AddictionBuff)	
+
+	if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
+		Debug.Notification("YPS Addiction Buff: " + yps_AddictionBuff)
+		Debug.Notification("YPS Heels Worn: " + yps_HeelsWorn)
+    endif 
+
+
+
+	; NOTE:  The Fashion buff levels are:  3=well fashioned.
 endfunction
 
 function push_lovesick_variables_to_the_plugin()

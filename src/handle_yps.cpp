@@ -103,37 +103,49 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 	auto* source = effect->spell;
 	auto base_name = base->GetName();
 
-		// Let's try to track YPS-Fashion-High-Heels-slowdown-effect:  this gets activated and deactivated all the time, so we have to keep our messages in check
-		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "High Heel Novice") == 0)  ) )
+	// For the protocol, we give some debug information.
+	/* 	
+	HeelTrainingStatusName[0] = "Untrained Feet"
+	HeelTrainingStatusName[1] = "High Heel Novice"
+	HeelTrainingStatusName[2] = "Flexible Feet"
+	HeelTrainingStatusName[3] = "High Heel Walker"
+	HeelTrainingStatusName[4] = "Arched Feet"
+	HeelTrainingStatusName[5] = "Bondage Feet"  */
+
+	SKSE::log::info("The MAGIC EFFECT Source->GetName() of the YPS-heels move penalty gave:  {} with magnitude:  {}", source->GetName(), effect->magnitude);
+
+	// Let's try to track YPS-Fashion-High-Heels-slowdown-effect:  this gets activated and deactivated all the time, so we have to keep our messages in check
+	if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "High Heel Novice") == 0)  ) )
+	{
+		if ( (a_event->isApplied) )
 		{
-			if ( (a_event->isApplied) )
-			{
-				// Due to what seems like a bug to me, there will be slowdown effect even when not wearing heels.  In that case of course we don't complain about the heels.  So we have to catch that here.
-				if ( (effect->magnitude < 0) && actually_wearing_heels_according_to_yps_thoughts) {
-					SKSE::log::info("xxxxxxxxxxx High Heels Novice MAGIC EFFECT PROPERLY DETECTED");
-					DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You already have some experience with them, but you are still a High Heels Novice, so they still slow you down a bit. It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
-				}
-				// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
-			} else {  //  i.e. if (!a_event->isApplied) {
-				// We do nothing here, as we just have stopped moving, nothing else.
-				SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of High Heels Novice MAGIC EFFECT.");
-				// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
+			// Due to what seems like a bug to me, there will be slowdown effect even when not wearing heels.  In that case of course we don't complain about the heels.  So we have to catch that here.
+			if ( (effect->magnitude < 0) && actually_wearing_heels_according_to_yps_thoughts) {
+				SKSE::log::info("xxxxxxxxxxx High Heels Novice MAGIC EFFECT PROPERLY DETECTED");
+				DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You already have some experience with them, but you are still a High Heels Novice, so they still slow you down a bit. It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
 			}
+			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
+		} else {  //  i.e. if (!a_event->isApplied) {
+			// We do nothing here, as we just have stopped moving, nothing else.
+			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of High Heels Novice MAGIC EFFECT.");
+			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		}
-		if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "Untrained Feet") == 0)  ) ) 
+	}
+	if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "Untrained Feet") == 0)  ) ) 
+	{
+		if ((a_event->isApplied) && (effect->magnitude < 0) )
 		{
-			if ((a_event->isApplied) && (effect->magnitude < 0) )
-			{
-				SKSE::log::info("xxxxxxxxxxx YPS 'Untrained Feet' (high heels) MAGIC EFFECT PROPERLY DETECTED");
-				std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS UNTRAINED FEET! ", base_name);
-				DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now.  It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
-				// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
-			}
-			if ( (!a_event->isApplied) ) {
-				// We do nothing here, as we just have stopped moving, nothing else.
-				SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of Untrained Feet MAGIC EFFECT.");
-				// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
-			}
+			SKSE::log::info("xxxxxxxxxxx YPS 'Untrained Feet' (high heels) MAGIC EFFECT PROPERLY DETECTED");
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS UNTRAINED FEET! ", base_name);
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now.  It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		}
+		if ( (!a_event->isApplied) ) {
+			// We do nothing here, as we just have stopped moving, nothing else.
+			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of Untrained Feet MAGIC EFFECT.");
+			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
+		}
+	}
+
 	logger::info("*********************YPS-MAGIC-EFFECT-HANDLER FINISHED!!!**********************************");
 }

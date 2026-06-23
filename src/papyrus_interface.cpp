@@ -134,11 +134,11 @@ void SNMIPapyrus::set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value)
     SKSE::log::info("Note:  yps_AddicitonBuff updated VIA PUSH FROM PAPYRUS: {}", a_value);
 	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
 	if ( (previous_yps_AddictionBuff < _yps_AddictionBuff) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just gained a stronger boost from your YPS fashion addiction!  You appear even more radiant and people will respond more favorable to you this way!  Say so and let us know how that makes you feel!");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Due to some change in your fashion or in your styling, you now appear even more radiant (or less disgusting) and people will respond more favorable to you this way!  Say as much in your thoughts, and let us know how that makes you feel, given that you like fasion and styling!");
 		SKSE::log::info("Note:  yps_AddictionBuff-update thought was delivered.");
 	}
 	if ( (previous_yps_AddictionBuff > _yps_AddictionBuff) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just LOST some of your YPS fashion addiction buff!  You appear LESS radiant and people will respond LESS favorable to you this way!  Say so and let us know how that makes you feel!");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Due to some change in your fashion or in your styling, you now appear even LESS radiant (or even more disgusting) and people will respond less favorable to you this way!  Say as much in your thoughts, and let us know how that makes you feel, given that you like fasion and styling!");
 		SKSE::log::info("Note:  yps_AddictionBuff-update thought was delivered.");
 	}
 	previous_yps_AddictionBuff = _yps_AddictionBuff;  // update the previous level for the next check

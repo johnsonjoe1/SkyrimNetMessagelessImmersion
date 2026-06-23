@@ -57,6 +57,10 @@ At present there is some support for Advanced-Nudity-Detection (AND) mod:
 
 Upon picking up items:
 * 0.5.0:  If there are special keywords, such as a YPS-fashion-level or an AND-flash-risk keyword or a SL-Survival-bikini keyword, thoughts upon that implication will be raised.
+* 0.5.1:  Summoning your own bear (and only the bear so far) via creature summoner mod will trigger a response.
+* 0.5.1:  Irresistable Attraction effect will be commented upon as well.  This might not be necessary or too much, but at present we just try how it works out.
+* 0.5.1:  Finer dirtyness handling, as a swim doesn't give the same cleanliness as a bath with soap.
+* 0.5.2:  Filter comments from clothing changes while in a SL scene, because that feels kind of out-of-place there, at least at the start.
 
 There is some sensitivity to overall SkyrimNet talk going on, so as to not babble too much when others are speaking, but on the other hand, give some updates and hopefully immersion and mental self-talk when it's otherwise quiet and alone time in the woods.
 
