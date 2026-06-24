@@ -102,6 +102,7 @@ bool is_known_useless_event(std::string event_name)
 		"AnimationStart_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"AnimationStarting_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_READY_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_READY_Thread1",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"StageStart",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"StageStart_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"StageEnd",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
@@ -122,6 +123,19 @@ bool is_known_useless_event(std::string event_name)
 		"AnimationEnd_TAPPlayerFreelance",      //  This might be from The-Ancient-Profession.
 		"StageStart_TAPPlayerFreelance",        //  This might be from The-Ancient-Profession.
 		"StageEnd_TAPPlayerFreelance",          //  This might be from The-Ancient-Profession.
+
+		"AnimationStart_CreatureSummoner", // This is from the Creature Summoner mod.
+		"AnimationStarting_CreatureSummoner", // This is from the Creature Summoner mod.
+		"StageStart_CreatureSummoner", // This is from the Creature Summoner mod.
+		"AnimationChange", // This is from the Creature Summoner mod.
+		"AnimationChange_CreatureSummoner", // This is from the Creature Summoner mod.
+
+
+		"AnimationEnding_CreatureSummoner", // This is from the Creature Summoner mod.
+		"AnimationEnd_CreatureSummoner", // This is from the Creature Summoner mod
+		"StageEnd_CreatureSummoner", // This is from the Creature Summoner mod
+
+
 		"Helpless_RemoveSpell",  // Unknown what this is
 		"CaptiveDefeatInit"  // This is called every time a new cell is entered and merely a technical event,  probably for CaptivePlayer.
 	};		
@@ -131,6 +145,45 @@ bool is_known_useless_event(std::string event_name)
 	return false;
 }
 
+void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* a_event) 
+{
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting") == 0)  | 
+		(std::strcmp(a_event->eventName.c_str() , "AnimationStart") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationStart_MatchMaker") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationStarting_MatchMaker") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationStarting_TAPPlayerFreelance") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationStart_TAPPlayerFreelance") == 0) |
+
+		(std::strcmp(a_event->eventName.c_str() , "AnimationStart_CreatureSummoner") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationStarting_CreatureSummoner") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "StageStart_CreatureSummoner") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationChange") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationChange_CreatureSummoner") == 0) |				
+
+		(std::strcmp(a_event->eventName.c_str() , "StageStart_TAPPlayerFreelance") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "StageStart_") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "SL_AdvanceScene") == 0) ) 
+	{
+		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
+		logger::info("Mod-Event-Based DISABLING OF CLOTHING-CHANGE-COMMENTS: {}\n{}\n.", a_event->eventName.c_str(), a_event->strArg.c_str());  
+		set_current_animation_status("in_a_scene");
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnding") == 0)  | 
+		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationEnding_TAPPlayerFreelance") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd_TAPPlayerFreelance") == 0) |		
+		(std::strcmp(a_event->eventName.c_str() , "AnimationEnding_CreatureSummoner") == 0) | // This is from the Creature Summoner mod.
+		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd_CreatureSummoner") == 0) | // This is from the Creature Summoner mod		
+		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd_MatchMaker") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationEnding_MatchMaker") == 0) ) 
+	{
+		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
+		logger::info("Mod-Event-Based RE-ENABLING OF CLOTHING-CHANGE-COMMENTS: {}\n{}\n.", a_event->eventName.c_str(), a_event->strArg.c_str());  
+		set_current_animation_status("not_in_a_scene");
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+}
 
 void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 {
@@ -139,12 +192,17 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		// This mod event is so frequent it clutters up the log even if we just dedicate one line to it, so we will just dismiss this one silently.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+
+	toggle_in_a_scene_or_not_based_on_mod_events(a_event);
+	
+
 	if ( is_known_useless_event(a_event->eventName.c_str()))
 	{
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 		logger::info("SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+
 
 	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)  | 
 		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_IMPORANT_PlayerThought") == 0) |

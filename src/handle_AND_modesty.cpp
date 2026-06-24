@@ -279,11 +279,26 @@ void handle_current_flashing_state()
 }
 void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 {
+	// Safety-first:  If the player character isn't initialized yet, we don't do anything!!!
 	auto* player = RE::PlayerCharacter::GetSingleton();
 	if (!player) {
 		logger::info("AND-Modesty-Factions:  SEVERE ERROR: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
 		return;
 	}
+
+	if (player_is_in_a_SL_scene()) {
+		logger::info("AND-Modesty-Factions:  Player is in a SL scene, so we skip the AND-Modesty-Faction handling for now.");
+		if (hard_change_in_slots_0_to_7()) {
+			LillithOnlyBox("SNMI:  There was a HARD CHANGE IN CLOTHING, but player is currently in a SL scene, so we skip the AND-Modesty comment here for now.");
+			// This should avoid some my-clothes-are-off comment at the beginning of an SL scene, because that feels kind of out-of-place.
+			reset_previous_rank_to_current_rank();
+			//  handle_hard_change_in_slots_0_to_7();
+		}		
+		// LillithOnlyBox("SNMI:  Player is in a SL scene, so we skip the AND-Modesty-Faction handling for now.");
+		return;
+	}
+
+
 	// Make sure the game is initialized and we don't get confused at game startup.
 	if (AND_previous_faction_rank_sorted[0] == -1) {
 		logger::info("AND-Modesty-Factions:  AND-Ranks are not initialized yet!!  Initialize them and then return for now and for this round!!");
