@@ -135,6 +135,7 @@ bool is_known_useless_event(std::string event_name)
 		"AnimationEnd_CreatureSummoner", // This is from the Creature Summoner mod
 		"StageEnd_CreatureSummoner", // This is from the Creature Summoner mod
 
+		"PlayDBVOTopic",  // This is from the DragonBornVoiceOver Mod, but we don't need to respond to it, as this is already diaglogue.
 
 		"Helpless_RemoveSpell",  // Unknown what this is
 		"CaptiveDefeatInit"  // This is called every time a new cell is entered and merely a technical event,  probably for CaptivePlayer.
@@ -330,6 +331,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	
 	// IF the MOD-EVENT really WASNT HANDLED BY THIS POINT, IT IS MAYBE SOMETHING NEW, AND THEREFORE WE MAKE A MESSAGEBOX-ANNOUNCEMENT OF it.
 	LillithOnlyBox("An unhandled mod-event was discovered: " + debug_message);
+	logger::info("An unhandled mod-event was discovered: {}" , debug_message );
 
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 	/*  IN THE END, WE CANNOT USE THIS, BECAUSE IT GETS TRIGGERED ALL THE TIME FROM E.g. UD ELLBOW BINDER NON-STOP FROM THE IDLE ANIMATION.

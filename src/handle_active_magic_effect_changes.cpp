@@ -64,7 +64,7 @@ std::string_view ExtractCreatureNameFromEffectName(std::string_view effect_name)
 
 bool is_known_irrelevant_magic_effect(std::string base_name)
 {
-	static const std::array<std::string, 16> irrelevant_effect_list = {
+	static const std::array<std::string, 19> irrelevant_effect_list = {
 		"RaceMenuHH Scale Effect"   , 
 		"Consume Food Portion"   , 
 		"Automate Hunger Script"  ,
@@ -78,6 +78,9 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"UIWheelMenu_CloseMenu",
 		"UIWheelMenu_ChooseOption",
 		"CC NPCBimboCheckerCloakEffect",
+		"lvskLoveSicknessVisibleEffect",  // This one is the pink-heart-eyes from the LoveSickness mod.  What are we to do with that?
+		"MilkRNDEffect",             // This is from MME, but I don't understand it.  Maybe it is some milk that was auto-drank from iNeed, but I don't know.
+		"Adrenaline Script",         // This one is from iNeed, but I don't remember doing anything at that point.  Maybe it was auto-eating something with an effect.  But I don't know.
 		"_STA_DroolCooldownSpell",   // This is interesting, because it's from spank-that-ass a drool effect, but it seems to be too numerous and frequent to really be useful for anything at present
 		"_STA_TearsCooldownMgef",    // This is interesting, because it's from spank-that-ass tears effect, but it seems to be too numerous and frequent to really be useful for anything at present
 		"_STA_DialogOutputMgef"      // This is some spank-that-ass sex scene comments, but I guess SkyrimNet will do much better on it's own than those crude old comments
@@ -311,7 +314,15 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		} 
 	}	
 
-
+	if (base && ( (std::strcmp(base->GetName(), "Teleport") == 0) && (std::strcmp(base->GetFormEditorID(), "aaaWCTeleportSpellEffect") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for AAA WC TELEPORT SPELL EFFECT APPLICATION!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just used a teleport spell.  This one should get you right to the display hall, where all your Waifu Cards are collected.  Say as much in your response.")); //  + standard_thought_instruction;
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} 
+	}	
 
 
 

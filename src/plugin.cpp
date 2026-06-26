@@ -21,7 +21,7 @@ namespace logger = SKSE::log;
 
 /*  TODO-LIST   
 ** Many more UD-Mod-Events for different devices being applied could be commented.
-NEXT:   ** Many more Creature-Summoner-Creatures could be commented upon summoning them.
+DONE 0.5.2:   ** Many more Creature-Summoner-Creatures could be commented upon summoning them.
 AFTER THAT:  ** Try to find out the (other) actor of an SL scene and then comment at the beginning of the scene, maybe even based on the tags of the scene.
 ** Build the periodic check status-thought-message:
    --  YPS Thought:  Take the latest one queued from the YPS thought mod event and bring it forward
@@ -251,7 +251,7 @@ public:
             return RE::BSEventNotifyControl::kContinue;
 		} else
 		{
-            SKSE::log::info("[SkyrimNetMessagelessImmersion] That activated object does not seem to be Furniture and also not an Armor item, so we ignore it.");
+            SKSE::log::info("ActivateEventHandler : That activated object does not seem to be Furniture and also not an Armor item, so we ignore it.  But for the reference, the numeric code was:  {} and the name was:  {}", static_cast<std::uint32_t>(formType), base->GetName());
             return RE::BSEventNotifyControl::kContinue;
         }
 
