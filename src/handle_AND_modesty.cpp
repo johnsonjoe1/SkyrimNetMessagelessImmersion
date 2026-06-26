@@ -289,11 +289,13 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 	if (player_is_in_a_SL_scene()) {
 		logger::info("AND-Modesty-Factions:  Player is in a SL scene, so we skip the AND-Modesty-Faction handling for now.");
 		if (hard_change_in_slots_0_to_7()) {
-			LillithOnlyBox("SNMI:  There was a HARD CHANGE IN CLOTHING, but player is currently in a SL scene, so we skip the AND-Modesty comment here for now.");
+			// LillithOnlyBox("SNMI:  There was a HARD CHANGE IN CLOTHING, but player is currently in a SL scene, so we skip the AND-Modesty comment here for now.");
+
 			// This should avoid some my-clothes-are-off comment at the beginning of an SL scene, because that feels kind of out-of-place.
-			reset_previous_rank_to_current_rank();
+			
 			//  handle_hard_change_in_slots_0_to_7();
 		}		
+		reset_previous_rank_to_current_rank();
 		// LillithOnlyBox("SNMI:  Player is in a SL scene, so we skip the AND-Modesty-Faction handling for now.");
 		return;
 	}
@@ -307,7 +309,10 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 	}
 
 	// Manual addition for debuggin/understanding the flashing-rank in more detail:
-	debug_boxes_for_flashing_state_understanding();
+	if (false) {
+		//  disable that for now, because it keeps popping up so much, that it is even annoying during testing and debugging. 
+		debug_boxes_for_flashing_state_understanding();
+	}
 
 	// FIRST we check for actual clothing changes (ie. on slots 0-7).  If something happens there, that is the message and the rest is irrelevant anyway.
 	if (hard_change_in_slots_0_to_7()) {

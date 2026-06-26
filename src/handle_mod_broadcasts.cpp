@@ -117,12 +117,15 @@ bool is_known_useless_event(std::string event_name)
 		"AnimationEnd_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"StageEnd_",                            //  This might be from The-Ancient-Profession.
 		"StageStart_",                          //  This might be from The-Ancient-Profession.
-		"AnimationStarting_TAPPlayerFreelance", //  This might be from The-Ancient-Profession.
+		// "AnimationStarting_TAPPlayerFreelance", //  This might be from The-Ancient-Profession.  We need this one for a comment at animation overall start.
 		"AnimationStart_TAPPlayerFreelance",    //  This might be from The-Ancient-Profession.
 		"AnimationEnding_TAPPlayerFreelance",   //  This might be from The-Ancient-Profession.
 		"AnimationEnd_TAPPlayerFreelance",      //  This might be from The-Ancient-Profession.
 		"StageStart_TAPPlayerFreelance",        //  This might be from The-Ancient-Profession.
 		"StageEnd_TAPPlayerFreelance",          //  This might be from The-Ancient-Profession.
+
+		"StageStart_BattleFuck", // This is from the BattleFuck mod.  Since this is about undressing itself, we won't stop clothing changes from this one.
+		"StageEnd_BattleFuck",   // This is from the BattleFuck mod.  Since this is about undressing itself, we won't stop clothing changes from this one.
 
 		"AnimationStart_CreatureSummoner", // This is from the Creature Summoner mod.
 		"AnimationStarting_CreatureSummoner", // This is from the Creature Summoner mod.
@@ -134,6 +137,15 @@ bool is_known_useless_event(std::string event_name)
 		"AnimationEnding_CreatureSummoner", // This is from the Creature Summoner mod.
 		"AnimationEnd_CreatureSummoner", // This is from the Creature Summoner mod
 		"StageEnd_CreatureSummoner", // This is from the Creature Summoner mod
+
+
+		"AnimationStart_slacEngagement",   // 4 seconds after AnimationStarting_....
+		"StageEnd_slacEngagement",
+		// "AnimationStarting_slacEngagement",  
+		"StageStart_slacEngagement",
+		"AnimationChange_slacEngagement",
+		"AnimationEnding_slacEngagement",
+		"AnimationEnd_slacEngagement",
 
 		"PlayDBVOTopic",  // This is from the DragonBornVoiceOver Mod, but we don't need to respond to it, as this is already diaglogue.
 
@@ -161,6 +173,11 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		(std::strcmp(a_event->eventName.c_str() , "AnimationChange") == 0) |
 		(std::strcmp(a_event->eventName.c_str() , "AnimationChange_CreatureSummoner") == 0) |				
 
+		//   (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BodySearch") == 0) |     Body search is also about clothing, so comments here are fine
+		(std::strcmp(a_event->eventName.c_str() , "AnimationStarting_slacEngagement") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "StageStart_slacEngagement") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationStart_slacEngagement") == 0) |
+
 		(std::strcmp(a_event->eventName.c_str() , "StageStart_TAPPlayerFreelance") == 0) |
 		(std::strcmp(a_event->eventName.c_str() , "StageStart_") == 0) |
 		(std::strcmp(a_event->eventName.c_str() , "SL_AdvanceScene") == 0) ) 
@@ -177,6 +194,10 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		(std::strcmp(a_event->eventName.c_str() , "AnimationEnding_CreatureSummoner") == 0) | // This is from the Creature Summoner mod.
 		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd_CreatureSummoner") == 0) | // This is from the Creature Summoner mod		
 		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd_MatchMaker") == 0) |
+
+		(std::strcmp(a_event->eventName.c_str() , "AnimationEnding_slacEngagement") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd_slacEngagement") == 0) |
+
 		(std::strcmp(a_event->eventName.c_str() , "AnimationEnding_MatchMaker") == 0) ) 
 	{
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
@@ -299,6 +320,67 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		// DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}		
+
+	// MOD EVENT:  From BodySearch, we have the following event:  AnimationStarting_BodySearch
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_BodySearch") == 0)  ) {
+		std::string  thought_message = std::format("A guard has just brought you to their guards baracks, saying he needs to do a body search.  But now the search turns out to be mainly him groping your body everywhere for his pleasure and amusement. Let us know your response to that, and make sure you implicitly explain that you are being groped for pleasure in your response as well. ");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		// More in this context:
+		// StageStart_BodySearch
+		// 4 seconds later:  AnimationStart_BodySearch
+		// StageEnd_BodySearch
+		// SSL_PREPARE_Thread1
+		// SSL_LOCK_Thread1
+		// AnimationStarting_slacEngagement
+		// StageStart_slacEngagement
+		// AnimationStart_slacEngagement
+		// StageEnd_slacEngagement
+		// SSL_CLEAR_Thread1
+		// AnimationEnding_slacEngagement
+	}	
+	
+	// MOD EVENT:  From some animal mod, creature maybe, we have the following event:  AnimationStarting_slacEngagement
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_slacEngagement") == 0)  ) {
+		std::string  thought_message = std::format("A creature, an animal or a monster, has just managed to take advantage of you and start a sexual encounter with you, and you somehow couldn't resist or didn't resist and submitted into the sexual encounter.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having sex with a creature. ");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		// More in this context:
+		// StageStart_slacEngagement
+		// 4 seconds later:  AnimationStart_slacEngagement
+		// StageEnd_slacEngagement
+		// SSL_PREPARE_Thread1
+		// SSL_LOCK_Thread1
+		// AnimationStarting_slacEngagement
+		// StageStart_slacEngagement
+		// AnimationStart_slacEngagement
+		// StageEnd_slacEngagement
+		// SSL_CLEAR_Thread1
+		// AnimationEnding_slacEngagement
+	}	
+	
+	// MOD EVENT:  From some animal mod, creature maybe, we have the following event:  AnimationStarting_TAPPlayerFreelance
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_TAPPlayerFreelance") == 0)  ) {
+		std::string  thought_message = std::format("You just managed to successfully prostitute yourself to a man and were paid the usual price of this profession.  You are now starting a sexual encounter with him, like a normal prostitute would.  Let us know your response to that, and make sure you implicitly explain that you are letting him fuck you and use you for his pleasure in your response as well. ");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		// More in this context:
+		// StageStart_slacEngagement
+		// 4 seconds later:  AnimationStart_slacEngagement
+		// StageEnd_slacEngagement
+		// SSL_PREPARE_Thread1
+		// SSL_LOCK_Thread1
+		// AnimationStarting_slacEngagement
+		// StageStart_slacEngagement
+		// AnimationStart_slacEngagement
+		// StageEnd_slacEngagement
+		// SSL_CLEAR_Thread1
+		// AnimationEnding_slacEngagement
+	}	
+
+
+
+
 
 	// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
 	if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)  || 

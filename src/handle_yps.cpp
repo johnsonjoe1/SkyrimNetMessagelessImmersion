@@ -14,6 +14,7 @@ namespace logger = SKSE::log;
 bool actually_wearing_heels_according_to_yps_thoughts = false;
 
 
+
 struct ParsedCondition
 {
     std::string name;
@@ -146,6 +147,22 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		}
 	}
+	if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "Flexible Feet") == 0)  ) ) 
+	{
+		if ((a_event->isApplied) && (effect->magnitude < 0) )
+		{
+			SKSE::log::info("xxxxxxxxxxx YPS 'Flexible Feet' (high heels) MAGIC EFFECT PROPERLY DETECTED");
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS FLEXIBLE FEET! ", base_name);
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, have been wearing high heels quite a while now. Your feet are now bent to the shape of the heels.  That means you are just as clumsy without the heels now than you are with the heels.  This means you might just as well continue your high heels training, so that you will be able to move faster again once your feet permanently reach even more permanently arched state.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
+		}
+		if ( (!a_event->isApplied) ) {
+			// We do nothing here, as we just have stopped moving, nothing else.
+			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of Untrained Feet MAGIC EFFECT.");
+			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
+		}
+	}
+
 
 	logger::info("*********************YPS-MAGIC-EFFECT-HANDLER FINISHED!!!**********************************");
 }

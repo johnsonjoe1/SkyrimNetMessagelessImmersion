@@ -60,7 +60,8 @@ void handle_check_for_close_conversations()
 			data.aiConversationRunning != nullptr);
 		if (data.closestConversation) {
 			//  NOTE:  This message box never fires, because that happens actually inside a dialoge-UI with talk options and all that, at least I think that's why.
-			LillithOnlyBox("closestConversation IS NOT NULL ANY MORE!!!!");
+			// At first I thought we could use this for something useful, but it's much too random it seems.  "Stupid Dog" conversations and such, not really helping.
+			// LillithOnlyBox("closestConversation IS NOT NULL ANY MORE!!!!");
 		}
 		if (data.aiConversationRunning) {
 			LillithOnlyBox("aiConversationRunning IS NOT NULL ANY MORE!!!!");
