@@ -39,6 +39,29 @@ int IsAFoodBasedDisease(std::string_view keyword)
 	return -1;
 }
 
+std::string_view ExtractCreatureNameFromEffectName(std::string_view effect_name)
+{
+	static constexpr std::string_view prefix = "Creature";
+	static constexpr std::string_view suffix = "Effect";
+
+	if (effect_name.size() <= (prefix.size() + suffix.size()))
+	{
+		return {};
+	}
+
+	if (effect_name.compare(0, prefix.size(), prefix) != 0)
+	{
+		return {};
+	}
+
+	if (effect_name.compare(effect_name.size() - suffix.size(), suffix.size(), suffix) != 0)
+	{
+		return {};
+	}
+
+	return effect_name.substr(prefix.size(), effect_name.size() - prefix.size() - suffix.size());
+}
+
 bool is_known_irrelevant_magic_effect(std::string base_name)
 {
 	static const std::array<std::string, 16> irrelevant_effect_list = {
@@ -267,15 +290,16 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		}
 	}
 
-	if (base && ( (std::strcmp(base->GetName(), "CreatureBearEffect") == 0)  ) )
+
+	// Handle CreatureSummoner effects:
+	// For any effect like CreatureBoarEffect, CreatureChaurusEffect, CreatureAshhopperEffect we handle it by producting a descriptive thought message containing that creature name.
+	const auto creature_name = ExtractCreatureNameFromEffectName(base_name ? base_name : "");
+	if (!creature_name.empty() && a_event->isApplied)
 	{
-		if (a_event->isApplied)
-		{
-			SKSE::log::info("Event handler for CREATURE BEAR EFFECT APPLICATION!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just summoned a Bear.  And the bear is a male bear and it seems to be horny too, looking for mates, and that includes you too!  Say as much in your response and make it clear that you speak about your freshly summoned bear in your response.")); //  + standard_thought_instruction;
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		} 
-	}	
+		SKSE::log::info("Event handler for CREATURE {} EFFECT APPLICATION!", creature_name);
+		DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just summoned a {}.  And the {} is a male {} and it seems to be horny too, looking for mates, and that includes you too!  Say as much in your response and make it clear that you speak about your freshly summoned {} in your response.", creature_name, creature_name, creature_name, creature_name)); //  + standard_thought_instruction;
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 	
 	if (base && ( (std::strcmp(base->GetName(), "Irresistible Attraction") == 0)  ) )
 	{
