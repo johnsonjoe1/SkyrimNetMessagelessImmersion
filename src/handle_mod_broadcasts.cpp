@@ -18,16 +18,16 @@ bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
 	return false;
 }
 
-bool is_known_useless_event(std::string event_name)
+bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string event_name)
 {
 	static const std::unordered_set<std::string> ignored_mod_events = {
 		"SKICP_configManagerReady",
 		"Apropos2GameLoaded",
 		"Apropos2ConfigClose",
-		// "SNMI_JustPumpMyStringToPlayerThought",             // treat our own events with a log entry only.
-		// "SNMI_Pump_IMPORANT_PlayerThought",                 // treat our own events with a log entry only.
-		// "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",        // treat our own events with a log entry only.
-		// "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought",  // treat our own events with a log entry only.
+		// "SNMI_JustPumpMyStringToPlayerThought",             // we can't short-circuit that any more, because it should reset background thought cooldowns
+		// "SNMI_Pump_IMPORANT_PlayerThought",                 // we can't short-circuit that any more, because it should reset background thought cooldowns
+		// "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",        // we can't short-circuit that any more, because it should reset background thought cooldowns
+		// "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought",  // we can't short-circuit that any more, because it should reset background thought cooldowns
 		"SKIWF_hudModeChanged", 
 		"SKIWF_widgetLoaded", 
 		"SKIWF_widgetManagerReady", 
@@ -35,11 +35,11 @@ bool is_known_useless_event(std::string event_name)
 		"SKIWF_iWantStatusBarsReady", 
 		"iWantStatusBarsReady", 
 		"iWantWidgetsReset", 
-		"SKICP_modSelected",   // this is broadcast when the player selects a mod in the SKI Configuration Menu.
-		"SKICP_pageSelected",  // this is broadcast when the player selects a page of a mod configuration in the SKI Configuration Menu.
+		"SKICP_modSelected",         // this is broadcast when the player selects a mod in the SKI Configuration Menu.
+		"SKICP_pageSelected",        // this is broadcast when the player selects a page of a mod configuration in the SKI Configuration Menu.
 		"SKICP_optionHighlighted",   // this is broadcast when the player highlights a configuration option for a mod in the SKI Configuration Menu.
-		"SKICP_optionSelected",   // this is broadcast when the player selects a configuration option for a mod in the SKI Configuration Menu.
-		"SKICP_messageDialogClosed",   // this is broadcast when the player closes a message dialog in the SKI Configuration Menu.
+		"SKICP_optionSelected",      // this is broadcast when the player selects a configuration option for a mod in the SKI Configuration Menu.
+		"SKICP_messageDialogClosed", // this is broadcast when the player closes a message dialog in the SKI Configuration Menu.
 		"SKICP_menuSelected",
 		"SKICP_menuAccepted",
 		"SKICP_inputSelected",
@@ -133,11 +133,9 @@ bool is_known_useless_event(std::string event_name)
 		"AnimationChange", // This is from the Creature Summoner mod.
 		"AnimationChange_CreatureSummoner", // This is from the Creature Summoner mod.
 
-
 		"AnimationEnding_CreatureSummoner", // This is from the Creature Summoner mod.
 		"AnimationEnd_CreatureSummoner", // This is from the Creature Summoner mod
 		"StageEnd_CreatureSummoner", // This is from the Creature Summoner mod
-
 
 		"AnimationStart_slacEngagement",   // 4 seconds after AnimationStarting_....
 		"StageEnd_slacEngagement",
@@ -160,45 +158,50 @@ bool is_known_useless_event(std::string event_name)
 
 void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* a_event) 
 {
-	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting") == 0)  | 
-		(std::strcmp(a_event->eventName.c_str() , "AnimationStart") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "AnimationStart_MatchMaker") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "AnimationStarting_MatchMaker") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "AnimationStarting_TAPPlayerFreelance") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "AnimationStart_TAPPlayerFreelance") == 0) |
+	static const std::unordered_set<std::string_view> scene_start_events = {
+		"AnimationStarting",
+		"AnimationStart",
+		"AnimationStart_MatchMaker",
+		"AnimationStarting_MatchMaker",
+		"AnimationStarting_TAPPlayerFreelance",
+		"AnimationStart_TAPPlayerFreelance",
+		"AnimationStart_CreatureSummoner",
+		"AnimationStarting_CreatureSummoner",
+		"StageStart_CreatureSummoner",
+		"AnimationChange",
+		"AnimationChange_CreatureSummoner",
+		// "AnimationStart_BodySearch" is intentionally excluded: body search itself is about clothing.
+		"AnimationStarting_slacEngagement",
+		"AnimationStart_slacEngagement",
+		"StageStart_slacEngagement",
+		"StageStart_TAPPlayerFreelance",
+		"StageStart_",
+		"SL_AdvanceScene"
+	};
 
-		(std::strcmp(a_event->eventName.c_str() , "AnimationStart_CreatureSummoner") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "AnimationStarting_CreatureSummoner") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "StageStart_CreatureSummoner") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "AnimationChange") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "AnimationChange_CreatureSummoner") == 0) |				
+	static const std::unordered_set<std::string_view> scene_end_events = {
+		"AnimationEnding",
+		"AnimationEnd",
+		"AnimationEnding_TAPPlayerFreelance",
+		"AnimationEnd_TAPPlayerFreelance",
+		"AnimationEnding_CreatureSummoner",
+		"AnimationEnd_CreatureSummoner",
+		"AnimationEnd_MatchMaker",
+		"AnimationEnding_MatchMaker",
+		"AnimationEnding_slacEngagement",
+		"AnimationEnd_slacEngagement"
+	};
 
-		//   (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BodySearch") == 0) |     Body search is also about clothing, so comments here are fine
-		(std::strcmp(a_event->eventName.c_str() , "AnimationStarting_slacEngagement") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "StageStart_slacEngagement") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "AnimationStart_slacEngagement") == 0) |
+	const std::string_view event_name = a_event->eventName;
 
-		(std::strcmp(a_event->eventName.c_str() , "StageStart_TAPPlayerFreelance") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "StageStart_") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "SL_AdvanceScene") == 0) ) 
+	if (scene_start_events.contains(event_name))
 	{
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 		logger::info("Mod-Event-Based DISABLING OF CLOTHING-CHANGE-COMMENTS: {}\n{}\n.", a_event->eventName.c_str(), a_event->strArg.c_str());  
 		set_current_animation_status("in_a_scene");
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnding") == 0)  | 
-		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "AnimationEnding_TAPPlayerFreelance") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd_TAPPlayerFreelance") == 0) |		
-		(std::strcmp(a_event->eventName.c_str() , "AnimationEnding_CreatureSummoner") == 0) | // This is from the Creature Summoner mod.
-		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd_CreatureSummoner") == 0) | // This is from the Creature Summoner mod		
-		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd_MatchMaker") == 0) |
-
-		(std::strcmp(a_event->eventName.c_str() , "AnimationEnding_slacEngagement") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "AnimationEnd_slacEngagement") == 0) |
-
-		(std::strcmp(a_event->eventName.c_str() , "AnimationEnding_MatchMaker") == 0) ) 
+	if (scene_end_events.contains(event_name))
 	{
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 		logger::info("Mod-Event-Based RE-ENABLING OF CLOTHING-CHANGE-COMMENTS: {}\n{}\n.", a_event->eventName.c_str(), a_event->strArg.c_str());  
@@ -218,13 +221,12 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	toggle_in_a_scene_or_not_based_on_mod_events(a_event);
 	
 
-	if ( is_known_useless_event(a_event->eventName.c_str()))
+	if ( is_known_useless_event_that_can_be_completely_shortcircuited(a_event->eventName.c_str()))
 	{
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 		logger::info("SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-
 
 	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)  | 
 		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_IMPORANT_PlayerThought") == 0) |
@@ -235,8 +237,6 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		logger::info(".\n.\n.\nWe really push out a thought now.  From: {}\n{}\n.", a_event->eventName.c_str(), a_event->strArg.c_str());  
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-
-
 
 	// We log all other mod events, because they might be interesting for us to react to and turn into immersive player thoughts
 	logger::info("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
