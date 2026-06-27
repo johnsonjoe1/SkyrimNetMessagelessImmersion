@@ -44,8 +44,10 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SKICP_menuAccepted",
 		"SKICP_inputSelected",
 		"SKICP_inputAccepted",
-		"SKICP_keymapChanged",   // this is broadcast when the player changes a keymap in the SKI Configuration Menu.
+		"SKICP_keymapChanged",          // this is broadcast when the player changes a keymap in the SKI Configuration Menu.
 		"SKIWF_widgetError",            // this is broadcast when a widget error occurs.
+		"SKICP_sliderSelected",         // more mod events that happen when changing something in the MCM.
+		"SKICP_sliderAccepted",         // more mod events that happen when changing something in the MCM.
 		"RSM_CategoriesInitialized",   // this is some technical event from RaceMenu that we don't care about.
 		"RSM_Initialized",             // this is some technical event from RaceMenu that we don't care about.
 		"RSM_SliderChange",
@@ -67,7 +69,11 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		//"SkyrimNet_SpeechComplete",
 		//"SkyrimNet_AudioStarted",
 		//"SkyrimNet_AudioEnded",
-		"SkyrimNet_MemoryCreated",  // No need to respond to this, as it's internal memory creation and not relevant to direct game status.
+		"SkyrimNet_MemoryCreated",  // No need to respond to this, as it's internal memory creation and not relevant to direct game status.^
+		"UIWheelMenu_LoadMenu",      //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
+		"UIWheelMenu_SetOption",     //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
+		"UIWheelMenu_CloseMenu",     //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
+		"UIWheelMenu_ChooseOption",  //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
 		"UD_AfterUIReload", 			
 		"UD_QuestKeywordUpdate", 
 		"UD_GenericKeyUpdate", 

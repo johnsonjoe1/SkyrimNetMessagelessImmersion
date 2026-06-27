@@ -64,7 +64,7 @@ std::string_view ExtractCreatureNameFromEffectName(std::string_view effect_name)
 
 bool is_known_irrelevant_magic_effect(std::string base_name)
 {
-	static const std::array<std::string, 19> irrelevant_effect_list = {
+	static const std::array<std::string, 21> irrelevant_effect_list = {
 		"RaceMenuHH Scale Effect"   , 
 		"Consume Food Portion"   , 
 		"Automate Hunger Script"  ,
@@ -79,6 +79,8 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"UIWheelMenu_ChooseOption",
 		"CC NPCBimboCheckerCloakEffect",
 		"lvskLoveSicknessVisibleEffect",  // This one is the pink-heart-eyes from the LoveSickness mod.  What are we to do with that?
+		"Heart Eyes Effect",              // This is from lovesick mod, but it only affects eye textures and has no further relevance.
+		"Euphoria",                       // This is from lovesick mod, but we only handle lovesick state 0 and 1 so far.
 		"MilkRNDEffect",             // This is from MME, but I don't understand it.  Maybe it is some milk that was auto-drank from iNeed, but I don't know.
 		"Adrenaline Script",         // This one is from iNeed, but I don't remember doing anything at that point.  Maybe it was auto-eating something with an effect.  But I don't know.
 		"_STA_DroolCooldownSpell",   // This is interesting, because it's from spank-that-ass a drool effect, but it seems to be too numerous and frequent to really be useful for anything at present

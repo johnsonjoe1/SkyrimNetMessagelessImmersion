@@ -62,6 +62,10 @@ Upon picking up items:
 * 0.5.1:  Finer dirtyness handling, as a swim doesn't give the same cleanliness as a bath with soap.
 * 0.5.2:  Filter comments from clothing changes while in a SL scene, because that feels kind of out-of-place there, at least at the start.
 * 0.5.2:  Added basic support for Body-Search Mod:  Comments on scene start.
+* 0.5.2:  Added basic support for BattleFuck Mod.
+* 0.5.2:  yps Flexible Feet training status now handled properly.
+* 0.5.2:  All creature sommonings from creature summoner mod now handled properly, with a comment on the summoning.
+
 
 There is some sensitivity to overall SkyrimNet talk going on, so as to not babble too much when others are speaking, but on the other hand, give some updates and hopefully immersion and mental self-talk when it's otherwise quiet and alone time in the woods.
 
