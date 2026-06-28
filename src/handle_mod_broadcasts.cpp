@@ -83,6 +83,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"UD_QuestKeywordUpdate", 
 		"UD_GenericKeyUpdate", 
 		"UD_PatchUpdate",
+		"DeviceVibrateEffectStart",  //  Problaby from UD, but this is already commented on via the Naito-Plugin it seems, so we do nothing here.
 		"DeviceVibrateEffectStop",  //  Problaby from UD, but this is already commented on via the Naito-Plugin it seems, so we do nothing here.
 		"UIListMenu_LoadMenu",
 		"UIListMenu_CloseMenu",
@@ -146,6 +147,10 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"AnimationStart_BattleFuck",   //  This is from the BattleFuck mod.  This is 4 seconds after the other, so we ignore this one and respond to the other one.
 		"StageStart_BattleFuck", // This is from the BattleFuck mod.  Since this is about undressing itself, we won't stop clothing changes from this one.
 		"StageEnd_BattleFuck",   // This is from the BattleFuck mod.  Since this is about undressing itself, we won't stop clothing changes from this one.
+		"AnimationEnd_BattleFuck",   // This is from the BattleFuck mod.  nothing to do here.
+		//  "AnimationEnding_BattleFuck", // This is from the BattleFuck mod.  We absolutely should comment on that.
+
+
 
 		"AnimationStart_CreatureSummoner", // This is from the Creature Summoner mod.
 		"AnimationStarting_CreatureSummoner", // This is from the Creature Summoner mod.
@@ -306,9 +311,9 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 
 	// MOD EVENT:  Name: DeviousEventTrip and Fall  StrArg: Beea  NumArg: 0
-	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventTrip and Fall") == 0)  ) {
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventTrip and Fall") == 0) ||  (std::strcmp(a_event->eventName.c_str() , "DeviousEventLeg Cuffs Trip Over") == 0) ) {
 		// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
-		std::string  thought_message = std::format("YOU, the player, just tripped over your own feet, because you are wearing these devious bondage boots that you are locked into and cannot take off.  What are you thinking now based on this? ", a_event->strArg.c_str());
+		std::string  thought_message = std::format("YOU, the player, just tripped over your own feet, because you are wearing these devious bondage boots or leg cuffs that you are locked into and cannot take off.  What are you thinking now based on this? ", a_event->strArg.c_str());
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
@@ -324,27 +329,46 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		}	
 	}
 	
-	// MOD EVENT:  Name: DeviousEventLeg Cuffs Trip Over :  this seems to be a random event, but sometimes nothing happens.  We make a comment, but only so that it's not too wrong.
-	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventLegCuffsTripOver") == 0)  ) {
+	// MOD EVENT:  Name: DeviceActorOrgasm  StrArg: Lillith  NumArg: 0
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceActorOrgasm") == 0)  ) {
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
-			std::string  thought_message = std::format("YOU, the player, just stumbled and almost fell over your leg cuffs.  Gods, that was close!  Say so and let us know what you are feeling and thinking.");
+			std::string  thought_message = std::format("YOU, the player, just orgasmed from the vibrating devices locked onto your body and into your sensitive parts.  You couldn't prevent it.  Gods, that was intense!  Say so and let us know what you are feeling and thinking.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
-			LillithOnlyBox("DeviousEventLegCuffsTripOver: Event noticed, but it's NOT ABUT THE PLAYER?????  DoubleCheck this next time");
+			LillithOnlyBox("DeviceActorOrgasm: Event noticed, but it's NOT ABUT THE PLAYER?????  DoubleCheck this next time");
+		}	
+	}
+	
+	// MOD EVENT:  Name: SkyrimNetDDUDNG_Event  StrArg: Lillith's Genital Piercing (Common Soul Gem) stops vibrating.  NumArg: 0
+	if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNetDDUDNG_Event") == 0)  ) {
+		if ( (a_event->strArg.c_str() == "Lillith's Genital Piercing (Common Soul Gem) stops vibrating." ) ||
+		     (a_event->strArg.c_str() == "Lillith's Genital Piercing (Common Soul Gem) starts vibrating.") ) {
+			// do nothing here.  This is already a known event.  But we are specific and want to see the rest of them.
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} else {
+			std::string thought_message = std::format("SkyrimNetDDUDNG_Event: {}", a_event->strArg.c_str() );
+			LillithOnlyBox(thought_message);
 		}	
 	}
 
+
+
 	// MOD EVENT:  Name: AnimationStarting_BattleFuck :  this is the start of a BattleFuck scene.  We absolutely should comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_BattleFuck") == 0)  ) {
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
-			std::string  thought_message = std::format("YOU, the player, are now getting ambushed in a sexual assault.  Someone gips you from behind and wants to strip away your clothing and armour, so he can fuck you. There may be bystanders who come to watch the spectacle as you are potentially getting raped.  You may struggle to resist, but it's unclear if that will work!  Say so and let us know what you are feeling and thinking in that moment.");
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-			LillithOnlyBox("AnimationStarting_BattleFuck:  " + thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		} else {
-			LillithOnlyBox("AnimationStarting_BattleFuck: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time");
-		}	
+		// This event is always about the player, nobody else.
+		std::string  thought_message = std::format("YOU, the player, are now getting ambushed in a sexual assault.  Someone gips you from behind and wants to strip away your clothing and armour, so he can the rape you right in from of everybody.  There may be bystanders who come to watch the spectacle as you are potentially getting raped.  You may struggle to resist, but it's unclear if that will work!  Say so and let us know what you are feeling and thinking in that moment, given that you are about to be stripped and raped and make it clear from your response, that a rape is about to happen to you.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("AnimationStarting_BattleFuck:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+	// MOD EVENT:  Name:  "AnimationEnding_BattleFuck" :  this is the end of a BattleFuck scene.  We absolutely should comment on it.
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BattleFuck") == 0)  ) {
+		// This event is always about the player, nobody else.
+		std::string  thought_message = std::format("YOU, the player, survived a sexual assault.  Maybe you got completely undressed by the attacker and maybe he even fucked you and came inside of you, while everybody else stood by and watched, but regardless of that, the assault is over now and you can get dressed again.  Say so and let us know what you are feeling and thinking in that moment.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("AnimationStarting_BattleFuck:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
 

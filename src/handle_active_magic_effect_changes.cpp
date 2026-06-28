@@ -278,7 +278,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		DumpThoughts::throw_out_TTS_thought_message(std::format("Some substance called black goo just came in contact with you, and, to your horror, it manifested into a bondage device, thus trapping you as the victim now locked into said device.  What are you thinking in the face of this situation? ")); //  + standard_thought_instruction;
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-	// Let's try to track UD/DD slowdown-effect from bondage boots:  :  NOW THE REMOVAL OF THE EFFECT.
+	// Let's try to track UD/DD slowdown-effect from bondage boots: 
 	if (base && ( (std::strcmp(base->GetName(), "SpeedMult Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "BootSlow-Enchant") == 0)  ))
 	{
 		if (a_event->isApplied)
@@ -294,6 +294,9 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}
 	}
+
+
+
 
 
 	// Handle CreatureSummoner effects:
