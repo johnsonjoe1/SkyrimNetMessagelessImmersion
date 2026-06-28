@@ -30,7 +30,7 @@ Other mods that are being picked on (at least in minimal amounts) when they are 
 * BodySearch, 
 * Unforgiving Devices / Unforgiving Skyrim, 
 * SLAC
-* STA
+* STA (Spank That Ass)
 * The Ancient Profession.
 
 Note, that as said, there are only minimal gentle changes, nothing big or invasive.  And none of them are required in any form.  I add more stuff, as I play along and find something is missing and more response from SkyrimNet would be appropriate here and there.  Not a very systematic or completionist approach, but rather picking up stuff here and there.

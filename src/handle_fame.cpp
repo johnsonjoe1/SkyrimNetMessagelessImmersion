@@ -8,6 +8,7 @@
 #include "handle_fame.h"
 #include <unordered_set>
 #include <optional>
+#include <string_view>
 
 namespace logger = SKSE::log;
 
@@ -78,6 +79,9 @@ static std::vector<FameGlobal> fameGlobals = {
 void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 {
 	bool some_fame_change_happend = false;
+	std::vector<std::string_view> fame_increases;
+	std::vector<std::string_view> fame_decreases;	
+
 	for (auto& fame : fameGlobals) {
 		if (!fame.global) {
 			fame.global = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESGlobal>( fame.formID, "SLSF Reloaded.esp");
@@ -99,6 +103,8 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 			
 			
 			// Assign new value and message-box-report value changes for now
+
+
 			fame.current_value = fame.global->value;
 			if (fame.current_value != fame.previous_value) {
 
@@ -113,10 +119,12 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 				}
 				if ( fame.current_value > fame.previous_value ) {
 					// Increase:  say as much
+					fame_increases.push_back(fame.name);
 					SKSE::log::info("SLSF-Handling: Detected an INCREASE in: {}  from {} to {}.", fame.name, fame.previous_value, fame.current_value);
 					LillithOnlyBox(std::format("SLSF-Handling: Detected an INCREASE in: {} from {} to {}." , fame.name , fame.previous_value , fame.current_value));
 				} else {
 					// Decrease:  say as much
+					fame_decreases.push_back(fame.name);
 					SKSE::log::info("SLSF-Handling: Detected a DECREASE in: {}  from {} to {}.", fame.name, fame.previous_value, fame.current_value);
 					LillithOnlyBox(std::format("SLSF-Handling: Detected a DECREASE in: {} from {} to {}." , fame.name , fame.previous_value , fame.current_value));
 				}
@@ -137,7 +145,52 @@ And let us know from your response, that you speak about your fame in the given 
 	}
 	if (!some_fame_change_happend){
 		SKSE::log::info("SLSF-handing:  Checked for changes in all fame-categories, but no changes detected.");
+	} else {
+		std::string fame_increases_as_string;
+		for (std::size_t index = 0; index < fame_increases.size(); ++index) {
+			if (index > 0) {
+				fame_increases_as_string += ", ";
+			}
+			fame_increases_as_string += fame_increases[index];
+		}
+		std::string fame_decreases_as_string;
+		for (std::size_t index = 0; index < fame_decreases.size(); ++index) {
+			if (index > 0) {
+				fame_decreases_as_string += ", ";
+			}
+			fame_decreases_as_string += fame_decreases[index];
+		}
+
+		SKSE::log::info("SLSF-Handling: Fame increases detected in the following categories: {}", fame_increases_as_string);
+		SKSE::log::info("SLSF-Handling: Fame decreases detected in the following categories: {}", fame_decreases_as_string);
+		std::string fame_thought_message;
+		if (!fame_increases.empty()) {
+			LillithOnlyBox(std::format("SLSF-Handling: Fame increases detected in the following categories: {}", fame_increases_as_string));
+			fame_thought_message = std::format(
+R"SKSE(YOU, the player, just entered an area where your sexual reputation in the following categories is noticably higher, 
+meaning pleople might be talking about your sexual actions and behaviour.  
+But maybe they have forgotten about you and what you did there already. 
+The detailed categories where you have increased fame here are: {}.   
+What are you thinking now based on this?  How does that make you feel?  
+And let us know from your response, that you speak about your reputation as a potentially perverse person in some of the given categories.
+)SKSE", fame_increases_as_string);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
+		}
+		if (!fame_decreases.empty()) {
+			LillithOnlyBox(std::format("SLSF-Handling: Fame decreases detected in the following categories: {}", fame_decreases_as_string));
+			fame_thought_message = std::format(
+R"SKSE(YOU, the player, just entered an area where your sexual reputation in the following categories is noticably lower, 
+maybe because there are no people there to even talk about you, and maybe because nobody knows you here or remembers your actions.  
+In any case, people are less likely to speak about your sexual actions and behaviour.  
+The detailed categories where you have decreased fame here are: {}.   
+What are you thinking now based on this?  How does that make you feel?  
+And let us know from your response, that you speak about your reputation as a potentially perverse person in some of the given categories.
+)SKSE", fame_decreases_as_string);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
+		}
 	}
 }
+
+
 
 

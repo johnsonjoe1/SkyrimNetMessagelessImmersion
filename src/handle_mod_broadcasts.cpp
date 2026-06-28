@@ -24,6 +24,8 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SKICP_configManagerReady",
 		"Apropos2GameLoaded",
 		"Apropos2ConfigClose",
+		"CC_ModBimboCorruption",   // not now, maybe we deal with this later.
+
 		// "SNMI_JustPumpMyStringToPlayerThought",             // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_IMPORANT_PlayerThought",                 // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",        // we can't short-circuit that any more, because it should reset background thought cooldowns
@@ -35,6 +37,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SKIWF_iWantStatusBarsReady", 
 		"iWantStatusBarsReady", 
 		"iWantWidgetsReset", 
+		"ORS_LinkedWidgetUpdate",    // no clue what this is.
 		"SKICP_modSelected",         // this is broadcast when the player selects a mod in the SKI Configuration Menu.
 		"SKICP_pageSelected",        // this is broadcast when the player selects a page of a mod configuration in the SKI Configuration Menu.
 		"SKICP_optionHighlighted",   // this is broadcast when the player highlights a configuration option for a mod in the SKI Configuration Menu.
@@ -64,6 +67,8 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SN_StatusUpdated", 
 		"_SN_StatusUpdated", 
 		"_SN_UIConfigured",
+		"_SLS_IntCoverShutdown",    // Not sure what this is.  Maybe the Sexlab-Survival mods Enforcers seeing you.  Too complicated for now.  But maybe later.
+		"_BC_UpdateBackPackWeight",  // This is from SL Survival as well, but not worth dealign with now probably.
 		//"SkyrimNet_SpeechStarted",
 		//"SkyrimNet_SpeechCompleted",
 		//"SkyrimNet_SpeechComplete",
@@ -78,11 +83,14 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"UD_QuestKeywordUpdate", 
 		"UD_GenericKeyUpdate", 
 		"UD_PatchUpdate",
+		"DeviceVibrateEffectStop",  //  Problaby from UD, but this is already commented on via the Naito-Plugin it seems, so we do nothing here.
 		"UIListMenu_LoadMenu",
 		"UIListMenu_CloseMenu",
 		"UIListMenu_SelectItemText",   // this may be useful later, because it indicated player is trying lockpicking now
 		"UIListMenu_SelectItem",
 		// "UD_SentientDialogue",  // Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
+
+		"_SLS_Int_PlayerLoadsGame",  // Sexlab-Survival has detected a reload, nothing else.
 		"RSM_LoadPlugins",
 		"SeverActions_CellLoaded",
 		"SeverActions_FamiliarityTimestamp",
@@ -90,6 +98,8 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SeverActions_AmbientBanterReady",
 		"SeverActions_ForcedCombatEnded",   // No need to respond to this, I guess?
 		"SeverActions_NewTeammateDetected",
+		"SeverActionsNative_FurnitureCleanup",
+		"SeverActions_OrphanCleanup",
 		"ReSchlongify",
 		"MME_MilkCycleComplete",
 		"BeeingFemale",   //  We ignore this for now, maybe later we can do something with it.
@@ -98,9 +108,11 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"Obody_ApplyMorph",
 		"_SN_PlayerConsumes",  // MOD EVENT:  Name: _SN_PlayerConsumes  StrArg: IsEating  NumArg: 0
 		"PlayerOrgasmEnd",
+
 		"dhlp-Resume",   // This is technical Devious Helplessness operational stuff, to continue mod processes.
 		"dhlp-Suspend",   // This is technical Devious Helplessness operational stuff, to suspend mod processes.
 		"dhlp-maintenance",   // This is technical Devious Helplessness operational stuff, for maintenance purposes.
+
 		"SSL_PREPARE_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_LOCK_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"AnimationStarting",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
@@ -130,6 +142,8 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"StageStart_TAPPlayerFreelance",        //  This might be from The-Ancient-Profession.
 		"StageEnd_TAPPlayerFreelance",          //  This might be from The-Ancient-Profession.
 
+		//  "AnimationStarting_BattleFuck",   //  This is from the BattleFuck mod.  This is the one event, that we respond to.
+		"AnimationStart_BattleFuck",   //  This is from the BattleFuck mod.  This is 4 seconds after the other, so we ignore this one and respond to the other one.
 		"StageStart_BattleFuck", // This is from the BattleFuck mod.  Since this is about undressing itself, we won't stop clothing changes from this one.
 		"StageEnd_BattleFuck",   // This is from the BattleFuck mod.  Since this is about undressing itself, we won't stop clothing changes from this one.
 
@@ -165,8 +179,8 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* a_event) 
 {
 	static const std::unordered_set<std::string_view> scene_start_events = {
-		"AnimationStarting",
-		"AnimationStart",
+		// "AnimationStarting",   // This can also happen in BattleFuck, where undressing is an important point and SHOULD be commented via player-thoughts.
+		// "AnimationStart",   // This can also happen in BattleFuck, where undressing is an important point and SHOULD be commented via player-thoughts.
 		"AnimationStart_MatchMaker",
 		"AnimationStarting_MatchMaker",
 		"AnimationStarting_TAPPlayerFreelance",
@@ -203,7 +217,7 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 	if (scene_start_events.contains(event_name))
 	{
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
-		logger::info("Mod-Event-Based DISABLING OF CLOTHING-CHANGE-COMMENTS: {}\n{}\n.", a_event->eventName.c_str(), a_event->strArg.c_str());  
+		logger::info("Mod-Event-Based DISABLING OF CLOTHING-CHANGE-COMMENTS: {}  StrArg: {} ", a_event->eventName.c_str(), a_event->strArg.c_str());  
 		set_current_animation_status("in_a_scene");
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
@@ -298,6 +312,42 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+
+	// MOD EVENT:  Name: DeviousEventStruggle  :  this seems to be a random forced struggle event with no real struggle but just for roleplay.  We make a comment.
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventStruggle") == 0)  ) {
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just can't take it any more.  In a frenzy, you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking.");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} else {
+			LillithOnlyBox("DeviousEventStruggle: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time");
+		}	
+	}
+	
+	// MOD EVENT:  Name: DeviousEventLeg Cuffs Trip Over :  this seems to be a random event, but sometimes nothing happens.  We make a comment, but only so that it's not too wrong.
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventLegCuffsTripOver") == 0)  ) {
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just stumbled and almost fell over your leg cuffs.  Gods, that was close!  Say so and let us know what you are feeling and thinking.");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} else {
+			LillithOnlyBox("DeviousEventLegCuffsTripOver: Event noticed, but it's NOT ABUT THE PLAYER?????  DoubleCheck this next time");
+		}	
+	}
+
+	// MOD EVENT:  Name: AnimationStarting_BattleFuck :  this is the start of a BattleFuck scene.  We absolutely should comment on it.
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_BattleFuck") == 0)  ) {
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, are now getting ambushed in a sexual assault.  Someone gips you from behind and wants to strip away your clothing and armour, so he can fuck you. There may be bystanders who come to watch the spectacle as you are potentially getting raped.  You may struggle to resist, but it's unclear if that will work!  Say so and let us know what you are feeling and thinking in that moment.");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+			LillithOnlyBox("AnimationStarting_BattleFuck:  " + thought_message);
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} else {
+			LillithOnlyBox("AnimationStarting_BattleFuck: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time");
+		}	
+	}	
+
+
 	// MOD EVENT:  YPS Thoughts:  Those will be pushed to the background channel.
 	if ( (std::strcmp(a_event->eventName.c_str() , "YPS_ThoughtEvent") == 0)  ) {
 		// std::string  thought_message = std::format(a_event->strArg.c_str());
