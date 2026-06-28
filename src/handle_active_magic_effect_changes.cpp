@@ -253,6 +253,27 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate something!  As a total surprise, you now notice, that you may have just contracted the so-called disease '{}' from it!  You need to announce the potential infection in your response, so that the actual player is informed.  You may do that implicitly, in the form of regret, surprise anger or shock.  It is a potentially dangerous condition. Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+
+	// The cure to rock joint desease looks like the comment below.  Lets say something.
+	if (base && ( strcmp(base_name, "Rock Joint") == 0) && (! a_event->isApplied) )
+	{
+		std::string stomach_rot_status = std::format("CURE OF {} DISEASE DETECTED! ", base_name);
+		LillithOnlyBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
+		SKSE::log::info("Event handler for Rock Joint Disease!");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, just got cured of your {} Disease!  What a relief.  Your body has recoverd so quickly from the cure!  You need to announce great relief and successful cure!  You may do that implicitly, in the form of relief and gratitude.  Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+/*
+[2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:336] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:337] Effect REMOVED on Lillith | UID=17
+[2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:340] Base name: Rock Joint | Base ptr: 0x1a4f4647900 | Base-FormID: 1E00F0AC | Base-Form Type: 18   (This means: MGEF) 
+[2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:341] base-Effect EDID: RND_DiseaseRockjoint | Source ptr: 0x1a4df640a00  |  Caster: None 
+[2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:345] Magnitude: -1 | Duration: 0
+[2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:348] Source name: Rock Joint | Source FormID: B8782 | Source EDID: DiseaseRockjoint 
+[2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:354] Form LookupByID 1E00F0AC found: Rock Joint
+*/
+
+
 	// Let's try to track Unforgiving Devices Struggle Exhaustion here:  FIRST THE APPLICATION OF THE EFFECT.
 	if (base && ( (std::strcmp(base->GetName(), "Exhaustion") == 0)  ) && ( (std::strcmp(source->GetName(), "Struggle exhaustion") == 0)  ) )
 	{

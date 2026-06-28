@@ -68,6 +68,8 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"_SN_StatusUpdated", 
 		"_SN_UIConfigured",
 		"_SLS_IntCoverShutdown",    // Not sure what this is.  Maybe the Sexlab-Survival mods Enforcers seeing you.  Too complicated for now.  But maybe later.
+		"_SLS_IntWeaponReadied",    // Sexlab-Survival mod triggering this when drawing a weapon.  Nothing for us.
+		"_SLS_LicenceStateUpdateEvent",  // Sexlab-Survival mod triggering this at seemingly random times, e.g. in Lauras Shop.
 		"_BC_UpdateBackPackWeight",  // This is from SL Survival as well, but not worth dealign with now probably.
 		//"SkyrimNet_SpeechStarted",
 		//"SkyrimNet_SpeechCompleted",
@@ -264,7 +266,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}
 
 	// We log all other mod events, because they might be interesting for us to react to and turn into immersive player thoughts
-	logger::info("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
+	logger::info("MOD EVENT:  Name: ''{}''  StrArg: ''{}''  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
 	std::string debug_message = std::format("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg );
 
 
@@ -341,13 +343,15 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}
 	
 	// MOD EVENT:  Name: SkyrimNetDDUDNG_Event  StrArg: Lillith's Genital Piercing (Common Soul Gem) stops vibrating.  NumArg: 0
+	// MOD EVENT:  Name: SkyrimNetDDUDNG_Event  StrArg: Lillith's Genital Piercing (Common Soul Gem) stops vibrating.  NumArg: 0
+	// Lillith's Genital Piercing (Common Soul Gem) starts vibrating.
 	if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNetDDUDNG_Event") == 0)  ) {
-		if ( (a_event->strArg.c_str() == "Lillith's Genital Piercing (Common Soul Gem) stops vibrating." ) ||
-		     (a_event->strArg.c_str() == "Lillith's Genital Piercing (Common Soul Gem) starts vibrating.") ) {
+		if ( (a_event->strArg == "Lillith's Genital Piercing (Common Soul Gem) stops vibrating." ) ||
+		     (a_event->strArg == "Lillith's Genital Piercing (Common Soul Gem) starts vibrating.") ) {
 			// do nothing here.  This is already a known event.  But we are specific and want to see the rest of them.
 			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
-			std::string thought_message = std::format("SkyrimNetDDUDNG_Event: {}", a_event->strArg.c_str() );
+			std::string thought_message = std::format("SkyrimNetDDUDNG_Event: ''{}''", a_event->strArg.c_str() );
 			LillithOnlyBox(thought_message);
 		}	
 	}
