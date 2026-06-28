@@ -30,7 +30,8 @@ Other mods that are being picked on (at least in minimal amounts) when they are 
 * BodySearch, 
 * Unforgiving Devices / Unforgiving Skyrim, 
 * SLAC
-* The ancient Profession.
+* STA
+* The Ancient Profession.
 
 Note, that as said, there are only minimal gentle changes, nothing big or invasive.  And none of them are required in any form.  I add more stuff, as I play along and find something is missing and more response from SkyrimNet would be appropriate here and there.  Not a very systematic or completionist approach, but rather picking up stuff here and there.
 
@@ -83,10 +84,7 @@ Everything is hard-coded at the moment.  There are no config-files or MCMs or an
 If you want, you can disable e.g. the background thought channel by deleting the SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought.yaml file. You can do that from within SkyrimNet by editing the list of triggers there.
 
 # Contributing guidelines
-You really want to help?  Most people have far more skill and competence to work on something far better and more complex.  This noob codebase would only slow them down.  Just in case:  If you send something, please keep it simple and noob-friendly enough, that I can hope to understand it.  Thanks!
-
-There is infinitely much to do, as there are infinitely many mods, that could be SkyrimNet-integreated in this way.  
-The priority should be on stuff, that doesn't yet has a standalone SkyrimNet-integration already.
+You really want to help?  Great!  There are no rules.  Do what you want and can.  
 
 # License
 As free as possible. I guess nobody want this code anyway.  And that is referring only to the parts I added to the project, not the template/libraries that I started with.  See their license in the respective places.
