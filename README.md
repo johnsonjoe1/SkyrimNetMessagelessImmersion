@@ -7,25 +7,35 @@ This project takes SkyrimNet and adds some additional triggers to trigger player
 The idea is to make Skyrim basically messageless, because the player character notices all changes in-game and reflects on them.
 So that in an ideal scenario, all widgets and all fonts could be removed from the screen for better immersion.
 
-Of course, this is just a noob project, with so far no real experience with Skyrim modding.
-At present, there is only a SKSE plugin and some trigger-yaml files for SkyrimNet and since recently also the first papyrus bridge.
+The idea is, not to change anything about what you do in game.  The only change should be more immersion and more responsiveness concerning SkyrimNet player-thoughts, which in turn should be enough to make all other prompts also aware of relevant proceedings.
+So everything should play the same, just with an potentially messageless and widgetless interface if you want it that way.
 
-The idea is, not to change anything, but just make the interface potentially messageless and widgetless.
-Nothing is overwritten concerning other mods and no require and no other mods or proceedinds are changed.  That is one of the ideas here:  
+# Installation instructions and technicallities
 
-Make especially those messages that just scroll by and are easily overlooked into a player-thought (or later maybe some other) reaction,
-e.g. when getting infected with a disease, and it's visible in the active effect page, it should also trigger a response thought in-game.
-When the disease gets worse, it should trigger another reaction.  
-If an items has some magic effects attached to it, that could trigger more responses by the player-character in game.
-
-# Installation instructions
-There are now some release packages.  
-
-Requirements/Versions:  The Skyrim version I'm using is Skyrim AE latest version 1.6.1170, Skyrim SKSE the latest version as of 2026, and SkyrimNet (21.2+ version or any later version that still has trigger yaml-files, but they don't change that much).
+This is mainly an SKSE plugin with CommonLibSSE-NG, meaning that is *should* work with Skyrim version 1.6.1170, as well as the latest GOG versions.
+There are *no* hard requirements for other mods (except for SkyrimNet, which is required).
 Any other mods, that would benefit from the plugin are not required, as it doesn't change them, it just listens to them and reads out stuff from them. 
 
+How does it work?  It's a noob project.  It just hooks into magic effect changes and mod broadcasts from other mods (or the base game), and if something
+relevant shows up, we trigger a player-thought response.  
+Any other prompts from SkyrimNet are aware of the player-thoughts anyway, and therefore are also informed.  So SkyrimNet might pick up on the additional
+information as well, without extra code from then on.  So minimal invasiveness and a gentle presence in your load order is the goal.
+
+Other mods that are being picked on (at least in minimal amounts) when they are present:
+* YPS fashion mod,
+* MME Milk mod, 
+* Advanced Nudity Detection (AND) mod, 
+* SLSF, 
+* Battlefuck, 
+* BodySearch, 
+* Unforgiving Devices / Unforgiving Skyrim, 
+* SLAC
+* The ancient Profession.
+
+Note, that as said, there are only minimal gentle changes, nothing big or invasive.  And none of them are required in any form.  I add more stuff, as I play along and find something is missing and more response from SkyrimNet would be appropriate here and there.  Not a very systematic or completionist approach, but rather picking up stuff here and there.
 
 # Features list
+
 At present, there are some hooks into the activation of furniture, like Tanning Rack and Blacksmith forge, that should trigger player thought.
 Then there are some hooks into the active magic effect process.  Whatever seems reasonable and can easily be interpreted from what is there in the event data will trigger a response.
 Also, mod event broadcasts from other mods will be listened to, and, where applicable, trigger a player-character thought response (depending on relevance).
@@ -65,7 +75,6 @@ Upon picking up items:
 * 0.5.2:  Added basic support for BattleFuck Mod.
 * 0.5.2:  yps Flexible Feet training status now handled properly.
 * 0.5.2:  All creature sommonings from creature summoner mod now handled properly, with a comment on the summoning.
-
 
 There is some sensitivity to overall SkyrimNet talk going on, so as to not babble too much when others are speaking, but on the other hand, give some updates and hopefully immersion and mental self-talk when it's otherwise quiet and alone time in the woods.
 
