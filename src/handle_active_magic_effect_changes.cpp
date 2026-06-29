@@ -64,7 +64,7 @@ std::string_view ExtractCreatureNameFromEffectName(std::string_view effect_name)
 
 bool is_known_irrelevant_magic_effect(std::string base_name)
 {
-	static const std::array<std::string, 21> irrelevant_effect_list = {
+	static const std::array<std::string, 23> irrelevant_effect_list = {
 		"RaceMenuHH Scale Effect"   , 
 		"Consume Food Portion"   , 
 		"Automate Hunger Script"  ,
@@ -73,6 +73,8 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"SCO_CellChangeDetectMgef" ,
 		"SCO_CellChangeBegin",
 		"Cell Tracking Effect",
+		"Watch Cell",                 //  This one is from Slave Tats
+		"Detect Cell Change Effect",  //  This one is from sztkUtil
 		"UIWheelMenu_LoadMenu",
 		"UIWheelMenu_SetOption",
 		"UIWheelMenu_CloseMenu",

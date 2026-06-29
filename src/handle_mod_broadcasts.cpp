@@ -120,11 +120,20 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"StageStart_HelplessFollower",        // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
 		"StageEnd_HelplessFollower",          // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
 		"AnimationEnding_HelplessFollower",   // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
+		"AnimationEnd_HelplessFollower",   // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.		
 		"StageEnd_HelplessFollower",          // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
 		"Helpless_FollowerRedress",           // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
+		"AnimationStart_HelplessFollower",    // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
+		"AnimationStarting_HelplessFollower",    // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
 
 		"StageEnd_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"StageStart_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
+		"AnimationEnding_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
+		"AnimationEnd_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
+
+		"OrgasmStart_HelplessFollower",  //	those two are both followers, I think.  MOD EVENT:  Name: OrgasmStart_HelplessFollower  StrArg: 1  NumArg: 0
+		"OrgasmStart",                   //	those two are both followers, I think.  MOD EVENT:  Name: OrgasmStart  StrArg: 1  NumArg: 0	
+		"OrgasmStart_slacEngagement",   //  Hmmm, not now, I guess.
 		
 		"SSL_PREPARE_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_PREPARE_Thread1",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
@@ -489,7 +498,8 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
-			LillithOnlyBox("DeviousEventStruggle: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time");
+			LillithOnlyBox(std::format("DeviousEventStruggle: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}	
 	}
 	
@@ -500,7 +510,8 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
-			LillithOnlyBox("DeviceActorOrgasm: Event noticed, but it's NOT ABUT THE PLAYER?????  DoubleCheck this next time");
+			LillithOnlyBox(std::format("DeviceActorOrgasm: Event noticed, but it's NOT ABUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}	
 	}
 	
@@ -514,7 +525,9 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			std::string thought_message = std::format("SkyrimNetDDUDNG_Event: ''{}''", a_event->strArg.c_str() );
-			LillithOnlyBox(thought_message);
+			// These events are numerous and mostly give text descriptions of what is happening concerning UD/DD device equipments.
+			// LillithOnlyBox(thought_message);
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}	
 	}
 
@@ -552,6 +565,11 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	
+
+
+
+
+
 	// MOD EVENT:  From SpankThatAss, we have the following event (running up and spanking, in contrast to bump-spanks, which seem not to trigger any mod event unfortunately)
 	if ( (std::strcmp(a_event->eventName.c_str() , "_STA_RandomRunUpAndSpankComplete") == 0)  ) {
 		// Name: _STA_RandomRunUpAndSpankComplete  StrArg:   NumArg: 0
@@ -643,7 +661,6 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 		// Let's also check, if it was player thoughts or player diagloge
 		
-
 		auto now = std::chrono::steady_clock::now();
 		// auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
 		auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - DumpThoughts::GetLastSpeechTimestamp());

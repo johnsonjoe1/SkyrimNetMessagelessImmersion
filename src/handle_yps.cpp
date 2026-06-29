@@ -158,6 +158,21 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 		}
 		if ( (!a_event->isApplied) ) {
 			// We do nothing here, as we just have stopped moving, nothing else.
+			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of Flexible Feet MAGIC EFFECT.");
+			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
+		}
+	}
+	if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "High Heel Walker") == 0)  ) ) 
+	{
+		if ((a_event->isApplied) && (effect->magnitude < 0) )
+		{
+			SKSE::log::info("xxxxxxxxxxx YPS 'High Heel Walker' (high heels) MAGIC EFFECT PROPERLY DETECTED");
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS HIGH HEEL WALKER! ", base_name);
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, have been wearing high heels quite a while now. Your feet are now bent to the shape of the heels, more than they are adapted to flat shoes.  That means you are now more clumsy without the heels than you are with the heels.  This means you need to continue walking in high heels, because this is a bit faster now, and going without high heels will just slow you down.  And when you train your feet even more with high heels, you will be faster still.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
+		}
+		if ( (!a_event->isApplied) ) {
+			// We do nothing here, as we just have stopped moving, nothing else.
 			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of Untrained Feet MAGIC EFFECT.");
 			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		}
