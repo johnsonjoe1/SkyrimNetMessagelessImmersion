@@ -322,6 +322,22 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	}
 
 
+	// Let's try to track SL Survival barefoot-slowdown-effect: 
+	if (base && ( (std::strcmp(base->GetName(), "Barefoot") == 0)  ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for SL Survival Barefoot effect APPLICATION!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, are suddenly barefoot and the ground is full of little stones and sharp edges.  You can't run so quickly like that, in fact you can walk only slowly while being barefoot and it's painful for your sensible feet.  Say as much in your response.")); //  + standard_thought_instruction;
+		} 
+		else // i.e.  if (!a_event->isApplied) )
+		{
+			SKSE::log::info("Event handler for SL Survival Barefoot effect REMOVAL!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, were barefoot the whole time and had to walk slowly over the sharp and uncomfortable ground. But now you have shoes on again. This means you can finally move much faster again!  What a relief!  Say as much in your response.")); //  + standard_thought_instruction;
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
 
 
 
