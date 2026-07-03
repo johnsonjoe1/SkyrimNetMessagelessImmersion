@@ -30,6 +30,126 @@ Event OnInit()
 
 EndEvent
 
+;Appropos
+;--------------------------------------
+
+ReferenceAlias Function GetAproposAlias(Actor akTarget, Quest apropos2Quest ) Global
+	; Search Apropos2 actor aliases as the player my_alias is not set in stone
+	ReferenceAlias aproposTwoAlias = None
+	Int i = 0
+	ReferenceAlias AliasSelect
+	Int aliasesInt = apropos2Quest.GetNumAliases() 
+	;slw_log.WriteLog("Apropos2 actor count" + aliasesInt)
+	While i < aliasesInt 
+		AliasSelect = apropos2Quest.GetNthAlias(i) as ReferenceAlias
+		If AliasSelect.GetReference() as Actor == akTarget
+			;slw_log.WriteLog("Apropos2 player found")
+			aproposTwoAlias = AliasSelect
+			Return aproposTwoAlias
+		EndIf
+		i += 1
+	EndWhile
+
+	;if aproposTwoAlias == None
+		;String akActorName = akTarget.GetLeveledActorBase().GetName()
+		;slw_log.WriteLog("Actor "+ akActorName + " is not yet registered in Apropos2")
+	;EndIf
+	Return aproposTwoAlias
+EndFunction
+	
+
+Int Function GetWearStateAnal(Actor akTarget,  Quest apropos2Quest) Global
+	ReferenceAlias aproposTwoAlias = GetAproposAlias(akTarget, apropos2Quest) 
+	if aproposTwoAlias != None
+		Int damage =  (aproposTwoAlias as Apropos2ActorAlias).AnalWearTearState - 1
+		If damage < 0
+			return 0
+		Elseif  damage <= 8
+			return damage
+		else
+			return 8
+		EndIf
+	Else
+		return 0
+	Endif
+EndFunction
+
+Int Function GetWearStateVaginal(Actor akTarget,  Quest apropos2Quest) Global 
+	ReferenceAlias aproposTwoAlias = GetAproposAlias(akTarget, apropos2Quest)
+	if aproposTwoAlias != None
+		Int damage = (aproposTwoAlias as Apropos2ActorAlias).VaginalWearTearState - 1
+		If damage < 0
+			return 0
+		Elseif  damage <= 8
+			return damage
+		else
+			return 8
+		EndIf
+	Else
+		return 0
+	Endif
+EndFunction
+
+Int Function GetWearStateOral(Actor akTarget, Quest apropos2Quest) Global
+	ReferenceAlias aproposTwoAlias = GetAproposAlias(akTarget, apropos2Quest)
+	if aproposTwoAlias != None
+		Int damage = (aproposTwoAlias as Apropos2ActorAlias).OralWearTearState - 1
+		If damage < 0
+			return 0
+		Elseif  damage <= 8
+			return damage
+		else
+			return 8
+		EndIf
+	Else
+		return 0
+	Endif
+EndFunction
+
+
+Function TestApropos()
+
+    Actor player = Game.GetPlayer()
+
+	Quest aproposQuest = Quest.GetQuest("Apropos2Actors")
+
+	if aproposQuest == None
+		Debug.Notification("Apropos quest not found")
+		return
+	endif
+
+	ReferenceAlias my_alias = GetAproposAlias(Game.GetPlayer(), aproposQuest)
+
+
+    ; ReferenceAlias my_alias = GetAproposAlias(player, Apropos2Quest)
+
+    if my_alias == None
+        Debug.Notification("No Apropos my_alias found")
+        Debug.Trace("[SNMI] No Apropos my_alias found")
+        return
+    endif
+
+    Debug.Notification("Alias found")
+
+	
+    Apropos2ActorAlias ap = my_alias as Apropos2ActorAlias
+
+    if ap == None
+        Debug.Notification("Cast failed")
+        Debug.Trace("[SNMI] Cast failed")
+        return
+    endif
+
+    Debug.Notification("Cast OK")
+
+    Debug.Trace("[SNMI] Vaginal = " + ap.VaginalWearTearState)
+    Debug.Trace("[SNMI] Anal     = " + ap.AnalWearTearState)
+    Debug.Trace("[SNMI] Oral     = " + ap.OralWearTearState)
+
+    Debug.Notification("V:" + ap.VaginalWearTearState + " A:" + ap.AnalWearTearState + " O:" + ap.OralWearTearState)
+EndFunction
+
+
 function push_all_MME_variables_to_the_plugin()
     current_milk_value =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkCount")      ; FROM MME_Storage.psc
     max_milk_value     =  StorageUtil.GetFloatValue(Game.GetPlayer(), "MME.MilkMaid.MilkMaximum")    ; FROM MME_Storage.psc
@@ -148,6 +268,8 @@ Event OnUpdate()
 
 	push_lovesick_variables_to_the_plugin()
 	    
+	TestApropos()
+
     RegisterForSingleUpdate(10.0)  ; Restart the same function in 10 seconds
 EndEvent
 
