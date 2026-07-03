@@ -64,7 +64,7 @@ std::string_view ExtractCreatureNameFromEffectName(std::string_view effect_name)
 
 bool is_known_irrelevant_magic_effect(std::string base_name)
 {
-	static const std::array<std::string, 23> irrelevant_effect_list = {
+	static const std::array<std::string, 25> irrelevant_effect_list = {
 		"RaceMenuHH Scale Effect"   , 
 		"Consume Food Portion"   , 
 		"Automate Hunger Script"  ,
@@ -85,9 +85,11 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"Euphoria",                       // This is from lovesick mod, but we only handle lovesick state 0 and 1 so far.
 		"MilkRNDEffect",             // This is from MME, but I don't understand it.  Maybe it is some milk that was auto-drank from iNeed, but I don't know.
 		"Adrenaline Script",         // This one is from iNeed, but I don't remember doing anything at that point.  Maybe it was auto-eating something with an effect.  But I don't know.
-		"_STA_DroolCooldownSpell",   // This is interesting, because it's from spank-that-ass a drool effect, but it seems to be too numerous and frequent to really be useful for anything at present
 		"_STA_TearsCooldownMgef",    // This is interesting, because it's from spank-that-ass tears effect, but it seems to be too numerous and frequent to really be useful for anything at present
-		"_STA_DialogOutputMgef"      // This is some spank-that-ass sex scene comments, but I guess SkyrimNet will do much better on it's own than those crude old comments
+		"_STA_DialogOutputMgef",     // This is some spank-that-ass sex scene comments, but I guess SkyrimNet will do much better on it's own than those crude old comments
+		"_STA_DroolCooldownMgef",     // This is interesting, because it's from spank-that-ass tears effect, but it seems to be too numerous and frequent to really be useful for anything at present
+		"_SLS_WeaponReadyMgef",
+		"_SLS_WeaponUnreadyMgef"
 	};		
 	for (std::size_t i = 0; i < irrelevant_effect_list.size(); ++i)
 	{
@@ -283,22 +285,24 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		{
 			SKSE::log::info("Event handler for UD STRUGGLE EXHAUSTION APPLICATION!");
 			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just tried getting out of your locking bondage devices for a whole while. You may have made some progress, but nevertheless now you are too exhausted to continue.  Say as much in your response.")); //  + standard_thought_instruction;
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} 
 		else  // i.e.  (!a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for UD STRUGGLE EXHAUSTION REMOVAL!");
 			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just were trying to get out of your locking bondage devices for a whole while. You may have made some progress, but in any case, that activity had made you exhausted to the point where you couldn't continue any more.  But now time has passed and you're feeling better and you're good to go and maybe could continue trying.  Say as much in your response.")); //  + standard_thought_instruction;
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// Let's try to track UD/US Black-Goo-Application-Effect here:  FIRST THE APPLICATION OF THE EFFECT.
-	if (base && ( (std::strcmp(base->GetName(), "Device Manifest") == 0)  ) && (a_event->isApplied) )
+	if (base && ( (std::strcmp(base->GetName(), "Device Manifest") == 0)  )  )
 	{
-		std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for BLACK-GOO-APPLICATION! ", base_name);
-		// RE::DebugMessageBox(stomach_rot_status.c_str());	
-		SKSE::log::info("Event handler for BLACK-GOO-APPLICATION!");
-		DumpThoughts::throw_out_TTS_thought_message(std::format("Some substance called black goo just came in contact with you, and, to your horror, it manifested into a bondage device, thus trapping you as the victim now locked into said device.  What are you thinking in the face of this situation? ")); //  + standard_thought_instruction;
+		if (a_event->isApplied) 
+		{
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for BLACK-GOO-APPLICATION! ", base_name);
+			// RE::DebugMessageBox(stomach_rot_status.c_str());	
+			SKSE::log::info("Event handler for BLACK-GOO-APPLICATION!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("Some substance called black goo just came in contact with you, and, to your horror, it manifested into a bondage device, thus trapping you as the victim now locked into said device.  What are you thinking in the face of this situation? ")); //  + standard_thought_instruction;
+		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// Let's try to track UD/DD slowdown-effect from bondage boots: 
@@ -308,14 +312,13 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		{
 			SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
 			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking bondage boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these heels equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} 
 		else // i.e.  if (!a_event->isApplied) )
 		{
 			SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN REMOVAL!");
 			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into bondage boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking bondage devices on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
 
@@ -338,8 +341,8 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		{
 			SKSE::log::info("Event handler for IRRESISTIBLE ATTRACTION EFFECT APPLICATION!");
 			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just became irresistibly attractive from some magic you used.  Others may be drawn to you and fuck you, or if not, you will just do it for yourself, because you are just to irresistile also to yourself!  Say as much in your response.")); //  + standard_thought_instruction;
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} 
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
 	if (base && ( (std::strcmp(base->GetName(), "Teleport") == 0) && (std::strcmp(base->GetFormEditorID(), "aaaWCTeleportSpellEffect") == 0) ) )
@@ -348,8 +351,8 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		{
 			SKSE::log::info("Event handler for AAA WC TELEPORT SPELL EFFECT APPLICATION!");
 			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just used a teleport spell.  This one should get you right to the display hall, where all your Waifu Cards are collected.  Say as much in your response.")); //  + standard_thought_instruction;
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} 
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
 

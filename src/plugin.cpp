@@ -22,7 +22,9 @@ namespace logger = SKSE::log;
 /*  TODO-LIST   
 ** Many more UD-Mod-Events for different devices being applied could be commented.
 DONE 0.5.2:   ** Many more Creature-Summoner-Creatures could be commented upon summoning them.
+NEXT:   Add all the links to supported mods and their versions in the Readme.md file.
 AFTER THAT:  ** Try to find out the (other) actor of an SL scene and then comment at the beginning of the scene, maybe even based on the tags of the scene.
+
 ** Build the periodic check status-thought-message:
    --  YPS Thought:  Take the latest one queued from the YPS thought mod event and bring it forward
    --  YPS Shoes Penalty

@@ -21,15 +21,19 @@ bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
 bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string event_name)
 {
 	static const std::unordered_set<std::string> ignored_mod_events = {
-		"SKICP_configManagerReady",
+		
 		"Apropos2GameLoaded",
 		"Apropos2ConfigClose",
+		
 		"CC_ModBimboCorruption",   // not now, maybe we deal with this later.
 
 		// "SNMI_JustPumpMyStringToPlayerThought",             // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_IMPORANT_PlayerThought",                 // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",        // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought",  // we can't short-circuit that any more, because it should reset background thought cooldowns
+		"SNMI_PlayerActivatedSomething",   //  This is our own event, to be picked up by SkyrimNet, so we don't need to respond to that.
+
+		"SKICP_configManagerReady",
 		"SKIWF_hudModeChanged", 
 		"SKIWF_widgetLoaded", 
 		"SKIWF_widgetManagerReady", 
@@ -70,6 +74,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"_SLS_IntCoverShutdown",    // Not sure what this is.  Maybe the Sexlab-Survival mods Enforcers seeing you.  Too complicated for now.  But maybe later.
 		"_SLS_IntWeaponReadied",    // Sexlab-Survival mod triggering this when drawing a weapon.  Nothing for us.
 		"_SLS_LicenceStateUpdateEvent",  // Sexlab-Survival mod triggering this at seemingly random times, e.g. in Lauras Shop.
+		"_SLS_HighlightItemsStop",
 		"_BC_UpdateBackPackWeight",  // This is from SL Survival as well, but not worth dealign with now probably.
 		//"SkyrimNet_SpeechStarted",
 		//"SkyrimNet_SpeechCompleted",
@@ -95,6 +100,8 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 
 		"_SLS_Int_PlayerLoadsGame",  // Sexlab-Survival has detected a reload, nothing else.
 		"RSM_LoadPlugins",
+
+		//  Mod events from SeverActions are directly integrated into SkyrimNet anyway, so no need to build a bridge for those in any way.
 		"SeverActions_CellLoaded",
 		"SeverActions_FamiliarityTimestamp",
 		"SeverActions_ReputationAssess",
@@ -103,6 +110,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SeverActions_NewTeammateDetected",
 		"SeverActionsNative_FurnitureCleanup",
 		"SeverActions_OrphanCleanup",
+		"SeverActions_TeammateRemoved",
 		"ReSchlongify",
 		"MME_MilkCycleComplete",
 		"BeeingFemale",   //  We ignore this for now, maybe later we can do something with it.
@@ -135,12 +143,16 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"OrgasmStart",                   //	those two are both followers, I think.  MOD EVENT:  Name: OrgasmStart  StrArg: 1  NumArg: 0	
 		"OrgasmStart_slacEngagement",   //  Hmmm, not now, I guess.
 		
+		// Technical mod events from Sexlab P+.  There can be up to 15 threads, but I guess those are edge cases that we don't need to handle for now.  
 		"SSL_PREPARE_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_PREPARE_Thread1",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_PREPARE_Thread2",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_LOCK_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_LOCK_Thread1",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_LOCK_Thread2",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_READY_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_READY_Thread1",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_READY_Thread2",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_CLEAR_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_CLEAR_Thread1",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_CLEAR_Thread2",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
@@ -337,6 +349,10 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 			// LillithOnlyBox(std::format("DeviceEquippedBoots: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}				
 	}
+
+
+
+
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedPony Boots
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedPony Boots") == 0)  ) {
 		// MOD EVENT:  Name: DeviceEquippedPony Boots  StrArg: zbfSlaveFemale  NumArg: 0
@@ -383,6 +399,20 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 			// LillithOnlyBox(std::format("DeviceEquippedClitoris Piercing: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}
 	}
+	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedCollar
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedCollar") == 0)  ) {
+		// MOD EVENT:  Name: DeviceEquippedCollar  StrArg: zbfSlaveFemale  NumArg: 0
+		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just got a collar locked onto your neck.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? " );
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} else {
+			// LillithOnlyBox(std::format("DeviceEquippedCollar: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+		}
+	}
+	
+
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedStraitJacket
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedStraitJacket") == 0)  ) {
 		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
@@ -573,7 +603,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  From SpankThatAss, we have the following event (running up and spanking, in contrast to bump-spanks, which seem not to trigger any mod event unfortunately)
 	if ( (std::strcmp(a_event->eventName.c_str() , "_STA_RandomRunUpAndSpankComplete") == 0)  ) {
 		// Name: _STA_RandomRunUpAndSpankComplete  StrArg:   NumArg: 0
-		std::string  thought_message = std::format("Someone just ran up behind you and spanked your ass with full force! Let us know your response to that, and make sure you implicitly explain that your ass was just slapped hard in your response as well. ");
+		std::string  thought_message = std::format("Since you were busy focussing on crafting, someone used the opportunity and just ran up behind you and spanked your ass with full force while you were distracted! Let us know your response to that, and make sure you implicitly explain that your ass was just slapped hard in your response as well. If you can guess who it was from the context, feel free to mention the culprit as well. You can even tell them to stop, if you want.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}		
