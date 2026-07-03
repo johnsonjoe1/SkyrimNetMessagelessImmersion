@@ -22,16 +22,19 @@ Any other prompts from SkyrimNet are aware of the player-thoughts anyway, and th
 information as well, without extra code from then on.  So minimal invasiveness and a gentle presence in your load order is the goal.
 
 Other mods that are being picked on (at least in minimal amounts) when they are present:
-* YPS fashion mod,
-* MME Milk mod, 
-* Advanced Nudity Detection (AND) mod, 
-* SLSF, 
-* Battlefuck, 
-* BodySearch, 
-* Unforgiving Devices / Unforgiving Skyrim, 
-* SLAC
-* STA (Spank That Ass)
-* The Ancient Profession.
+* YPS fashion mod:  YPS thoughts piped to SkyrimNet, YPS heels and feet training status and slowdown effects, comments on activation of clothing with YPS keywords, 
+  (https://www.loverslab.com/files/file/2583-immersive-hair-growth-and-styling-yps-devious-immersive-fashion-2025-06-08/),
+* MME Milk mod:  Full milk, halfway full, empty, lactacid level rise, milk pump usage, maid level rise,  (https://www.loverslab.com/files/file/6103-milk-mod-economy-se/),
+* Advanced Nudity Detection (AND) mod:  Change of (partial) nudity state, (https://www.nexusmods.com/skyrimspecialedition/mods/165289),
+* SLSF:  Major changes of fame,  (https://www.loverslab.com/files/file/35874-sexlab-sexual-fame-reloaded/),
+* Battlefuck:  Start of struggle comments, (https://www.loverslab.com/files/file/18241-battle-fuck/),
+* BodySearch:  Start of search comments, (https://www.loverslab.com/files/file/9318-sexlab-body-search/),
+* Unforgiving Devices / Unforgiving Skyrim:  Application and removal of certain devices, 
+* SLAC:  Start of scenes and end of scenes, (https://www.loverslab.com/files/file/6022-sexlab-aroused-creatures-se-2026-02-20/),
+* SL Survival 0.685 Beta SE: barefoot effect, (https://www.loverslab.com/blogs/entry/20175-sl-survival/)
+* STA v4.8 BETA SE: run-up-and-spank mod broadcast, (https://www.loverslab.com/blogs/entry/20176-spank-that-ass/)
+* The Ancient Profession:  Generic freelance work scene. (https://www.loverslab.com/files/file/11556-the-ancient-profession-2024-06-24/),
+* Vanilla Skyrim:  disease application and cure (partial, not everything), furniture use.
 
 Note, that as said, there are only minimal gentle changes, nothing big or invasive.  And none of them are required in any form.  I add more stuff, as I play along and find something is missing and more response from SkyrimNet would be appropriate here and there.  Not a very systematic or completionist approach, but rather picking up stuff here and there.
 
