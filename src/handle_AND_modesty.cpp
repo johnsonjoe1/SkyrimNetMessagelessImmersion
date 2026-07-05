@@ -141,13 +141,13 @@ void ListWornItems_and_update_global_curtain_flags()
 
 			if (strcmp(keyword->GetFormEditorID(), "AND_PelvicCurtain") == 0) {
 				global_pelvic_curtain_flag = true;
-				logger::info("      Found AND_PelvicCurtain keyword, setting global_pelvic_curtain_flag to true.");			}
+				logger::info("      ======================>Found AND_PelvicCurtain keyword, setting global_pelvic_curtain_flag to true.");			}
 			if (strcmp(keyword->GetFormEditorID(), "AND_ChestCurtain") == 0) {
 				global_chest_curtain_flag = true;
-				logger::info("      Found AND_ChestCurtain keyword, setting global_chest_curtain_flag to true.");			}
+				logger::info("      ======================>Found AND_ChestCurtain keyword, setting global_chest_curtain_flag to true.");			}
 			if (strcmp(keyword->GetFormEditorID(), "AND_AssCurtain") == 0) {
 				global_ass_curtain_flag = true;
-				logger::info("      Found AND_AssCurtain keyword, setting global_ass_curtain_flag to true.");
+				logger::info("      ======================>Found AND_AssCurtain keyword, setting global_ass_curtain_flag to true.");
 			}
 		}
     }
@@ -213,9 +213,12 @@ bool hard_change_in_slots_0_to_7()
 			"AND_ShowingUnderwearFaction", // 7
 */
 			bool bottom_flashing=false;
-			if (flashing_ass | flashing_pelvis) {
+			// if (flashing_ass | flashing_pelvis) {
+			 if (global_ass_curtain_flag | global_pelvic_curtain_flag) {
 				bottom_flashing=true;
 			} 
+
+
 			// bottom stuff will only count with no bottom-flashing active
 			if ( (my_i == 0) | (my_i == 2) | (my_i == 7) )  { // bottom stuff
 				if (!bottom_flashing) {
@@ -223,7 +226,8 @@ bool hard_change_in_slots_0_to_7()
 				}
 			}
 			if ( (my_i == 1) | (my_i == 4) | (my_i == 6) )  { // bottom stuff
-				if (!flashing_chest) {
+				// if (!flashing_chest) {
+				if (!global_chest_curtain_flag) {
 					found_change = true;
 				}
 			}

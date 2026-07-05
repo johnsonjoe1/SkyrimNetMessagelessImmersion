@@ -27,7 +27,6 @@ float LVSK_IsLovesick = 0.0
 Event OnInit()
     RegisterForSingleUpdate(10.0)
 	Debug.Notification("[SNMI] INITIAL ONINIT FOR THE Periodic 10 second update FINISHED.")
-
 EndEvent
 
 ;Appropos
@@ -108,46 +107,39 @@ EndFunction
 
 
 Function TestApropos()
-
     Actor player = Game.GetPlayer()
-
 	Quest aproposQuest = Quest.GetQuest("Apropos2Actors")
-
 	if aproposQuest == None
-		Debug.Notification("Apropos quest not found")
+		Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Apropos quest not found")
 		return
 	endif
-
 	ReferenceAlias my_alias = GetAproposAlias(Game.GetPlayer(), aproposQuest)
-
-
-    ; ReferenceAlias my_alias = GetAproposAlias(player, Apropos2Quest)
-
     if my_alias == None
-        Debug.Notification("No Apropos my_alias found")
+        Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  No Apropos my_alias found")
         Debug.Trace("[SNMI] No Apropos my_alias found")
         return
     endif
-
-    Debug.Notification("Alias found")
-
-	
+    ; Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Alias found")
     Apropos2ActorAlias ap = my_alias as Apropos2ActorAlias
-
     if ap == None
-        Debug.Notification("Cast failed")
+        Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Cast failed")
         Debug.Trace("[SNMI] Cast failed")
         return
     endif
-
-    Debug.Notification("Cast OK")
-
-    Debug.Trace("[SNMI] Vaginal = " + ap.VaginalWearTearState)
+    ; Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Cast OK")
+    Debug.Trace("[SNMI] Vaginal  = " + ap.VaginalWearTearState)
     Debug.Trace("[SNMI] Anal     = " + ap.AnalWearTearState)
     Debug.Trace("[SNMI] Oral     = " + ap.OralWearTearState)
-
-    Debug.Notification("V:" + ap.VaginalWearTearState + " A:" + ap.AnalWearTearState + " O:" + ap.OralWearTearState)
+	; Final status can be printed as a notification for now.
+	if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
+    	Debug.Notification("Apropos-Status:  V:" + ap.VaginalWearTearState + " A:" + ap.AnalWearTearState + " O:" + ap.OralWearTearState)
+	endif
 EndFunction
+
+Function TestANDFlashClothing()
+	; Here we query the current flash-clothing-keywords
+
+endfunction
 
 
 function push_all_MME_variables_to_the_plugin()
@@ -269,6 +261,8 @@ Event OnUpdate()
 	push_lovesick_variables_to_the_plugin()
 	    
 	TestApropos()
+
+	TestANDFlashClothing()
 
     RegisterForSingleUpdate(10.0)  ; Restart the same function in 10 seconds
 EndEvent
