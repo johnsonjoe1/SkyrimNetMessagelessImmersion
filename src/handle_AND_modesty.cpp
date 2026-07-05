@@ -135,9 +135,7 @@ void ListWornItems_and_update_global_curtain_flags()
 			if (!keyword) {
 				continue;
 			}
-			logger::info("      Keyword: {} ({:08X})",
-				keyword->GetFormEditorID(),
-				keyword->GetFormID());
+			// logger::info("      Keyword: {} ({:08X})", 				keyword->GetFormEditorID(), 				keyword->GetFormID());
 
 			if (strcmp(keyword->GetFormEditorID(), "AND_PelvicCurtain") == 0) {
 				global_pelvic_curtain_flag = true;
