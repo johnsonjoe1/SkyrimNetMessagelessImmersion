@@ -317,20 +317,20 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		//  [2026-06-29 10:26:54.934] [log] [info] [handle_mod_broadcasts.cpp:269] MOD EVENT:  Name: ''DeviceRemovedGloves''  StrArg: ''Lillith''  NumArg: 1
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {	
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player, just managed to get our of your locking bondage boots.  What a relief!  What are you thinking now based on this? ");
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
-			LillithOnlyBox(std::format("DeviceRemovedBoots: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+			// LillithOnlyBox(std::format("DeviceRemovedBoots: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedWristRestraint") == 0)  ) {
 		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player,  managed to get our of your locking bondage device.  Your wrists are free again!  What a relief!  What are you thinking now based on this? ");
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
-			LillithOnlyBox(std::format("DeviceRemovedWristRestraint: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+			// LillithOnlyBox(std::format("DeviceRemovedWristRestraint: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}		
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 	if ( (std::strcmp(a_event->eventName.c_str() , "UD_SentientDialogue") == 0)  ) {
@@ -339,20 +339,31 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		DumpThoughts::throw_out_TTS_thought_message(thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
-	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedBoots") == 0)  || (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedBallet Boots") == 0)) {  
+
+	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedBoots, DeviceEquippedBallet Boots, 
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedBoots") == 0)  || (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedBallet Boots") == 0) ||  (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedIron Ballet Boots") == 0) ) {  
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {			
-			std::string  thought_message = std::format("YOU, the player, just got locked into bondage boots and you cannot take them off any more because they got locked onto your feet.  What are you thinking now based on this? " );
+			std::string  thought_message = std::format("YOU, the player, just got locked into bondage boots and you cannot take them off any more because they got locked onto your feet.  They may have high heels and they may be severely restricting the speed at which you can move.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
+			// [2026-07-05 13:31:33.275] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceEquippedIron Ballet Boots  StrArg: Bandit Outlaw  NumArg: 0
 			// LillithOnlyBox(std::format("DeviceEquippedBoots: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
-		}				
+		}		
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;		
 	}
-
-
-
-
+	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceRemovedBoots, DeviceRemovedBallet Boots, 
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedBoots") == 0)  || (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedBallet Boots") == 0) ||  (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedIron Ballet Boots") == 0) ) {  
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {			
+			std::string  thought_message = std::format("YOU, the player, just got released from your bondage boots and you feet are finally free from them.  They may have had high heels and they may have been severely restricting the speed at which you could move, but now you are rid of them.  What are you thinking now based on this? " );
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		} else {
+			// [2026-07-05 13:31:33.275] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceRemovedIron Ballet Boots  StrArg: Bandit Outlaw  NumArg: 0
+			// LillithOnlyBox(std::format("DeviceRemovedBoots: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+		}		
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;		
+	}
+	
+	
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedPony Boots
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedPony Boots") == 0)  ) {
 		// MOD EVENT:  Name: DeviceEquippedPony Boots  StrArg: zbfSlaveFemale  NumArg: 0
@@ -360,20 +371,20 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got locked into pony boots.  These pony boots wrap around your legs shape them like a horse leg, with hooves and horseshoe and all. In addition to that and to further de-humanize the wearer, the pony boots are making a sound like a walking pony whereever you go. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			// LillithOnlyBox(std::format("DeviceEquippedPony Boots: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}			
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedyoke") == 0)  ) {
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {		
 			std::string  thought_message = std::format("YOU, the player, just got locked into an iron bondage yoke. Such a yoke is an iron bondage device, that locks around your neck and wrists, trapping your wrists in a position next to your shoulders, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
-			LillithOnlyBox(std::format("DeviceEquippedyoke: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+			// LillithOnlyBox(std::format("DeviceEquippedyoke: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}		
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedGloves
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedGloves") == 0)  ) {
@@ -382,10 +393,11 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got locked into an iron bondage yoke. Such a yoke is an iron bondage device, that locks around your neck and wrists, trapping your wrists in a position next to your shoulders, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
+			// [2026-07-05 13:31:35.193] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceEquippedGloves  StrArg: Bandit Outlaw  NumArg: 0
 			// LillithOnlyBox(std::format("DeviceEquippedGloves: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedClitoris Piercing
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedClitoris Piercing") == 0)  ) {
@@ -394,11 +406,59 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got a clitoris piercing locked onto your clitoris.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
+			// [2026-07-05 13:31:06.541] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceEquippedClitoris Piercing  StrArg: Bandit Outlaw  NumArg: 0
 			// LillithOnlyBox(std::format("DeviceEquippedClitoris Piercing: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+
+	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedNipple Piercings
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedNipple Piercings") == 0)  ) {
+		// MOD EVENT:  Name: DeviceEquippedNipple Piercings  StrArg: zbfSlaveFemale  NumArg: 0
+		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just got a nipple piercing locked onto your nipples.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? " );
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		} else {
+			// [2026-07-05 13:31:11.225] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceEquippedNipple Piercings  StrArg: Bandit Outlaw  NumArg: 0
+			// LillithOnlyBox(std::format("DeviceEquippedNipple Piercings: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
+	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedVaginal Plug
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedVaginal Plug") == 0)  ) {
+		// MOD EVENT:  Name: DeviceEquippedVaginal Plug  StrArg: zbfSlaveFemale  NumArg: 0
+		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just got a vaginal plug locked into your vagina.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? " );
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		} else {
+			// [2026-07-05 13:31:16.191] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceEquippedVaginal Plug  StrArg: Bandit Outlaw  NumArg: 0
+			// LillithOnlyBox(std::format("DeviceEquippedVaginal Plug: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedAnal Plug
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedAnal Plug") == 0)  ) {
+		// MOD EVENT:  Name: DeviceEquippedAnal Plug  StrArg: zbfSlaveFemale  NumArg: 0
+		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just got a vaginal plug locked into your anus.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? " );
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		} else {
+			// [2026-07-05 13:31:22.758] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceEquippedAnal Plug  StrArg: Bandit Outlaw  NumArg: 0
+			// LillithOnlyBox(std::format("DeviceEquippedAnal Plug: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	
+
+
+
+
+
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedCollar
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedCollar") == 0)  ) {
 		// MOD EVENT:  Name: DeviceEquippedCollar  StrArg: zbfSlaveFemale  NumArg: 0
@@ -406,12 +466,40 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got a collar locked onto your neck.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			// LillithOnlyBox(std::format("DeviceEquippedCollar: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedChastity Bra
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedChastity Bra") == 0)  ) {
+		// MOD EVENT:  Name: DeviceEquippedChastity Bra  StrArg: zbfSlaveFemale  NumArg: 0
+		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just got a chastity bra locked onto your body.  This device is like a normal bra, but it is sturdy and prevents stimulation including self-stimulation and all access to your breasts.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? " );
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		} else {
+			// [2026-07-05 13:31:37.159] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceEquippedChastity Bra  StrArg: Bandit Outlaw  NumArg: 0
+			// LillithOnlyBox(std::format("DeviceEquippedChastity Bra: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	// These are mod events, that we actually could and should use to react to them via thoughts:   DeviceEquippedChastity Belt
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedChastity Belt") == 0)  ) {
+		// MOD EVENT:  Name: DeviceEquippedChastity Belt  StrArg: zbfSlaveFemale  NumArg: 0
+		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just got a chastity belt locked onto your body.  This device is like a normal panties, but it is absolutely sturdy and prevents stimulation including self-stimulation and masturbation all access to your pussy.  On the one hand it keeps you from having intercourse with a man and thus also might prevent rape unless the attacker has the key, on the other hand you can't access your own sex this way, which might be very frustrating when you are very horny.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? " );
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		} else {
+			// [2026-07-05 13:31:39.809] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceEquippedChastity Belt  StrArg: Bandit Outlaw  NumArg: 0
+			// LillithOnlyBox(std::format("DeviceEquippedChastity Belt: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	
+	
+
 
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedStraitJacket
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedStraitJacket") == 0)  ) {
@@ -419,10 +507,23 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got locked into a strait jacket.  The jacket holds your arms and hands in tight sleeves bound around your torso, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			// LillithOnlyBox(std::format("DeviceEquippedStraitJacket: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}			
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
+	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedElbowbinder
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedElbowbinder") == 0)  ) {
+		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just got locked into an elbow binder.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? " );
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		} else {
+			// [2026-07-05 13:30:58.741] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceEquippedElbowbinder  StrArg: Bandit Outlaw  NumArg: 0
+			// LillithOnlyBox(std::format("DeviceEquippedElbowbinder: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+		}			
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedRope Harness
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedRope Harness") == 0)  ) {
@@ -431,10 +532,10 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got locked into a rope harness.  The rope harness wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			// LillithOnlyBox(std::format("DeviceEquippedRope Harness: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
-		}			
+		}		
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;	
 	}	
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedArm Cuffs
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedArm Cuffs") == 0)  ) {
@@ -443,10 +544,10 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got locked into arm cuffs.  The arm cuffs wrap around your wrists.  In addition, these cuffs can be connected together, e.g. behind your back, to further immobilize and restrain you, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			// LillithOnlyBox(std::format("DeviceEquippedArm Cuffs: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
-		}			
+		}		
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;	
 	}	
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedLeg Cuffs
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedLeg Cuffs") == 0)  ) {
@@ -455,10 +556,10 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got locked into leg cuffs.  The leg cuffs wrap around your ankles.  In addition, these cuffs can be connected together, to further immobilize and restrain you and force you to make only tiny hobble steps, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			// LillithOnlyBox(std::format("DeviceEquippedLeg Cuffs: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}			
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedGloves
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedGloves") == 0)  ) {
@@ -467,10 +568,10 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got locked into gloves.  The gloves wrap around your hands like boxing gloves but with no thumb, so that you cannot use your fingers for anything.  These devices got locked onto your hands and now you cannot get of out them.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			// LillithOnlyBox(std::format("DeviceEquippedGloves: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
-		}			
+		}		
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;	
 	}	
 
 
@@ -481,10 +582,10 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got an Anal Pear Plug plugged into your ass.  This plug is plugged into the anus, and then it expands inside, so that you cannot remove it any more.  And it is locked in this state, locked onto your body and now you cannot get if out without somehow opening the lock first.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			// LillithOnlyBox(std::format("DeviceEquippedAnal Pear Plug: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
 		}			
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedGag
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedGag") == 0)  ) {
@@ -493,11 +594,26 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got a gag placed in your mouth.  This gag prevents you from speaking or making any significant noise.  It is securely fastened so that you cannot simply spit it out.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			// LillithOnlyBox(std::format("DeviceEquippedGag: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
-		}			
+		}		
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;	
 	}
+
+	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedblindfold
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedblindfold") == 0)  ) {
+		// MOD EVENT:  Name: DeviceEquippedblindfold  StrArg: zbfSlaveFemale  NumArg: 0
+		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just got a blindfold placed over your eyes.  This blindfold prevents you from seeing anything.  It is securely fastened so that you cannot simply remove it.  What are you thinking now based on this? " );
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		} else {
+			// [2026-07-05 13:31:30.975] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceEquippedblindfold  StrArg: Bandit Outlaw  NumArg: 0
+			// LillithOnlyBox(std::format("DeviceEquippedGag: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+		}		
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;	
+	}
+
  	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedChain Harness Wrist Shackles
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedChain Harness Wrist Shackles") == 0)  ) {
 		// MOD EVENT:  Name: DeviceEquippedChain Harness Wrist Shackles  StrArg: zbfSlaveFemale  NumArg: 0
@@ -505,10 +621,10 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just got a chain harness wrist shackles placed on your wrists.  These shackles prevent you from moving your arms freely.  They are securely fastened so that you cannot simply remove them.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			// LillithOnlyBox(std::format("DeviceEquippedChain Harness Wrist Shackles: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
-		}			
+		}	
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;		
 	}
 		
 
@@ -526,11 +642,10 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just can't take it any more.  In a frenzy, you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			LillithOnlyBox(std::format("DeviousEventStruggle: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}	
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	
 	// MOD EVENT:  Name: DeviceActorOrgasm  StrArg: Lillith  NumArg: 0
@@ -538,11 +653,10 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
 			std::string  thought_message = std::format("YOU, the player, just orgasmed from the vibrating devices locked onto your body and into your sensitive parts.  You couldn't prevent it.  Gods, that was intense!  Say so and let us know what you are feeling and thinking.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		} else {
 			LillithOnlyBox(std::format("DeviceActorOrgasm: Event noticed, but it's NOT ABUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}	
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	
 	// MOD EVENT:  Name: SkyrimNetDDUDNG_Event  StrArg: Lillith's Genital Piercing (Common Soul Gem) stops vibrating.  NumArg: 0
