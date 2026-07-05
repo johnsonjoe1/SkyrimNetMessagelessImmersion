@@ -16,6 +16,21 @@ std::array<int, 23> AND_previous_faction_rank_sorted = {
 	-1, -1, -1
 };
 
+/*
+AND_FlashingChestCurtain
+AND_FlashingPelvicCurtain
+AND_FlashingAssCurtain
+AND_PelvicCurtain
+AND_ChestCurtain
+AND_AssCurtain
+*/
+
+bool global_pelvic_curtain_flag = false;
+bool global_chest_curtain_flag = false;
+bool global_ass_curtain_flag = false;
+
+
+
 std::array<std::string, 23> AND_faction_list_sorted = {
 "AND_ShowingAssFaction",       // 0
 "AND_ShowingChestFaction",     // 1
@@ -68,6 +83,76 @@ std::array<std::string, 23> AND_faction_verbalalized_and_sorted = {
 "modesty faction"
 };
 
+void PrintSlots(std::uint32_t mask)
+{
+    for (int i = 0; i < 32; i++)
+    {
+        if (mask & (1u << i))
+        {
+            logger::info("    uses slot {}", i + 30);
+        }
+    }
+}
+
+void ListWornItems_and_update_global_curtain_flags()
+{
+	// For our purposes, the actor is always the player character.
+	RE::Actor* actor = RE::PlayerCharacter::GetSingleton();
+    if (!actor) {
+        return;
+    }
+
+	// By default, the curtain flags are all off.
+	global_pelvic_curtain_flag = false;
+	global_chest_curtain_flag = false;
+	global_ass_curtain_flag = false;
+
+	// Loop through inventory and list everything
+    auto inventory = actor->GetInventory();
+    logger::info("Currently worn items:");
+    for (const auto& [item, entry] : inventory)
+    {
+        if (!entry.second->IsWorn()) {
+            continue;
+        }
+
+		auto armor = item->As<RE::TESObjectARMO>();
+        if (!armor) {
+            continue;
+        } 
+		
+		auto slots = armor->GetSlotMask();
+        auto form = item;
+        logger::info("  {} (FormID {:08X})  on slot 0x{:08X}",
+            form->GetName(),
+            form->GetFormID(),
+            static_cast<std::uint32_t>(slots));
+		PrintSlots(static_cast<std::uint32_t>(slots));
+
+		for (std::uint32_t i = 0; i < armor->numKeywords; i++)
+		{
+			auto* keyword = armor->keywords[i];
+			if (!keyword) {
+				continue;
+			}
+			logger::info("      Keyword: {} ({:08X})",
+				keyword->GetFormEditorID(),
+				keyword->GetFormID());
+
+			if (strcmp(keyword->GetFormEditorID(), "AND_PelvicCurtain") == 0) {
+				global_pelvic_curtain_flag = true;
+				logger::info("      Found AND_PelvicCurtain keyword, setting global_pelvic_curtain_flag to true.");			}
+			if (strcmp(keyword->GetFormEditorID(), "AND_ChestCurtain") == 0) {
+				global_chest_curtain_flag = true;
+				logger::info("      Found AND_ChestCurtain keyword, setting global_chest_curtain_flag to true.");			}
+			if (strcmp(keyword->GetFormEditorID(), "AND_AssCurtain") == 0) {
+				global_ass_curtain_flag = true;
+				logger::info("      Found AND_AssCurtain keyword, setting global_ass_curtain_flag to true.");
+			}
+		}
+    }
+}
+
 
 std::string RemoveAllOccurrences(std::string str, const std::string& toRemove)
 {
@@ -87,6 +172,9 @@ std::string RemoveAllOccurrences(std::string str, const std::string& toRemove)
 //  Note to self:  public: private: keywords only belong in the header, not in the .cpp file.  
 bool hard_change_in_slots_0_to_7()
 {
+
+	ListWornItems_and_update_global_curtain_flags();
+
 	logger::info("handle_AND_modesty -- checking change in slots 0 to 7 of AND!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	auto* player = RE::PlayerCharacter::GetSingleton();
 	if (!player) {
@@ -142,6 +230,9 @@ bool hard_change_in_slots_0_to_7()
 		}
 	}
 	logger::info("SUCCESSFULLY QUERIED FOR HARD CLOTHING CHANGE-Factions: >>>>>>>>>>>>>>>>>>>>>>>>>> FINAL RESULT IS READY:  found_change = {} ", found_change);
+
+
+
 	return found_change;
 }
 
