@@ -144,6 +144,54 @@ void SNMIPapyrus::set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value)
 	previous_yps_AddictionBuff = _yps_AddictionBuff;  // update the previous level for the next check
 }
 
+void SNMIPapyrus::set_yps_HeelsWorn(RE::StaticFunctionTag*, float a_value)
+{
+    _yps_HeelsWorn = a_value;
+
+	return;
+
+	// maybe the mod isn't even installed.  in that case the level and previous level would be 0 and nothing needs to be done
+	if (_yps_HeelsWorn == 0 && previous_yps_HeelsWorn == 0) {
+		return;
+	}
+	if (previous_yps_HeelsWorn == -1.0f) {  // This is the initial value, so we just set it without any checks, to avoid any weird messages at game start.
+		previous_yps_HeelsWorn = _yps_HeelsWorn;
+		return;
+	}	
+
+    SKSE::log::info("Note:  yps_HeelsWorn updated VIA PUSH FROM PAPYRUS: {}", a_value);
+	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
+	if ( (previous_yps_HeelsWorn < _yps_HeelsWorn) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Due to some change in your fashion or in your styling, you now appear even more radiant (or less disgusting) and people will respond more favorable to you this way!  Say as much in your thoughts, and let us know how that makes you feel, given that you like fasion and styling!");
+		SKSE::log::info("Note:  yps_HeelsWorn-update thought was delivered.");
+	}
+	if ( (previous_yps_HeelsWorn > _yps_HeelsWorn) ) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Due to some change in your fashion or in your styling, you now appear even LESS radiant (or even more disgusting) and people will respond less favorable to you this way!  Say as much in your thoughts, and let us know how that makes you feel, given that you like fasion and styling!");
+		SKSE::log::info("Note:  yps_HeelsWorn-update thought was delivered.");
+	}
+	previous_yps_HeelsWorn = _yps_HeelsWorn;  // update the previous level for the next check
+}
+/*
+SNMI_Native.set_yps_Apropos2Vstate(ap.VaginalWearTearState)
+SNMI_Native.set_yps_Apropos2Astate(ap.AnalWearTearState)
+SNMI_Native.set_yps_Apropos2Ostate(ap.OralWearTearState)
+*/
+
+
+void SNMIPapyrus::set_Apropos2Vstate(RE::StaticFunctionTag*, float a_value)
+{
+    _Apropos2Vstate = a_value;
+}
+void SNMIPapyrus::set_Apropos2Astate(RE::StaticFunctionTag*, float a_value)
+{
+    _Apropos2Astate = a_value;
+}
+void SNMIPapyrus::set_Apropos2Ostate(RE::StaticFunctionTag*, float a_value)
+{
+    _Apropos2Ostate = a_value;
+}
+
+
 
 void SNMIPapyrus::SetMilkMax(RE::StaticFunctionTag*, float a_value)
 {
@@ -238,6 +286,11 @@ bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 
 	a_vm->RegisterFunction("set_yps_AddictionLevel", "SNMI_Native", set_yps_AddictionLevel);
 	a_vm->RegisterFunction("set_yps_AddictionBuff", "SNMI_Native", set_yps_AddictionBuff);
+	a_vm->RegisterFunction("set_yps_HeelsWorn", "SNMI_Native", set_yps_HeelsWorn);
+
+	a_vm->RegisterFunction("set_Apropos2Vstate", "SNMI_Native", set_Apropos2Vstate);
+	a_vm->RegisterFunction("set_Apropos2Astate", "SNMI_Native", set_Apropos2Astate);
+	a_vm->RegisterFunction("set_Apropos2Ostate", "SNMI_Native", set_Apropos2Ostate);
 
 	a_vm->RegisterFunction("set_lovesickness_flag", "SNMI_Native", set_lovesickness_flag);
 	a_vm->RegisterFunction("set_lovesickness_euphoria", "SNMI_Native", set_lovesickness_euphoria);

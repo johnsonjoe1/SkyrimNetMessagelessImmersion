@@ -135,15 +135,52 @@ void ListWornItems_and_update_global_curtain_flags()
 			if (!keyword) {
 				continue;
 			}
-			// logger::info("      Keyword: {} ({:08X})", 				keyword->GetFormEditorID(), 				keyword->GetFormID());
+			logger::info("      Keyword: {} ({:08X})", 				keyword->GetFormEditorID(), 				keyword->GetFormID());
 
-			if (strcmp(keyword->GetFormEditorID(), "AND_PelvicCurtain") == 0) {
+			// [2026-07-06 23:18:53.487] [log] [info] [handle_AND_modesty.cpp:138]       Keyword: AND_PelvicFlashRiskLow (FE021810)
+			// [2026-07-06 23:18:53.487] [log] [info] [handle_AND_modesty.cpp:138]       Keyword: AND_AssFlashRiskLow (FE021814)
+			/*
+			"AND_ChestFlashRisk" , 
+			"AND_ChestFlashRiskLow" , 
+			"AND_ChestFlashRiskHigh" , 
+			"AND_ChestFlashRiskExtreme" , 
+			"AND_ChestFlashRiskUltra" , 
+
+			"AND_PelvicFlashRisk" , 
+			"AND_PelvicFlashRiskExtreme" , 
+			"AND_PelvicFlashRiskHigh" , 
+			"AND_PelvicFlashRiskLow" , 
+			"AND_PelvicFlashRiskUltra" , 
+
+			*/
+			if ( 
+				(strcmp(keyword->GetFormEditorID(), "AND_PelvicCurtain") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRisk") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskLow") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskHigh") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskExtreme") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskUltra") == 0)
+			) {
 				global_pelvic_curtain_flag = true;
-				logger::info("      ======================>Found AND_PelvicCurtain keyword, setting global_pelvic_curtain_flag to true.");			}
-			if (strcmp(keyword->GetFormEditorID(), "AND_ChestCurtain") == 0) {
+				logger::info("      ======================>Found AND_PelvicFlashRisk keyword, setting global_pelvic_curtain_flag to true.");			}
+			if ( 
+				(strcmp(keyword->GetFormEditorID(), "AND_ChestCurtain") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRisk") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskLow") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskHigh") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskExtreme") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskUltra") == 0)
+			) {
 				global_chest_curtain_flag = true;
 				logger::info("      ======================>Found AND_ChestCurtain keyword, setting global_chest_curtain_flag to true.");			}
-			if (strcmp(keyword->GetFormEditorID(), "AND_AssCurtain") == 0) {
+			if (
+				(strcmp(keyword->GetFormEditorID(), "AND_AssCurtain") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRisk") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskLow") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskHigh") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskExtreme") == 0) ||
+				(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskUltra") == 0)
+			) {
 				global_ass_curtain_flag = true;
 				logger::info("      ======================>Found AND_AssCurtain keyword, setting global_ass_curtain_flag to true.");
 			}

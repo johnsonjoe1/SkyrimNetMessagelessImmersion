@@ -26,8 +26,15 @@ float LVSK_IsLovesick = 0.0
 
 Event OnInit()
     RegisterForSingleUpdate(10.0)
-	Debug.Notification("[SNMI] INITIAL ONINIT FOR THE Periodic 10 second update FINISHED.")
+	lillith_notification("[SNMI] INITIAL ONINIT FOR THE Periodic 10 second update FINISHED.")
 EndEvent
+
+function lillith_notification(string notification_string) Global
+	Debug.Trace("[SNMI] " + notification_string)
+	if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
+		Debug.Notification(notification_string)
+	endif
+EndFunction
 
 ;Appropos
 ;--------------------------------------
@@ -39,12 +46,26 @@ ReferenceAlias Function GetAproposAlias(Actor akTarget, Quest apropos2Quest ) Gl
 	ReferenceAlias AliasSelect
 	Int aliasesInt = apropos2Quest.GetNumAliases() 
 	;slw_log.WriteLog("Apropos2 actor count" + aliasesInt)
+	Debug.Trace("[SNMI] Apropos2 actor count: " + aliasesInt)
 	While i < aliasesInt 
 		AliasSelect = apropos2Quest.GetNthAlias(i) as ReferenceAlias
-		If AliasSelect.GetReference() as Actor == akTarget
+
+		Actor aliasActor = AliasSelect.GetReference() as Actor
+
+		if aliasActor
+			string my_message = "[SNMI] Alias " + i + ": " + aliasActor.GetLeveledActorBase().GetName()
+			lillith_notification(my_message)
+		else
+			; lillith_notification("[SNMI] Alias " + i + ": EMPTY")
+		endif
+
+		If aliasActor == akTarget
 			;slw_log.WriteLog("Apropos2 player found")
+			Debug.Trace("[SNMI] Apropos2 player found")
 			aproposTwoAlias = AliasSelect
 			Return aproposTwoAlias
+		else
+			; Debug.Trace("[SNMI] Apropos2 player not found for alias " + i + " which is named: " + AliasSelect.GetName())
 		EndIf
 		i += 1
 	EndWhile
@@ -108,22 +129,38 @@ EndFunction
 
 Function TestApropos()
     Actor player = Game.GetPlayer()
-	Quest aproposQuest = Quest.GetQuest("Apropos2Actors")
+	;ActorsQuest = Game.GetFormFromFile(0x02902C, "Apropos2.esp") as Quest
+	; Quest aproposQuest = Quest.GetQuest("Apropos2Actors")
+	Quest aproposQuest = Game.GetFormFromFile(0x02902C, "Apropos2.esp") as Quest
+
 	if aproposQuest == None
-		Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Apropos quest not found")
+		Debug.Trace("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Apropos quest not found")
 		return
 	endif
+
+	Debug.Trace("SNMI:  Apropos2Quest is running = " + aproposQuest.IsRunning())
+
 	ReferenceAlias my_alias = GetAproposAlias(Game.GetPlayer(), aproposQuest)
     if my_alias == None
-        Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  No Apropos my_alias found")
-        Debug.Trace("[SNMI] No Apropos my_alias found")
+        ; Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  No Apropos my_alias found")
+        Debug.Trace("[SNMI]  SNMI_Papyrus_Brige_Script.psc:  No Apropos my_alias found.  -->  This can mean that there simply wasn't any wear-and-tear yet, so the player is not yet registered in Apropos2.  This is normal and expected.")
+		; String akActorName = Game.GetPlayer().GetLeveledActorBase().GetName()
+		; Debug.Notification("Actor "+ akActorName + " is not yet registered in Apropos2")
+
+		; NOTE:  Actually it is normal, that the PlayerChar is not found and not registered in Apropos2
+		;        as long as no wear-and-tear has actually happend.  Once some wear-and-tear has happened
+		;        the player will be registered in Apropos2 and then this function will return a valid alias.
+		lillith_notification("Apropos-DEFAULT-REPLACEMENT:  V:" + 0 + " A:" + 0 + " O:" + 0)
+
+		SNMI_Native.set_Apropos2Vstate(0)
+		SNMI_Native.set_Apropos2Astate(0)
+		SNMI_Native.set_Apropos2Ostate(0)		
         return
     endif
     ; Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Alias found")
     Apropos2ActorAlias ap = my_alias as Apropos2ActorAlias
     if ap == None
-        Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Cast failed")
-        Debug.Trace("[SNMI] Cast failed")
+        lillith_notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Cast failed")
         return
     endif
     ; Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Cast OK")
@@ -131,9 +168,12 @@ Function TestApropos()
     Debug.Trace("[SNMI] Anal     = " + ap.AnalWearTearState)
     Debug.Trace("[SNMI] Oral     = " + ap.OralWearTearState)
 	; Final status can be printed as a notification for now.
-	if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
-    	Debug.Notification("Apropos-Status:  V:" + ap.VaginalWearTearState + " A:" + ap.AnalWearTearState + " O:" + ap.OralWearTearState)
-	endif
+	lillith_notification("Apropos-Status:  V:" + ap.VaginalWearTearState + " A:" + ap.AnalWearTearState + " O:" + ap.OralWearTearState)
+
+	SNMI_Native.set_Apropos2Vstate(ap.VaginalWearTearState)
+	SNMI_Native.set_Apropos2Astate(ap.AnalWearTearState)
+	SNMI_Native.set_Apropos2Ostate(ap.OralWearTearState)
+
 EndFunction
 
 Function TestANDFlashClothing()
@@ -173,8 +213,8 @@ function push_all_MME_variables_to_the_plugin()
 
     ; Let's try to get that milk stage from the MME mod, without any overhead
     ; milk_string = JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkCnt)
-    ; debug.Notification(formatString(milk_string, Game.GetPlayer().GetLeveledActorBase().GetName()))
-    ; debug.Notification(milk_string)
+    ; lillith_notification(formatString(milk_string, Game.GetPlayer().GetLeveledActorBase().GetName()))
+    ; lillith_notification(milk_string)
 
     SNMI_Native.SetMilkLevel(current_milk_value)
     SNMI_Native.SetMilkMax(max_milk_value)
@@ -184,7 +224,7 @@ function push_all_MME_variables_to_the_plugin()
 	SNMI_Native.SetMaidLevel(mme_maid_level)
 
     if False ;  Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
-         Debug.Notification("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", mme_maid_level: " + mme_maid_level )
+        lillith_notification("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", mme_maid_level: " + mme_maid_level )
 	Else
         Debug.Trace("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", mme_maid_level: " + mme_maid_level )
     endif 
@@ -196,21 +236,21 @@ function push_all_YPS_variables_to_the_plugin()
 
 	; We take the list of current YPS-Conditions (for thoughts) and put them all into a single string, so that we can then push it to the C++ plugin
 	int count = StorageUtil.StringListCount(None, "ypsActiveConditionsList")
-	; Debug.Notification("Conditions: " + count)
+	; lillith_notification("Conditions: " + count)
 	string allConditions = ""
 	int i = 0
 	while i < count
 		string condition = StorageUtil.StringListGet(None, "ypsActiveConditionsList", i)
 		Debug.Trace("YPS Condition[" + i + "] = " + condition)
 		; For testing:
-		; Debug.Notification(condition)
+		; lillith_notification(condition)
 		if i > 0
 			allConditions += "|"
 		endif
 		allConditions += condition
 		i += 1
 	endWhile	
-	; Debug.Notification("Final YPS condition list: " + allConditions )
+	; lillith_notification("Final YPS condition list: " + allConditions )
 	Debug.Trace("[SNMI]  Final YPS condition list: " + allConditions )
     SNMI_Native.SetYpsConditionString(allConditions)
 
@@ -221,13 +261,9 @@ function push_all_YPS_variables_to_the_plugin()
 
 	SNMI_Native.set_yps_AddictionLevel(yps_AddictionLevel)
 	SNMI_Native.set_yps_AddictionBuff(yps_AddictionBuff)	
+	SNMI_Native.set_yps_HeelsWorn(yps_HeelsWorn)
 
-	if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
-		Debug.Notification("YPS Addiction Buff: " + yps_AddictionBuff)
-		Debug.Notification("YPS Heels Worn: " + yps_HeelsWorn)
-    endif 
-
-
+	lillith_notification("YPS Addiction Buff: " + yps_AddictionBuff + ", YPS Addiction Level: " + yps_AddictionLevel + ", YPS Heels Worn: " + yps_HeelsWorn)
 
 	; NOTE:  The Fashion buff levels are:  3=well fashioned.
 endfunction

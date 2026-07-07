@@ -17,7 +17,13 @@ public:
 
 	static void set_yps_AddictionLevel(RE::StaticFunctionTag*, float a_value);
 	static void set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value);	
+	static void set_yps_HeelsWorn(RE::StaticFunctionTag*, float a_value);
+
 	static void SetYpsConditionString(RE::StaticFunctionTag*, std::string a_value);
+
+	static void set_Apropos2Vstate(RE::StaticFunctionTag*, float a_value);
+	static void set_Apropos2Astate(RE::StaticFunctionTag*, float a_value);
+	static void set_Apropos2Ostate(RE::StaticFunctionTag*, float a_value);
 
 	static void set_lovesickness_flag(RE::StaticFunctionTag*, float a_value);
 	static void set_lovesickness_euphoria(RE::StaticFunctionTag*, float a_value);
@@ -43,6 +49,7 @@ public:
 
 	inline static float previous_yps_AddictionLevel = 0;
 	inline static float previous_yps_AddictionBuff = 0;
+	inline static float previous_yps_HeelsWorn = 0;
 
 	private:
     static inline float _milkLevel = 124356.0f;
@@ -55,7 +62,12 @@ public:
 
 	static inline float _yps_AddictionLevel = 0;
 	static inline float _yps_AddictionBuff = 0;
+	static inline float _yps_HeelsWorn = 0;
 	
+    static inline float _Apropos2Vstate = 0;
+    static inline float _Apropos2Astate = 0;
+    static inline float _Apropos2Ostate = 0;
+
 	static inline float _lovesickness_flag=0;
 	static inline float previous_lovesickness_flag=0;
 	static inline float _lovesickness_euphoria=0;
