@@ -6,6 +6,7 @@ set(headers ${headers}
     src/settings.h
     src/DumpThoughts.h
     src/handle_AND_modesty.h
+    src/handle_SL_Survival.h
     src/misc.h
     src/papyrus_interface.h
     src/handle_iNeed.h
