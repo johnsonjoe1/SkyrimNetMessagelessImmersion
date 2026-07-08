@@ -83,17 +83,6 @@ std::array<std::string, 23> AND_faction_verbalalized_and_sorted = {
 "modesty faction"
 };
 
-void PrintSlots(std::uint32_t mask)
-{
-    for (int i = 0; i < 32; i++)
-    {
-        if (mask & (1u << i))
-        {
-            logger::info("    uses slot {}", i + 30);
-        }
-    }
-}
-
 void ListWornItems_and_update_global_curtain_flags()
 {
 	// For our purposes, the actor is always the player character.
@@ -135,24 +124,8 @@ void ListWornItems_and_update_global_curtain_flags()
 			if (!keyword) {
 				continue;
 			}
-			logger::info("      Keyword: {} ({:08X})", 				keyword->GetFormEditorID(), 				keyword->GetFormID());
+			// logger::info("      Keyword: {} ({:08X})", 				keyword->GetFormEditorID(), 				keyword->GetFormID());
 
-			// [2026-07-06 23:18:53.487] [log] [info] [handle_AND_modesty.cpp:138]       Keyword: AND_PelvicFlashRiskLow (FE021810)
-			// [2026-07-06 23:18:53.487] [log] [info] [handle_AND_modesty.cpp:138]       Keyword: AND_AssFlashRiskLow (FE021814)
-			/*
-			"AND_ChestFlashRisk" , 
-			"AND_ChestFlashRiskLow" , 
-			"AND_ChestFlashRiskHigh" , 
-			"AND_ChestFlashRiskExtreme" , 
-			"AND_ChestFlashRiskUltra" , 
-
-			"AND_PelvicFlashRisk" , 
-			"AND_PelvicFlashRiskExtreme" , 
-			"AND_PelvicFlashRiskHigh" , 
-			"AND_PelvicFlashRiskLow" , 
-			"AND_PelvicFlashRiskUltra" , 
-
-			*/
 			if ( 
 				(strcmp(keyword->GetFormEditorID(), "AND_PelvicCurtain") == 0) ||
 				(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRisk") == 0) ||

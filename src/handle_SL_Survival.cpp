@@ -10,8 +10,65 @@
 
 namespace logger = SKSE::log;
 
+
+
+void check_armor_for_bikini_property()
+{
+	// For our purposes, the actor is always the player character.
+	RE::Actor* actor = RE::PlayerCharacter::GetSingleton();
+    if (!actor) {
+        return;
+    }
+
+
+	// Loop through inventory and list everything
+    auto inventory = actor->GetInventory();
+    logger::info("Currently worn items:");
+    for (const auto& [item, entry] : inventory)
+    {
+        if (!entry.second->IsWorn()) {
+            continue;
+        }
+
+		auto armor = item->As<RE::TESObjectARMO>();
+        if (!armor) {
+            continue;
+        } 
+		
+		auto slots = armor->GetSlotMask();
+        auto form = item;
+        logger::info("  {} (FormID {:08X})  on slot 0x{:08X}",
+            form->GetName(),
+            form->GetFormID(),
+            static_cast<std::uint32_t>(slots));
+		PrintSlots(static_cast<std::uint32_t>(slots));
+
+		for (std::uint32_t i = 0; i < armor->numKeywords; i++)
+		{
+			auto* keyword = armor->keywords[i];
+			if (!keyword) {
+				continue;
+			}
+			logger::info("      Keyword: {} ({:08X})", 				keyword->GetFormEditorID(), 				keyword->GetFormID());
+
+			if ( 
+				(strcmp(keyword->GetFormEditorID(), "_SLS_BikiniArmor") == 0)
+			) {
+				
+				logger::info("      ======================>Found AND_AssCurtain keyword, setting global_ass_curtain_flag to true.");
+			}
+		}
+    }
+}
+
+
+
+
+
+
 void handle_SL_Survival::handle_sl_survival_magic_effect_stuff(const RE::TESActiveEffectApplyRemoveEvent* a_event, RE::ActiveEffect* effect)
 {
+	SKSE::log::info("CHECKING FOR _SLS_STUFF!");
 	logger::info("*********************SL-Survival-MAGIC-EFFECT-HANDLER STARTED!!!**********************************");
 	// We got a magic effect.  We check once again everything, even though it has been checked in the calling function.
 
@@ -60,6 +117,7 @@ void handle_SL_Survival::handle_sl_survival_magic_effect_stuff(const RE::TESActi
 			SKSE::log::info("Event handler for SL Bikini Curse out-of-breath-sequence APPLICATION!");
 			// DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, are suddenly out of breath and have to stop.  All because you are affected by the Bikini curse that you are wearing something that isn't a bikini or heels that aren't high enough.  Say as much in your response.")); //  + standard_thought_instruction;
 			// std::string sentence_with_non_bikini_items = get_bikini_curse_offending_sentence();
+			check_armor_for_bikini_property();
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, are suddenly out of breath and have to stop.  All because you are affected by the Bikini curse.  The bikini curse makes it so that you are out of breath, whenever you are either wearing something that isn't a bikini or you are wearing heels that aren't high enough.  Say as much in your response and mention the 'bikini curse'.")); //  + standard_thought_instruction;
 		} 
 		else // i.e.  if (!a_event->isApplied) )

@@ -160,12 +160,6 @@ private:
     RE::ActiveEffect* found;
 };
 
-std::string get_bikini_curse_offending_sentence()
-{
-	// TODO: Implement the logic to generate the offending sentence for the bikini curse.
-	return "Offending sentence placeholder";
-}
-
 void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemoveEvent* a_event)
 {
 	// Protect from null pointer access, just in case.
@@ -227,9 +221,23 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
+	// We moved the SL-Survival-Stuff to the separate SL-Survival module
+	if (base) {
+		SKSE::log::info("CHECKING FOR _SLS_STUFF! Currently investigating: {}", base_name);
+		if ( 
+			(std::strcmp(base_name, "Barefoot") == 0)  || 
+			(std::strcmp(base_name, "Bikini Curse") == 0) || 
+			(std::strcmp(base_name, "_SLS_BikCurseShortBreathMgef") == 0) ) {
+
+				LillithOnlyBox(std::format("CHECKING FOR _SLS_STUFF! Finally found something: {} and IsApplied= {}", base_name, a_event->isApplied));
+				handle_SL_Survival::handle_sl_survival_magic_effect_stuff(a_event, effect);  // const RE::TESActiveEffectApplyRemoveEvent* a_event,
+				return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		}
+	}
+
 	// We moved the YPS-Movement-Speed-Stuff to the separate YPS module
 	if (base) {
-		if (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0) {
+		if (std::strcmp(base_name, "Movement Speed Penalty") == 0) {
 			if ( (std::strcmp(source->GetName(), "High Heel Novice") == 0) || (std::strcmp(source->GetName(), "Untrained Feet") == 0) 
 				|| (std::strcmp(source->GetName(), "Flexible Feet") == 0) || (std::strcmp(source->GetName(), "High Heel Walker") == 0) 
 				|| (std::strcmp(source->GetName(), "Arched Feet") == 0) || (std::strcmp(source->GetName(), "Bondage Feet") == 0) )
@@ -288,7 +296,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 
 
 	// Let's try to track Unforgiving Devices Struggle Exhaustion here:  FIRST THE APPLICATION OF THE EFFECT.
-	if (base && ( (std::strcmp(base->GetName(), "Exhaustion") == 0)  ) && ( (std::strcmp(source->GetName(), "Struggle exhaustion") == 0)  ) )
+	if (base && ( (std::strcmp(base_name, "Exhaustion") == 0)  ) && ( (std::strcmp(source->GetName(), "Struggle exhaustion") == 0)  ) )
 	{
 		if (a_event->isApplied)
 		{
@@ -303,7 +311,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// Let's try to track UD/US Black-Goo-Application-Effect here:  FIRST THE APPLICATION OF THE EFFECT.
-	if (base && ( (std::strcmp(base->GetName(), "Device Manifest") == 0)  )  )
+	if (base && ( (std::strcmp(base_name, "Device Manifest") == 0)  )  )
 	{
 		if (a_event->isApplied) 
 		{
@@ -315,7 +323,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// Let's try to track UD/DD slowdown-effect from bondage boots: 
-	if (base && ( (std::strcmp(base->GetName(), "SpeedMult Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "BootSlow-Enchant") == 0)  ))
+	if (base && ( (std::strcmp(base_name, "SpeedMult Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "BootSlow-Enchant") == 0)  ))
 	{
 		if (a_event->isApplied)
 		{
@@ -331,16 +339,6 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	}
 
 
-	// We moved the SL-Survival-Stuff to the separate SL-Survival module
-	if (base) {
-		if ( 
-			(std::strcmp(base->GetName(), "Barefoot") == 0)  || 
-			(std::strcmp(base->GetName(), "Bikini Curse") == 0) || 
-			(std::strcmp(base->GetName(), "_SLS_BikCurseShortBreathMgef") == 0) ) {
-				handle_SL_Survival::handle_sl_survival_magic_effect_stuff(a_event, effect);  // const RE::TESActiveEffectApplyRemoveEvent* a_event,
-				return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		}
-	}
 
 
 
@@ -356,7 +354,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	
-	if (base && ( (std::strcmp(base->GetName(), "Irresistible Attraction") == 0)  ) )
+	if (base && ( (std::strcmp(base_name, "Irresistible Attraction") == 0)  ) )
 	{
 		if (a_event->isApplied)
 		{
@@ -366,7 +364,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
-	if (base && ( (std::strcmp(base->GetName(), "Teleport") == 0) && (std::strcmp(base->GetFormEditorID(), "aaaWCTeleportSpellEffect") == 0) ) )
+	if (base && ( (std::strcmp(base_name, "Teleport") == 0) && (std::strcmp(base->GetFormEditorID(), "aaaWCTeleportSpellEffect") == 0) ) )
 	{
 		if (a_event->isApplied)
 		{

@@ -210,6 +210,9 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"AnimationEnding_slacEngagement",
 		"AnimationEnd_slacEngagement",
 
+		"ActorChangeStart",                  //  This *might* be relevant, if that has some extra detail about the current SL scene and changes there, but it's just not a priority now.
+		"ActorChangeStart_slacEngagement",   //  This *might* be relevant, if that has some extra detail about the current SL scene and changes there, but it's just not a priority now.
+
 		"PlayDBVOTopic",  // This is from the DragonBornVoiceOver Mod, but we don't need to respond to it, as this is already diaglogue.
 
 		"Helpless_RemoveSpell",  // Unknown what this is
@@ -387,11 +390,13 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedGloves
-	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedGloves") == 0)  ) {
+	if ( 
+		( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedGloves") == 0)  ) || 
+		( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedBondage Mittens") == 0)  ) ){
 		// MOD EVENT:  Name: DeviceEquippedGloves  StrArg: zbfSlaveFemale  NumArg: 0
 		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
-			std::string  thought_message = std::format("YOU, the player, just got locked into an iron bondage yoke. Such a yoke is an iron bondage device, that locks around your neck and wrists, trapping your wrists in a position next to your shoulders, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? " );
+			std::string  thought_message = std::format("YOU, the player, just got locked into bondage gloves.  Such gloves prevent the use of your fingers, making it impossible to perform delicate tasks. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? " );
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		} else {
 			// [2026-07-05 13:31:35.193] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceEquippedGloves  StrArg: Bandit Outlaw  NumArg: 0
@@ -573,7 +578,19 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		}		
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;	
 	}	
-
+	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceRemovedGloves
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedGloves") == 0)  ) {
+		// MOD EVENT:  Name: DeviceRemovedGloves  StrArg: zbfSlaveFemale  NumArg: 0
+		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just got unlocked from gloves.  The gloves wrap around your hands like boxing gloves but with no thumb, so that you were unable to use your fingers for anything.  These devices got unlocked from your hands and now you can use your fingers again.  What are you thinking now based on this? " );
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		} else {
+			// LillithOnlyBox(std::format("DeviceRemovedGloves: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
+		}		
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;	
+	}	
+	
 
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedAnal Pear Plug
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceEquippedAnal Pear Plug") == 0)  ) {

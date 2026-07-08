@@ -5,6 +5,8 @@
 #include <string_view>
 #include <unordered_set>
 
+namespace logger = SKSE::log;
+
 std::string final_lillith_message;
 static std::string current_animation_status = "not_in_a_scene";   // by default, we assume no SL scene is going on.
 static auto last_disablement_timestamp = std::chrono::steady_clock::now();
@@ -78,3 +80,13 @@ void LillithOnlyBox(std::string_view a_message)
 	}  
 }
 
+void PrintSlots(std::uint32_t mask)
+{
+    for (int i = 0; i < 32; i++)
+    {
+        if (mask & (1u << i))
+        {
+            logger::info("    uses slot {}", i + 30);
+        }
+    }
+}
