@@ -23,6 +23,7 @@ namespace logger = SKSE::log;
 **  REFACTOR the many UD-Device-Mod-Events for different devices into string lists.
 **  AUTOMATICALLY handle also the Unequip-events from the same source using the same patterns.
 **  Handle the changes in YPS-Buffs:  (Maybe also remember the clothing-contribution (manually) from last time.  Mabe also the makeup/nails/hair from last time.)
+**  Reign in the SLSF-Messageboxes by making them conditional on a constant flag.
 
 MUCH LATER:  ** Try to find out the (other) actor of an SL scene and then comment at the beginning of the scene, maybe even based on the tags of the scene.
 
