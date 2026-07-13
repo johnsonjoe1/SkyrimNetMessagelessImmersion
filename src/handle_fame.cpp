@@ -101,10 +101,7 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 				SKSE::log::info("SLSF-GLOBALPointer existed:{}  value={}  previous_value={}", fame.name , cur_value, fame.previous_value);
 			}
 			
-			
 			// Assign new value and message-box-report value changes for now
-
-
 			fame.current_value = fame.global->value;
 			if (fame.current_value != fame.previous_value) {
 
@@ -121,14 +118,15 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 					// Increase:  say as much
 					fame_increases.push_back(fame.name);
 					SKSE::log::info("SLSF-Handling: Detected an INCREASE in: {}  from {} to {}.", fame.name, fame.previous_value, fame.current_value);
-					LillithOnlyBox(std::format("SLSF-Handling: Detected an INCREASE in: {} from {} to {}." , fame.name , fame.previous_value , fame.current_value));
+					// LillithOnlyBox(std::format("SLSF-Handling: Detected an INCREASE in: {} from {} to {}." , fame.name , fame.previous_value , fame.current_value));
 				} else {
 					// Decrease:  say as much
 					fame_decreases.push_back(fame.name);
 					SKSE::log::info("SLSF-Handling: Detected a DECREASE in: {}  from {} to {}.", fame.name, fame.previous_value, fame.current_value);
-					LillithOnlyBox(std::format("SLSF-Handling: Detected a DECREASE in: {} from {} to {}." , fame.name , fame.previous_value , fame.current_value));
+					// LillithOnlyBox(std::format("SLSF-Handling: Detected a DECREASE in: {} from {} to {}." , fame.name , fame.previous_value , fame.current_value));
 				}
 
+				/*
 				if ((fame.current_value > 50) && (fame.previous_value <= 50)) {
 					LillithOnlyBox(std::format("SLSF-Handling: CROSSING the 50 THRESHOLD:   TRIGGERING A THOUGHT VALUE FOR: {}.", fame.name));
 					std::string fame_thought_message = std::format(
@@ -139,6 +137,7 @@ And let us know from your response, that you speak about your fame in the given 
 )SKSE", fame.name);
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
 				} 
+				*/
 			}
 			fame.previous_value = fame.global->value;
 		}
