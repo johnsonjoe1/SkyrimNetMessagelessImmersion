@@ -30,6 +30,7 @@ namespace
 			{"DeviceEquippedStraitJacket", "YOU, the player, just got locked into a strait jacket.  The jacket holds your arms and hands in tight sleeves bound around your torso, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? "},
 			{"DeviceEquippedElbowbinder", "YOU, the player, just got locked into an elbow binder.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? "},
 			{"DeviceEquippedRope Harness", "YOU, the player, just got locked into a rope harness.  The rope harness wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? "},
+			{"DeviceEquippedHarness", "YOU, the player, just got locked into a harness.  The harness wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.  What are you thinking now based on this? "},
 			{"DeviceEquippedArm Cuffs", "YOU, the player, just got locked into arm cuffs.  The arm cuffs wrap around your wrists.  In addition, these cuffs can be connected together, e.g. behind your back, to further immobilize and restrain you, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.  What are you thinking now based on this? "},
 			{"DeviceEquippedLeg Cuffs", "YOU, the player, just got locked into leg cuffs.  The leg cuffs wrap around your ankles.  In addition, these cuffs can be connected together, to further immobilize and restrain you and force you to make only tiny hobble steps, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.  What are you thinking now based on this? "},
 			{"DeviceEquippedAnal Pear Plug", "YOU, the player, just got an Anal Pear Plug plugged into your ass.  This plug is plugged into the anus, and then it expands inside, so that you cannot remove it any more.  And it is locked in this state, locked onto your body and now you cannot get if out without somehow opening the lock first.  What are you thinking now based on this? "},
@@ -45,6 +46,49 @@ namespace
 		}
 
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName()) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string(it->second));
+		}
+
+		return true;
+	}
+
+	bool try_handle_device_removed_event(const SKSE::ModCallbackEvent* a_event)
+	{
+		static const std::unordered_map<std::string_view, std::string_view> removed_device_thoughts = {
+			{"DeviceRemovedBoots", "YOU, the player, just got released from your bondage boots and you feet are finally free from them.  They may have had high heels and they may have been severely restricting the speed at which you could move, but now you are rid of them.  What are you thinking now based on this? "},
+			{"DeviceRemovedBallet Boots", "YOU, the player, just got released from your bondage boots and you feet are finally free from them.  They may have had high heels and they may have been severely restricting the speed at which you could move, but now you are rid of them.  What are you thinking now based on this? "},
+			{"DeviceRemovedIron Ballet Boots", "YOU, the player, just got released from your bondage boots and you feet are finally free from them.  They may have had high heels and they may have been severely restricting the speed at which you could move, but now you are rid of them.  What are you thinking now based on this? "},
+			{"DeviceRemovedPony Boots", "YOU, the player, just got released from your pony boots.  Those boots had shaped your legs like horse legs and added hoof-like movement sounds, but these effects no longer apply now that they are removed.  What are you thinking now based on this? "},
+			{"DeviceRemovedyoke", "YOU, the player, just got released from your iron bondage yoke.  Your neck and wrists are no longer locked in that restrictive yoke posture, so those restraints no longer apply.  What are you thinking now based on this? "},
+			{"DeviceRemovedGloves", "YOU, the player, just got unlocked from gloves.  The gloves wrap around your hands like boxing gloves but with no thumb, so that you were unable to use your fingers for anything.  These devices got unlocked from your hands and now you can use your fingers again.  What are you thinking now based on this? "},
+			{"DeviceRemovedBondage Mittens", "YOU, the player, just got released from your bondage mittens.  Your fingers are no longer restrained by those mittens, so those restrictions no longer apply.  What are you thinking now based on this? "},
+			{"DeviceRemovedClitoris Piercing", "YOU, the player, just got your clitoris piercing removed.  That piercing can cause intense stimulation and inconvenient vibration, but those effects no longer apply now that it is gone.  What are you thinking now based on this? "},
+			{"DeviceRemovedNipple Piercings", "YOU, the player, just got your nipple piercings removed.  Those piercings can cause intense stimulation and inconvenient vibration, but those effects no longer apply now that they are gone.  What are you thinking now based on this? "},
+			{"DeviceRemovedVaginal Plug", "YOU, the player, just got your vaginal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.  What are you thinking now based on this? "},
+			{"DeviceRemovedAnal Plug", "YOU, the player, just got your anal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.  What are you thinking now based on this? "},
+			{"DeviceRemovedCollar", "YOU, the player, just got your collar removed.  The feeling of being locked and restrained by that collar no longer applies now that it is gone.  What are you thinking now based on this? "},
+			{"DeviceRemovedChastity Bra", "YOU, the player, just got your chastity bra removed.  Access and stimulation restrictions on your breasts no longer apply now that the device is gone.  What are you thinking now based on this? "},
+			{"DeviceRemovedChastity Belt", "YOU, the player, just got your chastity belt removed.  The access and stimulation restrictions from that belt no longer apply now that it is gone.  What are you thinking now based on this? "},
+			{"DeviceRemovedStraitJacket", "YOU, the player, just got released from your strait jacket.  Your arms and hands are no longer bound against your torso, so those restraints no longer apply.  What are you thinking now based on this? "},
+			{"DeviceRemovedElbowbinder", "YOU, the player, just got released from your elbow binder.  Your arms are no longer forced behind your back in that restrictive position, so those restraints no longer apply.  What are you thinking now based on this? "},
+			{"DeviceRemovedRope Harness", "YOU, the player, just got released from your rope harness.  The constricting pressure around your torso no longer applies now that it is removed.  What are you thinking now based on this? "},
+			{"DeviceRemovedHarness", "YOU, the player, just got released from your harness.  The constricting and restrictive pressure from that harness no longer applies now that it is removed.  What are you thinking now based on this? "},
+			{"DeviceRemovedArm Cuffs", "YOU, the player, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.  What are you thinking now based on this? "},
+			{"DeviceRemovedWristRestraint", "YOU, the player, just got your wrist restraint removed.  Your wrists are no longer restrained, and you can move them freely now.  What are you thinking now based on this? "},
+			{"DeviceRemovedLeg Cuffs", "YOU, the player, just got your leg cuffs removed.  Your ankles are no longer cuffed and your movement is no longer restricted by them.  What are you thinking now based on this? "},
+			{"DeviceRemovedAnal Pear Plug", "YOU, the player, just got your anal pear plug removed.  The internal pressure and restrictive lock-in effects no longer apply now that it is gone.  What are you thinking now based on this? "},
+			{"DeviceRemovedGag", "YOU, the player, just got your gag removed.  Your mouth is no longer restrained, and you can speak and breathe freely again.  What are you thinking now based on this? "},
+			{"DeviceRemovedblindfold", "YOU, the player, just got your blindfold removed.  Your vision is no longer obstructed, so that sensory restriction no longer applies.  What are you thinking now based on this? "},
+			{"DeviceRemovedChain Harness Wrist Shackles", "YOU, the player, just got your chain harness wrist shackles removed.  Your wrists are no longer locked by those shackles, so those restraints no longer apply.  What are you thinking now based on this? "},
+		};
+
+		const std::string_view event_name = a_event->eventName.c_str();
+		const auto it = removed_device_thoughts.find(event_name);
+		if (it == removed_device_thoughts.end()) {
+			return false;
+		}
+
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() && !it->second.empty()) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string(it->second));
 		}
 
@@ -179,6 +223,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"AnimationStart_HelplessFollower",    // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
 		"AnimationStarting_HelplessFollower",    // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
 
+		"AnimationStart_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"StageEnd_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"StageStart_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"AnimationEnding_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
@@ -242,6 +287,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"StageStart_CreatureSummoner", // This is from the Creature Summoner mod.
 		"AnimationChange", // This is from the Creature Summoner mod.
 		"AnimationChange_CreatureSummoner", // This is from the Creature Summoner mod.
+		"AnimationChange_HelplessCreature", // hmmm, Devious Helplessness or Aroused Creatures??
 
 		"AnimationEnding_CreatureSummoner", // This is from the Creature Summoner mod.
 		"AnimationEnd_CreatureSummoner", // This is from the Creature Summoner mod
@@ -360,26 +406,6 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	std::string debug_message = std::format("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg );
 
 
-	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceRemovedBoots
-	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedBoots") == 0)  ) {
-		//  [2026-06-29 10:26:54.934] [log] [info] [handle_mod_broadcasts.cpp:269] MOD EVENT:  Name: ''DeviceRemovedGloves''  StrArg: ''Lillith''  NumArg: 1
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {	
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player, just managed to get our of your locking bondage boots.  What a relief!  What are you thinking now based on this? ");
-		} else {
-			// LillithOnlyBox(std::format("DeviceRemovedBoots: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
-		}
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}
-	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
-	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedWristRestraint") == 0)  ) {
-		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player,  managed to get our of your locking bondage device.  Your wrists are free again!  What a relief!  What are you thinking now based on this? ");
-		} else {
-			// LillithOnlyBox(std::format("DeviceRemovedWristRestraint: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
-		}		
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}
 	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
 	if ( (std::strcmp(a_event->eventName.c_str() , "UD_SentientDialogue") == 0)  ) {
 		// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
@@ -392,39 +418,12 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
-	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceRemovedBoots, DeviceRemovedBallet Boots, 
-	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedBoots") == 0)  || (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedBallet Boots") == 0) ||  (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedIron Ballet Boots") == 0) ) {  
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {			
-			std::string  thought_message = std::format("YOU, the player, just got released from your bondage boots and you feet are finally free from them.  They may have had high heels and they may have been severely restricting the speed at which you could move, but now you are rid of them.  What are you thinking now based on this? " );
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-		} else {
-			// [2026-07-05 13:31:33.275] [log] [info] [handle_mod_broadcasts.cpp:715] An unhandled mod-event was discovered: MOD EVENT:  Name: DeviceRemovedIron Ballet Boots  StrArg: Bandit Outlaw  NumArg: 0
-			// LillithOnlyBox(std::format("DeviceRemovedBoots: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
-		}		
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;		
+	if (try_handle_device_removed_event(a_event)) {
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-	
-	
 
 
 
-	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceRemovedGloves
-	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceRemovedGloves") == 0)  ) {
-		// MOD EVENT:  Name: DeviceRemovedGloves  StrArg: zbfSlaveFemale  NumArg: 0
-		// NOTE:  Apparently, these events are also triggered for other people than the player.  We need to check StrArg for the player name to make sure this is about the player.
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
-			std::string  thought_message = std::format("YOU, the player, just got unlocked from gloves.  The gloves wrap around your hands like boxing gloves but with no thumb, so that you were unable to use your fingers for anything.  These devices got unlocked from your hands and now you can use your fingers again.  What are you thinking now based on this? " );
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-		} else {
-			// LillithOnlyBox(std::format("DeviceRemovedGloves: Event noticed, but it's NOT ABOUT THE PLAYER?????  Target seems to be someone else named:  {} ", a_event->strArg.c_str()));
-		}		
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;	
-	}	
-	
-
-
-
-		
 
 
 	// MOD EVENT:  Name: DeviousEventTrip and Fall  StrArg: Beea  NumArg: 0
