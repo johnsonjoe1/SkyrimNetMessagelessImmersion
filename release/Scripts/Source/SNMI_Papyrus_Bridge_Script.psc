@@ -12,6 +12,8 @@ string milk_string = "No milk_string defined yet!"
 float LVSK_Euphoria = 0.0
 float LVSK_IsLovesick = 0.0
 
+int sparcity_counter = 0
+int sparcity_threshold = 6
 
 ; ypsPiercingTicker Property PETicker Auto
 ; 
@@ -150,7 +152,10 @@ Function TestApropos()
 		; NOTE:  Actually it is normal, that the PlayerChar is not found and not registered in Apropos2
 		;        as long as no wear-and-tear has actually happend.  Once some wear-and-tear has happened
 		;        the player will be registered in Apropos2 and then this function will return a valid alias.
-		lillith_notification("Apropos-DEFAULT-REPLACEMENT:  V:" + 0 + " A:" + 0 + " O:" + 0)
+
+		if sparcity_counter == 0
+			lillith_notification("Apropos-DEFAULT-REPLACEMENT:  V:" + 0 + " A:" + 0 + " O:" + 0)
+		endif
 
 		SNMI_Native.set_Apropos2Vstate(0)
 		SNMI_Native.set_Apropos2Astate(0)
@@ -168,7 +173,10 @@ Function TestApropos()
     Debug.Trace("[SNMI] Anal     = " + ap.AnalWearTearState)
     Debug.Trace("[SNMI] Oral     = " + ap.OralWearTearState)
 	; Final status can be printed as a notification for now.
-	lillith_notification("Apropos-Status:  V:" + ap.VaginalWearTearState + " A:" + ap.AnalWearTearState + " O:" + ap.OralWearTearState)
+
+	if sparcity_counter == 0
+		lillith_notification("Apropos-Status:  V:" + ap.VaginalWearTearState + " A:" + ap.AnalWearTearState + " O:" + ap.OralWearTearState)
+	endif
 
 	SNMI_Native.set_Apropos2Vstate(ap.VaginalWearTearState)
 	SNMI_Native.set_Apropos2Astate(ap.AnalWearTearState)
@@ -263,9 +271,16 @@ function push_all_YPS_variables_to_the_plugin()
 	SNMI_Native.set_yps_AddictionBuff(yps_AddictionBuff)	
 	SNMI_Native.set_yps_HeelsWorn(yps_HeelsWorn)
 
-	lillith_notification("YPS Addiction Buff: " + yps_AddictionBuff + ", YPS Addiction Level: " + yps_AddictionLevel + ", YPS Heels Worn: " + yps_HeelsWorn)
+	if sparcity_counter == 0
+		lillith_notification("YPS Addiction Buff: " + yps_AddictionBuff + ", YPS Addiction Level: " + yps_AddictionLevel + ", YPS Heels Worn: " + yps_HeelsWorn)
+	endif
 
 	; NOTE:  The Fashion buff levels are:  3=well fashioned.
+	sparcity_counter = sparcity_counter +1
+	if sparcity_counter >= sparcity_threshold
+		sparcity_counter = 0
+	endif
+
 endfunction
 
 function push_lovesick_variables_to_the_plugin()
