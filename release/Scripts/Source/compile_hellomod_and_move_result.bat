@@ -55,9 +55,7 @@ COPY SNMI_*.psc C:\Modding\SKSE_on_Pandora\mods\SkyrimNetMessagelessImmersion\Sc
 COPY SNMI_*.pex C:\Modding\SKSE_on_Pandora\mods\SkyrimNetMessagelessImmersion\Scripts\
 COPY ypsThoughts.psc C:\Modding\SKSE_on_Pandora\mods\SkyrimNetMessagelessImmersion\Scripts\Source\
 COPY ypsThoughts.pex C:\Modding\SKSE_on_Pandora\mods\SkyrimNetMessagelessImmersion\Scripts\
-
-
-
+del *.pex
 
 @REM  COPY ypsThoughts.pex         "C:\Modding\SKSE_on_Pandora\mods\yps-ImmersiveFashion (6.9.2)\Scripts\"
 @REM  COPY CC_SexEventsScript.pex  "C:\Modding\SKSE_on_Pandora\mods\Bimbos of Skyrim 1.9.0.7\scripts\"

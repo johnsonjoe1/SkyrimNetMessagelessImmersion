@@ -23,6 +23,8 @@ namespace
 			{"DeviceEquippedClitoris Piercing", "YOU, the player, just got a clitoris piercing locked onto your clitoris.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? "},
 			{"DeviceEquippedNipple Piercings", "YOU, the player, just got a nipple piercing locked onto your nipples.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? "},
 			{"DeviceEquippedVaginal Plug", "YOU, the player, just got a vaginal plug locked into your vagina.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? "},
+			{"DeviceEquippedVaginal Pear Plug", "YOU, the player, just got a vaginal pear plug locked into your vagina.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? "},
+
 			{"DeviceEquippedAnal Plug", "YOU, the player, just got a anal plug locked into your anus.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? "},
 			{"DeviceEquippedCollar", "YOU, the player, just got a collar locked onto your neck.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? "},
 			{"DeviceEquippedChastity Bra", "YOU, the player, just got a chastity bra locked onto your body.  This device is like a normal bra, but it is sturdy and prevents stimulation including self-stimulation and all access to your breasts.  This device got locked onto you and now you cannot get if off.  What are you thinking now based on this? "},
@@ -64,7 +66,9 @@ namespace
 			{"DeviceRemovedBondage Mittens", "YOU, the player, just got released from your bondage mittens.  Your fingers are no longer restrained by those mittens, so those restrictions no longer apply.  What are you thinking now based on this? "},
 			{"DeviceRemovedClitoris Piercing", "YOU, the player, just got your clitoris piercing removed.  That piercing can cause intense stimulation and inconvenient vibration, but those effects no longer apply now that it is gone.  What are you thinking now based on this? "},
 			{"DeviceRemovedNipple Piercings", "YOU, the player, just got your nipple piercings removed.  Those piercings can cause intense stimulation and inconvenient vibration, but those effects no longer apply now that they are gone.  What are you thinking now based on this? "},
+			// NOTE:  These two again come with two different spellings.
 			{"DeviceRemovedVaginal Plug", "YOU, the player, just got your vaginal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.  What are you thinking now based on this? "},
+			{"DeviceRemovedPlugVaginal", "YOU, the player, just got your vaginal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.  What are you thinking now based on this? "},
 			{"DeviceRemovedAnal Plug", "YOU, the player, just got your anal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.  What are you thinking now based on this? "},
 			{"DeviceRemovedCollar", "YOU, the player, just got your collar removed.  The feeling of being locked and restrained by that collar no longer applies now that it is gone.  What are you thinking now based on this? "},
 			{"DeviceRemovedChastity Bra", "YOU, the player, just got your chastity bra removed.  Access and stimulation restrictions on your breasts no longer apply now that the device is gone.  What are you thinking now based on this? "},
@@ -73,6 +77,8 @@ namespace
 			{"DeviceRemovedElbowbinder", "YOU, the player, just got released from your elbow binder.  Your arms are no longer forced behind your back in that restrictive position, so those restraints no longer apply.  What are you thinking now based on this? "},
 			{"DeviceRemovedRope Harness", "YOU, the player, just got released from your rope harness.  The constricting pressure around your torso no longer applies now that it is removed.  What are you thinking now based on this? "},
 			{"DeviceRemovedHarness", "YOU, the player, just got released from your harness.  The constricting and restrictive pressure from that harness no longer applies now that it is removed.  What are you thinking now based on this? "},
+			// NOTE:  These two again come with two different spellings.
+			{"DeviceRemovedArmCuffs", "YOU, the player, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.  What are you thinking now based on this? "},
 			{"DeviceRemovedArm Cuffs", "YOU, the player, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.  What are you thinking now based on this? "},
 			{"DeviceRemovedWristRestraint", "YOU, the player, just got your wrist restraint removed.  Your wrists are no longer restrained, and you can move them freely now.  What are you thinking now based on this? "},
 			{"DeviceRemovedLeg Cuffs", "YOU, the player, just got your leg cuffs removed.  Your ankles are no longer cuffed and your movement is no longer restricted by them.  What are you thinking now based on this? "},
@@ -144,6 +150,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SKIWF_widgetError",            // this is broadcast when a widget error occurs.
 		"SKICP_sliderSelected",         // more mod events that happen when changing something in the MCM.
 		"SKICP_sliderAccepted",         // more mod events that happen when changing something in the MCM.
+		"SKICP_dialogCanceled",         // more mod events that happen when changing something in the MCM.
 		"RSM_CategoriesInitialized",   // this is some technical event from RaceMenu that we don't care about.
 		"RSM_Initialized",             // this is some technical event from RaceMenu that we don't care about.
 		"RSM_SliderChange",
@@ -200,13 +207,27 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SeverActionsNative_FurnitureCleanup",
 		"SeverActions_OrphanCleanup",
 		"SeverActions_TeammateRemoved",
+		"SeversHearth_CampTick",
+		"SeverActions_LLM_RelAssess",
+		"SeverActions_BrawlChallengeChoice",
+		"SeverBrawl_Started",
+		"SeverBrawl_Ended",
+		"SeverActions_LLM_RepAssess",
+
+		"SLOA_PlayerArousalUpdated",   // This update message is nice, but there is already a player response for that it seems.
+
+		"BM-LPO_ViolationCheck",  // This is from Licenses - Player Oppression mod, but this is just the check, nothing for us to work with.  The actual violation might be something noteworthy.
+
 		"ReSchlongify",
 		"MME_MilkCycleComplete",
 		"BeeingFemale",   //  We ignore this for now, maybe later we can do something with it.
 		"CBPCPlayerCollisionWithFemaleEvent",
 		"PlayerChangedCells",
 		"Obody_ApplyMorph",
+
 		"_SN_PlayerConsumes",  // MOD EVENT:  Name: _SN_PlayerConsumes  StrArg: IsEating  NumArg: 0
+		
+		
 		"PlayerOrgasmEnd",
 
 		"dhlp-Resume",   // This is technical Devious Helplessness operational stuff, to continue mod processes.
@@ -617,6 +638,24 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 	// MORE THINGS TO HANDLE: Name: yps_FashionChange  StrArg: FingerNailPolish  NumArg: 0
 
+
+	// MOD EVENT:  YPS initialization:  NOTE:  This is NOT the real handling, it's just capturing these at game startup, which is otherwise annoying
+	if ( (std::strcmp(a_event->eventName.c_str() , "yps_HairStageChange") == 0)  || 
+		(std::strcmp(a_event->eventName.c_str() , "yps_FashionChange") == 0)  || 
+		(std::strcmp(a_event->eventName.c_str() , "yps_AddictionBuffChange") == 0) ) {			
+
+		// Let's also check, if it was player thoughts or player diagloge
+		
+		SKSE::log::info("WE JUST CHECKED AND FOUND {} seconds since game load.", DumpThoughts::seconds_since_game_load());
+		if (DumpThoughts::seconds_since_game_load() < 180) {
+			
+			// This is just the initial setup of the YPS mod, which we don't care about.
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		}
+		// otherwise:  Mention this unhandled mod event, as usual.
+	}
+
+	
 
 
 

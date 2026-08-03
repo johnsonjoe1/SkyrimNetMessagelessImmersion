@@ -65,11 +65,13 @@ std::string_view ExtractCreatureNameFromEffectName(std::string_view effect_name)
 
 bool is_known_irrelevant_magic_effect(std::string base_name)
 {
-	static const std::array<std::string, 28> irrelevant_effect_list = {
+	static const std::array<std::string, 34> irrelevant_effect_list = {
 		"RaceMenuHH Scale Effect"   , 
 		"Consume Food Portion"   , 
 		"Automate Hunger Script"  ,
+		"Automate Thirst Script"  ,
 		"SOS_Addon_PHF_Recolor" ,
+		"SOS Actor Magic Effect" ,
 		"Maintenance" ,
 		"SCO_CellChangeDetectMgef" ,
 		"SCO_CellChangeBegin",
@@ -93,6 +95,13 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"_SLS_WeaponUnreadyMgef",
 		"_SLS_CombatBeginMgef",
 		"_SLS_CombatEndMgef",
+
+		"BM_ME_DetectLocChange",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
+		"BM_ME_DetectLocCity",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
+		"BM_ME_PeriodicCheck",  // The mod Licenses-Player Oppression periodically doing something I presume.
+
+		"Quest Start Routine",  // This is from Mod Sleep-in-Lingerie, and startup/initialization of the Mod.
+
 		"Standing Moving Detector Effect"   // This is also from SL Survival and runs all the time, like every 2 to 5 seconds, so useless for our purposes here.
 	};		
 	for (std::size_t i = 0; i < irrelevant_effect_list.size(); ++i)

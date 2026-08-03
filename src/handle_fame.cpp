@@ -111,9 +111,32 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 				if ( fame.name == "SLSF_AllowComment" ) {
 					continue;  // This event is not so interesting
 				}
+				if ( fame.name == "SLSF_Reloaded_CommentFrequency" ) {
+					continue;  // This event is not so interesting
+				}
 				if ( fame.name == "SLSF_Reloaded_CurrentTattooFame" ) {
 					continue;  // The Tattoo fame seems to increase also from whipping marks and from dirt (which is a SlaveTat in many cases) as well, so this is very prone to error.  Ignore it.
 				}
+				if (( fame.name == "SLSF_Reloaded_VisiblyBound" ) || 
+					( fame.name == "SLSF_Reloaded_LightlyBound" ) || 
+					( fame.name == "SLSF_Reloaded_HeavilyBound" ) || 
+					( fame.name == "SLSF_Reloaded_IsBelted" ) ||
+					( fame.name == "SLSF_Reloaded_IsCollared" ) ||
+				
+					( fame.name == "SLSF_Reloaded_OralCumVisible" ) ||
+					( fame.name == "SLSF_Reloaded_AnalCumVisible" ) ||
+					( fame.name == "SLSF_Reloaded_VaginalCumVisible" ) ||
+					( fame.name == "SLSF_Reloaded_CommentFrequency" ) ||
+					( fame.name == "SLSF_Reloaded_Skooma" ) ||
+					( fame.name == "SLSF_Reloaded_IsBelted" ) ||
+					( fame.name == "SLSF_Reloaded_IsCollared" ) ||
+					( fame.name == "SLSF_Reloaded_OralCumCount" ) ||
+					( fame.name == "SLSF_Reloaded_AnalCumCount" ) ||
+					( fame.name == "SLSF_Reloaded_VaginalCumCount" ) ||
+					( fame.name == "SLSF_Reloaded_TotalCumCount" )) {
+					continue;  // This is just the switch, and we disregard that for now, since accumulated fame will be spoken about anyway.
+				}
+
 				if ( fame.current_value > fame.previous_value ) {
 					// Increase:  say as much
 					fame_increases.push_back(fame.name);
