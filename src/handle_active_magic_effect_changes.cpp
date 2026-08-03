@@ -377,12 +377,27 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	{
 		if (a_event->isApplied)
 		{
-			SKSE::log::info("Event handler for AAA WC TELEPORT SPELL EFFECT APPLICATION!");
+			SKSE::log::info("Event handler for AAA WC TELEPORT SPELL effect application!");
 			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just used a teleport spell.  This one should get you right to the display hall, where all your Waifu Cards are collected.  Say as much in your response.")); //  + standard_thought_instruction;
 		} 
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
+
+	if (base && ( (std::strcmp(base_name, "Restraint Trap") == 0) ) )   // We already know, that this is about the player at this point, so no need to double-check!
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for RESTRAINT TRAP effect application!");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, were just hit by a bondage trap.  This is a major catastrophe.  The Trap has hit you and now you will be bound into restrictive bondage gear by the magic of the restraints trap!  In your response, you should cry out in desperation, that you have been hit by a bondage trap and will now suffer heavy bondage shortly.")); //  + standard_thought_instruction;
+		} 
+		//  The REMOVAL happens immediately afterwards and doesn't need to be mentioned again.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+
+	//  CODE-MARKER:  THIS IS THE ENTRY POINT FOR MORE ACTIVE MAGIC EFFECTS TO BE HANDLED.
+
+	
 
 
 

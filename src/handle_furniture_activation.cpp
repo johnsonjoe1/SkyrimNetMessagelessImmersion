@@ -142,8 +142,14 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 				SKSE::log::info("THIS IS THE 1st Event for this furniture item (because player not in a furniture already)! {} " , mod_event_string_arg );
 			}
 			mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
+		} else if (std::strcmp(furniture_name , "Lever") == 0){
+			// We do nothing for the lever
+			spdlog::info("[SkyrimNetMessagelessImmersion] SKIPPING FURNITURE ACTIVATION EVENT FOR LEVER, AS THIS SOMETIMES GETS IN THE WAY OF IMPORTANT THINGS.");
 		} else {
-
+			//  LATER:  Add special treatment for:  Arcane Enchanter
+			//  LATER:  Add special treatment for:  Alchemist's Retort
+			//  LATER:  Add special treatment for:  Alchemy Lab
+			//  LATER:  Add special treatment for:  Staff Enchanter
 			//  LATER:  Add special treatment for:  Bench
 			//  LATER:  Add special treatment for:  Wood Chopping Block
 
