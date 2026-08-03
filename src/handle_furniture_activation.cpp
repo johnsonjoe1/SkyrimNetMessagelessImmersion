@@ -143,8 +143,9 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 			}
 			mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
 		} else if (std::strcmp(furniture_name , "Lever") == 0){
-			// We do nothing for the lever
+			// We do nothing for the lever, but we must return in order to prevent event generation.
 			spdlog::info("[SkyrimNetMessagelessImmersion] SKIPPING FURNITURE ACTIVATION EVENT FOR LEVER, AS THIS SOMETIMES GETS IN THE WAY OF IMPORTANT THINGS.");
+			return;
 		} else {
 			//  LATER:  Add special treatment for:  Arcane Enchanter
 			//  LATER:  Add special treatment for:  Alchemist's Retort
