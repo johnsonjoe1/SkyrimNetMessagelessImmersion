@@ -8,6 +8,9 @@
 
 namespace logger = SKSE::log;
 
+static auto last_device_equipped_thought_timestamp = std::chrono::steady_clock::now();
+static auto last_device_removed_thought_timestamp = std::chrono::steady_clock::now();
+
 namespace
 {
 	bool try_handle_device_equipped_event(const SKSE::ModCallbackEvent* a_event)
@@ -81,7 +84,15 @@ namespace
 		}
 
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName()) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string(it->second));
+
+			//  We POTENTIALLY throw out a thought message about the devices being equipped.  But we don't want to flood the queue.
+			auto now = std::chrono::steady_clock::now();
+			auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_device_equipped_thought_timestamp);
+			const int minimum_time_since_last_device_equipped_thought = 20;  // in seconds
+			if (runtime.count() >= minimum_time_since_last_device_equipped_thought) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string(it->second));
+				last_device_equipped_thought_timestamp = now;
+			}
 		}
 
 		return true;
@@ -139,7 +150,15 @@ namespace
 		}
 
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() && !it->second.empty()) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string(it->second));
+
+			//  We POTENTIALLY throw out a thought message about the devices being removed.  But we don't want to flood the queue.
+			auto now = std::chrono::steady_clock::now();
+			auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_device_removed_thought_timestamp);
+			const int minimum_time_since_last_device_removed_thought = 20;  // in seconds
+			if (runtime.count() >= minimum_time_since_last_device_removed_thought) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string(it->second));
+				last_device_removed_thought_timestamp = now;
+			}
 		}
 
 		return true;
@@ -289,11 +308,15 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"AnimationStart_HelplessFollower",    // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
 		"AnimationStarting_HelplessFollower",    // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
 
+		"StageEnd_Helpless",    // This is from MOD:  Devious Helplessness.  Stage-end will not be used, so it can be ignored.
+
+
 		"AnimationStart_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"StageEnd_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"StageStart_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"AnimationEnding_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"AnimationEnd_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
+		"AnimationChange_HelplessCreature", // hmmm, Devious Helplessness or Aroused Creatures??
 
 		"OrgasmStart_HelplessFollower",  //	those two are both followers, I think.  MOD EVENT:  Name: OrgasmStart_HelplessFollower  StrArg: 1  NumArg: 0
 		"OrgasmStart",                   //	those two are both followers, I think.  MOD EVENT:  Name: OrgasmStart  StrArg: 1  NumArg: 0	
@@ -322,6 +345,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"StageStart_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"StageEnd",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"StageEnd_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+
 		"SL_SetSpeed",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SL_EndScene",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SL_AdvanceScene",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
@@ -353,7 +377,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"StageStart_CreatureSummoner", // This is from the Creature Summoner mod.
 		"AnimationChange", // This is from the Creature Summoner mod.
 		"AnimationChange_CreatureSummoner", // This is from the Creature Summoner mod.
-		"AnimationChange_HelplessCreature", // hmmm, Devious Helplessness or Aroused Creatures??
+		
 
 		"AnimationEnding_CreatureSummoner", // This is from the Creature Summoner mod.
 		"AnimationEnd_CreatureSummoner", // This is from the Creature Summoner mod
@@ -656,8 +680,48 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
-
-
+	// MOD EVENT:  Name: AnimationStarting_Helpless :  this is the start of a BattleFuck scene.  We absolutely should comment on it.
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_Helpless") == 0)  ) {
+		// This event is always about the player, nobody else.
+		std::string  thought_message = std::format("YOU, the player, are currently still helpless in your bondage gear and at the mercy of others.  But now someone is coming to take advantage of your helplessness and is going to use your body for sex and breeding and there is nothing you can do about it due to being bound in bondage gear.  You can only cry out in desperation and fear.  Let us feel your fear of being used for sex in this way in your response and let us know that it is too late and the sexual assault is going to happen.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("AnimationStarting_Helpless:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+	// MOD EVENT:  Name: AnimationChange_Helpless :  this is the start of a BattleFuck scene.  We absolutely should comment on it.
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationChange_Helpless") == 0)  ) {
+		// This event is always about the player, nobody else.
+		std::string  thought_message = std::format("YOU, the player, have been trapped in bondage gear and were helpless all the time.  And now an attacker has exploited you and used your body for sex and breeding and there was nothing you were able to do to prevent that.  But now the attacker wants sex in yet another position, while you are still completely helpless and can do nothing to prevent your own abuse and rape.  Say so in your response and let us know how you feel.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("AnimationChange_Helpless:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+	// MOD EVENT:  Name: AnimationEnd_Helpless :  this is the start of a BattleFuck scene.  We absolutely should comment on it.
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnd_Helpless") == 0)  ) {
+		// This event is always about the player, nobody else.
+		std::string  thought_message = std::format("YOU, the player, have been trapped in bondage gear and were helpless all the time.  And now an attacker has exploited you and used your body for sex and breeding and there was nothing you were able to do to prevent that.  But now your ordeal is over and the attacker has finally let go of your.  You are still trapped in your bondage gear, but at least the attacker stopped raping you.  Say so in your respone and let us know how you feel now.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("AnimationEnd_Helpless:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+	// MOD EVENT:  the rest of the sequence, where we don't do anything and just return on those events.
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStart_Helpless") == 0)  ||
+	(std::strcmp(a_event->eventName.c_str() , "AnimationStarting_Helpless") == 0) ||
+	(std::strcmp(a_event->eventName.c_str() , "StageStart_Helpless") == 0) ||
+	(std::strcmp(a_event->eventName.c_str() , "StageEnd_Helpless") == 0) ||
+	(std::strcmp(a_event->eventName.c_str() , "AnimationEnding_Helpless") == 0) ) {
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+	// The sequence is:
+	// DONE:  AnimationStarting_Helpless
+	// NOTHINGTODO:  AnimationStart_Helpless
+	// NOTHINGTODO:  StageStart_Helpless	
+	// NOTHINGTODO:  StageEnd_Helpless
+	// DONE:  AnimationChange_Helpless
+	// NOTHINGTODO:  StageStart_Helpless	
+	// NOTHINGTODO:  StageEnd_Helpless
+	// NOTHINGTODO:  AnimationEnding_Helpless
+	// DONE:  AnimationEnd_Helpless
 
 	// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
 	if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)  || 
