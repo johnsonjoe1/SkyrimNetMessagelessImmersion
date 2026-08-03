@@ -46,6 +46,9 @@ namespace
 			{"DeviceEquippedHarness", "YOU, the player, just got locked into a harness.  The harness wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},
 			{"DeviceEquippedChain Harness Wrist Shackles", "YOU, the player, just got a chain harness wrist shackles locked onto your wrists.  These shackles prevent you from moving your arms freely.  They are securely fastened so that you cannot simply remove them.   "},
 			{"DeviceEquippedBoxbinder", "YOU, the player, just got locked into a box binder.  The box binder holds your arms and hands in a bag behind your torso, so that you are helpless and completely at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedcorset", "YOU, the player, just got locked into a corsett.  The corsett wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},
+			
+
 
 			// Crotch things here:
 			{"DeviceEquippedClitoris Piercing", "YOU, the player, just got a clitoris piercing locked onto your clitoris.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
@@ -279,6 +282,10 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SeverActions_ExternalWaitAdopt",
 		"SeverActions_CombatSpoils",
 		"SeverActions_CampMemberDied",
+		"SeverActions_SetUIScale",
+		"SeverActions_PrismaUI_RequestData",
+		"SeverActions_BrawlChallengeExpired",
+		"SeverActionsNative_SandboxCleanup",
 
 		"SLOA_PlayerArousalUpdated",   // This update message is nice, but there is already a player response for that it seems.
 		"SLOA_NPCArousalUpdated",      // This update message is nice, but there is no need to respond now.
@@ -432,6 +439,10 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		"SL_AdvanceScene",
 		"AnimationStarting_HelplessCreature",
 		"StageStart_HelplessCreature",
+
+		"AnimationStarting_Helpless",
+		"StageStart_Helpless",
+
 	};
 
 	static const std::unordered_set<std::string_view> scene_end_events = {
@@ -445,8 +456,9 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		"AnimationEnding_MatchMaker",
 		"AnimationEnding_slacEngagement",
 		"AnimationEnd_slacEngagement",
-		"AnimationEnding_HelplessCreature",
-		"AnimationEnd_HelplessCreature"
+		"AnimationEnding_HelplessCreature",   //  This is from Aroused Creatures (I think)
+		"AnimationEnd_HelplessCreature",      //  This is from Aroused Creatures (I think)
+		"AnimationEnd_Helpless"    // This is from Devious Helplessness.
 	};
 
 	const std::string_view event_name = a_event->eventName;

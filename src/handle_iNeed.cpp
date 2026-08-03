@@ -18,15 +18,9 @@ namespace logger = SKSE::log;
 //  Note to self:  static keyword only belongs in the header, not in the .cpp file.
 //  Note to self:  public: private: keywords only belong in the header, not in the .cpp file.  
 
-void handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff()
+
+void handle_iNeed::handle_iNeed_but_only_fatigue_stuff()
 {
-	auto* player = RE::PlayerCharacter::GetSingleton();
-	if (!player) {
-		logger::info("SEVERE ERROR: Querying the player failed in the handle_iNeed_hunger_thirst_and_fatigue_stuff function!!");
-		return;
-	}
-
-
 	// We have from another mod:
 	//
 	// GlobalVariable function GetINeedFatigue() global
@@ -41,6 +35,11 @@ void handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff()
 			->LookupForm<RE::TESGlobal>(0x12DC, "iNeed.esp");
 	if (fatigueGV) {
 		float fatigue = fatigueGV->value;
+		if (DumpThoughts::too_early_after_game_load()) {
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger/thirst/fatigue check:  Too early after game load to check iNeed hunger/thirst/fatigue levels.  Skipping this check.");
+			previous_iNeed_fatigue_level = fatigue;			
+			return;
+		}
 		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: value={}", fatigue);
 		if (fatigue == 0) {
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means NO FATIGUE AT ALL, NOTHING! ");
@@ -72,7 +71,11 @@ void handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff()
 		// We only update fatigue, if the whole iNeed stuff worked.
 		previous_iNeed_fatigue_level = fatigue;					
 	}
-	// We have from another mod:
+}
+
+void handle_iNeed::handle_iNeed_but_only_thirst_stuff()
+{
+// We have from another mod:
 	//
 	//GlobalVariable function GetINeedThirst() global
 	//    return Game.GetFormFromFile(0x4378, "iNeed.esp") as GlobalVariable
@@ -85,6 +88,11 @@ void handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff()
 			->LookupForm<RE::TESGlobal>(0x4378, "iNeed.esp");
 	if (thirstGV) {
 		float thirst = thirstGV->value;
+		if (DumpThoughts::too_early_after_game_load()) {
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger/thirst/fatigue check:  Too early after game load to check iNeed hunger/thirst/fatigue levels.  Skipping this check.");
+			previous_iNeed_thirst_level = thirst;			
+			return;
+		}
 		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: value={}", thirst);
 		if (thirst == 0) {
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed thirst GlobalVariable found: i guess that means NO thirst AT ALL, NOTHING! ");
@@ -116,7 +124,10 @@ void handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff()
 		// We only update thirst, if the whole iNeed stuff worked.
 		previous_iNeed_thirst_level = thirst;					
 	}
+}
 
+void handle_iNeed::handle_iNeed_but_only_hunger_stuff()
+{
 	// We have from another mod:
 	//
 	// GlobalVariable function GetINeedHunger() global
@@ -130,6 +141,11 @@ void handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff()
 			->LookupForm<RE::TESGlobal>(0x12DB, "iNeed.esp");
 	if (hungerGV) {
 		float hunger = hungerGV->value;
+		if (DumpThoughts::too_early_after_game_load()) {
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger/thirst/fatigue check:  Too early after game load to check iNeed hunger/thirst/fatigue levels.  Skipping this check.");
+			previous_iNeed_hunger_level = hunger;
+			return;
+		}
 		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: value={}", hunger);
 		if (hunger == 0) {
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed hunger GlobalVariable found: i guess that means NO hunger AT ALL, NOTHING! ");
@@ -161,7 +177,21 @@ void handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff()
 		// We only update hunger, if the whole iNeed stuff worked.
 		previous_iNeed_hunger_level = hunger;					
 	}
+}
 
+void handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff()
+{
+	auto* player = RE::PlayerCharacter::GetSingleton();
+	if (!player) {
+		logger::info("SEVERE ERROR: Querying the player failed in the handle_iNeed_hunger_thirst_and_fatigue_stuff function!!");
+		return;
+	}
+
+	handle_iNeed::handle_iNeed_but_only_fatigue_stuff();
+
+	handle_iNeed::handle_iNeed_but_only_thirst_stuff();
+
+	handle_iNeed::handle_iNeed_but_only_hunger_stuff();
 
 }
 

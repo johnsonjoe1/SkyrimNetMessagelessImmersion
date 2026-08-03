@@ -65,7 +65,7 @@ std::string_view ExtractCreatureNameFromEffectName(std::string_view effect_name)
 
 bool is_known_irrelevant_magic_effect(std::string base_name)
 {
-	static const std::array<std::string, 34> irrelevant_effect_list = {
+	static const std::array<std::string, 47> irrelevant_effect_list = {
 		"RaceMenuHH Scale Effect"   , 
 		"Consume Food Portion"   , 
 		"Automate Hunger Script"  ,
@@ -99,6 +99,20 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"BM_ME_DetectLocChange",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
 		"BM_ME_DetectLocCity",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
 		"BM_ME_PeriodicCheck",  // The mod Licenses-Player Oppression periodically doing something I presume.
+
+		"BM_ME_HostArmorLicense",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostBikiniExemption",   // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostBikiniLicense",     // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostClothingLicense",   // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostCollarExemption",   // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostCraftingLicense",   // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostCurfewExemption",   // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostInsurance",         // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostMagicLicense",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostTradingLicense",    // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostTravelPermit",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostWeaponLicense",     // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_HostWhoreLicense",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 
 		"Quest Start Routine",  // This is from Mod Sleep-in-Lingerie, and startup/initialization of the Mod.
 
