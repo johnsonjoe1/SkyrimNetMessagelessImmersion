@@ -383,10 +383,16 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 
 		"AnimationStarting_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
 		"AnimationStart_JailRapeNPC",  // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
+		"AnimationChange_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
+		"OrgasmStart_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
 		"StageStart_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
 		"StageEnd_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
 		"AnimationEnding_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
 		"AnimationEnd_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
+
+		// "AnimationStarting_JailRapePC", // This is from the JailRape mod. 
+		"AnimationStart_JailRapePC", // This is from the JailRape mod.  but animation starting event is separate and already all we need.
+		"StageEnd_JailRapePC", // This is from the JailRape mod.  but animation starting event is separate and already all we need.
 		
 		"AnimationStart_CreatureSummoner", // This is from the Creature Summoner mod.
 		"AnimationStarting_CreatureSummoner", // This is from the Creature Summoner mod.
@@ -770,7 +776,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_JailRapePC") == 0)  ) {
 		// This event is always about the player, nobody else.
 		last_devious_helplessness_thought_timestamp = std::chrono::steady_clock::now();
-		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  Now one of them is going to rape you for his own fun and pleasure. You can only cry out in desperation and fear.  Announce that in your response, so that the player is alerted to the situation.");
+		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  Now one of them is going to rape you for his own fun and pleasure. You can only cry out in desperation and fear about what is to come.  Announce that in your response, so that the player is alerted to the situation.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("AnimationStarting_JailRapePC:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -779,7 +785,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationChange_JailRapePC") == 0)  ) {
 		// This event is always about the player, nobody else.
 		last_devious_helplessness_thought_timestamp = std::chrono::steady_clock::now();
-		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  One of them has already used you for his own fun and pleasure. But now he wants even more sex and to use your body in different ways still, so you have to endure more sexual assault now.  Announce that in your response, so that the player is alerted to the situation.");
+		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  One of them has already used you for his own fun and pleasure. But now he wants even more sex and to use your body in different ways still. You will be forced to play along and do what he wants.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("AnimationChange_JailRapePC:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -787,7 +793,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  Name: StageStart_JailRapePC :  this from a Jailrape-Scene.  We absolutely should comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_JailRapePC") == 0)  ) {
 		// This event is always about the player, nobody else.
-		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  One of them has already used you for his own fun and pleasure. But he wants even more sex and will continue to use your body even more for his pleasure.  Announce that in your response, so that the player is alerted to the situation.");
+		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  One of them has already used you for his own fun and pleasure. But he wants even more sex. You are forced to play along and do what he wants. You can not stop what is happening. You are starting to break and submit to the guards and accept their absolute authority over you. ");
 
 		// We need a cooldown here again for this part, because it might flood the queue too much otherwise.
 		if (std::chrono::steady_clock::now() - last_devious_helplessness_thought_timestamp < std::chrono::seconds(15)) {
@@ -806,13 +812,13 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// 3.  BM-LPO_BountyEnd  (30 seconds later when running away from the guards)
 	// MOD EVENT:  YPS initialization:  NOTE:  This is NOT the real handling, it's just capturing these at game startup, which is otherwise annoying
 	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_ViolationFound") == 0) ) {			
-		std::string  thought_message = std::format("Oh no!  One of those license-obsessed guards has spotted you and is coming after you to give you a hefty fine or other punishment.	Announce that you have been spotted and in your response, so that the player will be alerted to the situation.");
+		std::string  thought_message = std::format("Oh no!  You are in violation of one of the many ridiculous license regulations. Better be careful. The guards might catch you and then you will be punished.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyStart") == 0)  || 
-		(std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyStart") == 0)  || 
+		(std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyEnd") == 0)  || 
 		(std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyStart") == 0) ) {			
 
 		// We do nothing here, on purpose for now, since the Violation-Found event should already be enough.

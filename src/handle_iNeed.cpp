@@ -18,6 +18,24 @@ namespace logger = SKSE::log;
 //  Note to self:  static keyword only belongs in the header, not in the .cpp file.
 //  Note to self:  public: private: keywords only belong in the header, not in the .cpp file.  
 
+void handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start()
+{
+	logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TRYING to reset iNeed hunger/thirst/fatigue after game load or start.");
+	auto* fatigueGV = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESGlobal>(0x12DC, "iNeed.esp");
+	if (fatigueGV) {
+		previous_iNeed_fatigue_level = fatigueGV->value;
+	}		
+	auto* thirstGV = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESGlobal>(0x4378, "iNeed.esp");
+	if (thirstGV) {
+		previous_iNeed_thirst_level = thirstGV->value;
+	}
+	auto* hungerGV =
+		RE::TESDataHandler::GetSingleton()
+			->LookupForm<RE::TESGlobal>(0x12DB, "iNeed.esp");
+	if (hungerGV) {
+		previous_iNeed_hunger_level = hungerGV->value;
+	}	
+}
 
 void handle_iNeed::handle_iNeed_but_only_fatigue_stuff()
 {

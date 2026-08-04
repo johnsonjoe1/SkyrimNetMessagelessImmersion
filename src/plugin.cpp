@@ -334,10 +334,12 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 	case SKSE::MessagingInterface::kPostLoadGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		handle_AND_modesty::reset_previous_rank_to_current_rank();
+		handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
         break;
 	case SKSE::MessagingInterface::kNewGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		handle_AND_modesty::reset_previous_rank_to_current_rank();
+		handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
 		break;
 	};
 }
