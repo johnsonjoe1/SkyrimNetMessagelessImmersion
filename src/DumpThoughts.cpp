@@ -32,12 +32,11 @@ void DumpThoughts::reset_last_game_load_or_reload_timestamp() {
 	
 	if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
 	{
-		//RE::DebugMessageBox("SNMI:  Player 'LILLITH' is detected, so skipping the silence after game (re)load.");
-		SKSE::log::info("SNMI:  Player 'LILLITH' is detected, so skipping the silence after game (re)load.");
-		return;
+		//SKSE::log::info("SNMI:  Player 'LILLITH' is detected, so skipping the silence after game (re)load.");
+		//return;
 	} 
-
 	// We reset the game-reloaded-timestamp for silence and thus avoiding messages from reload-induced changes
+	SKSE::log::info(">>>>>>>>>>>>>>>>> RESETTING THE TIME since game-start-or-game-reload-now.");
 	last_game_load_or_reload_timestamp = std::chrono::steady_clock::now();
 }
 bool DumpThoughts::too_early_after_game_load()
@@ -46,13 +45,13 @@ bool DumpThoughts::too_early_after_game_load()
 	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_game_load_or_reload_timestamp);
 	SKSE::log::info("Time since last game load or reload: {} seconds", runtime.count());
 
-	const int minimum_time_since_last_game_load_or_reload = 30;  // in seconds 
+	const int minimum_time_since_last_game_load_or_reload = 20;  // in seconds 
 
 	// We make the timeout again dependend on the player name
 	if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
 	{
-		SKSE::log::info("OVERRIDING natural timeout-after-game-load, because it's LILLITH, the debug character playing.", runtime.count(), minimum_time_since_last_game_load_or_reload);
-		return false; 
+		// SKSE::log::info("OVERRIDING natural timeout-after-game-load, because it's LILLITH, the debug character playing.", runtime.count(), minimum_time_since_last_game_load_or_reload);
+		// return false; 
 	} 
 
 	if (runtime.count() < minimum_time_since_last_game_load_or_reload) {
