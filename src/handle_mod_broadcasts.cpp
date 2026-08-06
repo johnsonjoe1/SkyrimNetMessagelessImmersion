@@ -337,15 +337,26 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SSL_PREPARE_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_PREPARE_Thread1",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_PREPARE_Thread2",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_PREPARE_Thread3",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_PREPARE_Thread4",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		
 		"SSL_LOCK_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_LOCK_Thread1",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_LOCK_Thread2",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_LOCK_Thread3",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_LOCK_Thread4",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		
 		"SSL_READY_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_READY_Thread1",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_READY_Thread2",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_READY_Thread3",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_READY_Thread4",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		
 		"SSL_CLEAR_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_CLEAR_Thread1",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_CLEAR_Thread2",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_CLEAR_Thread3",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
+		"SSL_CLEAR_Thread4",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 
 		"AnimationStarting",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"AnimationStart",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
@@ -453,7 +464,9 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 
 		"AnimationStarting_Helpless",
 		"StageStart_Helpless",
-
+		"AnimationStarting_JailRapePC",
+		"StageStart_JailRapePC",
+		"AnimationChange_JailRapePC",
 	};
 
 	static const std::unordered_set<std::string_view> scene_end_events = {
@@ -469,7 +482,10 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		"AnimationEnd_slacEngagement",
 		"AnimationEnding_HelplessCreature",   //  This is from Aroused Creatures (I think)
 		"AnimationEnd_HelplessCreature",      //  This is from Aroused Creatures (I think)
-		"AnimationEnd_Helpless"    // This is from Devious Helplessness.
+		"AnimationEnd_Helpless",    // This is from Devious Helplessness.
+		"AnimationEnding_JailRapePC",
+		"AnimationEnd_JailRapePC",
+
 	};
 
 	const std::string_view event_name = a_event->eventName;
@@ -785,7 +801,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationChange_JailRapePC") == 0)  ) {
 		// This event is always about the player, nobody else.
 		last_devious_helplessness_thought_timestamp = std::chrono::steady_clock::now();
-		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  One of them has already used you for his own fun and pleasure. But now he wants even more sex and to use your body in different ways still. You will be forced to play along and do what he wants.");
+		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  One of them has already used you for his own fun and pleasure. But now he wants even more sex. He wants to try even more different sex positions with you. And to use your body in yet more ways. You cannot stop him from doing what he wants with you.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("AnimationChange_JailRapePC:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -793,7 +809,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  Name: StageStart_JailRapePC :  this from a Jailrape-Scene.  We absolutely should comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_JailRapePC") == 0)  ) {
 		// This event is always about the player, nobody else.
-		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  One of them has already used you for his own fun and pleasure. But he wants even more sex. You are forced to play along and do what he wants. You can not stop what is happening. You are starting to break and submit to the guards and accept their absolute authority over you. ");
+		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  One of them has already used you for his own fun and pleasure. But he wants even more sex. You are forced to play along and do what he wants. You cannot stop what is happening to you, because the attacker is too strong. You can try to resist, but that might make him even more aggressive. You can try not to get excited from the sexual stimulation of your body, but even that is becoming more difficult, and you can slowly feel yourself getting involuntarily more sexually excited. Or you can start to break and start to submit and lose your will to resist entirely, accepting the guards as your new masters, and accepting that it is better to obey them than face more punishment and hoping, that if you can please the guards better, they might let you go and not be mean to you any more. ");
 
 		// We need a cooldown here again for this part, because it might flood the queue too much otherwise.
 		if (std::chrono::steady_clock::now() - last_devious_helplessness_thought_timestamp < std::chrono::seconds(15)) {
@@ -812,7 +828,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// 3.  BM-LPO_BountyEnd  (30 seconds later when running away from the guards)
 	// MOD EVENT:  YPS initialization:  NOTE:  This is NOT the real handling, it's just capturing these at game startup, which is otherwise annoying
 	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_ViolationFound") == 0) ) {			
-		std::string  thought_message = std::format("Oh no!  You are in violation of one of the many ridiculous license regulations. Better be careful. The guards might catch you and then you will be punished.");
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, can see a guard approaching you. They want to catch you and give you a fine for some ridiculous license regulation or maybe even throw you in jail.  Announce that they are coming for you with your response, so that the player is alerted to the situation, and maybe even explain, that it is probably because of license regulation, as the player might otherwise not understand what is going on.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;

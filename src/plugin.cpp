@@ -326,6 +326,8 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 	case SKSE::MessagingInterface::kPostLoad:
 		// DANGER HERE:  The player name may not be availabe.  This might crash!!	
 		//  DumpThoughts::reset_last_game_load_or_reload_timestamp();	
+		//  CRASHING AT THIS CALL POINT:   handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
+		handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
 		break;
 	case SKSE::MessagingInterface::kPreLoadGame:
 		// DANGER HERE:  The player name may not be availabe.  This might crash!!	

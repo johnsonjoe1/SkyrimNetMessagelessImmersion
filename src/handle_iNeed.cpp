@@ -20,7 +20,11 @@ namespace logger = SKSE::log;
 
 void handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start()
 {
-	logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TRYING to reset iNeed hunger/thirst/fatigue after game load or start.");
+	logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start: TRYING to reset iNeed hunger/thirst/fatigue after game load or start.");
+	if (!RE::TESDataHandler::GetSingleton()) {
+		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start: TESDataHandler::GetSingleton() is NULL.  TOO EARLY!  ABORTING TO PREVENT CRASH.");
+		return;
+	} 
 	auto* fatigueGV = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESGlobal>(0x12DC, "iNeed.esp");
 	if (fatigueGV) {
 		previous_iNeed_fatigue_level = fatigueGV->value;
@@ -29,9 +33,7 @@ void handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start()
 	if (thirstGV) {
 		previous_iNeed_thirst_level = thirstGV->value;
 	}
-	auto* hungerGV =
-		RE::TESDataHandler::GetSingleton()
-			->LookupForm<RE::TESGlobal>(0x12DB, "iNeed.esp");
+	auto* hungerGV = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESGlobal>(0x12DB, "iNeed.esp");
 	if (hungerGV) {
 		previous_iNeed_hunger_level = hungerGV->value;
 	}	
@@ -202,6 +204,13 @@ void handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff()
 	auto* player = RE::PlayerCharacter::GetSingleton();
 	if (!player) {
 		logger::info("SEVERE ERROR: Querying the player failed in the handle_iNeed_hunger_thirst_and_fatigue_stuff function!!");
+		return;
+	}
+
+	// Make sure the game is initialized and we don't get confused at game startup.
+	if ( (previous_iNeed_fatigue_level == 1000000) || (previous_iNeed_thirst_level == 1000000) || (previous_iNeed_hunger_level == 1000000) ) {
+		logger::info("handle_iNeed:  iNeed levels are not initialized yet!!  Initialize them and then return for now and for this round!!");
+		try_to_reset_iNeed_stuff_after_game_load_or_start();
 		return;
 	}
 

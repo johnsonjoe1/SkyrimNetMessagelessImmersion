@@ -34,9 +34,9 @@ Other mods that are being picked on (at least in minimal amounts) when they are 
 * SL Survival 0.685 Beta SE: barefoot effect, (https://www.loverslab.com/blogs/entry/20175-sl-survival/)
 * STA v4.8 BETA SE: run-up-and-spank mod broadcast, (https://www.loverslab.com/blogs/entry/20176-spank-that-ass/)
 * The Ancient Profession:  Generic freelance work scene. (https://www.loverslab.com/files/file/11556-the-ancient-profession-2024-06-24/),
-* Some basic support for Jailrape mod,
-* Some basic support for Licenses - Player Oppression mod,
-* Vanilla Skyrim:  disease application and cure (partial, not everything), furniture use.
+* Some basic support for Jailrape mod. (https://www.loverslab.com/files/file/9111-sexlab-jail-rape/),
+* Some basic support for Licenses - Player Oppression mod. (https://www.nexusmods.com/skyrimspecialedition/mods/110418?tab=description),
+* Vanilla Skyrim:  disease application and cure (partial, only stomach rot disease so far), furniture use.
 
 Note, that as said, there are only minimal gentle changes, nothing big or invasive.  And none of them are required in any form.  I add more stuff, as I play along and find something is missing and more response from SkyrimNet would be appropriate here and there.  Not a very systematic or completionist approach, but rather picking up stuff here and there.
 
