@@ -677,6 +677,27 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		// SSL_CLEAR_Thread1
 		// AnimationEnding_slacEngagement
 	}	
+	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_BodySearch") == 0)  ) {
+		std::string  thought_message = std::format("A guard has just brought you to their guards baracks, saying he needs to do a body search.  But now the search turns out to be mainly him groping your body everywhere for his pleasure and amusement. That has been going on for a while.  And now he is continuing to grope you even more as he pleases. Let us know your response to that. ");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		// More in this context:
+		// StageStart_BodySearch
+		// 4 seconds later:  AnimationStart_BodySearch
+		// StageEnd_BodySearch
+	}		
+	if ( (std::strcmp(a_event->eventName.c_str() , "StageEnd_BodySearch") == 0) 
+	|| (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BodySearch") == 0) 
+	|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BodySearch") == 0) ) {
+		// nothing to do here, just exit.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BodySearch") == 0)  ) {
+		std::string  thought_message = std::format("A guard has just brought you to their guards baracks, saying he needs to do a body search.  But then the search turns out to be mainly him groping your body everywhere for his pleasure and amusement. Finally now, the guard has finished groping you under the pretext of a body search and is finally letting go of you.  Let us know your response to that.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+
 	
 	// MOD EVENT:  From some animal mod, creature maybe, we have the following event:  AnimationStarting_slacEngagement
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_slacEngagement") == 0)  ) {
@@ -840,6 +861,41 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		// We do nothing here, on purpose for now, since the Violation-Found event should already be enough.
 		return;
 	}
+	// When you get a weapons license:  BM-LPO_WeaponLicense_20_Activate
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_WeaponLicense_20_Activate") == 0) ) {			
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new weapons license.  Now you can (finally) carry your weapons out in the open as you please.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_BikiniLicense_20_Activate") == 0) ) {			
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new bikini license.  Now you can (finally) wear your bikini armor in public as you please, but this may still be a bit degrading, because this license doesn't allow you full armor and real armour, it only allows for skimpy bikini armour, making you a spectacle for male observers.  But still, it's better than nothing and the armor still gives you some protection, even if it's not as much as real armor would.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_CraftingLicense_20_Activate") == 0) ) {			
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new crafting license.  Now you can (finally) craft items in public as you please, which everybody else seems to be doing without much of a license, or at least you haven't seen one.  Could it be that you are being player and just harassed by the guards?  But at least you can now craft items in public without being harassed by guards and fined for it.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_TradingLicense_20_Activate") == 0) ) {			
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new trading license.  Now you can (finally) trade items in other than food or jewelry items, which everybody else seems to be doing all the time without much of a license, or at least you haven't seen one.  Could it be that you are being played and just harassed by the guards?  But at least you can now trade items in public without being harassed by guards and fined for it.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
+
+	if ( (std::strcmp(a_event->eventName.c_str() , "DF-ResistanceLossWithSeverity") == 0) ) {			
+		std::string  thought_message = std::format("The NPCs in this game are rather mean and mean-spirited towards you and they seem to be putting you down all the time.  They are just so stupid and annoying that it's wearing you down, sucking your mental energy from you.  Maybe they want to see you fail, so that they can control and dominate you and do what they want with you when you have no power to resist any more.  In any case, they are slowly wearing you out and you may not be able to take it any more at some point.  Tell us how you feel about that.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("DF-ResistanceLossWithSeverity:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	
 
 
 	// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
