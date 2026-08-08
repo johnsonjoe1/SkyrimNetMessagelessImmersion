@@ -28,7 +28,7 @@ Other mods that are being picked on (at least in minimal amounts) when they are 
 * Advanced Nudity Detection (AND) mod:  Change of (partial) nudity state, (https://www.nexusmods.com/skyrimspecialedition/mods/165289),
 * SLSF:  Major changes of fame,  (https://www.loverslab.com/files/file/35874-sexlab-sexual-fame-reloaded/),
 * Battlefuck:  Start of struggle comments, (https://www.loverslab.com/files/file/18241-battle-fuck/),
-* BodySearch:  Start of search comments, (https://www.loverslab.com/files/file/9318-sexlab-body-search/),
+* FINISHED in 0.6.3:  Support for BodySearch mod (https://www.loverslab.com/files/file/9318-sexlab-body-search/),
 * Unforgiving Devices / Unforgiving Skyrim:  Application and removal of certain devices, 
 * SLAC:  Start of scenes and end of scenes, (https://www.loverslab.com/files/file/6022-sexlab-aroused-creatures-se-2026-02-20/),
 * SL Survival 0.685 Beta SE: barefoot effect, (https://www.loverslab.com/blogs/entry/20175-sl-survival/)

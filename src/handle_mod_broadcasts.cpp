@@ -286,6 +286,8 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SeverActions_PrismaUI_RequestData",
 		"SeverActions_BrawlChallengeExpired",
 		"SeverActionsNative_SandboxCleanup",
+		"SeverActionsNative_OnArrival",
+		
 
 		"SLOA_PlayerArousalUpdated",   // This update message is nice, but there is already a player response for that it seems.
 		"SLOA_NPCArousalUpdated",      // This update message is nice, but there is no need to respond now.
@@ -452,7 +454,7 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		"StageStart_CreatureSummoner",
 		"AnimationChange",
 		"AnimationChange_CreatureSummoner",
-		// "AnimationStart_BodySearch" is intentionally excluded: body search itself is about clothing.
+		// "AnimationStart_BodySearch" is intentionally excluded: body search itself is about clothing, especially in the second part.
 		"AnimationStarting_slacEngagement",
 		"AnimationStart_slacEngagement",
 		"StageStart_slacEngagement",
@@ -863,7 +865,21 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}
 	// When you get a weapons license:  BM-LPO_WeaponLicense_20_Activate
 	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_WeaponLicense_20_Activate") == 0) ) {			
-		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new weapons license.  Now you can (finally) carry your weapons out in the open as you please.");
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new weapons license.  Now you can (finally) carry your weapons out in the open as you please, which everybody else seems to be doing without much of a license, or at least you haven't seen one.  Could it be that you are being played and just harassed by the guards?  But at least you can now carry your weapons in public without being harassed by guards and fined for it.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	// When you get a magic license:  BM-LPO_MagicLicense_20_Activate
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_MagicLicense_20_Activate") == 0) ) {			
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new magic license.  Now you can (finally) use magic in public as you please, which everybody else seems to be doing without much of a license, or at least you haven't seen one.  Could it be that you are being played and just harassed by the guards?  But at least you can now use magic in public without being harassed by guards and fined for it.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	// When you get an armor license:  BM-LPO_ArmorLicense_20_Activate
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_ArmorLicense_20_Activate") == 0) ) {
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new armor license.  Now you can (finally) wear your armor in public as you please, which everybody else seems to be doing without much of a license, or at least you haven't seen one.  Could it be that you are being played and just harassed by the guards?  But at least you can now wear your armor in public without being harassed by guards and fined for it.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -875,7 +891,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_CraftingLicense_20_Activate") == 0) ) {			
-		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new crafting license.  Now you can (finally) craft items in public as you please, which everybody else seems to be doing without much of a license, or at least you haven't seen one.  Could it be that you are being player and just harassed by the guards?  But at least you can now craft items in public without being harassed by guards and fined for it.");
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new crafting license.  Now you can (finally) craft items in public as you please, which everybody else seems to be doing without much of a license, or at least you haven't seen one.  Could it be that you are being played and just harassed by the guards?  But at least you can now craft items in public without being harassed by guards and fined for it.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -883,6 +899,24 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_TradingLicense_20_Activate") == 0) ) {			
 		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new trading license.  Now you can (finally) trade items in other than food or jewelry items, which everybody else seems to be doing all the time without much of a license, or at least you haven't seen one.  Could it be that you are being played and just harassed by the guards?  But at least you can now trade items in public without being harassed by guards and fined for it.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_ClothingLicense_20_Activate") == 0) ) {			
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new clothing license.  Now you can (finally) wear clothing in public, which everybody else seems to be doing all the time without much of a license, or at least you haven't seen one.  Could it be that you are being played and just harassed by the guards?  But at least you can now wear clothing in public without being harassed by guards and fined for it.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_TravelPermit_20_Activate") == 0) ) {			
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new travel permit.  Now you can (finally) travel in and out of town, which everybody else seems to be doing all the time without much of a license, or at least you haven't seen one.  Could it be that you are being played and just harassed by the guards?  But at least you can now travel in and out of town without being harassed by guards and fined for it.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_Insurance_20_Activate") == 0) ) {			
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new life insurance.  You can (finally) go about your business, which everybody else seems to be doing all the time without much of a life insurance policy, or at least you haven't seen one.  Could it be that you are being played and just harassed by the guards?  But at least you can now have your life insurance and can't be harassed by guards and fined over just living.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -896,6 +930,14 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	
+	if ( (std::strcmp(a_event->eventName.c_str() , "_SN_WaterRefill") == 0) ) {			
+		std::string  thought_message = std::format("You just used some water well or similar source to fill up your waterskins.  The supply should last for quite a while.  Tell us how you feel about that.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("_SN_WaterRefill:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+	
+
 
 
 	// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
