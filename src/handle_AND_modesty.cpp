@@ -317,24 +317,24 @@ void handle_hard_change_in_slots_0_to_7()
 
 void handle_AND_modesty::reset_previous_rank_to_current_rank()
 {
-	logger::info("AND-Modesty-Factions:  STARTING TO RESET ALL PREVIOUS-RANKS TO CURRENT-RANKS");
+	logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AND-Modesty-Factions:  STARTING TO RESET ALL PREVIOUS-RANKS TO CURRENT-RANKS");
 	auto* player = RE::PlayerCharacter::GetSingleton();
 	if (!player) {
-		logger::info("AND-Modesty-Factions:  SEVERE ERROR: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
+		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AND-Modesty-Factions:  SEVERE ERROR: IN reset_previous_rank_to_current_rank: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
 		return;
 	}
 	for (std::size_t my_i = 0; my_i < AND_faction_list_sorted.size(); ++my_i) {
 		auto* current_Faction =
 		RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
 		if (!current_Faction) {
-			logger::info("AND-Modesty-Factions:  SEVERE ERROR:  IN reset_previous_rank_to_current_rank: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AND-Modesty-Factions:  SEVERE ERROR:  IN reset_previous_rank_to_current_rank: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
 			continue;
 		}
 		int rank = player->GetFactionRank(current_Faction, true);
 		AND_previous_faction_rank_sorted[my_i] = rank;
 		// logger::info("SUCCESSFULLY QUERIED AND-Modesty-Factions IN INITIALIZATION RUN: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
 	}
-	logger::info("AND-Modesty-Factions:  FINISHED RESETTING ALL PREVIOUS-RANKS TO CURRENT-RANKS");
+	logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AND-Modesty-Factions:  FINISHED RESETTING ALL PREVIOUS-RANKS TO CURRENT-RANKS");
 }
 
 void handle_current_flashing_state()
@@ -406,7 +406,7 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 
 	// Make sure the game is initialized and we don't get confused at game startup.
 	if (AND_previous_faction_rank_sorted[0] == -1) {
-		logger::info("AND-Modesty-Factions:  AND-Ranks are not initialized yet!!  Initialize them and then return for now and for this round!!");
+		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AND-Modesty-Factions:  AND-Ranks are not initialized yet!!  Initialize them and then return for now and for this round!!");
 		reset_previous_rank_to_current_rank();
 		return;
 	}
