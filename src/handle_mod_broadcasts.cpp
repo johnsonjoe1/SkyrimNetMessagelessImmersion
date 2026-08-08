@@ -1,6 +1,7 @@
 #include "log.h"
 #include "SKSE/SKSE.h"
 #include "misc.h"
+#include "handle_yps.h"
 #include "DumpThoughts.h"
 #include <string_view>
 #include <unordered_map>
@@ -557,7 +558,9 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
-
+	if (handle_yps::try_handle_yps_mod_stuff(a_event)) {
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 
 
 
@@ -627,12 +630,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}	
 
 
-	// MOD EVENT:  YPS Thoughts:  Those will be pushed to the background channel.
-	if ( (std::strcmp(a_event->eventName.c_str() , "YPS_ThoughtEvent") == 0)  ) {
-		// std::string  thought_message = std::format(a_event->strArg.c_str());
-		DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(a_event->strArg.c_str());   // this shouldn't be overdone, but hte background code makes sure of that.
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}
+
 	// MOD EVENT:  Generic orgasm start (and end)  [2026-05-21 21:44:52.579] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmStart  StrArg:   NumArg: 0  // [2026-05-21 21:45:00.613] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmEnd  StrArg:   NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "PlayerOrgasmStart") == 0)  ) {
 		// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
@@ -933,13 +931,10 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	if ( (std::strcmp(a_event->eventName.c_str() , "_SN_WaterRefill") == 0) ) {			
 		std::string  thought_message = std::format("You just used some water well or similar source to fill up your waterskins.  The supply should last for quite a while.  Tell us how you feel about that.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-		LillithOnlyBox("_SN_WaterRefill:  " + thought_message);
+		LillithOnlyBox("iNeed - Food, Water and Sleep - Continued:  _SN_WaterRefill:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 	
-
-
-
 	// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
 	if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)  || 
 		(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechCompleted") == 0)  || 
@@ -960,11 +955,12 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}
 	// 	|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)
 	
+
+
+
+	
 	// MORE THINGS TO HANDLE: Name: yps_AddictionBuffChange  StrArg:   NumArg: 6
-
 	// MORE THINGS TO HANDLE: Name: yps_FashionChange  StrArg: FingerNailPolish  NumArg: 0
-
-
 	// MOD EVENT:  YPS initialization:  NOTE:  This is NOT the real handling, it's just capturing these at game startup, which is otherwise annoying
 	if ( (std::strcmp(a_event->eventName.c_str() , "yps_HairStageChange") == 0)  || 
 		(std::strcmp(a_event->eventName.c_str() , "yps_FashionChange") == 0)  || 
