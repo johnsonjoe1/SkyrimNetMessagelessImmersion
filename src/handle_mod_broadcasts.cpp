@@ -288,6 +288,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SeverActions_BrawlChallengeExpired",
 		"SeverActionsNative_SandboxCleanup",
 		"SeverActionsNative_OnArrival",
+		"SeverActions_CampChallenge",
 		
 
 		"SLOA_PlayerArousalUpdated",   // This update message is nice, but there is already a player response for that it seems.

@@ -6,7 +6,9 @@
 #include "DumpThoughts.h"
 #include "handle_AND_modesty.h"
 #include "misc.h"
+#include <algorithm>
 #include <string.h>
+#include <vector>
 
 namespace logger = SKSE::log;
 
@@ -28,6 +30,65 @@ AND_AssCurtain
 bool global_pelvic_curtain_flag = false;
 bool global_chest_curtain_flag = false;
 bool global_ass_curtain_flag = false;
+
+struct CurrentlyWornItemRecord
+{
+	RE::FormID form_id{};
+	RE::TESObjectARMO* armor{nullptr};
+	std::uint32_t slot_mask{0};
+	RE::TESBoundObject* item{nullptr};
+};
+
+static std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
+
+static std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
+
+void refresh_currently_worn_item_records()
+{
+	currently_worn_item_records.clear();
+
+	// For our purposes, the actor is always the player character.
+	RE::Actor* actor = RE::PlayerCharacter::GetSingleton();
+	if (!actor) {
+		return;
+	}
+
+	// Loop through inventory and cache everything currently worn.
+	auto inventory = actor->GetInventory();
+	for (const auto& [item, entry] : inventory)
+	{
+		if (!entry.second->IsWorn()) {
+			continue;
+		}
+
+		auto armor = item->As<RE::TESObjectARMO>();
+		if (!armor) {
+			continue;
+		}
+
+		currently_worn_item_records.push_back(CurrentlyWornItemRecord{
+			.form_id = item->GetFormID(),
+			.armor = armor,
+			.slot_mask = static_cast<std::uint32_t>(armor->GetSlotMask()),
+			.item = item
+		});
+	}
+
+	std::sort(
+		currently_worn_item_records.begin(),
+		currently_worn_item_records.end(),
+		[](const CurrentlyWornItemRecord& lhs, const CurrentlyWornItemRecord& rhs) {
+			return lhs.form_id < rhs.form_id;
+		});
+	currently_worn_item_records.erase(
+		std::unique(
+			currently_worn_item_records.begin(),
+			currently_worn_item_records.end(),
+			[](const CurrentlyWornItemRecord& lhs, const CurrentlyWornItemRecord& rhs) {
+				return lhs.form_id == rhs.form_id;
+			}),
+		currently_worn_item_records.end());
+}
 
 
 
@@ -83,44 +144,31 @@ std::array<std::string, 23> AND_faction_verbalalized_and_sorted = {
 "modesty faction"
 };
 
+
+
+
 void ListWornItems_and_update_global_curtain_flags()
 {
-	// For our purposes, the actor is always the player character.
-	RE::Actor* actor = RE::PlayerCharacter::GetSingleton();
-    if (!actor) {
-        return;
-    }
+	refresh_currently_worn_item_records();
 
 	// By default, the curtain flags are all off.
 	global_pelvic_curtain_flag = false;
 	global_chest_curtain_flag = false;
 	global_ass_curtain_flag = false;
 
-	// Loop through inventory and list everything
-    auto inventory = actor->GetInventory();
+	// Loop through the cached worn-item snapshot and list everything.
     logger::info("Currently worn items:");
-    for (const auto& [item, entry] : inventory)
+	for (const auto& worn_item : currently_worn_item_records)
     {
-        if (!entry.second->IsWorn()) {
-            continue;
-        }
-
-		auto armor = item->As<RE::TESObjectARMO>();
-        if (!armor) {
-            continue;
-        } 
-		
-		auto slots = armor->GetSlotMask();
-        auto form = item;
         logger::info("  {} (FormID {:08X})  on slot 0x{:08X}",
-            form->GetName(),
-            form->GetFormID(),
-            static_cast<std::uint32_t>(slots));
-		PrintSlots(static_cast<std::uint32_t>(slots));
+			worn_item.item->GetName(),
+			worn_item.form_id,
+			worn_item.slot_mask);
+		PrintSlots(worn_item.slot_mask);
 
-		for (std::uint32_t i = 0; i < armor->numKeywords; i++)
+		for (std::uint32_t i = 0; i < worn_item.armor->numKeywords; i++)
 		{
-			auto* keyword = armor->keywords[i];
+			auto* keyword = worn_item.armor->keywords[i];
 			if (!keyword) {
 				continue;
 			}
@@ -159,20 +207,10 @@ void ListWornItems_and_update_global_curtain_flags()
 			}
 		}
     }
+
+	historic_worn_item_records = currently_worn_item_records;
 }
 
-
-std::string RemoveAllOccurrences(std::string str, const std::string& toRemove)
-{
-    if (toRemove.empty()) {
-        return str;
-    }
-    size_t pos = 0;
-    while ((pos = str.find(toRemove, pos)) != std::string::npos) {
-        str.erase(pos, toRemove.length());
-    }
-    return str;
-}
 
 
 // ****************************************************************************************************************
