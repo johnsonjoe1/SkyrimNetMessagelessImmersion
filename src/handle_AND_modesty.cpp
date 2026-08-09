@@ -37,6 +37,7 @@ struct CurrentlyWornItemRecord
 	RE::TESObjectARMO* armor{nullptr};
 	std::uint32_t slot_mask{0};
 	RE::TESBoundObject* item{nullptr};
+	std::vector<RE::BGSKeyword*> keywords;
 };
 
 static std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
@@ -72,6 +73,14 @@ void refresh_currently_worn_item_records()
 			.slot_mask = static_cast<std::uint32_t>(armor->GetSlotMask()),
 			.item = item
 		});
+		auto& record = currently_worn_item_records.back();
+		record.keywords.reserve(armor->numKeywords);
+		for (std::uint32_t i = 0; i < armor->numKeywords; ++i) {
+			auto* keyword = armor->keywords[i];
+			if (keyword) {
+				record.keywords.push_back(keyword);
+			}
+		}
 	}
 
 	std::sort(
@@ -145,7 +154,49 @@ std::array<std::string, 23> AND_faction_verbalalized_and_sorted = {
 };
 
 
+void run_change_report_on_worn_items(
+	const std::vector<CurrentlyWornItemRecord>& current_records,
+	const std::vector<CurrentlyWornItemRecord>& historic_records)
+{
+	auto describe_record = [](const CurrentlyWornItemRecord& record) {
+		if (record.item) {
+			return std::format("{} (FormID {:08X}, slot 0x{:08X})", record.item->GetName(), record.form_id, record.slot_mask);
+		}
+		return std::format("(FormID {:08X}, slot 0x{:08X})", record.form_id, record.slot_mask);
+	};
+	std::string change_report_message = "WORN ITEMS CHANGE REPORT:\n";
+	bool changes_detected = false;
 
+	std::size_t current_index = 0;
+	std::size_t historic_index = 0;
+	while (current_index < current_records.size() || historic_index < historic_records.size())
+	{
+		if (historic_index >= historic_records.size() || (current_index < current_records.size() && current_records[current_index].form_id < historic_records[historic_index].form_id)) {
+			logger::info("WORN ITEMS CHANGE REPORT: ADDED {}", describe_record(current_records[current_index]));
+			change_report_message += "ADDED " + describe_record(current_records[current_index]) + "\n";
+			++current_index;
+			changes_detected = true;
+			continue;
+		}
+
+		if (current_index >= current_records.size() || historic_records[historic_index].form_id < current_records[current_index].form_id) {
+			logger::info("WORN ITEMS CHANGE REPORT: REMOVED {}", describe_record(historic_records[historic_index]));
+			change_report_message += "REMOVED " + describe_record(historic_records[historic_index]) + "\n";
+			++historic_index;
+			changes_detected = true;
+			continue;
+		}
+
+		++current_index;
+		++historic_index;
+	}
+
+	if (changes_detected) {
+		LillithOnlyBox(change_report_message);
+	} else {
+		// do nothing
+	}
+}
 
 void ListWornItems_and_update_global_curtain_flags()
 {
@@ -207,6 +258,8 @@ void ListWornItems_and_update_global_curtain_flags()
 			}
 		}
     }
+
+	run_change_report_on_worn_items(currently_worn_item_records, historic_worn_item_records);
 
 	historic_worn_item_records = currently_worn_item_records;
 }
