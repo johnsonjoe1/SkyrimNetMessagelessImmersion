@@ -121,8 +121,15 @@ void refresh_currently_worn_item_records()
 				record.keywords.push_back(keyword);
 			}
 		}
+		bool full_spam_of_equipment_keywords = true;
+		if (full_spam_of_equipment_keywords) {
+			logger::info("Worn item:  {}", item->GetName());
+			for (const auto* keyword : record.keywords) {
+				logger::info("    Keyword:  {}", keyword->GetFormEditorID());
+			}
+		}
 	}
-
+	
 	std::sort(currently_worn_item_records.begin(), currently_worn_item_records.end(),
 		[](const CurrentlyWornItemRecord& lhs, const CurrentlyWornItemRecord& rhs) {
 			return lhs.form_id < rhs.form_id;

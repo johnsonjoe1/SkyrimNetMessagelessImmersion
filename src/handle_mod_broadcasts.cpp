@@ -324,6 +324,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"AnimationStarting_HelplessFollower",    // This is technical Devious Helplessness / creature stuff, but for followers and currently out of scope.
 
 		"StageEnd_Helpless",    // This is from MOD:  Devious Helplessness.  Stage-end will not be used, so it can be ignored.
+		"Helpless_inventorycheck",   // This is also from Devious Helplessness, but it's just a possibility:  sometimes there is a steal event, but with creatures for example this gets triggered also, but there is nothing of this sort.  Therefore:  We do nothing with just this information.
 
 
 		"AnimationStart_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.

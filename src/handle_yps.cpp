@@ -13,8 +13,6 @@
 namespace logger = SKSE::log;
 bool actually_wearing_heels_according_to_yps_thoughts = false;
 
-
-
 struct ParsedCondition
 {
     std::string name;
@@ -105,21 +103,21 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 	}
 
 	if ( (std::strcmp(a_event->eventName.c_str() , "yps_AddictionBuffChange") == 0) ) {			
-
+		LillithOnlyBox("YPS-AddictionBuffChange event detected.  NO HANDLING AT PRESENT!!!");
 		// For the moment, this shoudl still raise a popup...
-		// return true;
+		return true;
 	}
 
 	if (std::strcmp(a_event->eventName.c_str() , "yps_HairStageChange") == 0) {			
-
+		LillithOnlyBox("YPS-HairStageChange event detected.  NO HANDLING AT PRESENT!!!");
 		// For the moment, this shoudl still raise a popup...
-		// return true;
+		return true;
 	}
 
 	if ( (std::strcmp(a_event->eventName.c_str() , "yps_FashionChange") == 0)  ) {			
-
+		LillithOnlyBox("YPS-FashionChange event detected.  NO HANDLING AT PRESENT!!!");
 		// For the moment, this shoudl still raise a popup...
-		// return true;
+		return true;
 	}
 	return false;
 
