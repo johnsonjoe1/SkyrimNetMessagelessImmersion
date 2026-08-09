@@ -189,6 +189,91 @@ void run_change_report_on_worn_items(
 	}
 }
 
+int get_pelvic_property(const CurrentlyWornItemRecord& worn_item)
+{
+	for (std::uint32_t i = 0; i < worn_item.armor->numKeywords; i++)
+	{
+		auto* keyword = worn_item.armor->keywords[i];
+		if (!keyword) {
+			continue;
+		}
+		// logger::info("      Keyword: {} ({:08X})", 				keyword->GetFormEditorID(), 				keyword->GetFormID());
+		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicCurtain") == 0) ||
+			(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRisk") == 0) ) {
+			return 1;  // just risk, no specific level
+		}
+		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskLow") == 0) ) {			
+			return 2;  // low risk
+		}
+		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskHigh") == 0) ) {			
+			return 3;  // high risk
+		}
+		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskExtreme") == 0) ) {			
+			return 4;  // extreme risk
+		}		
+		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskUltra") == 0) ) {			
+			return 5;  // ultra risk
+		}				
+	}
+	return 0;
+}
+
+int get_chest_property(const CurrentlyWornItemRecord& worn_item)
+{
+	for (std::uint32_t i = 0; i < worn_item.armor->numKeywords; i++)
+	{
+		auto* keyword = worn_item.armor->keywords[i];
+		if (!keyword) {
+			continue;
+		}
+		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestCurtain") == 0) ||
+			(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRisk") == 0)) {
+			return 1;  // just risk, no specific level
+		}
+		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskLow") == 0)) {
+			return 2;  // low risk
+		}
+		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskHigh") == 0)) {
+			return 3;  // high risk
+		}
+		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskExtreme") == 0)) {
+			return 4;  // extreme risk
+		}
+		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskUltra") == 0)) {
+			return 5;  // ultra risk
+		}
+	}
+	return 0;
+}
+
+int get_ass_property(const CurrentlyWornItemRecord& worn_item)
+{
+	for (std::uint32_t i = 0; i < worn_item.armor->numKeywords; i++)
+	{
+		auto* keyword = worn_item.armor->keywords[i];
+		if (!keyword) {
+			continue;
+		}
+		if ((strcmp(keyword->GetFormEditorID(), "AND_AssCurtain") == 0) ||
+			(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRisk") == 0)) {
+			return 1;  // just risk, no specific level
+		}
+		if ((strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskLow") == 0)) {
+			return 2;  // low risk
+		}
+		if ((strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskHigh") == 0)) {
+			return 3;  // high risk
+		}
+		if ((strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskExtreme") == 0)) {
+			return 4;  // extreme risk
+		}
+		if ((strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskUltra") == 0)) {
+			return 5;  // ultra risk
+		}
+	}
+	return 0;
+}
+
 void ListWornItems_and_update_global_curtain_flags()
 {
 	refresh_currently_worn_item_records();
@@ -208,45 +293,17 @@ void ListWornItems_and_update_global_curtain_flags()
 			worn_item.slot_mask);
 		PrintSlots(worn_item.slot_mask);
 
-		for (std::uint32_t i = 0; i < worn_item.armor->numKeywords; i++)
-		{
-			auto* keyword = worn_item.armor->keywords[i];
-			if (!keyword) {
-				continue;
-			}
-			// logger::info("      Keyword: {} ({:08X})", 				keyword->GetFormEditorID(), 				keyword->GetFormID());
-
-			if ( 
-				(strcmp(keyword->GetFormEditorID(), "AND_PelvicCurtain") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRisk") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskLow") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskHigh") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskExtreme") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskUltra") == 0)
-			) {
-				global_pelvic_curtain_flag = true;
-				logger::info("      ======================>Found AND_PelvicFlashRisk keyword, setting global_pelvic_curtain_flag to true.");			}
-			if ( 
-				(strcmp(keyword->GetFormEditorID(), "AND_ChestCurtain") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRisk") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskLow") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskHigh") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskExtreme") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskUltra") == 0)
-			) {
-				global_chest_curtain_flag = true;
-				logger::info("      ======================>Found AND_ChestCurtain keyword, setting global_chest_curtain_flag to true.");			}
-			if (
-				(strcmp(keyword->GetFormEditorID(), "AND_AssCurtain") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRisk") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskLow") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskHigh") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskExtreme") == 0) ||
-				(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskUltra") == 0)
-			) {
-				global_ass_curtain_flag = true;
-				logger::info("      ======================>Found AND_AssCurtain keyword, setting global_ass_curtain_flag to true.");
-			}
+		if (get_pelvic_property(worn_item)>0) {
+			logger::info("      ======================>Found AND_PelvicFlashRisk keyword, setting global_pelvic_curtain_flag to true.");	
+			global_pelvic_curtain_flag = true;
+		}
+		if (get_chest_property(worn_item) > 0) {
+			global_chest_curtain_flag = true;
+			logger::info("      ======================>Found AND_ChestCurtain keyword, setting global_chest_curtain_flag to true.");
+		}
+		if (get_ass_property(worn_item) > 0) {
+			global_ass_curtain_flag = true;
+			logger::info("      ======================>Found AND_AssCurtain keyword, setting global_ass_curtain_flag to true.");
 		}
     }
 
