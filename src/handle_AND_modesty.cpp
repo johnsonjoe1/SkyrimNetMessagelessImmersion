@@ -406,8 +406,7 @@ void handle_AND_modesty::reset_previous_rank_to_current_rank()
 		return;
 	}
 	for (std::size_t my_i = 0; my_i < AND_faction_list_sorted.size(); ++my_i) {
-		auto* current_Faction =
-		RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
+		auto* current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
 		if (!current_Faction) {
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AND-Modesty-Factions:  SEVERE ERROR:  IN reset_previous_rank_to_current_rank: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
 			continue;
