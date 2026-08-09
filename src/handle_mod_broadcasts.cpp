@@ -568,7 +568,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  Name: DeviousEventTrip and Fall  StrArg: Beea  NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventTrip and Fall") == 0) ||  (std::strcmp(a_event->eventName.c_str() , "DeviousEventLeg Cuffs Trip Over") == 0) ) {
 		// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
-		std::string  thought_message = std::format("YOU, the player, just tripped over your own feet, because you are wearing these devious bondage boots or leg cuffs that you are locked into and cannot take off.  What are you thinking now based on this? ", a_event->strArg.c_str());
+		std::string  thought_message = std::format("YOU, the player, just tripped over your own feet, because you are wearing these devious bondage boots or leg cuffs that you are locked into and cannot take off.  What are you thinking now based on this?  Be sure to mention that you just tripped or fell BECAUSE of these bondage boots or leg cuffs that you are forced to wear.", a_event->strArg.c_str());
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}

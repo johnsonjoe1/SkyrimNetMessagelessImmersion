@@ -35,63 +35,6 @@ std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
 
 std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
 
-void refresh_currently_worn_item_records()
-{
-	currently_worn_item_records.clear();
-
-	// For our purposes, the actor is always the player character.
-	RE::Actor* actor = RE::PlayerCharacter::GetSingleton();
-	if (!actor) {
-		return;
-	}
-
-	// Loop through inventory and cache everything currently worn.
-	auto inventory = actor->GetInventory();
-	for (const auto& [item, entry] : inventory)
-	{
-		if (!entry.second->IsWorn()) {
-			continue;
-		}
-
-		auto armor = item->As<RE::TESObjectARMO>();
-		if (!armor) {
-			continue;
-		}
-
-		currently_worn_item_records.push_back(CurrentlyWornItemRecord{
-			.form_id = item->GetFormID(),
-			.armor = armor,
-			.slot_mask = static_cast<std::uint32_t>(armor->GetSlotMask()),
-			.item = item
-		});
-		auto& record = currently_worn_item_records.back();
-		record.keywords.reserve(armor->numKeywords);
-		for (std::uint32_t i = 0; i < armor->numKeywords; ++i) {
-			auto* keyword = armor->keywords[i];
-			if (keyword) {
-				record.keywords.push_back(keyword);
-			}
-		}
-	}
-
-	std::sort(
-		currently_worn_item_records.begin(),
-		currently_worn_item_records.end(),
-		[](const CurrentlyWornItemRecord& lhs, const CurrentlyWornItemRecord& rhs) {
-			return lhs.form_id < rhs.form_id;
-		});
-	currently_worn_item_records.erase(
-		std::unique(
-			currently_worn_item_records.begin(),
-			currently_worn_item_records.end(),
-			[](const CurrentlyWornItemRecord& lhs, const CurrentlyWornItemRecord& rhs) {
-				return lhs.form_id == rhs.form_id;
-			}),
-		currently_worn_item_records.end());
-}
-
-
-
 std::array<std::string, 23> AND_faction_list_sorted = {
 "AND_ShowingAssFaction",       // 0
 "AND_ShowingChestFaction",     // 1
@@ -144,58 +87,64 @@ std::array<std::string, 23> AND_faction_verbalalized_and_sorted = {
 "modesty faction"
 };
 
-
-void run_change_report_on_worn_items(
-	const std::vector<CurrentlyWornItemRecord>& current_records,
-	const std::vector<CurrentlyWornItemRecord>& historic_records)
+void refresh_currently_worn_item_records()
 {
-	auto describe_record = [](const CurrentlyWornItemRecord& record) {
-		if (record.item) {
-			return std::format("{} (FormID {:08X}, slot 0x{:08X})", record.item->GetName(), record.form_id, record.slot_mask);
-		}
-		return std::format("(FormID {:08X}, slot 0x{:08X})", record.form_id, record.slot_mask);
-	};
-	std::string change_report_message = "WORN ITEMS CHANGE REPORT:\n";
-	bool changes_detected = false;
-
-	std::size_t current_index = 0;
-	std::size_t historic_index = 0;
-	while (current_index < current_records.size() || historic_index < historic_records.size())
+	logger::info("ENTERING:  refresh_currently_worn_item_records");
+	currently_worn_item_records.clear();
+	// For our purposes, the actor is always the player character.
+	RE::Actor* actor = RE::PlayerCharacter::GetSingleton();
+	if (!actor) {
+		return;
+	}
+	// Loop through inventory and cache everything currently worn.
+	auto inventory = actor->GetInventory();
+	for (const auto& [item, entry] : inventory)
 	{
-		if (historic_index >= historic_records.size() || (current_index < current_records.size() && current_records[current_index].form_id < historic_records[historic_index].form_id)) {
-			logger::info("WORN ITEMS CHANGE REPORT: ADDED {}", describe_record(current_records[current_index]));
-			change_report_message += "ADDED " + describe_record(current_records[current_index]) + "\n";
-			++current_index;
-			changes_detected = true;
+		if (!entry.second->IsWorn()) {
 			continue;
 		}
-
-		if (current_index >= current_records.size() || historic_records[historic_index].form_id < current_records[current_index].form_id) {
-			logger::info("WORN ITEMS CHANGE REPORT: REMOVED {}", describe_record(historic_records[historic_index]));
-			change_report_message += "REMOVED " + describe_record(historic_records[historic_index]) + "\n";
-			++historic_index;
-			changes_detected = true;
+		auto armor = item->As<RE::TESObjectARMO>();
+		if (!armor) {
 			continue;
 		}
-
-		++current_index;
-		++historic_index;
+		currently_worn_item_records.push_back(CurrentlyWornItemRecord{
+			.form_id = item->GetFormID(),
+			.armor = armor,
+			.slot_mask = static_cast<std::uint32_t>(armor->GetSlotMask()),
+			.item = item
+		});
+		auto& record = currently_worn_item_records.back();
+		record.keywords.reserve(armor->numKeywords);
+		for (std::uint32_t i = 0; i < armor->numKeywords; ++i) {
+			auto* keyword = armor->keywords[i];
+			if (keyword) {
+				record.keywords.push_back(keyword);
+			}
+		}
 	}
 
-	if (changes_detected) {
-		LillithOnlyBox(change_report_message);
-	} else {
-		// do nothing
-	}
+	std::sort(currently_worn_item_records.begin(), currently_worn_item_records.end(),
+		[](const CurrentlyWornItemRecord& lhs, const CurrentlyWornItemRecord& rhs) {
+			return lhs.form_id < rhs.form_id;
+		});
+	currently_worn_item_records.erase(
+		std::unique(
+			currently_worn_item_records.begin(),
+			currently_worn_item_records.end(),
+			[](const CurrentlyWornItemRecord& lhs, const CurrentlyWornItemRecord& rhs) {
+				return lhs.form_id == rhs.form_id;
+			}),
+		currently_worn_item_records.end());
 }
 
 int get_pelvic_property(const CurrentlyWornItemRecord& worn_item)
 {
+	logger::info("ENTERING:  get_pelvic_property");
 	for (std::uint32_t i = 0; i < worn_item.armor->numKeywords; i++)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
 		if (!keyword) {
-			continue;
+			return 0;
 		}
 		// logger::info("      Keyword: {} ({:08X})", 				keyword->GetFormEditorID(), 				keyword->GetFormID());
 		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicCurtain") == 0) ||
@@ -220,11 +169,12 @@ int get_pelvic_property(const CurrentlyWornItemRecord& worn_item)
 
 int get_chest_property(const CurrentlyWornItemRecord& worn_item)
 {
+	logger::info("ENTERING:  get_chest_property");
 	for (std::uint32_t i = 0; i < worn_item.armor->numKeywords; i++)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
 		if (!keyword) {
-			continue;
+			return 0;
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestCurtain") == 0) ||
 			(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRisk") == 0)) {
@@ -248,11 +198,12 @@ int get_chest_property(const CurrentlyWornItemRecord& worn_item)
 
 int get_ass_property(const CurrentlyWornItemRecord& worn_item)
 {
+	logger::info("ENTERING:  get_ass_property");
 	for (std::uint32_t i = 0; i < worn_item.armor->numKeywords; i++)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
 		if (!keyword) {
-			continue;
+			return 0;
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_AssCurtain") == 0) ||
 			(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRisk") == 0)) {
@@ -274,8 +225,96 @@ int get_ass_property(const CurrentlyWornItemRecord& worn_item)
 	return 0;
 }
 
+void trigger_immediate_message_if_flashing_item_was_added(CurrentlyWornItemRecord my_record)
+{
+	logger::info("ENTERING:  trigger_immediate_message_if_flashing_item_was_added");
+	// On equipping any flashing item, we immediately report that to the player.
+	if ( (get_pelvic_property(my_record)+get_chest_property(my_record)+get_ass_property(my_record)) > 0 ) 
+	{
+		// We have a flashing item.
+		bool previous_flash = false;
+		std::string flash_item_message = std::format("The equipment item {} you just put on is flashing ", my_record.item->GetName());
+		if (get_pelvic_property(my_record)) {
+			flash_item_message += " your pelvic area at least. ";
+			previous_flash = true;
+		}
+		if (get_chest_property(my_record)) {
+			if (previous_flash) {
+				flash_item_message += "And it is also flashing ";
+			}
+			flash_item_message += " your chest area at least. ";
+			previous_flash = true;
+		}
+		if (get_ass_property(my_record)) {
+			if (previous_flash) {
+				flash_item_message += "And it is also flashing ";
+			}
+			flash_item_message += " your ass area at least. ";
+			previous_flash = true;
+		}
+		flash_item_message += " The player doesn't know which item you are speaking about, so be sure to mention the name of the item in your response and also describe the item's flashing property, not the general state of flashing your private areas. You can add that on top, but in this case, the item is what it's all about.  The item is probably so loose fitting or flapping around so much, that the flashing chance happens.";
+		LillithOnlyBox(flash_item_message);
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(flash_item_message);
+		// continue;
+	}
+}
+
+void run_change_report_on_worn_items(
+	const std::vector<CurrentlyWornItemRecord>& current_records,
+	const std::vector<CurrentlyWornItemRecord>& historic_records)
+{
+	logger::info("ENTERING:  run_change_report_on_worn_items");
+	auto describe_record = [](const CurrentlyWornItemRecord& record) {
+		if (record.item) {
+			return std::format("{} (FormID {:08X}, slot 0x{:08X})", record.item->GetName(), record.form_id, record.slot_mask);
+		}
+		return std::format("(FormID {:08X}, slot 0x{:08X})", record.form_id, record.slot_mask);
+	};
+	std::string change_report_message = "WORN ITEMS CHANGE REPORT:\n";
+	bool changes_detected = false;
+
+	std::size_t current_index = 0;
+	std::size_t historic_index = 0;
+
+	while (current_index < current_records.size() )
+	{
+		const bool current_record_exists_in_history = std::any_of(historic_records.begin(), historic_records.end(), [&](const CurrentlyWornItemRecord& historic_record) {
+			return historic_record.form_id == current_records[current_index].form_id;
+		});
+		if (!current_record_exists_in_history)
+		{
+			logger::info("WORN ITEMS CHANGE REPORT: ADDED {}", describe_record(current_records[current_index]));
+			change_report_message += "ADDED " + describe_record(current_records[current_index]) + "\n";
+			changes_detected = true;
+			trigger_immediate_message_if_flashing_item_was_added(current_records[current_index]);
+		}
+		++current_index;		
+	}
+
+	while (historic_index < historic_records.size())
+	{
+		const bool historic_record_exists_in_current_list = std::any_of(current_records.begin(), current_records.end(), [&](const CurrentlyWornItemRecord& current_record) {
+			return current_record.form_id == historic_records[historic_index].form_id;
+		});
+		if (!historic_record_exists_in_current_list)
+		{
+			logger::info("WORN ITEMS CHANGE REPORT: REMOVED {}", describe_record(historic_records[historic_index]));
+			change_report_message += "REMOVED " + describe_record(historic_records[historic_index]) + "\n";
+			changes_detected = true;
+			// trigger_immediate_message_if_flashing_item_was_added(current_records[current_index]);
+		}
+		++historic_index;
+	}
+
+	if (changes_detected) {
+		LillithOnlyBox(change_report_message);
+	} 
+	logger::info("LEAVING:  run_change_report_on_worn_items");
+}
+
 void ListWornItems_and_update_global_curtain_flags()
 {
+	logger::info("ENTERING:  ListWornItems_and_update_global_curtain_flags");
 	refresh_currently_worn_item_records();
 
 	// By default, the curtain flags are all off.
