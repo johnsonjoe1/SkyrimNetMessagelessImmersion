@@ -848,7 +848,6 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// 1.  BM-LPO_ViolationFound
 	// 2.  BM-LPO_BountyStart  (4 seconds later)
 	// 3.  BM-LPO_BountyEnd  (30 seconds later when running away from the guards)
-	// MOD EVENT:  YPS initialization:  NOTE:  This is NOT the real handling, it's just capturing these at game startup, which is otherwise annoying
 	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_ViolationFound") == 0) ) {			
 		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, can see a guard approaching you. They want to catch you and give you a fine for some ridiculous license regulation or maybe even throw you in jail.  Announce that they are coming for you with your response, so that the player is alerted to the situation, and maybe even explain, that it is probably because of license regulation, as the player might otherwise not understand what is going on.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
@@ -856,9 +855,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyStart") == 0)  || 
-		(std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyEnd") == 0)  || 
-		(std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyStart") == 0) ) {			
-
+		(std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyEnd") == 0) ) {			
 		// We do nothing here, on purpose for now, since the Violation-Found event should already be enough.
 		return;
 	}
@@ -960,23 +957,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 
 	
-	// MORE THINGS TO HANDLE: Name: yps_AddictionBuffChange  StrArg:   NumArg: 6
-	// MORE THINGS TO HANDLE: Name: yps_FashionChange  StrArg: FingerNailPolish  NumArg: 0
-	// MOD EVENT:  YPS initialization:  NOTE:  This is NOT the real handling, it's just capturing these at game startup, which is otherwise annoying
-	if ( (std::strcmp(a_event->eventName.c_str() , "yps_HairStageChange") == 0)  || 
-		(std::strcmp(a_event->eventName.c_str() , "yps_FashionChange") == 0)  || 
-		(std::strcmp(a_event->eventName.c_str() , "yps_AddictionBuffChange") == 0) ) {			
 
-		// Let's also check, if it was player thoughts or player diagloge
-		
-		SKSE::log::info("WE JUST CHECKED AND FOUND {} seconds since game load.", DumpThoughts::seconds_since_game_load());
-		if (DumpThoughts::seconds_since_game_load() < 180) {
-			
-			// This is just the initial setup of the YPS mod, which we don't care about.
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		}
-		// otherwise:  Mention this unhandled mod event, as usual.
-	}
 
 
 

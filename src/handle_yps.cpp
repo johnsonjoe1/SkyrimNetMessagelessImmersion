@@ -110,7 +110,6 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		// return true;
 	}
 
-
 	if (std::strcmp(a_event->eventName.c_str() , "yps_HairStageChange") == 0) {			
 
 		// For the moment, this shoudl still raise a popup...
@@ -123,6 +122,7 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		// return true;
 	}
 	return false;
+
 }
 
 
