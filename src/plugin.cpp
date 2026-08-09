@@ -328,6 +328,8 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		//  DumpThoughts::reset_last_game_load_or_reload_timestamp();	
 		//  CRASHING AT THIS CALL POINT:   handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
 		handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
+		refresh_currently_worn_item_records();
+		historic_worn_item_records = currently_worn_item_records;  // We eliminate any fake changes due to game load or new game
 		break;
 	case SKSE::MessagingInterface::kPreLoadGame:
 		// DANGER HERE:  The player name may not be availabe.  This might crash!!	
@@ -337,11 +339,15 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		handle_AND_modesty::reset_previous_rank_to_current_rank();
 		handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
+		refresh_currently_worn_item_records();
+		historic_worn_item_records = currently_worn_item_records;  // We eliminate any fake changes due to game load or new game
         break;
 	case SKSE::MessagingInterface::kNewGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		handle_AND_modesty::reset_previous_rank_to_current_rank();
 		handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
+		refresh_currently_worn_item_records();
+		historic_worn_item_records = currently_worn_item_records;  // We eliminate any fake changes due to game load or new game
 		break;
 	};
 }

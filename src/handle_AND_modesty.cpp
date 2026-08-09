@@ -31,18 +31,9 @@ bool global_pelvic_curtain_flag = false;
 bool global_chest_curtain_flag = false;
 bool global_ass_curtain_flag = false;
 
-struct CurrentlyWornItemRecord
-{
-	RE::FormID form_id{};
-	RE::TESObjectARMO* armor{nullptr};
-	std::uint32_t slot_mask{0};
-	RE::TESBoundObject* item{nullptr};
-	std::vector<RE::BGSKeyword*> keywords;
-};
+std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
 
-static std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
-
-static std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
+std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
 
 void refresh_currently_worn_item_records()
 {
