@@ -7,6 +7,7 @@
 #include "handle_SL_Survival.h"
 #include <string_view>
 #include <unordered_set>
+#include <vector>
 
 namespace logger = SKSE::log;
 
@@ -65,7 +66,7 @@ std::string_view ExtractCreatureNameFromEffectName(std::string_view effect_name)
 
 bool is_known_irrelevant_magic_effect(std::string base_name)
 {
-	static const std::array<std::string, 47> irrelevant_effect_list = {
+	static const std::vector<std::string> irrelevant_effect_list = {
 		"RaceMenuHH Scale Effect"   , 
 		"Consume Food Portion"   , 
 		"Automate Hunger Script"  ,
@@ -113,6 +114,12 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"BM_ME_HostTravelPermit",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 		"BM_ME_HostWeaponLicense",     // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 		"BM_ME_HostWhoreLicense",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+
+		"Muzzle Gag Ding-a-Ling Sounds Slow",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
+		"Muzzle Gag Ding-a-Ling Sounds Medium",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
+		"Muzzle Gag Ding-a-Ling Sounds Fast",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
+		"Drool",   // This is from UD/DD/ZAD and from some gag, and COULD be used later.
+
 
 		"Quest Start Routine",  // This is from Mod Sleep-in-Lingerie, and startup/initialization of the Mod.
 

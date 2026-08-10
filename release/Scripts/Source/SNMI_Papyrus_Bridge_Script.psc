@@ -264,7 +264,6 @@ function push_all_YPS_variables_to_the_plugin()
 
 	float yps_AddictionLevel = StorageUtil.GetIntValue(None, "yps_AddictionLevel") ; current Fashion Addiction level (0-11)
 	float yps_AddictionBuff = StorageUtil.GetIntValue(None, "yps_AddictionBuff")   ; level of current Fashion Addiction buff
-
 	float yps_HeelsWorn = StorageUtil.GetIntValue(None, "ypsHeelsWorn")            ;
 
 	SNMI_Native.set_yps_AddictionLevel(yps_AddictionLevel)
