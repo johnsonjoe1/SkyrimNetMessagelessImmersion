@@ -99,25 +99,57 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 	if ( (std::strcmp(a_event->eventName.c_str() , "YPS_ThoughtEvent") == 0)  ) {
 		// std::string  thought_message = std::format(a_event->strArg.c_str());
 		DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(a_event->strArg.c_str());   // this shouldn't be overdone, but the background code makes sure of that.
-		return true;  // In this case it really was a YPS event and that means no further processing necessary in the main mod boadcast module.
+		return false;  // In this case it really was a YPS event and that means no further processing necessary in the main mod boadcast module.
 	}
 
 	if ( (std::strcmp(a_event->eventName.c_str() , "yps_AddictionBuffChange") == 0) ) {			
 		LillithOnlyBox("YPS-AddictionBuffChange event detected.  NO HANDLING AT PRESENT!!!");
 		// For the moment, this shoudl still raise a popup...
-		return true;
+		return false;
 	}
 
 	if (std::strcmp(a_event->eventName.c_str() , "yps_HairStageChange") == 0) {			
+		SKSE::log::info("yps_HairStageChange event detected.");
 		LillithOnlyBox("YPS-HairStageChange event detected.  NO HANDLING AT PRESENT!!!");
 		// For the moment, this shoudl still raise a popup...
+		return false;
+	}
+
+	if (std::strcmp(a_event->eventName.c_str() , "yps_ArmpitHairStageChange") == 0) {			
+		SKSE::log::info("YPS-ArmpitHairStageChange event detected.");
+		if (a_event->numArg == 0) {
+			std::string final_thought_string = std::format("YOU, the player, just noticed, that your armpit hair is completely gone, probably because you shaved it, which is MUCH more fashionable for a woman than having armpit hair.  Be sure to mention your armpit hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the armpit hair situation makes you feel.");
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;
+		} else {
+			std::string final_thought_string = std::format("YOU, the player, just noticed, that your armpit hair has grown even more.  Out of the 5 stages from 0 = shaved to 5 = fully grown, you have now reached stage {}.  Describe the new state of your armpit hair in your response.  Be sure to mention armpit hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the armpit hair situation makes you feel.", a_event->numArg);
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+		}
 		return true;
 	}
+	
+	if (std::strcmp(a_event->eventName.c_str() , "yps_PubicHairStageChange") == 0) {			
+		SKSE::log::info("YPS-PubicHairStageChange event detected.");
+		if (a_event->numArg == 0) {
+			std::string final_thought_string = std::format("YOU, the player, just noticed, that your pubic hair is completely gone, probably because you shaved it, which is MUCH more fashionable for a woman than having pubic hair.  Be sure to mention your pubic hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the pubic hair situation makes you feel.");
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;
+		} else {
+			std::string final_thought_string = std::format("YOU, the player, just noticed, that your pubic hair has grown even more.  Out of the 5 stages from 0 = shaved to 5 = fully grown, you have now reached stage {}.  Describe the new state of your pubic hair in your response.  Be sure to mention pubic hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the pubic hair situation makes you feel.", a_event->numArg);
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;
+		}
+		return true;
+	}	
+
+
+
 
 	if ( (std::strcmp(a_event->eventName.c_str() , "yps_FashionChange") == 0)  ) {			
 		LillithOnlyBox("YPS-FashionChange event detected.  NO HANDLING AT PRESENT!!!");
 		// For the moment, this shoudl still raise a popup...
-		return true;
+		return false;
 	}
 	return false;
 
