@@ -474,6 +474,31 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
+/*-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:419] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:420] Effect REMOVED on Lillith | UID=39
+[2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:423] Base name: Covered In Cum | Base ptr: 0x1d03d86cb80 | Base-FormID: 9041477 | Base-Form Type: 18   (This means: MGEF) 
+[2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:424] base-Effect EDID: SexLabCumVaginalEffect | Source ptr: 0x1d03d723600  |  Caster: Lillith 
+[2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:428] Magnitude: 0 | Duration: 0
+[2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:431] Source name: Sexual Encounter | Source FormID: 9041478 | Source EDID: SexLabCumVaginalSpell 
+[2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:437] Form LookupByID 9041477 found: Covered In Cum*/
+	if (base && ( (std::strcmp(base_name, "Covered In Cum") == 0) && (std::strcmp(base->GetFormEditorID(), "SexLabCumVaginalEffect") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for Covered In Cum/SexLabCumVaginalEffect effect application!");
+			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, now have fresh cum dripping from your vagina.  This is so humiliating and disgusting. Say as much in your response and be sure to mention that his sperm is now oozing out of your vagina.  This event is so important, that you can elaborate in many words about your desperation here.");
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+		} else {
+			SKSE::log::info("Event handler for Covered In Cum/SexLabCumVaginalEffect effect removal!");
+			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, had fresh cum dripping from your vagina, up until now.  This was so humiliating and disgusting.  But now the cum dripping has stopped.  It probably all oozed out now.  Say as much in your response and be sure to mention that his sperm is stopped oozing out of your vagina now.  It is a little bit of a relief.  This event is so important, that you can elaborate in many words about your desperation here.");
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+
+
 
 
 	//  CODE-MARKER:  THIS IS THE ENTRY POINT FOR MORE ACTIVE MAGIC EFFECTS TO BE HANDLED.
