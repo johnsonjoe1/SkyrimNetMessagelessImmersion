@@ -11,6 +11,8 @@
 
 namespace logger = SKSE::log;
 
+static auto last_drool_thought_timestamp = std::chrono::steady_clock::now();
+
 std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Stomach Rot",
     "Food Poisoning"
@@ -415,6 +417,36 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		//  The REMOVAL happens immediately afterwards and doesn't need to be mentioned again.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
+
+/*[2026-08-09 13:37:08.084] [log] [info] [handle_active_magic_effect_changes.cpp:419] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-08-09 13:37:08.084] [log] [info] [handle_active_magic_effect_changes.cpp:420] Effect APPLIED on Lillith | UID=42
+[2026-08-09 13:37:08.084] [log] [info] [handle_active_magic_effect_changes.cpp:423] Base name: Drool | Base ptr: 0x1d0424ac2c0 | Base-FormID: 2415A4F2 | Base-Form Type: 18   (This means: MGEF) 
+[2026-08-09 13:37:08.084] [log] [info] [handle_active_magic_effect_changes.cpp:424] base-Effect EDID: UD_ZAZDrool_ME | Source ptr: 0x1d042c4f200  |  Caster: Lillith 
+[2026-08-09 13:37:08.084] [log] [info] [handle_active_magic_effect_changes.cpp:428] Magnitude: 3 | Duration: 125
+[2026-08-09 13:37:08.084] [log] [info] [handle_active_magic_effect_changes.cpp:431] Source name: Drool | Source FormID: 2415A4F4 | Source EDID: UD_ZAZDroolSpell 
+[2026-08-09 13:37:08.084] [log] [info] [handle_active_magic_effect_changes.cpp:437] Form LookupByID 2415A4F2 found: Drool*/
+	if (base && ( (std::strcmp(base_name, "Drool") == 0) ) )   // We already know, that this is about the player at this point, so no need to double-check!
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for Drool effect application!");
+
+			// We implement a cooldown here, just to be safe.
+			if (cooldown_has_passed(last_drool_thought_timestamp, 180))  // 180 seconds = 3 minutes cooldown
+			{
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, are now drooling.  This is so humiliating.  It's probably because of the gag you are wearing or something similar.  In your response, you should cry out in desperation, that you are drooling uncontrollably.  This event is so important, that you can elaborate in many words about your desperation here.")); //  + standard_thought_instruction;				
+				last_drool_thought_timestamp = std::chrono::steady_clock::now();
+			} else {
+				SKSE::log::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> But the cooldown in Event handler for Drool effect application hasn't passed yet!");
+				return;
+			}
+		} 
+		//  The REMOVAL happens immediately afterwards and doesn't need to be mentioned again.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+
+
+
 
 	//  CODE-MARKER:  THIS IS THE ENTRY POINT FOR MORE ACTIVE MAGIC EFFECTS TO BE HANDLED.
 

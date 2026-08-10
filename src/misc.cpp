@@ -11,6 +11,15 @@ std::string final_lillith_message;
 static std::string current_animation_status = "not_in_a_scene";   // by default, we assume no SL scene is going on.
 static auto last_disablement_timestamp = std::chrono::steady_clock::now();
 
+
+bool cooldown_has_passed(std::chrono::steady_clock::time_point last_timestamp, int cooldown_seconds)
+{
+	auto now = std::chrono::steady_clock::now();
+	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_timestamp);
+	return runtime.count() >= cooldown_seconds;
+}
+
+
 void handle_timeout_for_stale_scenes() {
 
 	if (current_animation_status == "not_in_a_scene") {

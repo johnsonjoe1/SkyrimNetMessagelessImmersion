@@ -100,6 +100,10 @@ namespace
 		return true;
 	}
 
+
+
+
+	
 	bool try_handle_device_removed_event(const SKSE::ModCallbackEvent* a_event)
 	{
 		static const std::unordered_map<std::string_view, std::string_view> removed_device_thoughts = {

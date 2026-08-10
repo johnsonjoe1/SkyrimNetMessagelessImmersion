@@ -9,3 +9,6 @@ bool player_is_in_a_SL_scene();
 void handle_timeout_for_stale_scenes();
 
 void PrintSlots(std::uint32_t mask);
+
+bool cooldown_has_passed(std::chrono::steady_clock::time_point last_timestamp, int cooldown_seconds);
+    
