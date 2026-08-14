@@ -38,7 +38,7 @@ bool DumpThoughts::too_early_after_game_load()
 	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_game_load_or_reload_timestamp);
 	SKSE::log::info("Time since last game load or reload: {} seconds", runtime.count());
 
-	const int minimum_time_since_last_game_load_or_reload = 20;  // in seconds 
+	const int minimum_time_since_last_game_load_or_reload = 5;  // 20;  // in seconds 
 
 	// We make the timeout again dependend on the player name
 	//if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
