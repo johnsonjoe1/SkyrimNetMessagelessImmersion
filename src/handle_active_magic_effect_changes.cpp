@@ -498,7 +498,31 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
-
+	/*[2026-08-14 16:40:34.172] [log] [info] [handle_active_magic_effect_changes.cpp:511] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-08-14 16:40:34.172] [log] [info] [handle_active_magic_effect_changes.cpp:512] Effect APPLIED on Lillith | UID=31
+[2026-08-14 16:40:34.172] [log] [info] [handle_active_magic_effect_changes.cpp:515] Base name: Tears | Base ptr: 0x1643d92cb80 | Base-FormID: 2415A4EF | Base-Form Type: 18   (This means: MGEF) 
+[2026-08-14 16:40:34.172] [log] [info] [handle_active_magic_effect_changes.cpp:516] base-Effect EDID: UD_ZAZTears_ME | Source ptr: 0x1643e03f300  |  Caster: Lillith 
+[2026-08-14 16:40:34.172] [log] [info] [handle_active_magic_effect_changes.cpp:520] Magnitude: 3 | Duration: 50
+[2026-08-14 16:40:34.172] [log] [info] [handle_active_magic_effect_changes.cpp:523] Source name: Tears | Source FormID: 2415A4F0 | Source EDID: UD_ZAZTearsSpell 
+[2026-08-14 16:40:34.172] [log] [info] [handle_active_magic_effect_changes.cpp:529] Form LookupByID 2415A4EF found: Tears
+*/
+	if (base && ( (std::strcmp(base_name, "Tears") == 0) && (std::strcmp(base->GetFormEditorID(), "UD_ZAZTearsSpell") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for Tears effect application!");
+			std::string final_thought_string = std::format("After the emotional abuse you just felt, you feel something watery drip down your cheeks.  You ask yourself:  Oh my god, could this be tears?  Am I crying?  Say as much in your response and be sure to mention that you think it's tears rolling down your cheeks.  This event is so important, that you can elaborate in many words about your desperation here.");
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+		} else {
+			// When the tears have stopped, that isn't such a big issue to make an annoucement from that.  So we do nothing in this case.
+			SKSE::log::info("Event handler for Tears effect removal!");
+			std::string final_thought_string = std::format("After the emotional abuse you just felt, the tears on your cheeks have stopped.  You take a moment to compose yourself.  Say as much in your response and be sure to mention that the tears have stopped.  This event is so important, that you can elaborate in many words about your desperation here.");
+			// LillithOnlyBox(final_thought_string);
+			// DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
 
 
 	//  CODE-MARKER:  THIS IS THE ENTRY POINT FOR MORE ACTIVE MAGIC EFFECTS TO BE HANDLED.
