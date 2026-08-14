@@ -111,7 +111,7 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 	if (std::strcmp(a_event->eventName.c_str() , "yps_HairStageChange") == 0) {			
 		SKSE::log::info("yps_HairStageChange event detected.");
 		LillithOnlyBox("YPS-HairStageChange event detected.  NO HANDLING AT PRESENT!!!");
-		// For the moment, this shoudl still raise a popup...
+		// For the moment, this should still raise a popup...
 		return false;
 	}
 
