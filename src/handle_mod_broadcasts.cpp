@@ -938,6 +938,37 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 	
+	// Maybe the player tried to access inventory or magic menu, but was prevented from doing so by Unforgiving Devices to enhance immersion and frustration.
+	// We comment accordingly to enhance player experince.
+	/*[2026-08-14 17:08:20.783] [log] [info] [handle_mod_broadcasts.cpp:547] MOD EVENT:  Name: ''DDUDNG_Event_Hotkey_captured_and_stopped''  StrArg: ''Find the hotkey in the number argument below''  NumArg: 23
+	[2026-08-14 17:08:20.783] [log] [info] [handle_mod_broadcasts.cpp:978] An unhandled mod-event was discovered: MOD EVENT:  Name: DDUDNG_Event_Hotkey_captured_and_stopped  StrArg: Find the hotkey in the number argument below  NumArg: 23  */	
+	if ( (std::strcmp(a_event->eventName.c_str() , "DDUDNG_Event_Hotkey_captured_and_stopped") == 0) ) {			
+		std::string  thought_message;	
+		if (a_event->numArg == 23) {
+			// This is the hotkey for opening the inventory menu, but it was captured and stopped by Unforgiving Devices.
+			// We comment accordingly to enhance player experince.
+			thought_message = std::format("The player just tried to use a hotkey to access your inventory, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the PC should explain to the player in first person, that you can't access the stuff in your inventory, because of the heavy bondage and that it's impossible to reach your gear now.");
+		}
+		else if (a_event->numArg == 15) {
+			// This is the hotkey for opening the magic menu, but it was captured and stopped by Unforgiving Devices.
+			// We comment accordingly to enhance player experince.
+			thought_message = std::format("The player just tried to use a hotkey to access your magic menu, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the PC should explain to the player in first person, that you can't access your magic and can't do magic stuff now as long as you are bound like you are now.");
+		}
+		else if (a_event->numArg == 16) {
+			// This is the hotkey for opening the quick access menu, but it was captured and stopped by Unforgiving Devices.
+			// We comment accordingly to enhance player experince.
+			thought_message = std::format("The player just tried to use a hotkey to access your quick access menu, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the PC should explain to the player in first person, that you can't access your weapons or spells anas long as you are bound like you are now.");
+		}		
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("Unforgiving Devices:  DDUDNG_Event_Hotkey_captured_and_stopped:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
+
+
+
+
+
 	// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
 	if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)  || 
 		(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechCompleted") == 0)  || 
