@@ -86,6 +86,14 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 		if (!fame.global) {
 			fame.global = RE::TESDataHandler::GetSingleton()->LookupForm<RE::TESGlobal>( fame.formID, "SLSF Reloaded.esp");
 			SKSE::log::info("NEW+NEW+NEW+NEW:   WE HAD TO LOOK UP THE POINTER FOR SLSF- GLOBAL:  {}", fame.name);
+
+			// Extra safety:  If that pointer is still null, then the SLSF mod is maybe not even installed.  We should
+			// exit right away and not change anything else.
+			if (!fame.global) {
+				SKSE::log::info("SLSF- GLOBAL:  {}  is STILL NULL after lookup.  This means that the SLSF mod is maybe not even installed.  Not a required.  We just exit fame handling quietly.", fame.name);
+				return;
+			}
+			
 			// In this case (game probably), we assign the current value and previous value as well, so there is 'no change'
 			fame.previous_value = fame.global->value;
 			fame.current_value = fame.global->value;
