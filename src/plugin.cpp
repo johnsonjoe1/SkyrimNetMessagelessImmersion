@@ -20,8 +20,6 @@
 namespace logger = SKSE::log;
 
 /*  TODO-LIST   
-**  REFACTOR the many UD-Device-Mod-Events for different devices into string lists.
-**  AUTOMATICALLY handle also the Unequip-events from the same source using the same patterns.
 **  Handle the changes in YPS-Buffs:  (Maybe also remember the clothing-contribution (manually) from last time.  Mabe also the makeup/nails/hair from last time.)
 **  Reign in the SLSF-Messageboxes by making them conditional on a constant flag.
 
@@ -42,13 +40,16 @@ MUCH LATER:  ** Try to find out the (other) actor of an SL scene and then commen
    --  Magic effect handling still missing:  BellSoundEffect  (from the pear and chain plug device)
    --   Base name: ChainSoundEffect | Base ptr: 0x165f448a080 | Base-FormID: 1101BB51 | Base-Form Type: 18   (This means: MGEF) 
         base-Effect EDID: zadx_HR_ChainSoundMagicEffect | Source ptr: 0x165f4163040  |  Caster: Lillith 
-   --  Magic effect ahndling still missing:  Orgasm Exhaustion (from UD vibrating devices)
-   --  Magic effect handling still missing:  Tears  (from UD/ZAZ tears spell)
+   --  Magic effect handling still missing:  Orgasm Exhaustion (from UD vibrating devices)
 
    --  MOD-Event-Handling:   MOD EVENT:  Name: ''BM-LPO_ViolationFound''  StrArg: ''''  NumArg: 0
    --  MOD-Event-Handling:   MOD EVENT:  Name: ''BM-LPO_BountyStart''  StrArg: ''''  NumArg: 0
    --  MOD-Event-Handling:   MOD EVENT:  Name: BM-LPO_BountyEnd  StrArg:   NumArg: 0
    --  MOD-Event-Handling:   MOD EVENT:  Name: BM-LPO_ViolationCheck  StrArg:   NumArg: 0
+
+   **  Add the Apropos2 pain status effects and changes
+
+   **  Add an internal debug hotkey to trigger general status overview concerning heavy effects currently in place and easily forgotten.
 
 */
 
