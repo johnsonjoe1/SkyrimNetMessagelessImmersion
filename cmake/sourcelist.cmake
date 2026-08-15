@@ -13,4 +13,5 @@ set(sources ${sources}
     src/handle_furniture_activation.cpp
     src/handle_mod_broadcasts.cpp
     src/handle_active_magic_effect_changes.cpp
+    src/handle_config_ini_file.cpp
 )

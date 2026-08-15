@@ -10,6 +10,7 @@
 #include "handle_iNeed.h"
 #include "handle_yps.h"
 #include "handle_fame.h"
+#include "handle_config_ini_file.h"
 #include "misc.h"
 #include "papyrus_interface.h"
 #include <unordered_set>
@@ -367,6 +368,9 @@ SKSEPluginLoad(const SKSE::LoadInterface *skse) {
 	// We NEED to register the papyrus interfaces here, before the Virtual-Machine is running.
 	// Otherwise we get an error in the papayrus.log.0:  [05/21/2026 - 07:26:51PM] error: Unbound native function "SetMilkLevel" called
 	SKSE::GetPapyrusInterface()->Register(SNMIPapyrus::Register);
+
+	// Try to load the (dummy) config.ini file, so that we can read the settings from it.  
+	SNMI::LoadSettings();
 
     return true;
 }
