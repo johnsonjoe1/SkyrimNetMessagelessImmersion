@@ -36,7 +36,8 @@ Other mods that are being picked on (at least in minimal amounts) when they are 
 * The Ancient Profession:  Generic freelance work scene. (https://www.loverslab.com/files/file/11556-the-ancient-profession-2024-06-24/),
 * Some basic support for Jailrape mod. (https://www.loverslab.com/files/file/9111-sexlab-jail-rape/),
 * Some basic support for Licenses - Player Oppression mod. (https://www.nexusmods.com/skyrimspecialedition/mods/110418?tab=description),
-* Vanilla Skyrim:  disease application and cure (partial, only stomach rot disease so far), furniture use.
+* Vanilla Skyrim:  disease application and cure (partial, only stomach rot disease so far).
+* Vanilla Skyrim:  furniture use, now with a furniture-type specific cooldown (0.6.6).
 
 Note, that as said, there are only minimal gentle changes, nothing big or invasive.  And none of them are required in any form.  I add more stuff, as I play along and find something is missing and more response from SkyrimNet would be appropriate here and there.  Not a very systematic or completionist approach, but rather picking up stuff here and there.
 
