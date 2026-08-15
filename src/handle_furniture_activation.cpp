@@ -3,6 +3,7 @@
 #include "SKSE/SKSE.h"
 #include "misc.h"
 #include "DumpThoughts.h"
+#include <array>
 #include <string_view>  
 #include <unordered_set>
 
@@ -65,32 +66,33 @@ Here you can turn in your raw ores, weapons or armour to smelt and disassemble t
 You must have the right materials to do so.
 )SKSE" + standard_thought_instruction;
 
-std::array<std::string, 5> furniture_prompt_list = {
-    blacksmith_forge_prompt_1,
-    grindstone_prompt_1,
-    workbench_prompt_1,
-    tanning_rack_prompt_1,
-    smelter_prompt_1
-};
-
-std::array<std::string, 5> furniture_prompt_triggers = {
-    "Blacksmith Forge",
-    "Grindstone",
-    "Workbench",
-    "Tanning Rack",
-    "Smelter"  // Arcane Enchanter  // Alchemist's Retort  // Alchemy Lab  //  Staff Enchanter   // Bench   // other seats, what about beds and that?
-};
-
-int get_furniture_list_index(std::string_view keyword)
+struct FurniturePrompt
 {
-	for (std::size_t i = 0; i < furniture_prompt_triggers.size(); ++i)
+	std::string_view trigger;
+	std::string_view prompt;
+	std::chrono::steady_clock::time_point last_thought_timestamp = std::chrono::steady_clock::now();
+};
+
+constexpr int furniture_thought_cooldown_seconds = 120;
+
+std::array<FurniturePrompt, 5> furniture_prompts = {{
+	{ "Blacksmith Forge", blacksmith_forge_prompt_1 },
+	{ "Grindstone", grindstone_prompt_1 },
+	{ "Workbench", workbench_prompt_1 },
+	{ "Tanning Rack", tanning_rack_prompt_1 },
+	{ "Smelter", smelter_prompt_1 }  // Arcane Enchanter  // Alchemist's Retort  // Alchemy Lab  // Staff Enchanter // Bench
+}};
+
+FurniturePrompt* find_furniture_prompt(std::string_view trigger)
+{
+	for (auto& furniture_prompt : furniture_prompts)
 	{
-		if (keyword == furniture_prompt_triggers[i])
+		if (trigger == furniture_prompt.trigger)
 		{
-			return static_cast<int>(i);
+			return &furniture_prompt;
 		}
 	}
-	return -1;
+	return nullptr;
 }
 
 void handle_furniture_item_activation(RE::TESBoundObject *base)
@@ -111,6 +113,7 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 		}
 		std::string  mod_event_name = "Nothing so far";
 		std::string  mod_event_string_arg = "Mod event string not set yet";
+		FurniturePrompt* selected_furniture_prompt = nullptr;
 
 		if (std::strcmp(furniture_name , "Milk Pump") == 0) {
 			SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated the Milk Pump!  THIS GETS A SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
@@ -127,7 +130,7 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 				SKSE::log::info("THIS IS THE 1st Event for ACTIVATION of Milk Pump!");
 			}
 			mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
-		} else if (get_furniture_list_index(furniture_name) != -1) {
+		} else if (auto* furniture_prompt = find_furniture_prompt(furniture_name)) {
 			SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated a piece of furniture that is in our list of special furniture!  This gets a SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
 		
 			auto* player = RE::PlayerCharacter::GetSingleton();
@@ -136,8 +139,12 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 				// player is already using furniture, so this is probably the second event.  No comment on this for all the furnitures in this standard list.
 				SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated a furniture from the list of special furniture, but this is probably the second furniture event, so we EXIT without no message and no further ado now!!!!");
 				return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+			} else if (!cooldown_has_passed(furniture_prompt->last_thought_timestamp, furniture_thought_cooldown_seconds)) {
+				SKSE::log::info("[SkyrimNetMessagelessImmersion] Skipping furniture thought for {} because its cooldown has not elapsed.", furniture_prompt->trigger);
+				return;
 			} else {
-				mod_event_string_arg = furniture_prompt_list[get_furniture_list_index(furniture_name)];
+				mod_event_string_arg = std::string(furniture_prompt->prompt);
+				selected_furniture_prompt = furniture_prompt;
 				// DEBUG-ONLY:  RE::DebugMessageBox(("THIS IS THE 1st Event for this furnitures item (because player not in a furniture already! " + mod_event_string_arg ).c_str());
 				SKSE::log::info("THIS IS THE 1st Event for this furniture item (because player not in a furniture already)! {} " , mod_event_string_arg );
 			}
@@ -183,6 +190,9 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
 		);
 		eventSource->SendEvent(&my_event);
+		if (selected_furniture_prompt) {
+			selected_furniture_prompt->last_thought_timestamp = std::chrono::steady_clock::now();
+		}
 		// This seems to have worked, so we say as much in the log.
 		spdlog::info("[SkyrimNetMessagelessImmersion] Mod-event string:  {}", base->GetName());
 		spdlog::info("[SkyrimNetMessagelessImmersion] Mod-event sender:  {}", RE::PlayerCharacter::GetSingleton()->GetName());

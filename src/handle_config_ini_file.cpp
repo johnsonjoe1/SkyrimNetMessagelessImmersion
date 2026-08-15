@@ -37,14 +37,13 @@ namespace SNMI
     void LoadSettings()
     {
         const auto configPath = GetPluginDirectory() / L"SkyrimNetMessagelessImmersion.ini";
-
-        SKSE::log::info("Trying to read config file now.  Expected location = {}", configPath.string());
+        SKSE::log::info("Trying to read config file now.  If you use MO2, the base tree position of the expected file location will appear to be in the real game folder, not your mod directory.  That is normal.  The rest of the path is what counts.  For debugging purposes we still print the internal expected location:  Expected location = {}", configPath.string());
 
         settings.debugLogging = GetPrivateProfileIntW(L"General", L"DebugLogging", 0, configPath.c_str()) != 0;
-        SKSE::log::info("Finished reading (or defaulting to fallback for)config variable settings.debug.  New variable value = {}", settings.debugLogging);
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.debug.  New variable value = {}", settings.debugLogging);
 
         settings.updateInterval = GetPrivateProfileIntW(L"Timing", L"UpdateInterval", 33, configPath.c_str());
-        SKSE::log::info("Finished reading (or defaulting to fallback for)config variable settings.updateInterval.  New variable value = {}", settings.updateInterval);
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.updateInterval.  New variable value = {}", settings.updateInterval);
     }
 }
 
