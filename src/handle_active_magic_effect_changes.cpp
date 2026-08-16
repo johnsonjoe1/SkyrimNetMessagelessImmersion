@@ -11,8 +11,8 @@
 
 namespace logger = SKSE::log;
 
-static auto last_drool_thought_timestamp = std::chrono::steady_clock::now();
-static auto last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now();
+static auto last_drool_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Stomach Rot",
@@ -66,7 +66,7 @@ std::string_view ExtractCreatureNameFromEffectName(std::string_view effect_name)
 
 	return effect_name.substr(prefix.size(), effect_name.size() - prefix.size() - suffix.size());
 }
-
+ 
 bool is_known_irrelevant_magic_effect(std::string base_name)
 {
 	static const std::vector<std::string> irrelevant_effect_list = {

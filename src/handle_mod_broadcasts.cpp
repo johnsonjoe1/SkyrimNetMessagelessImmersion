@@ -9,9 +9,10 @@
 
 namespace logger = SKSE::log;
 
-static auto last_device_equipped_thought_timestamp = std::chrono::steady_clock::now();
-static auto last_device_removed_thought_timestamp = std::chrono::steady_clock::now();
-static auto last_devious_helplessness_thought_timestamp = std::chrono::steady_clock::now();
+static auto last_device_equipped_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_device_removed_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_devious_helplessness_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_random_run_up_and_spank_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 namespace
 {
 	bool try_handle_device_equipped_event(const SKSE::ModCallbackEvent* a_event)
@@ -653,8 +654,13 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  From SpankThatAss, we have the following event (running up and spanking, in contrast to bump-spanks, which seem not to trigger any mod event unfortunately)
 	if ( (std::strcmp(a_event->eventName.c_str() , "_STA_RandomRunUpAndSpankComplete") == 0)  ) {
 		// Name: _STA_RandomRunUpAndSpankComplete  StrArg:   NumArg: 0
+		if (!cooldown_has_passed(last_random_run_up_and_spank_thought_timestamp, 60)) {
+			SKSE::log::info("=====SKIPPING MOD EVENT: _STA_RandomRunUpAndSpankComplete because of cooldown.  Last thought was {} seconds ago.", std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - last_random_run_up_and_spank_thought_timestamp).count());
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		}
 		std::string  thought_message = std::format("Since you were busy focussing on crafting, someone used the opportunity and just ran up behind you and spanked your ass with full force while you were distracted! Let us know your response to that, and make sure you implicitly explain that your ass was just slapped hard in your response as well. If you can guess who it was from the context, feel free to mention the culprit as well. You can even tell them to stop, if you want.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		last_random_run_up_and_spank_thought_timestamp = std::chrono::steady_clock::now();
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}		
 	// MOD EVENT:  From SpankThatAss, we have the following event:  spanking of any kind, and then we have this resistance loss by one, but we don't do anything on that for now)
