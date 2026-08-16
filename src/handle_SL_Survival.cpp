@@ -1,5 +1,4 @@
 #pragma once
-
 #include "log.h"
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
@@ -9,8 +8,6 @@
 #include <string.h>
 
 namespace logger = SKSE::log;
-
-
 
 void check_armor_for_bikini_property()
 {

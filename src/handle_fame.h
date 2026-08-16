@@ -10,10 +10,6 @@ class handle_fame
 {
 public:
 
-	// inline static float previous_iNeed_fatigue_level = 1000000;  // this will not trigger any getting-more-tired messages at game start
-	// inline static float previous_iNeed_thirst_level = 1000000;  // this will not trigger any getting-more-thirsty messages at game start
-	// inline static float previous_iNeed_hunger_level = 1000000;  // this will not trigger any getting-more-hungry messages at game start
-
 	static void handle_SLSF_Reloaded_fame_stuff();
 
 };

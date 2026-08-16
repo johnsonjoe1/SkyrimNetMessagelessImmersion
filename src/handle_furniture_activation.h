@@ -1,4 +1,4 @@
 #pragma once
-#include <string>   //  ChatGPT suggested this might be needed?????
+#include <string>  
 
 void handle_furniture_item_activation(RE::TESBoundObject *base);

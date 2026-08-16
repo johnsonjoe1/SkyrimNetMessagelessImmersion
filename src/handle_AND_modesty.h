@@ -19,8 +19,6 @@ extern std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
 
 void refresh_currently_worn_item_records();
 
-// ****************************************************************************************************************
-//  Now some utility stuff:  The basic message dumping and queuing for thoughts occurs in different classes, so we refactor it onto a new class here.
 class handle_AND_modesty 
 {
 public:
