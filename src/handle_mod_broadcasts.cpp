@@ -191,7 +191,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"Apropos2GameLoaded",
 		"Apropos2ConfigClose",
 		
-		"CC_ModBimboCorruption",   // not now, maybe we deal with this later.
+		// "CC_ModBimboCorruption",   Handling for this was just added now, so we don't want to short-circuit it any more.
 
 		// "SNMI_JustPumpMyStringToPlayerThought",             // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_IMPORANT_PlayerThought",                 // we can't short-circuit that any more, because it should reset background thought cooldowns
