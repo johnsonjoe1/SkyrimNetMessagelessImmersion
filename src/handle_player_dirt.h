@@ -1,16 +1,10 @@
 #pragma once
-
 #include <string>   //  ChatGPT suggested this might be needed?????
 
-// ****************************************************************************************************************
-//  Now some utility stuff:  The basic message dumping and queuing for thoughts occurs in different classes, so we refactor it onto a new class here.
 class handle_player_dirt
 {
 public:
-
-	// inline static float previous_iNeed_fatigue_level = 1000000;  // this will not trigger any getting-more-tired messages at game start
-
 	static void handle_player_dirt_changes();
-	
+	static void try_to_reset_player_dirt_after_game_load_or_start();
 };
 

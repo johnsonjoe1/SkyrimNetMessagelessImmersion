@@ -1,5 +1,4 @@
 #pragma once
-
 #include "log.h"
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
@@ -9,14 +8,6 @@
 #include "misc.h"
 
 namespace logger = SKSE::log;
-
-
-
-// ****************************************************************************************************************
-//  Now some utility stuff:  The basic message dumping functions and message queuing function for thoughts are all
-//  what this class can do.  
-//  Note to self:  static keyword only belongs in the header, not in the .cpp file.
-//  Note to self:  public: private: keywords only belong in the header, not in the .cpp file.  
 
 void handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start()
 {

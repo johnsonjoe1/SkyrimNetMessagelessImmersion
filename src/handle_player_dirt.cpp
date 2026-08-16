@@ -15,6 +15,26 @@ namespace logger = SKSE::log;
 
 float previous_dirt_value = 100000;  // some impossible value, so that no message occurs (unless dirt value 0, which wouldn't likely be the case in mid-game)
 
+
+void handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start()
+{
+	logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start: TRYING to reset player dirt after game load or start.");
+	if (!RE::TESDataHandler::GetSingleton()) {
+		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start: TESDataHandler::GetSingleton() is NULL.  TOO EARLY!  ABORTING TO PREVENT CRASH.");
+		return;
+	} 
+	
+	// We try to get the dirt values and set them as 'previous'.
+	auto* playerDirt = RE::TESDataHandler::GetSingleton() ->LookupForm<RE::TESGlobal>(0x000DA8, "Bathing in Skyrim.esp");
+	if (playerDirt) {
+		previous_dirt_value = playerDirt->value;
+		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start: SUCCESSFULLY RESET Player dirt value reset to {}", previous_dirt_value);
+	} else {
+		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start: NO LUCK RESETTING.  MAYBE THE MOD ISN'T EVEN INSTALLED.");
+	}
+}
+
+
 void handle_player_dirt::handle_player_dirt_changes()
 {
 	// We have from another mod:
