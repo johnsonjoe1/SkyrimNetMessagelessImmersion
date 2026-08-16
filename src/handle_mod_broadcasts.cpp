@@ -970,8 +970,21 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
-
-
+/*[2026-08-16 17:57:25.863] [log] [info] [handle_mod_broadcasts.cpp:533] SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: CC_ModBimboCorruption  StrArg: I love pretty jewellery!  NumArg: 2*/
+	if ( (std::strcmp(a_event->eventName.c_str() , "CC_ModBimboCorruption") == 0) ) {			
+		std::string  thought_message="";
+		if ( (std::strcmp(a_event->strArg.c_str() , "I love pretty jewellery!") == 0) ) {	
+			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  At present, present it's the bimbo jewelry, usually some piercings with jewelry to be precise, that add to the bimbo corruption of the PC.  Speak in character and let us know, that the pretty jewellery is getting to your mind and enhancing the bimbo corruption, turning you a bit more into a bimbo.");
+			debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
+		} else {
+			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  At present, present the source of the additional bimbo corruption is revealed via the string: {} .  Speak in character and let the player know, that additional bimbo corruption is seeping into your mind and turning you more into a bimbo from the source revealed in that string we just gave you.", a_event->strArg.c_str());
+			debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
+		}
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		
+		LillithOnlyBox(debug_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 
 
 
