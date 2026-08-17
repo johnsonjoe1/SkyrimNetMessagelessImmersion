@@ -592,13 +592,24 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  Name: DeviousEventArm cuff fumble  StrArg: Lillith  NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventArm cuff fumble") == 0)  ) {
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
-			std::string  thought_message = std::format("YOU, the player, just can't take having these arm cuffs locked onto your wrists any more.  In a frenzy, you panic and feel that you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking.");
+			std::string  thought_message = std::format("YOU, the player, just can't take having these arm cuffs locked onto your wrists any more.  In a frenzy, you panic and feel that you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking about these arm cuffs.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		} else {
 			LillithOnlyBox(std::format("DeviousEventArm cuff fumble: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
 		}	
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+	// MOD EVENT:  Name: DeviousEventNipple Piercings  StrArg: Lillith  NumArg: 0
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventNipple Piercings") == 0)  ) {
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player, just can't take having these nipple piercings any more.  In a frenzy, you panic and feel that you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking about these nipple piercings.");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		} else {
+			LillithOnlyBox(std::format("DeviousEventNipple Piercings: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
+		}	
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
 
 	
 	// MOD EVENT:  Name: DeviceActorOrgasm  StrArg: Lillith  NumArg: 0

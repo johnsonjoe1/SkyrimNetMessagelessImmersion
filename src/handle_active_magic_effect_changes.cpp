@@ -357,18 +357,46 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// Let's try to track UD/DD slowdown-effect from bondage boots: 
-	if (base && ( (std::strcmp(base_name, "SpeedMult Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "BootSlow-Enchant") == 0)  ))
+	if (base && ( (std::strcmp(base_name, "SpeedMult Penalty") == 0)  ) )
 	{
-		if (a_event->isApplied)
-		{
-			SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking bondage boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these heels equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
-		} 
-		else // i.e.  if (!a_event->isApplied) )
-		{
-			SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN REMOVAL!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into bondage boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking bondage devices on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
+		if (std::strcmp(source->GetName(), "BootSlow-Enchant") == 0) {
+			if (a_event->isApplied)
+			{
+				SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
+				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking bondage boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these heels equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
+			} 
+			else // i.e.  if (!a_event->isApplied) )
+			{
+				SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN REMOVAL!");
+				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into bondage boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking bondage devices on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
+			}
+		} else if (std::strcmp(source->GetName(), "AnkleShackles-Enchant") == 0) {
+			if (a_event->isApplied)
+			{
+				SKSE::log::info("Event handler for UD ANKLE SHACKLES SLOWDOWN APPLICATION!");
+				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking ankle shackles equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these shackles equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
+			} 
+			else // i.e.  if (!a_event->isApplied) )
+			{
+				SKSE::log::info("Event handler for UD ANKLE SHACKLES SLOWDOWN REMOVAL!");
+				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into ankle shackles the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking ankle shackles on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
+			}
+		} else if (std::strcmp(source->GetName(), "PonyBoot-Enchant") == 0) {
+			if (a_event->isApplied)
+			{
+				SKSE::log::info("Event handler for UD PONY BOOTS SLOWDOWN APPLICATION!");
+				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking pony boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these boots equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
+			} 
+			else // i.e.  if (!a_event->isApplied) )
+			{
+				SKSE::log::info("Event handler for UD PONY BOOTS SLOWDOWN REMOVAL!");
+				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into pony boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking pony boots on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
+			}
 		}
+
+
+		
+
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 /*[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=47
