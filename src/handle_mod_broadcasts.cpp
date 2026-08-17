@@ -574,7 +574,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  Name: DeviousEventTrip and Fall  StrArg: Beea  NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventTrip and Fall") == 0) ||  (std::strcmp(a_event->eventName.c_str() , "DeviousEventLeg Cuffs Trip Over") == 0) ) {
 		// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
-		std::string  thought_message = std::format("YOU, the player, just tripped over your own feet, because you are wearing these devious bondage boots or leg cuffs that you are locked into and cannot take off.  What are you thinking now based on this?  Be sure to mention that you just tripped or fell BECAUSE of these bondage boots or leg cuffs that you are forced to wear.", a_event->strArg.c_str());
+		std::string  thought_message = std::format("YOU, the player character, just tripped over your own feet, because you are wearing these devious bondage boots or leg cuffs that you are locked into and cannot take off.  What are you thinking now based on this?  Be sure to mention that you just tripped or fell BECAUSE of these bondage boots or leg cuffs that you are forced to wear.", a_event->strArg.c_str());
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
@@ -582,7 +582,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  Name: DeviousEventStruggle  :  this seems to be a random forced struggle event with no real struggle but just for roleplay.  We make a comment.
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventStruggle") == 0)  ) {
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
-			std::string  thought_message = std::format("YOU, the player, just can't take it any more.  In a frenzy, you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking.");
+			std::string  thought_message = std::format("YOU, the player character, just can't take it any more.  In a frenzy, you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		} else {
 			LillithOnlyBox(std::format("DeviousEventStruggle: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
@@ -592,7 +592,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  Name: DeviousEventArm cuff fumble  StrArg: Lillith  NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventArm cuff fumble") == 0)  ) {
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
-			std::string  thought_message = std::format("YOU, the player, just can't take having these arm cuffs locked onto your wrists any more.  In a frenzy, you panic and feel that you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking about these arm cuffs.");
+			std::string  thought_message = std::format("YOU, the player character, just can't take having these arm cuffs locked onto your wrists any more.  In a frenzy, you panic and feel that you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking about these arm cuffs locked onto your wrists.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		} else {
 			LillithOnlyBox(std::format("DeviousEventArm cuff fumble: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
@@ -602,16 +602,25 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  Name: DeviousEventNipple Piercings  StrArg: Lillith  NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventNipple Piercings") == 0)  ) {
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
-			std::string  thought_message = std::format("YOU, the player, just can't take having these nipple piercings any more.  In a frenzy, you panic and feel that you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking about these nipple piercings.");
+			std::string  thought_message = std::format("YOU, the player character, just can't take having these nipple piercings locked onto you any more.  In a frenzy, you panic and feel that you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking about these nipple piercings locked onto you.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		} else {
 			LillithOnlyBox(std::format("DeviousEventNipple Piercings: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
 		}	
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+	// MOD EVENT:  Name: DeviousEventTight Corset  StrArg: Lillith  NumArg: 0
+	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventTight Corset") == 0)  ) {
+		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+			std::string  thought_message = std::format("YOU, the player character, just can't take having this tight corset locked onto you any more.  In a frenzy, you panic and feel that you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking about this tight corset locked onto you.");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		} else {
+			LillithOnlyBox(std::format("DeviousEventTight Corset: Event noticed, but it's NOT ABOUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
+		}	
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 
 
-	
 	// MOD EVENT:  Name: DeviceActorOrgasm  StrArg: Lillith  NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceActorOrgasm") == 0)  ) {
 		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
