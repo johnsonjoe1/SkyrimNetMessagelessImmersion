@@ -370,7 +370,28 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-
+/*[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:535] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=47
+[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: Stagger when shouting | Base ptr: 0x20e387bae80 | Base-FormID: 1005380A | Base-Form Type: 18   (This means: MGEF) 
+[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:540] base-Effect EDID: zad_effShoutStagger | Source ptr: 0x20e3854ee00  |  Caster: Lillith 
+[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:544] Magnitude: 0 | Duration: 0
+[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:547] Source name: Restrictive Corset | Source FormID: 10052D45 | Source EDID: zad_EnchCorset 
+[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:553] Form LookupByID 1005380A found: Stagger when shouting*/
+	if (base && ( (std::strcmp(base_name, "Stagger when shouting") == 0)  ) && ( (std::strcmp(source->GetName(), "Restrictive Corset") == 0)  ))
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
+			std::string final_thought_string = std::format("YOU, the player, the corset you just got locked in is so restrictive, that you can't even shout properly without staggering in this thing!  Say as much in your response, and be sure to make it clear, that you speak about the corset that you are wearing and also make it clear, that you can't shout properly any more (without staggering) while locked into this item."); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Stagger when shouting: THOUGHT: " + final_thought_string);
+			LillithOnlyBox(final_thought_string);
+		} 
+		else // i.e.  if (!a_event->isApplied) )
+		{
+			// Do nothing here, since we only explain the effect when it is applied, that this is a special propery of the current corset.
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 
 
 
