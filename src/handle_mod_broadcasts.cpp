@@ -1017,6 +1017,13 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
+	// MOD EVENT:  Name: CaptivePlayerRestrain  StrArg:   NumArg: 0    // MY GUESS::  THIS IS THE CAPTURE EVENT.
+	if ( (std::strcmp(a_event->eventName.c_str() , "CaptivePlayerRestrain") == 0) ) {			
+		std::string  thought_message = std::format("It seems you have lost the battle with your adversaries. They have defeated you and you went down.  But you didn't die.  But you are unable to fight.  So now they come and tie you up to take you captive and use you for whatever purpose, sell you as a slave or use you as a sex toy.  In any case, they are slowly tying you up in bondage and chains.  Tell us how you feel about that.  Since this is a major event and will lead to potentially longer enslavement, you can speak in more details and many words about this and understands the implications of what is happening to you now.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("CaptivePlayerRestrain:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 
 
 	// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
