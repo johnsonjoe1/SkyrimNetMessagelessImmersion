@@ -446,7 +446,28 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-
+/*[2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:535] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=30
+[2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: Drugged | Base ptr: 0x20bc76fa240 | Base-FormID: 2C00082C | Base-Form Type: 18   (This means: MGEF) 
+[2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:540] base-Effect EDID: _ddCaptivePLDruggedEffect | Source ptr: 0x20e3ed63b80  |  Caster: Lillith 
+[2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:544] Magnitude: 0 | Duration: 1200
+[2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:547] Source name: Arousal Drug | Source FormID: 2C00082A | Source EDID: _ddArousalDrug 
+[2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:553] Form LookupByID 2C00082C found: Drugged */
+	if (base && ( (std::strcmp(base_name, "Drugged") == 0)  ) && ( (std::strcmp(source->GetName(), "Arousal Drug") == 0)  ))
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for Drugged APPLICATION!");
+			std::string final_thought_string = std::format("YOU, the player character, just got drugged with some arousal drug or aphrodisiac while bound and helpless in a prison scene from the captive player mod.  Explain to the player, that you have just been drugged with an arousal drug.  Also express the effects of the drug you are feeling, while helplessly tied up and unable to escape.  Since this is a major source of suffering, you can elaborate in more words about this."); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Drugged: THOUGHT: " + final_thought_string);
+			LillithOnlyBox(final_thought_string);
+		} 
+		else // i.e.  if (!a_event->isApplied) )
+		{
+			// Do nothing here, since we only explain the effect when it is applied, that this is a special propery of the current corset.
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 
 	// Handle CreatureSummoner effects:
 	// For any effect like CreatureBoarEffect, CreatureChaurusEffect, CreatureAshhopperEffect we handle it by producting a descriptive thought message containing that creature name.
