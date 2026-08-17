@@ -381,7 +381,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	{
 		if (a_event->isApplied)
 		{
-			SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
+			SKSE::log::info("Event handler for Stagger when shouting APPLICATION!");
 			std::string final_thought_string = std::format("YOU, the player, the corset you just got locked in is so restrictive, that you can't even shout properly without staggering in this thing!  Say as much in your response, and be sure to make it clear, that you speak about the corset that you are wearing and also make it clear, that you can't shout properly any more (without staggering) while locked into this item."); //  + standard_thought_instruction;
 			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Stagger when shouting: THOUGHT: " + final_thought_string);
 			LillithOnlyBox(final_thought_string);
@@ -394,8 +394,28 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	}
 
 
-
-
+/*[2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:535] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect REMOVED on Lillith | UID=30
+[2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: Whipped | Base ptr: 0x20bc785fc80 | Base-FormID: 2C0518F7 | Base-Form Type: 18   (This means: MGEF) 
+[2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:540] base-Effect EDID: _ddCaptivePLWhippedEffect | Source ptr: 0x20bc7701000  |  Caster: Lillith 
+[2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:544] Magnitude: 100 | Duration: 5
+[2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:547] Source name: Whipped | Source FormID: 2C0518F6 | Source EDID: _ddCaptivePLWhipped 
+[2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:553] Form LookupByID 2C0518F7 found: Whipped*/
+	if (base && ( (std::strcmp(base_name, "Whipped") == 0)  ) && ( (std::strcmp(source->GetName(), "Whipped") == 0)  ))
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for Whipped APPLICATION!");
+			std::string final_thought_string = std::format("YOU, the player, are getting whipped while bound and helpless from the captive player mod.  Express the horrible pain of being whipped while helplessly tied up and unable to escape.  Since this is a major source of suffering, you can elaborate in more words about this."); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Whipped: THOUGHT: " + final_thought_string);
+			LillithOnlyBox(final_thought_string);
+		} 
+		else // i.e.  if (!a_event->isApplied) )
+		{
+			// Do nothing here, since we only explain the effect when it is applied, that this is a special propery of the current corset.
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 
 
 	// Handle CreatureSummoner effects:
