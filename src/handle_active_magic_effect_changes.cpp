@@ -127,7 +127,9 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 
 		"Quest Start Routine",  // This is from Mod Sleep-in-Lingerie, and startup/initialization of the Mod.
 
-		"Standing Moving Detector Effect"   // This is also from SL Survival and runs all the time, like every 2 to 5 seconds, so useless for our purposes here.
+		"Standing Moving Detector Effect",   // This is also from SL Survival and runs all the time, like every 2 to 5 seconds, so useless for our purposes here.
+
+		"Align To Furniture Effect"   // This is from captive player, and is probably more an internal thing, so no need to do anything with that.
 	};		
 	for (std::size_t i = 0; i < irrelevant_effect_list.size(); ++i)
 	{
@@ -318,9 +320,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, just got cured of your {} Disease!  What a relief.  Your body has recoverd so quickly from the cure!  You need to announce great relief and successful cure!  You may do that implicitly, in the form of relief and gratitude.  Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
-/*
-[2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:336] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
-[2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:337] Effect REMOVED on Lillith | UID=17
+/*[2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:337] Effect REMOVED on Lillith | UID=17
 [2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:340] Base name: Rock Joint | Base ptr: 0x1a4f4647900 | Base-FormID: 1E00F0AC | Base-Form Type: 18   (This means: MGEF) 
 [2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:341] base-Effect EDID: RND_DiseaseRockjoint | Source ptr: 0x1a4df640a00  |  Caster: None 
 [2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:345] Magnitude: -1 | Duration: 0
@@ -371,8 +371,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-/*[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:535] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
-[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=47
+/*[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=47
 [2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: Stagger when shouting | Base ptr: 0x20e387bae80 | Base-FormID: 1005380A | Base-Form Type: 18   (This means: MGEF) 
 [2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:540] base-Effect EDID: zad_effShoutStagger | Source ptr: 0x20e3854ee00  |  Caster: Lillith 
 [2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:544] Magnitude: 0 | Duration: 0
@@ -393,8 +392,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-/*[2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:535] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
-[2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=31
+/*[2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=31
 [2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: ChainSoundEffect | Base ptr: 0x20e3799c480 | Base-FormID: 1101BB51 | Base-Form Type: 18   (This means: MGEF) 
 [2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:540] base-Effect EDID: zadx_HR_ChainSoundMagicEffect | Source ptr: 0x20e384a2740  |  Caster: Lillith 
 [2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:544] Magnitude: 0 | Duration: 0
@@ -424,8 +422,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 
 
 
-/*[2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:535] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
-[2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect REMOVED on Lillith | UID=30
+/*[2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect REMOVED on Lillith | UID=30
 [2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: Whipped | Base ptr: 0x20bc785fc80 | Base-FormID: 2C0518F7 | Base-Form Type: 18   (This means: MGEF) 
 [2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:540] base-Effect EDID: _ddCaptivePLWhippedEffect | Source ptr: 0x20bc7701000  |  Caster: Lillith 
 [2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:544] Magnitude: 100 | Duration: 5
@@ -446,8 +443,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-/*[2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:535] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
-[2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=30
+/*[2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=30
 [2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: Drugged | Base ptr: 0x20bc76fa240 | Base-FormID: 2C00082C | Base-Form Type: 18   (This means: MGEF) 
 [2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:540] base-Effect EDID: _ddCaptivePLDruggedEffect | Source ptr: 0x20e3ed63b80  |  Caster: Lillith 
 [2026-08-16 17:49:20.090] [log] [info] [handle_active_magic_effect_changes.cpp:544] Magnitude: 0 | Duration: 1200
@@ -468,6 +464,32 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+/*[2026-08-16 17:55:39.017] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=40
+[2026-08-16 17:55:39.017] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: Low Health Effect | Base ptr: 0x20bc785f040 | Base-FormID: 2C07505C | Base-Form Type: 18   (This means: MGEF) 
+[2026-08-16 17:55:39.017] [log] [info] [handle_active_magic_effect_changes.cpp:540] base-Effect EDID: _ddCaptivePLLowHealthEffect | Source ptr: 0x20bc7701e00  |  Caster: Lillith 
+[2026-08-16 17:55:39.017] [log] [info] [handle_active_magic_effect_changes.cpp:544] Magnitude: 100 | Duration: 100
+[2026-08-16 17:55:39.017] [log] [info] [handle_active_magic_effect_changes.cpp:547] Source name: Low Health | Source FormID: 2C07505B | Source EDID: _ddCaptivePLLowHealth 
+[2026-08-16 17:55:39.017] [log] [info] [handle_active_magic_effect_changes.cpp:553] Form LookupByID 2C07505C found: Low Health Effect*/
+	if (base && ( (std::strcmp(base_name, "Low Health Effect") == 0)  ) && ( (std::strcmp(source->GetName(), "Low Health") == 0)  ))
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for Low Health Effect APPLICATION!");
+			std::string final_thought_string = std::format("YOU, the player character, just got the Low Health Effect applied from the captive player mod.  That means you are going down like almost in a knockout, which gives your opponents a chance to find you and capture you.  Explain to the player, that your health is critically low and that you opponents might capture you if you don't manage to recover quickly soon.  Since this is a major source of suffering, you can elaborate in more words about this."); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Low Health Effect: THOUGHT: " + final_thought_string);
+			LillithOnlyBox(final_thought_string);
+		} 
+		else // i.e.  if (!a_event->isApplied) )
+		{
+			// Do nothing here, since we only explain the effect when it is applied, that this is a special propery of the current corset.
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
+
+
+
+
 
 	// Handle CreatureSummoner effects:
 	// For any effect like CreatureBoarEffect, CreatureChaurusEffect, CreatureAshhopperEffect we handle it by producting a descriptive thought message containing that creature name.
