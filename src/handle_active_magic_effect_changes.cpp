@@ -13,6 +13,7 @@ namespace logger = SKSE::log;
 
 static auto last_drool_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_chain_sound_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Stomach Rot",
@@ -403,10 +404,16 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	{
 		if (a_event->isApplied)
 		{
-			SKSE::log::info("Event handler for ChainSoundEffect APPLICATION!");
-			std::string final_thought_string = std::format("YOU, the player, are wearing ankle shackles with a chain, that is making sounds with every movement, so that it's impossible to move silently and sneak away in these things.  Say as much in your response, and be sure to make it clear, that you speak about the sounds from the ankle chains that you are wearing."); //  + standard_thought_instruction;
-			DumpThoughts::throw_out_TTS_thought_message("Active Effect: ChainSoundEffect: THOUGHT: " + final_thought_string);
-			LillithOnlyBox(final_thought_string);
+			if (cooldown_has_passed(last_chain_sound_thought_timestamp, 180))
+			{
+				SKSE::log::info("Event handler for ChainSoundEffect APPLICATION!");
+				std::string final_thought_string = std::format("YOU, the player, are wearing ankle shackles with a chain, that is making sounds with every movement, so that it's impossible to move silently and sneak away in these things.  Say as much in your response, and be sure to make it clear, that you speak about the sounds from the ankle chains that you are wearing."); //  + standard_thought_instruction;
+				DumpThoughts::throw_out_TTS_thought_message("Active Effect: ChainSoundEffect: THOUGHT: " + final_thought_string);
+				LillithOnlyBox(final_thought_string);
+				last_chain_sound_thought_timestamp = std::chrono::steady_clock::now();
+			} else {
+				SKSE::log::info("Skipping ChainSoundEffect thought because cooldown has not expired yet.");
+			}
 		} 
 		else // i.e.  if (!a_event->isApplied) )
 		{
