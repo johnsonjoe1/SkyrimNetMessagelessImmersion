@@ -1017,13 +1017,54 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
-	// MOD EVENT:  Name: CaptivePlayerRestrain  StrArg:   NumArg: 0    // MY GUESS::  THIS IS THE CAPTURE EVENT.
+
+
+	// This is the first thing that happens:  player goes down.   MOD EVENT:  Name: CaptiveDefeatWounded  StrArg:   NumArg: 0
+	if ( (std::strcmp(a_event->eventName.c_str() , "CaptiveDefeatWounded") == 0) ) {			
+		std::string  thought_message = std::format("It seems you have been wounded badly in your battle with your adversaries.  They have not captured you yet.  You must try to regain your strength quickly, or they might take you captive and do god-knows-what with you.  Explain that to the player via your response.  You can also add your feelings about this, while you speak in-character.  Since this is a major event and will lead to potentially longer enslavement, you can speak in more details and many words about this and understands the implications of what is happening to you now.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("CaptiveDefeatWounded:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	// This is the second thing that happens:  enemy reaches player while down.   MOD EVENT:  Name: CaptiveDefeatSurrender  StrArg:   NumArg: 0    // MY GUESS::  THIS IS THE CAPTURE EVENT.
+	if ( (std::strcmp(a_event->eventName.c_str() , "CaptiveDefeatSurrender") == 0) ) {			
+		std::string  thought_message = std::format("It seems you have lost the battle with your adversaries. They have defeated you and you went down.  You are unable to fight and can only surrender from here on.  Tell us how you feel about that.  Since this is a major event and will lead to potentially longer enslavement, you can speak in more details and many words about this and understands the implications of what is happening to you now.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("CaptiveDefeatSurrender:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	// This is what happens afterwards:  Player is tied up in bondage.   MOD EVENT:  Name: CaptivePlayerRestrain  StrArg:   NumArg: 0    // MY GUESS::  THIS IS THE CAPTURE EVENT.
 	if ( (std::strcmp(a_event->eventName.c_str() , "CaptivePlayerRestrain") == 0) ) {			
 		std::string  thought_message = std::format("It seems you have lost the battle with your adversaries. They have defeated you and you went down.  But you didn't die.  But you are unable to fight.  So now they come and tie you up to take you captive and use you for whatever purpose, sell you as a slave or use you as a sex toy.  In any case, they are slowly tying you up in bondage and chains.  Tell us how you feel about that.  Since this is a major event and will lead to potentially longer enslavement, you can speak in more details and many words about this and understands the implications of what is happening to you now.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("CaptivePlayerRestrain:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+	// This is what happens after that:  Player does into captivity.  MOD EVENT:  Name: CaptiveDefeatStart  StrArg:   NumArg: 0
+	if ( (std::strcmp(a_event->eventName.c_str() , "CaptiveDefeatStart") == 0) ) {			
+		std::string  thought_message = std::format("It seems you have lost the battle with your adversaries. They have defeated you and tied you up.  Now you are facing the prospect of a life in captivity as a slave or as a sex toy.  Tell us how you feel about that.  Since this is a major event and will lead to potentially longer enslavement, you can speak in more details and many words about this and understands the implications of what is happening to you now.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("CaptiveDefeatStart:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	// This is what happens after that:  They rob the player of his gear and armor and clothing too.  MOD EVENT:  Name: CaptiveDefeatRobPlayer  StrArg:   NumArg: 0
+	if ( (std::strcmp(a_event->eventName.c_str() , "CaptiveDefeatRobPlayer") == 0) ) {			
+		std::string  thought_message = std::format("It seems your enemies have taken you captive. Now you also have been robbed of all your things, even your armor and clothes and you are completely defenseless.  Tell us how you feel about that.  Since this is a major event and will lead to potentially longer enslavement, you can speak in more details and many words about this and understands the implications of what is happening to you now.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("CaptiveDefeatRobPlayer:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	// Sometimes this seems to come next/again:  MOD EVENT:  Name: CaptiveDefeatWounded  StrArg:   NumArg: 0
+	// This is what happens then:  MOD EVENT:  Name: CaptiveDefeatEndSexScene  StrArg:   NumArg: 0
+	if ( (std::strcmp(a_event->eventName.c_str() , "CaptiveDefeatEndSexScene") == 0) ) {		
+		
+		// NOTE:  This event can happen two times, for whatever reason.  So, it needs a cooldown.
+		std::string  thought_message = std::format("It seems your enemies have taken you captive.  You were forced into a humiliating sex scene, but now your captors seem satisfied and the raping has just stopped, at least for the moment.  But you are still a captive and will be for the foreseeable future, unable to escape their control.  Tell us how you feel about that.  Since this is a major event and will lead to potentially longer enslavement, you can speak in more details and many words about this and understands the implications of what is happening to you now.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("CaptiveDefeatEndSexScene:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
 
 
 	// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
