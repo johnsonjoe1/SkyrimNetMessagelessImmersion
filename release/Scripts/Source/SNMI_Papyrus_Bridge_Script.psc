@@ -301,6 +301,12 @@ endfunction
 
 
 
+bool function IsJContainersAvailable() global
+	return SKSE.GetPluginVersion("JContainers64") != -1
+endfunction
+
+
+
 function get_slavetats_state() global
     Actor player = Game.GetPlayer()
     int applied = JFormDB.getObj(player, ".SlaveTats.applied")
@@ -397,7 +403,9 @@ Event OnUpdate()
 	TestANDFlashClothing()
 
 	; NEW:  Try to query the slavetats state
-	get_slavetats_state()
+	if IsJContainersAvailable()
+		get_slavetats_state()
+	endif
 
     RegisterForSingleUpdate(10.0)  ; Restart the same function in 10 seconds
 EndEvent
