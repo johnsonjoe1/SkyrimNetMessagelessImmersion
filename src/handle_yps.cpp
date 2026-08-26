@@ -98,6 +98,12 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 	// MOD EVENT:  YPS Thoughts:  Those will be pushed to the background channel.
 	if ( (std::strcmp(a_event->eventName.c_str() , "YPS_ThoughtEvent") == 0)  ) {
 		// std::string  thought_message = std::format(a_event->strArg.c_str());
+
+		// While in the middle of a scene, a fashion thought is often out of place.  We stop them during scenes.
+		if (player_is_in_a_SL_scene()) {
+			SKSE::log::info("YPS-ThoughtEvent detected, but player is in a scene, so we will not process it.");
+			return true;  // In this case it really was a YPS event and that means no further processing necessary in the main mod boadcast module.
+		}
 		DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(a_event->strArg.c_str());   // this shouldn't be overdone, but the background code makes sure of that.
 		return true;  // In this case it really was a YPS event and that means no further processing necessary in the main mod boadcast module.
 	}

@@ -201,8 +201,6 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"Apropos2GameLoaded",
 		"Apropos2ConfigClose",
 		
-		// "CC_ModBimboCorruption",   Handling for this was just added now, so we don't want to short-circuit it any more.
-
 		// "SNMI_JustPumpMyStringToPlayerThought",             // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_IMPORANT_PlayerThought",                 // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",        // we can't short-circuit that any more, because it should reset background thought cooldowns
@@ -1013,6 +1011,12 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 /*[2026-08-16 17:57:25.863] [log] [info] [handle_mod_broadcasts.cpp:533] SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: CC_ModBimboCorruption  StrArg: I love pretty jewellery!  NumArg: 2*/
 	if ( (std::strcmp(a_event->eventName.c_str() , "CC_ModBimboCorruption") == 0) ) {			
+
+		if (player_is_in_a_SL_scene() && (std::strcmp(a_event->strArg.c_str() , "Oooh... I could get used to not being in control...") != 0) ) {
+			SKSE::log::info("CC_ModBimboCorruption event detected, but player is in a scene and it's not the corrupting sex as a message, so we will not process it.");
+			return;  // In this case it really was a CC_ModBimboCorruption event and that means no further processing necessary in the main mod boadcast module.
+		}
+
 		std::string  thought_message="";
 		if ( (std::strcmp(a_event->strArg.c_str() , "I love pretty jewellery!") == 0) ) {	
 			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  At present, present it's the bimbo jewelry, usually some piercings with jewelry to be precise, that add to the bimbo corruption of the PC.  Speak in character and let us know, that the pretty jewellery is getting to your mind and enhancing the bimbo corruption, turning you a bit more into a bimbo.");

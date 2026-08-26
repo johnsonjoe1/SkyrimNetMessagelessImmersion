@@ -30,20 +30,11 @@ void handle_timeout_for_stale_scenes() {
 	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_disablement_timestamp);
 	SKSE::log::info("Time since last refresh or set of in_a_scene property (for filtering SL scenes): {} seconds", runtime.count());
 
-	const int maximum_time_since_last_game_load_or_reload = 180;  // in seconds 
-
-	/*
-	// We make the timeout again dependend on the player name
-	if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
-	{
-		SKSE::log::info("OVERRIDING natural timeout-after-game-load, because it's LILLITH, the debug character playing.", runtime.count(), minimum_time_since_last_game_load_or_reload);
-		return false; 
-	} 
-	*/
+	const int maximum_time_since_last_game_load_or_reload = 10*60;  // in seconds 
 
 	if (runtime.count() > maximum_time_since_last_game_load_or_reload) {
-		SKSE::log::info("This scene is going on more than 180 seconds.  It may have run away.  We should reset to no-scene, just to be safe.");
-		LillithOnlyBox("SNMI:  This scene is going on more than 180 seconds.  It may have run away.  We reset to no-scene, just to be safe.");
+		SKSE::log::info("This scene is going on more than {} seconds.  It may have run away.  We should reset to no-scene, just to be safe.", maximum_time_since_last_game_load_or_reload);
+		LillithOnlyBox(std::format("SNMI:  This scene is going on more than {} seconds.  It may have run away.  We reset to no-scene, just to be safe.", maximum_time_since_last_game_load_or_reload));
 		set_current_animation_status("not_in_a_scene");
 	}
 }
