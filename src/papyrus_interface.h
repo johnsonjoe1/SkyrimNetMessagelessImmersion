@@ -24,6 +24,7 @@ public:
 	static void set_Apropos2Vstate(RE::StaticFunctionTag*, float a_value);
 	static void set_Apropos2Astate(RE::StaticFunctionTag*, float a_value);
 	static void set_Apropos2Ostate(RE::StaticFunctionTag*, float a_value);
+	static void suppress_next_Apropos2_state_updates();
 
 	static void set_lovesickness_flag(RE::StaticFunctionTag*, float a_value);
 	static void set_lovesickness_euphoria(RE::StaticFunctionTag*, float a_value);
@@ -70,6 +71,9 @@ public:
     static inline float _Apropos2Vstate = 0;
     static inline float _Apropos2Astate = 0;
     static inline float _Apropos2Ostate = 0;
+	static inline bool _suppress_next_Apropos2Vstate_update = true;
+	static inline bool _suppress_next_Apropos2Astate_update = true;
+	static inline bool _suppress_next_Apropos2Ostate_update = true;
 
 	static inline float _lovesickness_flag=0;
 	static inline float previous_lovesickness_flag=0;

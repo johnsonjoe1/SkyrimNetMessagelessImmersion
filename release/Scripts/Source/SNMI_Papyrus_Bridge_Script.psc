@@ -302,7 +302,12 @@ endfunction
 
 
 bool function IsJContainersAvailable() global
-	return SKSE.GetPluginVersion("JContainers64") != -1
+	;  return SKSE.GetPluginVersion("JContainers64") != -1
+	if JContainers.IsInstalled()
+		return true
+	else
+		return false
+	endif
 endfunction
 
 
@@ -405,6 +410,8 @@ Event OnUpdate()
 	; NEW:  Try to query the slavetats state
 	if IsJContainersAvailable()
 		get_slavetats_state()
+	else
+		Debug.Trace("[SNMI] SlaveTats-query:  JContainers is not available, so we cannot query the SlaveTats state.")
 	endif
 
     RegisterForSingleUpdate(10.0)  ; Restart the same function in 10 seconds

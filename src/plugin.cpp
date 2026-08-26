@@ -302,6 +302,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		break;
 	case SKSE::MessagingInterface::kPostLoadGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
+		SNMIPapyrus::suppress_next_Apropos2_state_updates();
 		handle_AND_modesty::reset_previous_rank_to_current_rank();
 		handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
 		handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start();

@@ -251,12 +251,15 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"_SLS_LicenceStateUpdateEvent",  // Sexlab-Survival mod triggering this at seemingly random times, e.g. in Lauras Shop.
 		"_SLS_HighlightItemsStop",
 		"_BC_UpdateBackPackWeight",  // This is from SL Survival as well, but not worth dealign with now probably.
+		
 		//"SkyrimNet_SpeechStarted",
 		//"SkyrimNet_SpeechCompleted",
 		//"SkyrimNet_SpeechComplete",
 		//"SkyrimNet_AudioStarted",
 		//"SkyrimNet_AudioEnded",
 		"SkyrimNet_MemoryCreated",  // No need to respond to this, as it's internal memory creation and not relevant to direct game status.^
+		"SkyrimNet_MoodChanged",  // No need to respond to this, as it's native to SkyrimNet anyway and probably already handled by SkyrimNet itself.
+
 		"UIWheelMenu_LoadMenu",      //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
 		"UIWheelMenu_SetOption",     //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
 		"UIWheelMenu_CloseMenu",     //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
@@ -641,7 +644,6 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}
 	
 	// MOD EVENT:  Name: SkyrimNetDDUDNG_Event  StrArg: Lillith's Genital Piercing (Common Soul Gem) stops vibrating.  NumArg: 0
-	// MOD EVENT:  Name: SkyrimNetDDUDNG_Event  StrArg: Lillith's Genital Piercing (Common Soul Gem) stops vibrating.  NumArg: 0
 	// Lillith's Genital Piercing (Common Soul Gem) starts vibrating.
 	if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNetDDUDNG_Event") == 0)  ) {
 		if ( (a_event->strArg == "Lillith's Genital Piercing (Common Soul Gem) stops vibrating." ) ||
@@ -1019,7 +1021,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 		std::string  thought_message="";
 		if ( (std::strcmp(a_event->strArg.c_str() , "I love pretty jewellery!") == 0) ) {	
-			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  At present, present it's the bimbo jewelry, usually some piercings with jewelry to be precise, that add to the bimbo corruption of the PC.  Speak in character and let us know, that the pretty jewellery is getting to your mind and enhancing the bimbo corruption, turning you a bit more into a bimbo.");
+			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  At present, present it's the bimbo jewelry, usually some piercings with jewelry to be precise, that add to the bimbo corruption of the PC.  Speak in character and let us know, that the pretty jewellery is getting to your mind and enhancing the bimbo corruption, turning you a bit more into a bimbo, or that you may end up a total bimbo, if you keep wearing it too long.");
 			debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
 		} else {
 			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  At present, present the source of the additional bimbo corruption is revealed via the string: {} .  Speak in character and let the player know, that additional bimbo corruption is seeping into your mind and turning you more into a bimbo from the source revealed in that string we just gave you.", a_event->strArg.c_str());
