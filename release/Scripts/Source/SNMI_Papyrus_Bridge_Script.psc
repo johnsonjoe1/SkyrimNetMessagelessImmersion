@@ -299,6 +299,88 @@ function push_lovesick_variables_to_the_plugin()
 
 endfunction
 
+
+
+function get_slavetats_state() global
+    Actor player = Game.GetPlayer()
+    int applied = JFormDB.getObj(player, ".SlaveTats.applied")
+
+    Debug.Trace("SNMI:  SlaveTatsState: Applied tattoos for " + player.GetLeveledActorBase().GetName() + ":")
+    if applied == 0
+        Debug.Trace("SNMI:  SlaveTatsState: []")
+    else
+        _log_jcontainer(applied, "")
+    endif
+endfunction
+
+function _log_jcontainer(int value, string indent) global
+    if value == 0
+        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "null")
+        return
+    endif
+
+    int index = 0
+    int count = 0
+    int type = 0
+	string map_key = ""
+
+    if JValue.isMap(value)
+        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "{")
+        int keys = JValue.addToPool(JMap.allKeys(value), "SlaveTatsState-log")
+        count = JArray.count(keys)
+        while index < count
+			map_key = JArray.getStr(keys, index)
+			type = JMap.valueType(value, map_key)
+            if type == 1
+				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": none")
+            elseif type == 2
+				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": " + JMap.getInt(value, map_key))
+            elseif type == 3
+				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": " + JMap.getFlt(value, map_key))
+            elseif type == 4
+				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": Form " + JMap.getForm(value, map_key).GetName())
+            elseif type == 5
+				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\":")
+				_log_jcontainer(JMap.getObj(value, map_key), indent + "  ")
+            elseif type == 6
+				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": \"" + JMap.getStr(value, map_key) + "\"")
+            else
+				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": Unknown type")
+            endif
+            index += 1
+        endwhile
+        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "}")
+    elseif JValue.isArray(value)
+        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "[")
+        count = JArray.count(value)
+        while index < count
+            type = JArray.valueType(value, index)
+            if type == 1
+                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  none")
+            elseif type == 2
+                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  " + JArray.getInt(value, index))
+            elseif type == 3
+                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  " + JArray.getFlt(value, index))
+            elseif type == 4
+                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  Form " + JArray.getForm(value, index).GetName())
+            elseif type == 5
+                _log_jcontainer(JArray.getObj(value, index), indent + "  ")
+            elseif type == 6
+                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + JArray.getStr(value, index) + "\"")
+            else
+                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  Unknown type")
+            endif
+            index += 1
+        endwhile
+        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "]")
+    else
+        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "Not a map or an array.")
+    endif
+
+    JValue.cleanPool("SlaveTatsState-log")
+endfunction
+
+
 Event OnUpdate()
 
     keepalive_value += 1.0    ; This is just an internal counter, that will count the number of times this has run so far
@@ -313,6 +395,9 @@ Event OnUpdate()
 	TestApropos()
 
 	TestANDFlashClothing()
+
+	; NEW:  Try to query the slavetats state
+	get_slavetats_state()
 
     RegisterForSingleUpdate(10.0)  ; Restart the same function in 10 seconds
 EndEvent
