@@ -3,7 +3,7 @@
 #include "log.h"
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
-
+#include "misc.h"
 #include "DumpThoughts.h"
 
 namespace logger = SKSE::log;
@@ -180,6 +180,30 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_messag
 	last_speech_timestamp=std::chrono::steady_clock::now();
 }
 
+
+void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std::string my_message) {
+	// RE::DebugMessageBox(my_message.c_str());
+	SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: {} ", my_message.c_str());
+	// We want to broadcast mod events.  So we need this event source.
+	std::string  mod_event_name = "SNMI_Pump_IMPORANT_PlayerThought";
+	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
+	auto eventSource = SKSE::GetModCallbackEventSource();
+
+	if (DumpThoughts::too_early_after_game_load()) {
+		SKSE::log::info("////////BLOCKING IMPORTANT thought message THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
+		return;
+	}
+
+	LillithOnlyBox(my_message.c_str());
+	SKSE::ModCallbackEvent my_event(
+		mod_event_name,                        // event name
+		mod_event_string_arg,                  // arbitrary string argument 
+		123.0f,                                // arbitrary float argument
+		RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
+	);
+	eventSource->SendEvent(&my_event);
+	last_speech_timestamp=std::chrono::steady_clock::now();
+}
 
 
 
