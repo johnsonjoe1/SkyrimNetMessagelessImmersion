@@ -36,6 +36,7 @@ Other mods that are being picked on (at least in minimal amounts) when they are 
 * The Ancient Profession:  Generic freelance work scene. (https://www.loverslab.com/files/file/11556-the-ancient-profession-2024-06-24/),
 * Some basic support for Jailrape mod. (https://www.loverslab.com/files/file/9111-sexlab-jail-rape/),
 * Some basic support for Licenses - Player Oppression mod. (https://www.nexusmods.com/skyrimspecialedition/mods/110418?tab=description),
+* Some basic support for the SE Version of the Apropos 2 mod (from the LL forum:  https://www.loverslab.com/topic/136768-apropos-2-for-sse/),
 * Vanilla Skyrim:  disease application and cure (partial, only stomach rot disease so far).
 * Vanilla Skyrim:  furniture use, now with a furniture-type specific cooldown (0.6.6).
 
