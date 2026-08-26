@@ -50,6 +50,9 @@ public:
 	inline static float previous_yps_AddictionLevel = 0;
 	inline static float previous_yps_AddictionBuff = 0;
 	inline static float previous_yps_HeelsWorn = 0;
+	inline static float previous_Apropos2Vstate = 0;
+	inline static float previous_Apropos2Astate = 0;
+	inline static float previous_Apropos2Ostate = 0;
 
 	private:
     static inline float _milkLevel = 124356.0f;

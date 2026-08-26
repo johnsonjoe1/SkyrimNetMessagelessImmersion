@@ -180,14 +180,17 @@ SNMI_Native.set_yps_Apropos2Ostate(ap.OralWearTearState)
 
 void SNMIPapyrus::set_Apropos2Vstate(RE::StaticFunctionTag*, float a_value)
 {
+	previous_Apropos2Vstate = _Apropos2Vstate;
     _Apropos2Vstate = a_value;
 }
 void SNMIPapyrus::set_Apropos2Astate(RE::StaticFunctionTag*, float a_value)
 {
+	previous_Apropos2Astate = _Apropos2Astate;
     _Apropos2Astate = a_value;
 }
 void SNMIPapyrus::set_Apropos2Ostate(RE::StaticFunctionTag*, float a_value)
 {
+	previous_Apropos2Ostate = _Apropos2Ostate;
     _Apropos2Ostate = a_value;
 }
 
