@@ -13,6 +13,7 @@ static auto last_device_equipped_thought_timestamp = std::chrono::steady_clock::
 static auto last_device_removed_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_devious_helplessness_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_random_run_up_and_spank_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_captive_defeat_end_sex_scene_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 namespace
 {
 	bool try_handle_device_equipped_event(const SKSE::ModCallbackEvent* a_event)
@@ -176,6 +177,15 @@ bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
 		static const std::unordered_set<std::string> ignored_mod_events = {
 		"SKIWF_widgetLoaded",
 		"SeverActions_CellLoaded",
+		"SeverActions_Tick_FollowerManager",
+		"SeverActions_Tick_Arrest",
+		"SeverActions_Tick_Brawl",
+		"SeverActions_Tick_SpellTeach",
+		"SeverActions_Tick_Travel",
+		"SeverActions_Tick_Survival",
+		"SeverActions_PersuasionFailed",
+		"SeverActions_OrphanCleanup",
+		"SeverActions_CampChallengeCleanup",
 		"CBPCPlayerCollisionWithFemaleEvent"
 	};		
 	if (ignored_mod_events.contains(event_name)) {
@@ -1059,8 +1069,13 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	if ( (std::strcmp(a_event->eventName.c_str() , "CaptiveDefeatEndSexScene") == 0) ) {		
 		
 		// NOTE:  This event can happen two times, for whatever reason.  So, it needs a cooldown.
+		if (!cooldown_has_passed(last_captive_defeat_end_sex_scene_thought_timestamp, 180)) {
+			SKSE::log::info("=====SKIPPING MOD EVENT: CaptiveDefeatEndSexScene because of cooldown.  Last thought was {} seconds ago.", std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - last_captive_defeat_end_sex_scene_thought_timestamp).count());
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		}
 		std::string  thought_message = std::format("It seems your enemies have taken you captive.  You were forced into a humiliating sex scene, but now your captors seem satisfied and the raping has just stopped, at least for the moment.  But you are still a captive and will be for the foreseeable future, unable to escape their control.  Tell us how you feel about that.  Since this is a major event and will lead to potentially longer enslavement, you can speak in more details and many words about this and understands the implications of what is happening to you now.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		last_captive_defeat_end_sex_scene_thought_timestamp = std::chrono::steady_clock::now();
 		LillithOnlyBox("CaptiveDefeatEndSexScene:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
