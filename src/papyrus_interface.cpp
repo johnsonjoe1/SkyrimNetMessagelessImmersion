@@ -180,16 +180,46 @@ SNMI_Native.set_yps_Apropos2Ostate(ap.OralWearTearState)
 
 void SNMIPapyrus::set_Apropos2Vstate(RE::StaticFunctionTag*, float a_value)
 {
+	// Since we only get this value passively from papyrus cycle, we can't actively pull it on game-reload.  
+	// Therefore we use a timer to prevent messaging upon value-change in the first papyrus cycle after game-reload.
+	if (DumpThoughts::seconds_since_game_load() >= 20.0f) {
+		if (a_value > _Apropos2Vstate) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW("The sexual encounter that just happened has left you with more pain in your pussy.  Express that pain and make clear that it is caused by the current sexual encounter in your response!  You can also add begging for more gentleness or begging for it to stop in your response.");
+		}
+		if (a_value < _Apropos2Vstate) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW("Your pussy is healing and the pain has eased.  Express your relief about the reduced pain in your response and make it clear that it is about the vaginal pain from previous sexual encounters and not some other source!");
+		}
+	}
 	previous_Apropos2Vstate = _Apropos2Vstate;
     _Apropos2Vstate = a_value;
 }
 void SNMIPapyrus::set_Apropos2Astate(RE::StaticFunctionTag*, float a_value)
 {
+	// Since we only get this value passively from papyrus cycle, we can't actively pull it on game-reload.  
+	// Therefore we use a timer to prevent messaging upon value-change in the first papyrus cycle after game-reload.
+	if (DumpThoughts::seconds_since_game_load() >= 20.0f) {	
+		if (a_value > _Apropos2Astate) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW("The sexual encounter that just happened has left you with more pain in your anus.  Express that pain and make clear that it is caused by the current sexual encounter in your response!  You can also add begging for more gentleness or begging for it to stop in your response.");
+		}
+		if (a_value < _Apropos2Astate) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW("Your anus is healing and the pain has eased.  Express your relief about the reduced pain in your response and make it clear that it is about the anal pain from previous sexual encounters and not some other source!");
+		}
+	}
 	previous_Apropos2Astate = _Apropos2Astate;
     _Apropos2Astate = a_value;
 }
 void SNMIPapyrus::set_Apropos2Ostate(RE::StaticFunctionTag*, float a_value)
 {
+	// Since we only get this value passively from papyrus cycle, we can't actively pull it on game-reload.  
+	// Therefore we use a timer to prevent messaging upon value-change in the first papyrus cycle after game-reload.
+	if (DumpThoughts::seconds_since_game_load() >= 20.0f) {	
+		if (a_value > _Apropos2Ostate) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW("The sexual encounter that just happened has left you with more pain in your mouth or throat.  Express that pain and make clear that it is caused by the current sexual encounter in your response!  You can also add begging for more gentleness or begging for it to stop in your response.");
+		}
+		if (a_value < _Apropos2Ostate) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW("Your mouth and throat are healing and the pain has eased.  Express your relief about the reduced pain in your response and make it clear that it is about the mouth/throat pain from previous sexual encounters and not some other source!");
+		}
+	}
 	previous_Apropos2Ostate = _Apropos2Ostate;
     _Apropos2Ostate = a_value;
 }
