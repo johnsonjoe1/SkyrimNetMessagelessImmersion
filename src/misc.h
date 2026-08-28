@@ -4,7 +4,7 @@
 
 // void LillithOnlyBox(const char* a_message);
 void LillithOnlyBox(std::string_view a_message);
-void set_current_animation_status(std::string_view a_status);
+void set_current_animation_status(std::string_view a_status, std::string_view reason_for_set_current_animation_status);
 bool player_is_in_a_SL_scene();
 void handle_timeout_for_stale_scenes();
 

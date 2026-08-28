@@ -105,8 +105,7 @@ public:
 			handle_player_dirt::handle_player_dirt_changes();
 			
 			handle_timeout_for_stale_scenes();  // just a periodic check, that we don't think we are in a SL scene forever (i.e. no more than 90 seconds after the previous SL_stage_advance)
-			logger::info("\n***********************************************************\n***** FINISHED DOING PERIODIC CHECKS *****\n***** The rest is callbacks and events, that happen driven by other mods *****\n***********************************************************");
-			
+			logger::info("\n***************************************************************************\n***** FINISHED DOING PERIODIC CHECKS *****\n***** The rest is callbacks and events, that happen driven by other mods *****\n***************************************************************************");
 		}
 
 		handle_changes_in_active_magic_effects(a_event);

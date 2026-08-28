@@ -35,7 +35,7 @@ void handle_timeout_for_stale_scenes() {
 	if (runtime.count() > maximum_time_since_last_game_load_or_reload) {
 		SKSE::log::info("This scene is going on more than {} seconds.  It may have run away.  We should reset to no-scene, just to be safe.", maximum_time_since_last_game_load_or_reload);
 		LillithOnlyBox(std::format("SNMI:  This scene is going on more than {} seconds.  It may have run away.  We reset to no-scene, just to be safe.", maximum_time_since_last_game_load_or_reload));
-		set_current_animation_status("not_in_a_scene");
+		set_current_animation_status("not_in_a_scene", std::format("timeout after {} seconds", maximum_time_since_last_game_load_or_reload));
 	}
 }
 
@@ -43,7 +43,7 @@ bool player_is_in_a_SL_scene() {
 	return current_animation_status == "in_a_scene";
 }
 
-void set_current_animation_status(std::string_view a_status)
+void set_current_animation_status(std::string_view a_status, std::string_view reason_for_set_current_animation_status)
 {
 	current_animation_status = std::string(a_status);
 	if (current_animation_status == "in_a_scene") {
@@ -56,8 +56,7 @@ void set_current_animation_status(std::string_view a_status)
 
 		RE::DebugMessageBox(("SNMI: Unexpected animation status: " + current_animation_status).c_str());  // Show the message in a message box if the player's name is Lillith.
 	}
-
-	SKSE::log::info("Current animation status updated to: {}", current_animation_status);
+	SKSE::log::info("Current animation status updated to: {}.  Reason: {}", current_animation_status, reason_for_set_current_animation_status);
 }
 
 void LillithOnlyBox(std::string_view a_message)
