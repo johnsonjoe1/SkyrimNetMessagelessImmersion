@@ -186,7 +186,36 @@ bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
 		"SeverActions_PersuasionFailed",
 		"SeverActions_OrphanCleanup",
 		"SeverActions_CampChallengeCleanup",
-		"CBPCPlayerCollisionWithFemaleEvent"
+		"CBPCPlayerCollisionWithFemaleEvent",
+		"Obody_ApplyMorph",
+		"SKICP_configManagerReady",
+		"SKICP_modSelected",         // this is broadcast when the player selects a mod in the SKI Configuration Menu.
+		"SKICP_pageSelected",        // this is broadcast when the player selects a page of a mod configuration in the SKI Configuration Menu.
+		"SKICP_optionHighlighted",   // this is broadcast when the player highlights a configuration option for a mod in the SKI Configuration Menu.
+		"SKICP_optionSelected",      // this is broadcast when the player selects a configuration option for a mod in the SKI Configuration Menu.
+		"SKICP_messageDialogClosed", // this is broadcast when the player closes a message dialog in the SKI Configuration Menu.
+		"SKICP_menuSelected",
+		"SKICP_menuAccepted",
+		"SKICP_inputSelected",
+		"SKICP_inputAccepted",
+		"SKICP_keymapChanged",          // this is broadcast when the player changes a keymap in the SKI Configuration Menu.
+		"SKICP_sliderSelected",         // more mod events that happen when changing something in the MCM.
+		"SKICP_sliderAccepted",         // more mod events that happen when changing something in the MCM.
+		"SKICP_dialogCanceled",         // more mod events that happen when changing something in the MCM.		
+		"SKIWF_widgetError",            // this is broadcast when a widget error occurs.
+		"SKIWF_hudModeChanged", 
+		"SKIWF_widgetLoaded", 
+		"SKIWF_widgetManagerReady", 
+		"SKIWF_iWantWidgetsReset", 
+		"SKIWF_iWantStatusBarsReady", 			
+		"RSM_CategoriesInitialized",   // this is some technical event from RaceMenu that we don't care about.
+		"RSM_Initialized",             // this is some technical event from RaceMenu that we don't care about.
+		"RSM_SliderChange",
+		"RSM_Reinitialized",
+		"RSM_RequestTintSave",
+		"RSM_RequestTintLoad",
+		"RSM_HairColorChange",
+		"RSM_ShadersInvalidated"
 	};		
 	if (ignored_mod_events.contains(event_name)) {
 		return true;
@@ -200,44 +229,19 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		
 		"Apropos2GameLoaded",
 		"Apropos2ConfigClose",
-		
+
+
 		// "SNMI_JustPumpMyStringToPlayerThought",             // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_IMPORANT_PlayerThought",                 // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",        // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought",  // we can't short-circuit that any more, because it should reset background thought cooldowns
 		"SNMI_PlayerActivatedSomething",   //  This is our own event, to be picked up by SkyrimNet, so we don't need to respond to that.
 
-		"SKICP_configManagerReady",
-		"SKIWF_hudModeChanged", 
-		"SKIWF_widgetLoaded", 
-		"SKIWF_widgetManagerReady", 
-		"SKIWF_iWantWidgetsReset", 
-		"SKIWF_iWantStatusBarsReady", 
+
 		"iWantStatusBarsReady", 
 		"iWantWidgetsReset", 
+		"iWantWidgetsDDReset",		
 		"ORS_LinkedWidgetUpdate",    // no clue what this is.
-		"SKICP_modSelected",         // this is broadcast when the player selects a mod in the SKI Configuration Menu.
-		"SKICP_pageSelected",        // this is broadcast when the player selects a page of a mod configuration in the SKI Configuration Menu.
-		"SKICP_optionHighlighted",   // this is broadcast when the player highlights a configuration option for a mod in the SKI Configuration Menu.
-		"SKICP_optionSelected",      // this is broadcast when the player selects a configuration option for a mod in the SKI Configuration Menu.
-		"SKICP_messageDialogClosed", // this is broadcast when the player closes a message dialog in the SKI Configuration Menu.
-		"SKICP_menuSelected",
-		"SKICP_menuAccepted",
-		"SKICP_inputSelected",
-		"SKICP_inputAccepted",
-		"SKICP_keymapChanged",          // this is broadcast when the player changes a keymap in the SKI Configuration Menu.
-		"SKIWF_widgetError",            // this is broadcast when a widget error occurs.
-		"SKICP_sliderSelected",         // more mod events that happen when changing something in the MCM.
-		"SKICP_sliderAccepted",         // more mod events that happen when changing something in the MCM.
-		"SKICP_dialogCanceled",         // more mod events that happen when changing something in the MCM.
-		"RSM_CategoriesInitialized",   // this is some technical event from RaceMenu that we don't care about.
-		"RSM_Initialized",             // this is some technical event from RaceMenu that we don't care about.
-		"RSM_SliderChange",
-		"RSM_Reinitialized",
-		"RSM_RequestTintSave",
-		"RSM_RequestTintLoad",
-		"RSM_HairColorChange",
-		"RSM_ShadersInvalidated",
 		"zadRegisterEvents",   			// This is from zadLibs probably and just a technical event anyway.
 		"GagSoundsRegistered",			// This is from zadLibs probably and just a technical event anyway.
 		"SLA_Int_PlayerLoadsGame",
@@ -305,8 +309,6 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SeverActionsNative_SandboxCleanup",
 		"SeverActionsNative_OnArrival",
 		"SeverActions_CampChallenge",
-		
-
 		"SLOA_PlayerArousalUpdated",   // This update message is nice, but there is already a player response for that it seems.
 		"SLOA_NPCArousalUpdated",      // This update message is nice, but there is no need to respond now.
 
@@ -318,7 +320,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"CBPCPlayerCollisionWithFemaleEvent",
 		"CBPCPlayerGenitalCollisionWithFemaleEvent",
 		"PlayerChangedCells",
-		"Obody_ApplyMorph",
+
 
 		"_SN_PlayerConsumes",  // MOD EVENT:  Name: _SN_PlayerConsumes  StrArg: IsEating  NumArg: 0
 		
@@ -897,20 +899,29 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}	
 
 	// The sequence of License-PlayerOppression mod events is:
-	// 1.  BM-LPO_ViolationFound
+	// 0.  BM-LPO_ViolationCheck
+	// 1.  BM-LPO_ViolationFound  (This also happens in dungeons and in the wilderness with no Guard close, it seems, at least recently 20260828)
 	// 2.  BM-LPO_BountyStart  (4 seconds later)
 	// 3.  BM-LPO_BountyEnd  (30 seconds later when running away from the guards)
-	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_ViolationFound") == 0) ) {			
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyStart") == 0) ) {			
 		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, can see a guard approaching you. They want to catch you and give you a fine for some ridiculous license regulation or maybe even throw you in jail.  Announce that they are coming for you with your response, so that the player is alerted to the situation, and maybe even explain, that it is probably because of license regulation, as the player might otherwise not understand what is going on.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
+		LillithOnlyBox("Licenses-PlayerOppressionMod: BM-LPO_BountyStart: " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyStart") == 0)  || 
-		(std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyEnd") == 0) ) {			
-		// We do nothing here, on purpose for now, since the Violation-Found event should already be enough.
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_ViolationFound") == 0)   ) {			
+		// We do nothing here, on purpose for now, since the Violation-Found seems to happen all the time in the latest version.  Strange.
+
+		// NOTE:  LATER WE MIGHT BE ABLE TO GIVE A PERIODIC UPDATE, THAT SOME LICENSE IS MISSING CURRENTLY, WITHOUT KNOWING WHICH
+		//        BUT STILL, LIKE THE ANNOUNCEMENT OF HUNGER IN A QUIET MOMENT AND WITHOUT BEING TOO REPETITIVE OR INTRUSIVE.
 		return;
 	}
+	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_BountyEnd") == 0) ) {			
+		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, have either outrun them or dealt with them via dialog.  We don't know that.  So you can simply express your hope now, that they will leave you alone now for a while with their stupid licensing regulations and harassments.  Say that or something similar in your response.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("Licenses-PlayerOppressionMod: BM-LPO_BountyEnd: " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
 	// When you get a weapons license:  BM-LPO_WeaponLicense_20_Activate
 	if ( (std::strcmp(a_event->eventName.c_str() , "BM-LPO_WeaponLicense_20_Activate") == 0) ) {			
 		std::string  thought_message = std::format("The game has rather weird license regulations now. This is part of player oppression mod.  At this point, YOU as the player character, received your new weapons license.  Now you can (finally) carry your weapons out in the open as you please, which everybody else seems to be doing without much of a license, or at least you haven't seen one.  Could it be that you are being played and just harassed by the guards?  But at least you can now carry your weapons in public without being harassed by guards and fined for it.");
