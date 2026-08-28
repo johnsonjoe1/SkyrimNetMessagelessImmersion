@@ -120,6 +120,7 @@ void DumpThoughts::throw_out_TTS_thought_message(std::string my_message) {
 
 	if (DumpThoughts::too_early_after_game_load()) {
 		SKSE::log::info("////////BLOCKING normal thought message THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
+		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
 		return;
 	}
 	SKSE::ModCallbackEvent my_event(
@@ -143,7 +144,8 @@ void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string
 	auto eventSource = SKSE::GetModCallbackEventSource();
 
 	if (DumpThoughts::too_early_after_game_load()) {
-		SKSE::log::info("////////BLOCKING IMPORTANT thought message THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
+		SKSE::log::info("////////BLOCKING AS_LITTERAL_AS_POSSIBLE thought message BECAUSE TOO EARLY AFTER RELOAD/////////");
+		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
 		return;
 	}
 
@@ -167,6 +169,7 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_messag
 
 	if (DumpThoughts::too_early_after_game_load()) {
 		SKSE::log::info("////////BLOCKING IMPORTANT thought message THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
+		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
 		return;
 	}
 
@@ -191,6 +194,7 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std
 
 	if (DumpThoughts::too_early_after_game_load()) {
 		SKSE::log::info("////////BLOCKING IMPORTANT thought message THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
+		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
 		return;
 	}
 

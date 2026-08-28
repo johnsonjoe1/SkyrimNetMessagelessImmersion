@@ -96,7 +96,7 @@ public:
 		auto now = std::chrono::steady_clock::now();
 		if (now - last_periodic_check_for_changes >= std::chrono::seconds(5)) {
 			last_periodic_check_for_changes = now;
-			logger::info("***************************************************************************5 seconds elapsed:  TIME TO DO PERIODIC CHECKS***********************************************************");
+			logger::info("\n***********************************************************\n***** 5 seconds elapsed:  TIME TO DO PERIODIC CHECKS *****\n***********************************************************");
 			handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff();
 			handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff();
 			handle_yps::handle_yps_fashion_detection_stuff();
@@ -105,6 +105,8 @@ public:
 			handle_player_dirt::handle_player_dirt_changes();
 			
 			handle_timeout_for_stale_scenes();  // just a periodic check, that we don't think we are in a SL scene forever (i.e. no more than 90 seconds after the previous SL_stage_advance)
+			logger::info("\n***********************************************************\n***** FINISHED DOING PERIODIC CHECKS *****\n***** The rest is callbacks and events, that happen driven by other mods *****\n***********************************************************");
+			
 		}
 
 		handle_changes_in_active_magic_effects(a_event);
