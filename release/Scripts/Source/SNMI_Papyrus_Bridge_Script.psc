@@ -29,6 +29,22 @@ int sparcity_threshold = 6
 Event OnInit()
     RegisterForSingleUpdate(10.0)
 	lillith_notification("[SNMI] INITIAL ONINIT FOR THE Periodic 10 second update FINISHED.")
+
+	RegisterForModEvent("HookAnimationStart", "OnSexLabAnimationStart")
+	lillith_notification("[SNMI] INITIAL HOOK INTO SexLab AnimationStart FINISHED.")
+
+EndEvent
+
+Event OnSexLabAnimationStart(int tid, bool hasPlayer)
+    lillith_notification("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
+	lillith_notification("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
+	lillith_notification("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
+	Debug.MessageBox("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
+	Debug.MessageBox("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
+	Debug.MessageBox("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
+
+    ; sslThreadController thread = SexLab.GetController(tid)
+    ; Actor[] actors = thread.Positions
 EndEvent
 
 function lillith_notification(string notification_string) Global
