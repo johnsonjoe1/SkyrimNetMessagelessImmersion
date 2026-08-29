@@ -90,7 +90,7 @@ void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_messa
 		// return RE::BSEventNotifyControl::kContinue;
 	} else {
 		//RE::DebugMessageBox(my_message.c_str());
-		SKSE::log::info("The thought for the BACKGROUND TTS channel is: {} ", my_message.c_str());
+		SKSE::log::info("The thought for the BACKGROUND TTS channel is: \n\n{} ", my_message.c_str());
 		// We want to broadcast mod events.  So we need this event source.
 		std::string  mod_event_name = "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought";
 		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
@@ -98,6 +98,7 @@ void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_messa
 
 		if (DumpThoughts::too_early_after_game_load()) {
 			SKSE::log::info("////////BLOCKING BACKGROUND THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
+			SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
 			return;
 		}
 		SKSE::ModCallbackEvent my_event(
@@ -112,7 +113,7 @@ void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_messa
 }	
 void DumpThoughts::throw_out_TTS_thought_message(std::string my_message) {
 	// RE::DebugMessageBox(my_message.c_str());
-	SKSE::log::info("The thought for the NORMAL THOUGHT channel is: {} ", my_message.c_str());
+	SKSE::log::info("The thought for the NORMAL THOUGHT channel is: \n\n{} ", my_message.c_str());
 	// We want to broadcast mod events.  So we need this event source.
 	std::string  mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";  //  was, but was probably wrong:   SNMI_PlayerActivatedSomething";
 	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
@@ -120,7 +121,7 @@ void DumpThoughts::throw_out_TTS_thought_message(std::string my_message) {
 
 	if (DumpThoughts::too_early_after_game_load()) {
 		SKSE::log::info("////////BLOCKING normal thought message THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
-		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
+		SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
 		return;
 	}
 	SKSE::ModCallbackEvent my_event(
@@ -137,7 +138,7 @@ void DumpThoughts::throw_out_TTS_thought_message(std::string my_message) {
 
 void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string my_message) {
 	// RE::DebugMessageBox(my_message.c_str());
-	SKSE::log::info("The thought for the AS_LITTERAL_AS_POSSIBLE channel is: {} ", my_message.c_str());
+	SKSE::log::info("The thought for the AS_LITTERAL_AS_POSSIBLE channel is: \n\n{} ", my_message.c_str());
 	// We want to broadcast mod events.  So we need this event source.
 	std::string  mod_event_name = "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought";   // this is the special event for literal and verbatim reproduction of the input text
 	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
@@ -145,7 +146,7 @@ void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string
 
 	if (DumpThoughts::too_early_after_game_load()) {
 		SKSE::log::info("////////BLOCKING AS_LITTERAL_AS_POSSIBLE thought message BECAUSE TOO EARLY AFTER RELOAD/////////");
-		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
+		SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
 		return;
 	}
 
@@ -161,7 +162,7 @@ void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string
 
 void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_message) {
 	// RE::DebugMessageBox(my_message.c_str());
-	SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: {} ", my_message.c_str());
+	SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: \n\n{} ", my_message.c_str());
 	// We want to broadcast mod events.  So we need this event source.
 	std::string  mod_event_name = "SNMI_Pump_IMPORANT_PlayerThought";
 	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
@@ -186,7 +187,7 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_messag
 
 void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std::string my_message) {
 	// RE::DebugMessageBox(my_message.c_str());
-	SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: {} ", my_message.c_str());
+	SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: \n\n{} ", my_message.c_str());
 	// We want to broadcast mod events.  So we need this event source.
 	std::string  mod_event_name = "SNMI_Pump_IMPORANT_PlayerThought";
 	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
