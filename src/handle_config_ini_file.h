@@ -5,6 +5,7 @@ namespace SNMI
     struct Settings
     {
         bool debugLogging{ false };
+		bool enablePlayerDirtThoughts{ false };
 		int updateInterval{ 33 };
     };
 

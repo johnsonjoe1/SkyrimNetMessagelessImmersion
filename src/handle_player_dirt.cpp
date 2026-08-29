@@ -50,14 +50,26 @@ void handle_player_dirt::handle_player_dirt_changes()
 		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Player dirtiness: {} (previous value: {} )", dirtValue, previous_dirt_value);
 		
 		if ((previous_dirt_value < 0.6f) && (dirtValue >= 0.6f)) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are getting really dirty now! This is not just a little bit, but really dirty so that you are not as charming when talking to people and maybe you also could get sick more easily.  Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!"));
-			SKSE::log::info("Note:  Dirtiness-level-update thought 1 was delivered.");
+			if (SNMI::GetSettings().enablePlayerDirtThoughts) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("You are getting really dirty now! This is not just a little bit, but really dirty so that you are not as charming when talking to people and maybe you also could get sick more easily.  Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!"));
+				SKSE::log::info("Note:  Dirtiness-level-update thought 1 was delivered.");
+			} else {
+				SKSE::log::info("Note:  Dirtiness-level-update thought 1 was not delivered because EnablePlayerDirtThoughts is disabled.");
+			}
 		} else if ((previous_dirt_value > 0.2f) && (dirtValue <= 0.2f)  && (dirtValue >= 0.19f)) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("Finally some of the dirt on your body has washed off.  It's not as clean as washing with soap, but you are still more fresh and clean than before!  Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!", static_cast<int>(dirtValue * 100)));
-			SKSE::log::info("Note:  Update according to empirical values:  some swimming brings dirtiness down to 0.2 absolute it seems.");
+			if (SNMI::GetSettings().enablePlayerDirtThoughts) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("Finally some of the dirt on your body has washed off.  It's not as clean as washing with soap, but you are still more fresh and clean than before!  Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!", static_cast<int>(dirtValue * 100)));
+				SKSE::log::info("Note:  Update according to empirical values:  some swimming brings dirtiness down to 0.2 absolute it seems.");
+			} else {
+				SKSE::log::info("Note:  Dirtiness-level-update thought for swimming was not delivered because EnablePlayerDirtThoughts is disabled.");
+			}
 		} else if ((previous_dirt_value > 0.01f) && (dirtValue <= 0.01f) ) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("Finally you are completely clean, like only a nice bath with soap can achieve!  Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!", static_cast<int>(dirtValue * 100)));
-			SKSE::log::info("Note:  Dirtiness-level-update thought 2 was delivered.");
+			if (SNMI::GetSettings().enablePlayerDirtThoughts) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("Finally you are completely clean, like only a nice bath with soap can achieve!  Say as much in your response and let us know how that makes you feel!  And make it clear that you speak about your dirtiness in your response!", static_cast<int>(dirtValue * 100)));
+				SKSE::log::info("Note:  Dirtiness-level-update thought 2 was delivered.");
+			} else {
+				SKSE::log::info("Note:  Dirtiness-level-update thought 2 was not delivered because EnablePlayerDirtThoughts is disabled.");
+			}
 		}
 		previous_dirt_value = dirtValue;  // Update the previous dirt value for the
 	} else {
