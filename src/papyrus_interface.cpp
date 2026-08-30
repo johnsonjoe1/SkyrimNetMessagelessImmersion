@@ -3,6 +3,7 @@
 #include "SKSE/SKSE.h"
 #include "DumpThoughts.h"
 #include "handle_AND_modesty.h"
+#include "handle_config_ini_file.h"
 #include "misc.h"
 #include <unordered_set>
 #include "papyrus_interface.h"
@@ -57,16 +58,28 @@ void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
     SKSE::log::info("Note:  Milk level updated VIA PUSH FROM PAPYRUS: {}", a_value);
 	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
 	if ( (previous_milk_level > 0.15 ) && (a_value <= 0.15) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are now sucked dry and have no more milk!  Say so and let us know how that makes you feel!  And make it clear that you speak about the milk inside of your breasts in your response!");
-		SKSE::log::info("Note:  Milk-level-update thought 1 was delivered.");
+		if (SNMI::GetSettings().enableMilkThoughts) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are now sucked dry and have no more milk!  Say so and let us know how that makes you feel!  And make it clear that you speak about the milk inside of your breasts in your response!");
+			SKSE::log::info("Note:  Milk-level-update thought 1 was delivered.");
+		} else {
+			SKSE::log::info("Note:  Milk-level-update thought 1 was not delivered because EnableMilkThoughts is disabled.");
+		}
 	}
 	if ( (previous_milk_level < 0.5f * milk_max) &&  (previous_milk_level > 0.01f ) && (a_value >= 0.5f * milk_max) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached half of their capacity, so you may soon require to be milked!  Say so and let us know what you are thinking!  And make it clear that you speak about the milk inside of your breasts in your response!");
-		SKSE::log::info("Note:  Milk-level-update thought 2 was delivered.");
+		if (SNMI::GetSettings().enableMilkThoughts) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached half of their capacity, so you may soon require to be milked!  Say so and let us know what you are thinking!  And make it clear that you speak about the milk inside of your breasts in your response!");
+			SKSE::log::info("Note:  Milk-level-update thought 2 was delivered.");
+		} else {
+			SKSE::log::info("Note:  Milk-level-update thought 2 was not delivered because EnableMilkThoughts is disabled.");
+		}
 	}
 	if ( (previous_milk_level < milk_max) && (a_value >= milk_max) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached their maximum capacity.  So your breasts need to be milked in order to relieve the pressure in your breasts.  Your breasts need to be milked.  You need to be milked.  Otherwise the milk might start to leak from your breasts at any time now.  Let us know how you feel about that!  And make it clear that you speak about the milk inside of your breasts in your response!");
-		SKSE::log::info("Note:  Milk-level-update thought 3 was delivered.");
+		if (SNMI::GetSettings().enableMilkThoughts) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts are filling with milk and have just reached their maximum capacity.  So your breasts need to be milked in order to relieve the pressure in your breasts.  Your breasts need to be milked.  You need to be milked.  Otherwise the milk might start to leak from your breasts at any time now.  Let us know how you feel about that!  And make it clear that you speak about the milk inside of your breasts in your response!");
+			SKSE::log::info("Note:  Milk-level-update thought 3 was delivered.");
+		} else {
+			SKSE::log::info("Note:  Milk-level-update thought 3 was not delivered because EnableMilkThoughts is disabled.");
+		}
 	}	
 	previous_milk_level = a_value;  // update the previous level for the next check
 }
@@ -87,8 +100,12 @@ void SNMIPapyrus::SetMaidLevel(RE::StaticFunctionTag*, float a_value)
     SKSE::log::info("Note:  Maid level updated VIA PUSH FROM PAPYRUS: {}", a_value);
 	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
 	if ( (previous_maid_level < _maidLevel) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts have suddenly gained capacity and advanced to a new milk level!  Say so and let us know how that makes you feel!  And make it clear that you speak about the milk capacity of your breasts and that you might resembe a 'better milk maid' now in your response!");
-		SKSE::log::info("Note:  Maid-level-update thought was delivered.");
+		if (SNMI::GetSettings().enableMilkThoughts) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Your breasts have suddenly gained capacity and advanced to a new milk level!  Say so and let us know how that makes you feel!  And make it clear that you speak about the milk capacity of your breasts and that you might resembe a 'better milk maid' now in your response!");
+			SKSE::log::info("Note:  Maid-level-update thought was delivered.");
+		} else {
+			SKSE::log::info("Note:  Maid-level-update thought was not delivered because EnableMilkThoughts is disabled.");
+		}
 	}
 	previous_maid_level = _maidLevel;  // update the previous level for the next check
 }
@@ -252,15 +269,23 @@ void SNMIPapyrus::SetLactacidLevel(RE::StaticFunctionTag*, float a_value)
     SKSE::log::info("Note:  Lactacid level updated VIA PUSH FROM PAPYRUS: {}", a_value);
 	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
 	if ( (previous_lactacid_level <= 0 ) && (a_value > 0) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received lactacid into your body, which you didn't have before!  This means that your breasts are going to start producing milk now!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
-		DumpThoughts::reset_lactacid_added_speech_timestamp();  // reset the timestamp for the last speech about lactacid being added, so that we can later check if the player is talking about it in a timely manner.
-		SKSE::log::info("Note:  Milk-level-update thought 1 was delivered.");
+		if (SNMI::GetSettings().enableMilkThoughts) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received lactacid into your body, which you didn't have before!  This means that your breasts are going to start producing milk now!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
+			DumpThoughts::reset_lactacid_added_speech_timestamp();  // reset the timestamp for the last speech about lactacid being added, so that we can later check if the player is talking about it in a timely manner.
+			SKSE::log::info("Note:  Lactacid-level-update thought 1 was delivered.");
+		} else {
+			SKSE::log::info("Note:  Lactacid-level-update thought 1 was not delivered because EnableMilkThoughts is disabled.");
+		}
 	}
 	if ( (previous_lactacid_level > 0 ) &&  (a_value > previous_lactacid_level) ) {
 		if (!DumpThoughts::too_early_for_next_lactacid_speech()) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received more lactacid into your body on top of the level you had already!  This means that your breasts are going to be producing milk for even longer time!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
-			DumpThoughts::reset_lactacid_added_speech_timestamp();  // reset the timestamp for the last speech about lactacid being added, so that we can later check if the player is talking about it in a timely manner.
-			SKSE::log::info("Note:  Lactacid-level-update thought 2 was delivered.");
+			if (SNMI::GetSettings().enableMilkThoughts) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just received more lactacid into your body on top of the level you had already!  This means that your breasts are going to be producing milk for even longer time!  Say so and let us know how that makes you feel!  And make it clear that you speak about your breasts and the milk in your response and also make sure that you mention the lactacid, that's causing it all!");
+				DumpThoughts::reset_lactacid_added_speech_timestamp();  // reset the timestamp for the last speech about lactacid being added, so that we can later check if the player is talking about it in a timely manner.
+				SKSE::log::info("Note:  Lactacid-level-update thought 2 was delivered.");
+			} else {
+				SKSE::log::info("Note:  Lactacid-level-update thought 2 was not delivered because EnableMilkThoughts is disabled.");
+			}
 		}
 	}
 	previous_lactacid_level = a_value;  // update the previous level for the next check
@@ -375,7 +400,11 @@ void SNMIPapyrus::handle_mme_milk_value_changes_and_produce_thoughts_from_them()
 		previous_milk_string = current_milk_string;  // Update the previous milk string to the current one for the next comparison.
 	} else {
 		// There was a change in milk string
-		DumpThoughts::throw_out_TTS_thought_message("Due to milk slowly accumulating in her breasts, " + current_milk_string);
+		if (SNMI::GetSettings().enableMilkThoughts) {
+			DumpThoughts::throw_out_TTS_thought_message("Due to milk slowly accumulating in her breasts, " + current_milk_string);
+		} else {
+			SKSE::log::info("Note:  Milk-string-change thought was not delivered because EnableMilkThoughts is disabled.");
+		}
 		previous_milk_string = current_milk_string;  // Update the previous milk string to the current one for the next comparison.			
 	}
 

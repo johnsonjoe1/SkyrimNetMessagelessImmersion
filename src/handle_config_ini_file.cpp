@@ -45,6 +45,9 @@ namespace SNMI
 		settings.enablePlayerDirtThoughts = GetPrivateProfileIntW(L"ModSpecific", L"EnablePlayerDirtThoughts", 0, configPath.c_str()) != 0;
 		SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enablePlayerDirtThoughts.  New variable value = {}", settings.enablePlayerDirtThoughts);
 
+        settings.enableMilkThoughts = GetPrivateProfileIntW(L"ModSpecific", L"EnableMilkThoughts", 0, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableMilkThoughts.  New variable value = {}", settings.enableMilkThoughts);
+
         settings.updateInterval = GetPrivateProfileIntW(L"Timing", L"UpdateInterval", 33, configPath.c_str());
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.updateInterval.  New variable value = {}", settings.updateInterval);
     }
