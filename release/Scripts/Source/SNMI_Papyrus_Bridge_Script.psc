@@ -1,6 +1,8 @@
 Scriptname SNMI_Papyrus_Bridge_Script extends Quest  
 {SNMI_Papyrus_Bridge_Script}
 
+SexLabFramework Property SexLab Auto
+
 float keepalive_value = 1.01
 float current_milk_value = 15.5
 float max_milk_value = 15.5
@@ -15,17 +17,6 @@ float LVSK_IsLovesick = 0.0
 int sparcity_counter = 0
 int sparcity_threshold = 6
 
-; ypsPiercingTicker Property PETicker Auto
-; 
-; int Function GetYpsFashionLevel()
-;    if PETicker
-;        return PETicker.CurrentFashionLevel()
-;    endif
-;    return 0
-; EndFunction
-
-
-
 Event OnInit()
     RegisterForSingleUpdate(10.0)
 	lillith_notification("[SNMI] INITIAL ONINIT FOR THE Periodic 10 second update FINISHED.")
@@ -35,16 +26,45 @@ Event OnInit()
 
 EndEvent
 
-Event OnSexLabAnimationStart(int tid, bool hasPlayer)
-    lillith_notification("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
-	lillith_notification("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
-	lillith_notification("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
-	Debug.MessageBox("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
-	Debug.MessageBox("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
-	Debug.MessageBox("[SNMI] SexLab AnimationStart received!  hasPlayer = " + hasPlayer)
+Event OnSexLabAnimationStart(int threadId, bool hasPlayer)
+    lillith_notification("[SNMI] SexLab AnimationStart received!  threadId = " + threadId + ", hasPlayer = " + hasPlayer)
 
-    ; sslThreadController thread = SexLab.GetController(tid)
-    ; Actor[] actors = thread.Positions
+	return
+
+	; NOTE:  The following code would require a hard dependency on SexLab (PPLUS) via the .esp file as a master, so we
+	;        don't want to go down that route now and focus first on other priorities.  
+	;        So we leave this code here for now, in case we want to use it later.
+
+	lillith_notification("[SNMI] SexLab AnimationStart received!  threadId = " + threadId + ", hasPlayer = " + hasPlayer)
+	lillith_notification("[SNMI] SexLab AnimationStart received!  threadId = " + threadId + ", hasPlayer = " + hasPlayer)
+	Debug.MessageBox("[SNMI] SexLab AnimationStart received!  threadId = " + threadId + ", hasPlayer = " + hasPlayer)
+	Debug.MessageBox("[SNMI] SexLab AnimationStart received!  threadId = " + threadId + ", hasPlayer = " + hasPlayer)
+	Debug.MessageBox("[SNMI] SexLab AnimationStart received!  threadId = " + threadId + ", hasPlayer = " + hasPlayer)
+
+	bool use_PPLUS_instead_of_Sexlab_166 = true
+
+	if use_PPLUS_instead_of_Sexlab_166
+		SexLabThread activeThread = SexLab.GetThread(threadId)
+		if !activeThread
+			Debug.Trace("[SNMI] No PPLUS thread found for threadId " + threadId + ". SexLab property: " + SexLab)
+			Debug.MessageBox("[SNMI] No PPLUS thread found for threadId " + threadId + ". SexLab property: " + SexLab)
+			return
+		else
+			Debug.MessageBox("[SNMI] PPLUS thread found for threadId " + threadId)
+		endif
+
+		Actor[] actors = activeThread.GetPositions()
+		Debug.Trace("[SNMI] PPLUS thread has " + actors.Length + " participants")
+		int index = 0
+		while index < actors.Length
+			Actor participant = actors[index]
+			if participant
+				Debug.Trace("[SNMI] PPLUS participant " + index + ": " + participant.GetDisplayName())
+				lillith_notification("[SNMI] PPLUS participant " + index + ": " + participant.GetDisplayName())
+			endif
+			index += 1
+		endwhile
+	endif
 EndEvent
 
 function lillith_notification(string notification_string) Global

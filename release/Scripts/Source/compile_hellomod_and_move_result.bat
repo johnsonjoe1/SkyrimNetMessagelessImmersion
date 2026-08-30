@@ -13,6 +13,9 @@ ECHO  Trying to compile the SNMI_Papyrus_Bridge_Script.psc file now:
 
 "C:\GAMES\steamapps\common\Skyrim Special Edition\Papyrus Compiler\PapyrusCompiler.exe" SNMI_Papyrus_Bridge_Script.psc -i="C:\GAMES\steamapps\common\Skyrim Special Edition\Data\Scripts\Source;C:\Modding\SKSE_on_Pandora\dev\SkyrimNetMessagelessImmersion\release\Scripts\Source;C:\Modding\SKSE_on_Pandora\mods\PapyrusUtil SE - Modders Scripting Utility Functions\Source\Scripts;C:\Modding\SKSE_on_Pandora\mods\SlaveTatsSE-1.3.9\Source\Scripts;C:\Modding\SKSE_on_Pandora\mods\JContainers SE\scripts\source;C:\Modding\SKSE_on_Pandora\mods\yps-ImmersiveFashion (6.9.2)\Scripts\Source" -flags=TESV_Papyrus_Flags.flg
 
+@REM C:\Modding\SKSE_on_Pandora\mods\SexLabFrameworkAE_v\scripts\Source;
+@REM C:\Modding\SKSE_on_Pandora\mods\SexLab Framework PPLUS - V2.17.1 - NG\Source\Scripts
+
 ECHO  Trying to compile the ypsThoughts.psc file now:
 
 "C:\GAMES\steamapps\common\Skyrim Special Edition\Papyrus Compiler\PapyrusCompiler.exe" ypsThoughts.psc -i="C:\GAMES\steamapps\common\Skyrim Special Edition\Data\Scripts\Source;C:\Modding\SKSE_on_Pandora\dev\SkyrimNetMessagelessImmersion\release\Scripts\Source;C:\Modding\SKSE_on_Pandora\mods\PapyrusUtil SE - Modders Scripting Utility Functions\Source\Scripts" -flags=TESV_Papyrus_Flags.flg
