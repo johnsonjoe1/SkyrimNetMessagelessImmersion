@@ -5,6 +5,7 @@
 #include "SKSE/SKSE.h"
 #include "DumpThoughts.h"
 #include "handle_AND_modesty.h"
+#include "handle_config_ini_file.h"
 #include "misc.h"
 #include <algorithm>
 #include <string.h>
@@ -261,7 +262,11 @@ void trigger_immediate_message_if_flashing_item_was_added(CurrentlyWornItemRecor
 		}
 		flash_item_message += " The player doesn't know which item you are speaking about, so be sure to mention the name of the item in your response and also describe the item's flashing property, not the general state of flashing your private areas. You can add that on top, but in this case, the item is what it's all about.  The item is probably so loose fitting or flapping around so much, that the flashing chance happens.";
 		LillithOnlyBox(flash_item_message);
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(flash_item_message);
+		if (SNMI::GetSettings().enableANDNudityThoughts) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(flash_item_message);
+		} else {
+			logger::info("Note:  AND flashing-item thought was not delivered because EnableANDNudityThoughts is disabled.");
+		}
 		// continue;
 	}
 }
@@ -494,7 +499,11 @@ void handle_hard_change_in_slots_0_to_7()
 	LillithOnlyBox(constructed_change_description.c_str());
 	if (DumpThoughts::seconds_since_game_load() >= 00.0f) {
 		// Actually getting naked is important enough to force-push the message
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(constructed_change_description);
+		if (SNMI::GetSettings().enableANDNudityThoughts) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(constructed_change_description);
+		} else {
+			logger::info("Note:  AND nudity-change thought was not delivered because EnableANDNudityThoughts is disabled.");
+		}
 	} else {
 		logger::info("Note:  AND-MODESTY-UPDATE-STRING CONSTRUCTED, but not delivering it to TTS because it's too soon after game load: {}.", constructed_change_description);
 	}
@@ -558,7 +567,11 @@ void handle_current_flashing_state()
 	if (DumpThoughts::seconds_since_game_load() >= 20.0f) {
 		SKSE::log::info("Note:  AND-MODESTY-UPDATE-STRING CONSTRUCTED: {}.", constructed_change_description);
 		// Flashing your private parts is not so important as to always push the message.  It's something that belongs into the background channel.
-		DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(constructed_change_description);
+		if (SNMI::GetSettings().enableANDNudityThoughts) {
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(constructed_change_description);
+		} else {
+			logger::info("Note:  AND flashing-state thought was not delivered because EnableANDNudityThoughts is disabled.");
+		}
 		// DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(constructed_change_description);
 	} else {
 		logger::info("AND-Modesty-Factions:  Note:  AND-MODESTY-UPDATE-STRING CONSTRUCTED, but not delivering it to TTS because it's too soon after game load: {}.", constructed_change_description);
