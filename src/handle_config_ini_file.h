@@ -7,6 +7,7 @@ namespace SNMI
         bool debugLogging{ false };
 		bool enablePlayerDirtThoughts{ false };
 		bool enableMilkThoughts{ false };
+        bool enableANDNudityThoughts{ false };
 		int updateInterval{ 33 };
     };
 
