@@ -2,6 +2,7 @@
 #include "SKSE/SKSE.h"
 #include "misc.h"
 #include "handle_yps.h"
+#include "handle_licenses_player_oppression.h"
 #include "DumpThoughts.h"
 #include <string_view>
 #include <unordered_map>
@@ -898,6 +899,12 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
+	if (handle_licenses_player_oppression::try_handle_mod_event(a_event)) {
+		return;
+	}
+
+#if 0
+	// Moved to handle_licenses_player_oppression.cpp.
 	// The sequence of License-PlayerOppression mod events is:
 	// 0.  BM-LPO_ViolationCheck
 	// 1.  BM-LPO_ViolationFound  (This also happens in dungeons and in the wilderness with no Guard close, it seems, at least recently 20260828)
@@ -980,6 +987,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		LillithOnlyBox("Licenses-PlayerOppressionMod:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+#endif
 
 
 	if ( (std::strcmp(a_event->eventName.c_str() , "DF-ResistanceLossWithSeverity") == 0) ) {			
