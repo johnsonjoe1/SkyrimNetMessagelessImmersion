@@ -95,6 +95,7 @@ void refresh_currently_worn_item_records()
 	// For our purposes, the actor is always the player character.
 	RE::Actor* actor = RE::PlayerCharacter::GetSingleton();
 	if (!actor) {
+		logger::info("EMERGENCY-LEAVING:  refresh_currently_worn_item_records BECAUSE actor is null");
 		return;
 	}
 	// Loop through inventory and cache everything currently worn.
@@ -133,6 +134,7 @@ void refresh_currently_worn_item_records()
 	
 	std::sort(currently_worn_item_records.begin(), currently_worn_item_records.end(),
 		[](const CurrentlyWornItemRecord& lhs, const CurrentlyWornItemRecord& rhs) {
+			// logger::info("LEAVING:  refresh_currently_worn_item_records");
 			return lhs.form_id < rhs.form_id;
 		});
 	currently_worn_item_records.erase(
@@ -140,9 +142,12 @@ void refresh_currently_worn_item_records()
 			currently_worn_item_records.begin(),
 			currently_worn_item_records.end(),
 			[](const CurrentlyWornItemRecord& lhs, const CurrentlyWornItemRecord& rhs) {
+				//logger::info("LEAVING:  refresh_currently_worn_item_records");
 				return lhs.form_id == rhs.form_id;
 			}),
 		currently_worn_item_records.end());
+	
+	logger::info("LEAVING:  refresh_currently_worn_item_records");
 }
 
 int get_pelvic_property(const CurrentlyWornItemRecord& worn_item)
@@ -152,26 +157,33 @@ int get_pelvic_property(const CurrentlyWornItemRecord& worn_item)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
 		if (!keyword) {
+			logger::info("LEAVING:  get_pelvic_property:  Found NO keyword for worn item {}.  Returning 0.", worn_item.item->GetName());
 			return 0;
 		}
 		// logger::info("      Keyword: {} ({:08X})", 				keyword->GetFormEditorID(), 				keyword->GetFormID());
 		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicCurtain") == 0) ||
 			(strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRisk") == 0) ) {
+			logger::info("LEAVING:  get_pelvic_property:  Found pelvic property for worn item {}.  Returning 1, so just general risk with no level.", worn_item.item->GetName());
 			return 1;  // just risk, no specific level
 		}
-		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskLow") == 0) ) {			
+		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskLow") == 0) ) {		
+			logger::info("LEAVING:  get_pelvic_property:  Found pelvic property for worn item {}.  Returning 2, so low risk.", worn_item.item->GetName());
 			return 2;  // low risk
 		}
-		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskHigh") == 0) ) {			
+		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskHigh") == 0) ) {		
+			logger::info("LEAVING:  get_pelvic_property:  Found pelvic property for worn item {}.  Returning 3, so high risk.", worn_item.item->GetName());
 			return 3;  // high risk
 		}
-		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskExtreme") == 0) ) {			
+		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskExtreme") == 0) ) {		
+			logger::info("LEAVING:  get_pelvic_property:  Found pelvic property for worn item {}.  Returning 4, so extreme risk.", worn_item.item->GetName());
 			return 4;  // extreme risk
 		}		
-		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskUltra") == 0) ) {			
+		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicFlashRiskUltra") == 0) ) {	
+			logger::info("LEAVING:  get_pelvic_property:  Found pelvic property for worn item {}.  Returning 5, so ultra risk.", worn_item.item->GetName());
 			return 5;  // ultra risk
 		}				
 	}
+	logger::info("LEAVING:  get_pelvic_property:  Returning 0, so no risk whatsoever and no prior keyword before that would have indicated any risk.  Worn item = {}", worn_item.item->GetName());
 	return 0;
 }
 
@@ -182,25 +194,32 @@ int get_chest_property(const CurrentlyWornItemRecord& worn_item)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
 		if (!keyword) {
+			logger::info("LEAVING:  get_chest_property:  Found NO keyword for worn item {}.  Returning 0.", worn_item.item->GetName());
 			return 0;
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestCurtain") == 0) ||
 			(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRisk") == 0)) {
+			logger::info("LEAVING:  get_chest_property:  Found chest property for worn item {}.  Returning 1, so just general risk with no level.", worn_item.item->GetName());
 			return 1;  // just risk, no specific level
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskLow") == 0)) {
+			logger::info("LEAVING:  get_chest_property:  Found chest property for worn item {}.  Returning 2, so low risk.", worn_item.item->GetName());
 			return 2;  // low risk
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskHigh") == 0)) {
+			logger::info("LEAVING:  get_chest_property:  Found chest property for worn item {}.  Returning 3, so high risk.", worn_item.item->GetName());
 			return 3;  // high risk
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskExtreme") == 0)) {
+			logger::info("LEAVING:  get_chest_property:  Found chest property for worn item {}.  Returning 4, so extreme risk.", worn_item.item->GetName());
 			return 4;  // extreme risk
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRiskUltra") == 0)) {
+			logger::info("LEAVING:  get_chest_property:  Found chest property for worn item {}.  Returning 5, so ultra risk.", worn_item.item->GetName());
 			return 5;  // ultra risk
 		}
 	}
+	logger::info("LEAVING:  get_chest_property:  Returning 0, so no risk whatsoever and no prior keyword before that would have indicated any risk.  Worn item = {}", worn_item.item->GetName());
 	return 0;
 }
 
@@ -211,25 +230,32 @@ int get_ass_property(const CurrentlyWornItemRecord& worn_item)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
 		if (!keyword) {
+			logger::info("LEAVING:  get_ass_property:  Found NO keyword for worn item {}.  Returning 0.", worn_item.item->GetName());
 			return 0;
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_AssCurtain") == 0) ||
 			(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRisk") == 0)) {
+			logger::info("LEAVING:  get_ass_property:  Found ass property for worn item {}.  Returning 1, so just general risk with no level.", worn_item.item->GetName());
 			return 1;  // just risk, no specific level
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskLow") == 0)) {
+			logger::info("LEAVING:  get_ass_property:  Found ass property for worn item {}.  Returning 2, so low risk.", worn_item.item->GetName());
 			return 2;  // low risk
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskHigh") == 0)) {
+			logger::info("LEAVING:  get_ass_property:  Found ass property for worn item {}.  Returning 3, so high risk.", worn_item.item->GetName());
 			return 3;  // high risk
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskExtreme") == 0)) {
+			logger::info("LEAVING:  get_ass_property:  Found ass property for worn item {}.  Returning 4, so extreme risk.", worn_item.item->GetName());
 			return 4;  // extreme risk
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_AssFlashRiskUltra") == 0)) {
+			logger::info("LEAVING:  get_ass_property:  Found ass property for worn item {}.  Returning 5, so ultra risk.", worn_item.item->GetName());
 			return 5;  // ultra risk
 		}
 	}
+	logger::info("LEAVING:  get_ass_property:  Returning 0, so no risk whatsoever and no prior keyword before that would have indicated any risk.  Worn item = {}", worn_item.item->GetName());
 	return 0;
 }
 
@@ -361,6 +387,7 @@ void ListWornItems_and_update_global_curtain_flags()
 	run_change_report_on_worn_items(currently_worn_item_records, historic_worn_item_records);
 
 	historic_worn_item_records = currently_worn_item_records;
+	logger::info("LEAVING:  ListWornItems_and_update_global_curtain_flags");
 }
 
 
