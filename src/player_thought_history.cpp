@@ -66,4 +66,22 @@ void PlayerThoughtHistory::LogRecords()
 	}
 }
 
+std::string PlayerThoughtHistory::GetLogSince(std::chrono::system_clock::time_point a_since)
+{
+	std::ostringstream thoughtLog;
+	for (const auto& record : records) {
+		if (record.timestamp < a_since) {
+			continue;
+		}
+
+		const auto timestamp = std::chrono::system_clock::to_time_t(record.timestamp);
+		std::tm localTime{};
+		localtime_s(&localTime, &timestamp);
+
+		thoughtLog << '[' << std::put_time(&localTime, "%Y-%m-%d %H:%M:%S") << "] " << record.text << '\n';
+	}
+
+	return thoughtLog.str();
+}
+
 
