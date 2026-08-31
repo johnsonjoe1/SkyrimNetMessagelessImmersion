@@ -2,7 +2,10 @@
 
 #include "log.h"
 
+#include <ctime>
+#include <iomanip>
 #include <nlohmann/json.hpp>
+#include <sstream>
 
 namespace
 {
@@ -34,10 +37,33 @@ void PlayerThoughtHistory::TryRecordSkyrimNetSpeech(std::string_view a_eventName
 	records.push_back({ std::chrono::system_clock::now(), text });
 	SKSE::log::info("Recorded SkyrimNet player thought: {}", text);
 
-    
+    SKSE::log::info(">>>>>>>>> The previous log of all player thoughts now looks like this:");
+    PlayerThoughtHistory::LogRecords();
+
 }
 
 const std::vector<PlayerThoughtRecord>& PlayerThoughtHistory::GetRecords()
 {
 	return records;
 }
+
+void PlayerThoughtHistory::LogRecords()
+{
+	if (records.empty()) {
+		SKSE::log::info("No SkyrimNet player thoughts have been recorded this session.");
+		return;
+	}
+
+	SKSE::log::info("=====SKYRIMNET PLAYER THOUGHT HISTORY ({} records)=====", records.size());
+	for (const auto& record : records) {
+		const auto timestamp = std::chrono::system_clock::to_time_t(record.timestamp);
+		std::tm localTime{};
+		localtime_s(&localTime, &timestamp);
+
+		std::ostringstream timestampText;
+		timestampText << std::put_time(&localTime, "%Y-%m-%d %H:%M:%S");
+		SKSE::log::info("[{}] {}", timestampText.str(), record.text);
+	}
+}
+
+

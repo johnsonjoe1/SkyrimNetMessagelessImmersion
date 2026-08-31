@@ -14,4 +14,5 @@ namespace PlayerThoughtHistory
 {
 	void TryRecordSkyrimNetSpeech(std::string_view a_eventName, std::string_view a_payload);
 	const std::vector<PlayerThoughtRecord>& GetRecords();
+	void LogRecords();
 }
