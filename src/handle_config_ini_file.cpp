@@ -51,6 +51,9 @@ namespace SNMI
         settings.enableANDNudityThoughts = GetPrivateProfileIntW(L"ModSpecific", L"EnableANDNudityThoughts", 0, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableANDNudityThoughts.  New variable value = {}", settings.enableANDNudityThoughts);
 
+        settings.enableLicensesPlayerOppressionThoughts = GetPrivateProfileIntW(L"ModSpecific", L"EnableLicensesPlayerOppressionThoughts", 0, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableLicensesPlayerOppressionThoughts.  New variable value = {}", settings.enableLicensesPlayerOppressionThoughts);
+
         settings.updateInterval = GetPrivateProfileIntW(L"Timing", L"UpdateInterval", 33, configPath.c_str());
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.updateInterval.  New variable value = {}", settings.updateInterval);
     }
