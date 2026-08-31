@@ -29,6 +29,11 @@ namespace
 	};
 }
 
+// The sequence of License-PlayerOppression mod events is:
+// 0.  BM-LPO_ViolationCheck
+// 1.  BM-LPO_ViolationFound  (This also happens in dungeons and in the wilderness with no Guard close, it seems, at least recently 20260828)
+// 2.  BM-LPO_BountyStart  (4 seconds later)
+// 3.  BM-LPO_BountyEnd  (30 seconds later when running away from the guards or guard dialog and punishment is over)
 bool handle_licenses_player_oppression::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 {
 	const std::string_view eventName = a_event->eventName.c_str();

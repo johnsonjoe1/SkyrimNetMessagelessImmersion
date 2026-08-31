@@ -4,6 +4,7 @@
 #include "handle_yps.h"
 #include "handle_jailrape.h"
 #include "handle_licenses_player_oppression.h"
+#include "player_thought_history.h"
 #include "DumpThoughts.h"
 #include <string_view>
 #include <unordered_map>
@@ -874,6 +875,9 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;
 	}
 
+
+
+	
 #if 0
 	// Moved to handle_licenses_player_oppression.cpp.
 	// The sequence of License-PlayerOppression mod events is:
@@ -1078,6 +1082,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 
 
+
 	// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
 	if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)  || 
 		(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechCompleted") == 0)  || 
@@ -1085,7 +1090,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioStarted") == 0) ||
 		(std::strcmp(a_event->eventName.c_str() , "SkyrimNet_AudioEnded") == 0)  ) {			
 
-		// Let's also check, if it was player thoughts or player diagloge
+		PlayerThoughtHistory::TryRecordSkyrimNetSpeech(a_event->eventName.c_str(), a_event->strArg.c_str());
 		
 		auto now = std::chrono::steady_clock::now();
 		// auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);

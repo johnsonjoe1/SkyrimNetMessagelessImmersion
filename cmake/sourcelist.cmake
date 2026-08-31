@@ -13,6 +13,7 @@ set(sources ${sources}
     src/handle_mod_broadcasts.cpp
 	src/handle_jailrape.cpp
 	src/handle_licenses_player_oppression.cpp
+	src/player_thought_history.cpp
     src/handle_active_magic_effect_changes.cpp
     src/handle_config_ini_file.cpp
     src/handle_player_dirt.cpp
