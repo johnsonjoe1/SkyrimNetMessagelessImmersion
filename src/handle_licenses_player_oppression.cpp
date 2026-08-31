@@ -1,6 +1,7 @@
 #include "handle_licenses_player_oppression.h"
 
 #include "DumpThoughts.h"
+#include "handle_config_ini_file.h"
 #include "misc.h"
 
 #include <string_view>
@@ -38,7 +39,11 @@ bool handle_licenses_player_oppression::try_handle_mod_event(const SKSE::ModCall
 	for (const auto& licenseThought : licenseThoughts) {
 		if (eventName == licenseThought.eventName) {
 			const std::string thoughtMessage{ licenseThought.message };
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thoughtMessage);
+			if (SNMI::GetSettings().enableLicensesPlayerOppressionThoughts) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thoughtMessage);
+			} else {
+				SKSE::log::info("Note:  Licensing Player Oppression thought for {} was not delivered because EnableLicensesPlayerOppressionThoughts is disabled.", eventName);
+			}
 			LillithOnlyBox("Licenses-PlayerOppressionMod: " + thoughtMessage);
 			return true;
 		}
