@@ -2,6 +2,7 @@
 #include "SKSE/SKSE.h"
 #include "misc.h"
 #include "handle_yps.h"
+#include "handle_jailrape.h"
 #include "handle_licenses_player_oppression.h"
 #include "DumpThoughts.h"
 #include <string_view>
@@ -865,39 +866,9 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 
 
-	// MOD EVENT:  Name: AnimationStarting_JailRapePC :  this is the start of a Jailrape-Scene.  We absolutely should comment on it.
-	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_JailRapePC") == 0)  ) {
-		// This event is always about the player, nobody else.
-		last_devious_helplessness_thought_timestamp = std::chrono::steady_clock::now();
-		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  Now one of them is going to rape you for his own fun and pleasure. You can only cry out in desperation and fear about what is to come.  Announce that in your response, so that the player is alerted to the situation.");
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-		LillithOnlyBox("AnimationStarting_JailRapePC:  " + thought_message);
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}	
-	// MOD EVENT:  Name: AnimationChange_JailRapePC :  this from a Jailrape-Scene.  We absolutely should comment on it.
-	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationChange_JailRapePC") == 0)  ) {
-		// This event is always about the player, nobody else.
-		last_devious_helplessness_thought_timestamp = std::chrono::steady_clock::now();
-		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  One of them has already used you for his own fun and pleasure. But now he wants even more sex. He wants to try even more different sex positions with you. And to use your body in yet more ways. You cannot stop him from doing what he wants with you.");
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-		LillithOnlyBox("AnimationChange_JailRapePC:  " + thought_message);
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}	
-	// MOD EVENT:  Name: StageStart_JailRapePC :  this from a Jailrape-Scene.  We absolutely should comment on it.
-	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_JailRapePC") == 0)  ) {
-		// This event is always about the player, nobody else.
-		std::string  thought_message = std::format("YOU, the player, are imprisoned by the guards.  One of them has already used you for his own fun and pleasure. But he wants even more sex. You are forced to play along and do what he wants. You cannot stop what is happening to you, because the attacker is too strong. You can try to resist, but that might make him even more aggressive. You can try not to get excited from the sexual stimulation of your body, but even that is becoming more difficult, and you can slowly feel yourself getting involuntarily more sexually excited. Or you can start to break and start to submit and lose your will to resist entirely, accepting the guards as your new masters, and accepting that it is better to obey them than face more punishment and hoping, that if you can please the guards better, they might let you go and not be mean to you any more. ");
-
-		// We need a cooldown here again for this part, because it might flood the queue too much otherwise.
-		if (std::chrono::steady_clock::now() - last_devious_helplessness_thought_timestamp < std::chrono::seconds(15)) {
-			SKSE::log::info("=====SKIPPING MOD EVENT: StageStart_JailRapePC because of cooldown.  Last thought was {} seconds ago.", std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - last_devious_helplessness_thought_timestamp).count());
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		}
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this might need a cooldown.
-		LillithOnlyBox("StageStart_JailRapePC:  " + thought_message);
-		last_devious_helplessness_thought_timestamp = std::chrono::steady_clock::now();
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}	
+	if (handle_jailrape::try_handle_mod_event(a_event, last_devious_helplessness_thought_timestamp)) {
+		return;
+	}
 
 	if (handle_licenses_player_oppression::try_handle_mod_event(a_event)) {
 		return;
