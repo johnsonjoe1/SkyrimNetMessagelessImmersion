@@ -338,7 +338,10 @@ endfunction
 
 
 bool function IsJContainersAvailable() global
-	;  return SKSE.GetPluginVersion("JContainers64") != -1
+	if SKSE.GetPluginVersion("JContainers64") == -1
+		return false
+	endif
+
 	if JContainers.IsInstalled()
 		return true
 	else
