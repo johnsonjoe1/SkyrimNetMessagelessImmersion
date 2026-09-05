@@ -87,7 +87,16 @@ Upon picking up items:
 There is some sensitivity to overall SkyrimNet talk going on, so as to not babble too much when others are speaking, but on the other hand, give some updates and hopefully immersion and mental self-talk when it's otherwise quiet and alone time in the woods.
 
 # Usage/Configuration
-Everything is hard-coded at the moment.  There are no config-files or MCMs or anything like that.
+
+The mod includes a limited configuration file at `SKSE/Plugins/SkyrimNetMessagelessImmersion.ini`.
+The following switches in its `[Thoughts]` section are live and accept `true` or `false`:
+
+* `EnableMilkThoughts`
+* `EnableLicensesPlayerOppressionThoughts`
+* `EnablePlayerDirtThoughts`
+* `EnableANDNudityThoughts`
+
+The `EnablePlugin`, `DebugLogging`, `UpdateInterval`, `EnableAproposThoughts`, and `EnableYPSThoughts` entries are placeholders and currently have no effect. Most other behavior remains hard-coded, and there is no MCM.
 If you want, you can disable e.g. the background thought channel by deleting the SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought.yaml file. You can do that from within SkyrimNet by editing the list of triggers there.
 
 # Contributing guidelines
@@ -105,4 +114,3 @@ So all credit goes to whoever contributes there and is credited there.
 See the template from https://github.com/Monitor221hz/CommonLibSSE-NG-Template-Plugin
 
 Thanks!
-
