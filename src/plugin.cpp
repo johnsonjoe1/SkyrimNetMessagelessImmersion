@@ -117,52 +117,6 @@ public:
 
 };
 
-class DialogueHook
-{
-public:
-    static void Install()
-    {
-
-		logger::info("SNMI:  CHECK//CHECK//CHECH//CHECK//CHECK//CHECK//CHECH//CHECK//CHECK//CHECK//CHECH//CHECK Installing DialogueHook.");
-        REL::Relocation<std::uintptr_t> vtbl{ RE::VTABLE_Actor[0] };
-
-        _SetDialogueWithPlayer =
-            vtbl.write_vfunc(0x041, SetDialogueWithPlayer);
-
-		logger::info("SNMI:  CHECK//CHECK//CHECH//CHECK//CHECK//CHECK//CHECH//CHECK//CHECK//CHECK//CHECH//CHECK DialogueHook installed.");
-
-    }
-
-private:
-    static bool SetDialogueWithPlayer(
-        RE::Actor* a_actor,
-        bool a_flag,
-        bool a_forceGreet,
-        RE::TESTopicInfo* a_topic)
-    {
-        if (a_actor) {
-            logger::info(
-                "Actor {} dialogue forceGreet={} topic={:08X}",
-                a_actor->GetName(),
-                a_forceGreet,
-                a_topic ? a_topic->GetFormID() : 0);
-			LillithOnlyBox("SetDialogueWithPlayer TRIGGERED!!!!");
-			logger::info(
-				"DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK//DOUBLECHECK:  Did the SetDialogueWithPlayer really trigger?  ");
-        }
-
-        return _SetDialogueWithPlayer(
-            a_actor,
-            a_flag,
-            a_forceGreet,
-            a_topic);
-    }
-
-    inline static REL::Relocation<
-        decltype(SetDialogueWithPlayer)> _SetDialogueWithPlayer;
-};
-
-
 class ModEventHandler : public RE::BSTEventSink<SKSE::ModCallbackEvent>
 {
 public:
@@ -280,9 +234,6 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		// auto* mod_event_source = SKSE::GetModCallbackEventSource();
 		// mod_event_source->AddEventSink(&g_mod_event_handler);
 		SKSE::GetModCallbackEventSource()->AddEventSink(&g_mod_event_handler);
-
-		// Try something new, register for dialogue, so we can form a better player-thought timing.
-		DialogueHook::Install();
 
 		break;
 
