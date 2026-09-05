@@ -42,21 +42,20 @@ namespace SNMI
         settings.debugLogging = GetPrivateProfileIntW(L"General", L"DebugLogging", 0, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.debug.  New variable value = {}", settings.debugLogging);
 
-		settings.enablePlayerDirtThoughts = GetPrivateProfileIntW(L"ModSpecific", L"EnablePlayerDirtThoughts", 0, configPath.c_str()) != 0;
+		settings.enablePlayerDirtThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnablePlayerDirtThoughts", 0, configPath.c_str()) != 0;
 		SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enablePlayerDirtThoughts.  New variable value = {}", settings.enablePlayerDirtThoughts);
 
-        settings.enableMilkThoughts = GetPrivateProfileIntW(L"ModSpecific", L"EnableMilkThoughts", 0, configPath.c_str()) != 0;
+        settings.enableMilkThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableMilkThoughts", 0, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableMilkThoughts.  New variable value = {}", settings.enableMilkThoughts);
 
-        settings.enableANDNudityThoughts = GetPrivateProfileIntW(L"ModSpecific", L"EnableANDNudityThoughts", 0, configPath.c_str()) != 0;
+        settings.enableANDNudityThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableANDNudityThoughts", 0, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableANDNudityThoughts.  New variable value = {}", settings.enableANDNudityThoughts);
 
-        settings.enableLicensesPlayerOppressionThoughts = GetPrivateProfileIntW(L"ModSpecific", L"EnableLicensesPlayerOppressionThoughts", 0, configPath.c_str()) != 0;
+        settings.enableLicensesPlayerOppressionThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableLicensesPlayerOppressionThoughts", 0, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableLicensesPlayerOppressionThoughts.  New variable value = {}", settings.enableLicensesPlayerOppressionThoughts);
 
         settings.updateInterval = GetPrivateProfileIntW(L"Timing", L"UpdateInterval", 33, configPath.c_str());
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.updateInterval.  New variable value = {}", settings.updateInterval);
     }
 }
-
 
