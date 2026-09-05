@@ -1,6 +1,7 @@
 #include "player_thought_history.h"
 
 #include "log.h"
+#include "RE/Skyrim.h"
 
 #include <ctime>
 #include <iomanip>
@@ -9,6 +10,7 @@
 
 namespace
 {
+	constexpr std::size_t maxLoggedThoughts = 15;
 	std::vector<PlayerThoughtRecord> records;
 }
 
@@ -54,15 +56,24 @@ void PlayerThoughtHistory::LogRecords()
 		return;
 	}
 
-	SKSE::log::info("=====SKYRIMNET PLAYER THOUGHT HISTORY ({} records)=====", records.size());
-	for (const auto& record : records) {
-		const auto timestamp = std::chrono::system_clock::to_time_t(record.timestamp);
+	const auto* player = RE::PlayerCharacter::GetSingleton();
+	const auto* playerName = player ? player->GetName() : nullptr;
+	const bool logCompleteHistory = playerName && std::string_view(playerName) == "Lillith";
+	auto firstRecordToLog = records.cbegin();
+	if (!logCompleteHistory && records.size() > maxLoggedThoughts) {
+		firstRecordToLog = records.cend() - maxLoggedThoughts;
+	}
+	const auto loggedRecordCount = static_cast<std::size_t>(records.cend() - firstRecordToLog);
+
+	SKSE::log::info("=====SKYRIMNET PLAYER THOUGHT HISTORY (logging {} of {} records)=====", loggedRecordCount, records.size());
+	for (auto record = firstRecordToLog; record != records.cend(); ++record) {
+		const auto timestamp = std::chrono::system_clock::to_time_t(record->timestamp);
 		std::tm localTime{};
 		localtime_s(&localTime, &timestamp);
 
 		std::ostringstream timestampText;
 		timestampText << std::put_time(&localTime, "%Y-%m-%d %H:%M:%S");
-		SKSE::log::info("[{}] {}", timestampText.str(), record.text);
+		SKSE::log::info("[{}] {}", timestampText.str(), record->text);
 	}
 }
 
