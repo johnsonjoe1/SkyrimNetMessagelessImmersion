@@ -13,8 +13,7 @@ So everything should play the same, just with an potentially messageless and wid
 # Installation instructions and technicallities
 
 This is mainly an SKSE plugin with CommonLibSSE-NG, meaning that is *should* work with Skyrim version 1.6.1170, as well as the latest GOG versions.
-There are *no* hard requirements for other mods (except for SkyrimNet, which is required, and therefore all of it's dependencies, so we can safely
-assume hard dependency on the following is already confirmed:
+There are *no* hard requirements for other mods (except for SkyrimNet, which is required, and therefore all of it's dependencies, so we can silently assume hard dependency on the following is already resolved:
 [Skyrim Script Extender (SKSE)] https://skse.silverlock.org/
 [Address Library for SKSE Plugins] https://www.nexusmods.com/skyrimspecialedition/mods/32444
 [PowerOfThree's Papyrus Extender] https://www.nexusmods.com/skyrimspecialedition/mods/22854
@@ -32,6 +31,9 @@ information as well, without extra code from then on.  So minimal invasiveness a
 Other mods that are being picked on (at least in minimal amounts) when they are present:
 * YPS fashion mod:  YPS thoughts piped to SkyrimNet, YPS heels and feet training status and slowdown effects, comments on activation of clothing with YPS keywords, 
   (https://www.loverslab.com/files/file/2583-immersive-hair-growth-and-styling-yps-devious-immersive-fashion-2025-06-08/),
+  Recommended setting for this one:  Turn off the in-build thought volume to zero, so that you don't have like an echo of the original sound sample from YPS and 
+  the player-thought voice from SkyrimNet.  Also, reduce the default frequency of thoughts, so that they integrate well with the
+  higher chatter frequency from SkyrimNet.  I use a setting of 4 percent probability per frame on 60 fps myself.
 * MME Milk mod:  Full milk, halfway full, empty, lactacid level rise, milk pump usage, maid level rise,  (https://www.loverslab.com/files/file/6103-milk-mod-economy-se/),
 * Advanced Nudity Detection (AND) mod:  Change of (partial) nudity state, (https://www.nexusmods.com/skyrimspecialedition/mods/165289),
 * SLSF:  Major changes of fame,  (https://www.loverslab.com/files/file/35874-sexlab-sexual-fame-reloaded/),
