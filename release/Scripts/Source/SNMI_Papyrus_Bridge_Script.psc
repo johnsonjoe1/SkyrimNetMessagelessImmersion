@@ -436,7 +436,9 @@ Event OnUpdate()
     keepalive_value += 1.0    ; This is just an internal counter, that will count the number of times this has run so far
     SNMI_Native.SetKeepaliveLevel(keepalive_value)
 
-	push_all_MME_variables_to_the_plugin()
+	if Game.GetModByName("MilkModNEW.esp") != 255
+		push_all_MME_variables_to_the_plugin()
+	endif
 
 	push_all_YPS_variables_to_the_plugin()
 
