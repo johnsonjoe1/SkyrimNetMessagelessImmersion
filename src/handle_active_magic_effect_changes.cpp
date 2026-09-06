@@ -103,6 +103,7 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 
 		"BM_ME_DetectLocChange",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
 		"BM_ME_DetectLocCity",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
+		"BM_ME_DetectLocTown",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
 		"BM_ME_PeriodicCheck",  // The mod Licenses-Player Oppression periodically doing something I presume.
 
 		"BM_ME_HostArmorLicense",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
@@ -118,6 +119,7 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"BM_ME_HostTravelPermit",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 		"BM_ME_HostWeaponLicense",     // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 		"BM_ME_HostWhoreLicense",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
+		"BM_ME_DetectStateWorkbench",  // The mod Licenses-Player Oppression checking for workbench state changes, can be ignored.
 
 		// NOW HANDLED:   ""Muzzle Gag Ding-a-Ling Sounds Slow",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
 		// NOW HANDLED:   ""Muzzle Gag Ding-a-Ling Sounds Medium",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
@@ -548,6 +550,83 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		} 
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
+
+	/*
+[2026-09-06 09:23:38.663] [log] [info] [handle_active_magic_effect_changes.cpp:677] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-06 09:23:38.663] [log] [info] [handle_active_magic_effect_changes.cpp:678] Effect APPLIED on Non-Lillith | UID=34
+[2026-09-06 09:23:38.663] [log] [info] [handle_active_magic_effect_changes.cpp:681] Base name: Fatigue | Base ptr: 0x1d5e06b17c0 | Base-FormID: 73F23 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-06 09:23:38.663] [log] [info] [handle_active_magic_effect_changes.cpp:682] base-Effect EDID: AlchDamageStaminaRavage | Source ptr: 0x1d5ded89a80  |  Caster: Non-Lillith 
+[2026-09-06 09:23:38.663] [log] [info] [handle_active_magic_effect_changes.cpp:686] Magnitude: -1 | Duration: 2.6599998
+[2026-09-06 09:23:38.663] [log] [info] [handle_active_magic_effect_changes.cpp:689] Source name: Thistle Branch | Source FormID: 134AA | Source EDID: Thistle01 
+[2026-09-06 09:23:38.663] [log] [info] [handle_active_magic_effect_changes.cpp:695] Form LookupByID 73F23 found: Fatigue
+*/
+	if (base && ( (std::strcmp(base_name, "Fatigue") == 0) && (std::strcmp(source->GetName(), "Thistle Branch") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for FATIGUE effect application from Thistle Branch!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate a piece of Thistle Branch and received a fatigue effect from it.  Say as much in your response, and make sure you make it clear that Thistle Branch simply causes fatigue.")); //  + standard_thought_instruction;
+		} 
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+/*
+[2026-09-06 09:23:36.988] [log] [info] [handle_active_magic_effect_changes.cpp:677] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-06 09:23:36.988] [log] [info] [handle_active_magic_effect_changes.cpp:678] Effect APPLIED on Non-Lillith | UID=33
+[2026-09-06 09:23:36.988] [log] [info] [handle_active_magic_effect_changes.cpp:681] Base name: Drain Intelligence | Base ptr: 0x1d5f4645b40 | Base-FormID: 6904C7FB | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-06 09:23:36.988] [log] [info] [handle_active_magic_effect_changes.cpp:682] base-Effect EDID: AlchDrainIntelligence_KRY | Source ptr: 0x1d5ded8d080  |  Caster: Non-Lillith 
+[2026-09-06 09:23:36.988] [log] [info] [handle_active_magic_effect_changes.cpp:686] Magnitude: -1.38 | Duration: 30
+[2026-09-06 09:23:36.988] [log] [info] [handle_active_magic_effect_changes.cpp:689] Source name: Red Mountain Flower | Source FormID: 77E1D | Source EDID: MountainFlower01Red 
+[2026-09-06 09:23:36.988] [log] [info] [handle_active_magic_effect_changes.cpp:695] Form LookupByID 6904C7FB found: Drain Intelligence
+*/
+	if (base && ( (std::strcmp(base_name, "Drain Intelligence") == 0) && (std::strcmp(source->GetName(), "Red Mountain Flower") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for DRAIN INTELLIGENCE effect application from Red Mountain Flower!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate a piece of Red Mountain Flower and received a drain intelligence effect from it.    Say as much in your response, and make sure you make it clear that Red Mountain Flower simply causes drain intelligence effect.")); //  + standard_thought_instruction;
+		} 
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+/*
+[2026-09-06 12:17:39.192] [log] [info] [handle_active_magic_effect_changes.cpp:718] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-06 12:17:39.192] [log] [info] [handle_active_magic_effect_changes.cpp:719] Effect APPLIED on Non-Lillith | UID=39
+[2026-09-06 12:17:39.192] [log] [info] [handle_active_magic_effect_changes.cpp:722] Base name: Damage Stamina Regen | Base ptr: 0x1b1dfb82240 | Base-FormID: 73F2C | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-06 12:17:39.192] [log] [info] [handle_active_magic_effect_changes.cpp:723] base-Effect EDID: AlchDamageStaminaRate | Source ptr: 0x1b1df66b240  |  Caster: Non-Lillith 
+[2026-09-06 12:17:39.192] [log] [info] [handle_active_magic_effect_changes.cpp:727] Magnitude: -4.02 | Duration: 30
+[2026-09-06 12:17:39.192] [log] [info] [handle_active_magic_effect_changes.cpp:730] Source name: Skeever Tail | Source FormID: 3AD6F | Source EDID: SkeeverTail 
+[2026-09-06 12:17:39.192] [log] [info] [handle_active_magic_effect_changes.cpp:736] Form LookupByID 73F2C found: Damage Stamina Regen
+*/
+	if (base && ( (std::strcmp(base_name, "Damage Stamina Regen") == 0) && (std::strcmp(source->GetName(), "Skeever Tail") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for DAMAGE STAMINA REGEN effect application from Skeever Tail!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate a piece of Skeever Tail and received a damage stamina regen effect from it.    Say as much in your response, and make sure you make it clear that Skeever Tail simply causes damage stamina regeneration effect.")); //  + standard_thought_instruction;
+		} 
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+/*
+[2026-09-06 12:17:44.455] [log] [info] [handle_active_magic_effect_changes.cpp:718] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-06 12:17:44.455] [log] [info] [handle_active_magic_effect_changes.cpp:719] Effect APPLIED on Non-Lillith | UID=40
+[2026-09-06 12:17:44.455] [log] [info] [handle_active_magic_effect_changes.cpp:722] Base name: Damage Stamina Regen | Base ptr: 0x1b1dfb82240 | Base-FormID: 73F2C | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-06 12:17:44.455] [log] [info] [handle_active_magic_effect_changes.cpp:723] base-Effect EDID: AlchDamageStaminaRate | Source ptr: 0x1b20714ed40  |  Caster: Non-Lillith 
+[2026-09-06 12:17:44.455] [log] [info] [handle_active_magic_effect_changes.cpp:727] Magnitude: -4.36 | Duration: 0.29999998
+[2026-09-06 12:17:44.455] [log] [info] [handle_active_magic_effect_changes.cpp:730] Source name: Spider Silk | Source FormID: 1CC0638 | Source EDID: CACO_SpiderSilk 
+[2026-09-06 12:17:44.455] [log] [info] [handle_active_magic_effect_changes.cpp:736] Form LookupByID 73F2C found: Damage Stamina Regen
+*/
+	if (base && ( (std::strcmp(base_name, "Damage Stamina Regen") == 0) && (std::strcmp(source->GetName(), "Spider Silk") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for DAMAGE STAMINA REGEN effect application from Spider Silk!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just consumed Spider Silk and received a damage stamina regen effect from it.    Say as much in your response, and make sure you make it clear that Spider Silk simply causes damage stamina regeneration effect.")); //  + standard_thought_instruction;
+		} 
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+/*
+
+*/
+
 
 
 	if (base && ( (std::strcmp(base_name, "Restraint Trap") == 0) ) )   // We already know, that this is about the player at this point, so no need to double-check!
