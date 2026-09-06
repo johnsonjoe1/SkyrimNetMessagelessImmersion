@@ -126,16 +126,10 @@ public:
         if (!a_event) {
             return RE::BSEventNotifyControl::kContinue;
         }
-
 		handle_mod_event_broadcasts(a_event);
-
-	
-
         return RE::BSEventNotifyControl::kContinue;
     }
-
 private:
-	
 };
 
 
