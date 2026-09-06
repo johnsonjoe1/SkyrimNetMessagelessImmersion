@@ -5,6 +5,7 @@
 #include "DumpThoughts.h"
 #include "handle_yps.h"
 #include "handle_SL_Survival.h"
+#include <algorithm>
 #include <string_view>
 #include <unordered_set>
 #include <vector>
@@ -32,6 +33,22 @@ std::array<std::string, 10> list_of_enemy_contracted_sicknesses = {
 	"Gutworm",
 	"Witbane"
 };
+
+std::array<std::string, 12> list_of_all_sicknesses = {
+    "Ataxia",
+    "Bone Break Fever",
+    "Brain Rot",
+    "Brown Rot",
+    "Droops",
+	"Greenspore",
+	"Rattles",
+	"Rockjoint",
+	"Gutworm",
+	"Witbane",
+    "Stomach Rot",
+    "Food Poisoning"	
+};
+
 
 int IsAFoodBasedDisease(std::string_view keyword)
 {
@@ -313,15 +330,16 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
-	// The cure to rock joint desease looks like the comment below.  Lets say something.
-	if (base && ( strcmp(base_name, "Rock Joint") == 0) && (! a_event->isApplied) )
+	// For the removal of a disease, we can simply handle them all in the same way.  At least for now.
+	if (base && std::find(list_of_all_sicknesses.begin(), list_of_all_sicknesses.end(), base_name) != list_of_all_sicknesses.end() && !a_event->isApplied)
 	{
 		std::string stomach_rot_status = std::format("CURE OF {} DISEASE DETECTED! ", base_name);
 		LillithOnlyBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
-		SKSE::log::info("Event handler for Rock Joint Disease!");
+		SKSE::log::info("Event handler for ALL DISEASED BEING REMOVED, i.e CURED!");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, just got cured of your {} Disease!  What a relief.  Your body has recoverd so quickly from the cure!  You need to announce great relief and successful cure!  You may do that implicitly, in the form of relief and gratitude.  Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
+
 /*[2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:337] Effect REMOVED on Lillith | UID=17
 [2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:340] Base name: Rock Joint | Base ptr: 0x1a4f4647900 | Base-FormID: 1E00F0AC | Base-Form Type: 18   (This means: MGEF) 
 [2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:341] base-Effect EDID: RND_DiseaseRockjoint | Source ptr: 0x1a4df640a00  |  Caster: None 
@@ -329,6 +347,55 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 [2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:348] Source name: Rock Joint | Source FormID: B8782 | Source EDID: DiseaseRockjoint 
 [2026-06-28 21:04:22.010] [log] [info] [handle_active_magic_effect_changes.cpp:354] Form LookupByID 1E00F0AC found: Rock Joint
 */
+
+/*
+[2026-09-06 15:21:07.321] [log] [info] [handle_active_magic_effect_changes.cpp:756] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-06 15:21:07.321] [log] [info] [handle_active_magic_effect_changes.cpp:757] Effect APPLIED on Non-Lillith | UID=38
+[2026-09-06 15:21:07.321] [log] [info] [handle_active_magic_effect_changes.cpp:760] Base name: Ataxia | Base ptr: 0x2a5f1608d40 | Base-FormID: 1E010672 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-06 15:21:07.321] [log] [info] [handle_active_magic_effect_changes.cpp:761] base-Effect EDID: RND_DiseaseAtaxiaStage1Effect | Source ptr: 0x2a5e7609a00  |  Caster: Non-Lillith 
+[2026-09-06 15:21:07.321] [log] [info] [handle_active_magic_effect_changes.cpp:765] Magnitude: -25 | Duration: 0
+[2026-09-06 15:21:07.321] [log] [info] [handle_active_magic_effect_changes.cpp:768] Source name: Ataxia | Source FormID: 1E00A530 | Source EDID: RND_DiseaseAtaxiaStage1 
+[2026-09-06 15:21:07.321] [log] [info] [handle_active_magic_effect_changes.cpp:774] Form LookupByID 1E010672 found: Ataxia
+*/
+	// Let's try to track ALL combat-related diseases here.  
+	if (base && std::find(list_of_enemy_contracted_sicknesses.begin(), list_of_enemy_contracted_sicknesses.end(), base_name) != list_of_enemy_contracted_sicknesses.end() && a_event->isApplied)
+	{
+		std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for FOOD-BASED-DISEASE! ", base_name);
+		LillithOnlyBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
+		SKSE::log::info("Event handler for ENEMY-CONTRACTED-DISEASE!");
+
+		if (std::string_view(base->GetFormEditorID()).find("Stage1") != std::string_view::npos)
+		{
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, just got infected with '{}' disease!  This must be something you contracted during combat with an infected creature.  You are already starting to feel the sickening effect.  You already feel the symptoms.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
+			RE::DebugMessageBox("DISEASE HANDLER STAGE 1!!");  
+			RE::DebugMessageBox("DISEASE HANDLER STAGE 1!!");  
+			if (std::strcmp(base_name, "Ataxia") == 0) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("The disease is making it harder for you to do lockpicking and pickpocketing.  Say so in your response."));
+			}
+		} else if (std::string_view(base->GetFormEditorID()).find("Stage2") != std::string_view::npos)
+		{
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, have now been infected with '{}' disease for quite a while.  And the effects of the disease are now suddenly getting worse!  You are now feeling much worse from the sickening effect.  You already feel heavy symptoms.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
+			RE::DebugMessageBox("DISEASE HANDLER STAGE 2!!");
+			RE::DebugMessageBox("DISEASE HANDLER STAGE 2!!");		
+			if (std::strcmp(base_name, "Ataxia") == 0) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("The disease is making it not only harder for you to do lockpicking and  pickpocketing, but at this stage of the disease, it also becomes harder to sneak and to carry so much weight.  Say so in your response."));
+			}				
+		} else 
+		{
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, have now reached the most severe stage of '{}' disease!  The effects are overwhelming, and you are feeling extremely sick.  You already feel the heaviest symptoms.  This could maybe end your life, if you don't manage to get treated in time.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
+			RE::DebugMessageBox("DISEASE HANDLER STAGE 3!!");
+			RE::DebugMessageBox("DISEASE HANDLER STAGE 3!!");
+			if (std::strcmp(base_name, "Ataxia") == 0) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("The disease has reached the worst state, and now you cannot move so fast any more and you can do only less damage to enemies in this sick state.  Say so in your response."));
+			}					
+		}
+
+		// NOTE:  FOR THE MOMENT WE LET THIS EVENT RUN, SO THAT WE SEE MORE PARATEMERS FROM IT IN THE LOG.
+		// return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+	// list_of_enemy_contracted_sicknesses
+
+
 
 
 	// Let's try to track Unforgiving Devices Struggle Exhaustion here:  FIRST THE APPLICATION OF THE EFFECT.
@@ -624,9 +691,23 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 /*
-
+[2026-09-06 15:17:37.685] [log] [info] [handle_active_magic_effect_changes.cpp:756] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-06 15:17:37.685] [log] [info] [handle_active_magic_effect_changes.cpp:757] Effect REMOVED on Non-Lillith | UID=32
+[2026-09-06 15:17:37.685] [log] [info] [handle_active_magic_effect_changes.cpp:760] Base name: Reduce Orgasm Resistance | Base ptr: 0x2a5f1b90800 | Base-FormID: 241553D6 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-06 15:17:37.685] [log] [info] [handle_active_magic_effect_changes.cpp:761] base-Effect EDID: UD_ReduceOrgasmResist_ME | Source ptr: 0x2a5f2250e00  |  Caster: Non-Lillith 
+[2026-09-06 15:17:37.685] [log] [info] [handle_active_magic_effect_changes.cpp:765] Magnitude: 2.5 | Duration: 0.35
+[2026-09-06 15:17:37.685] [log] [info] [handle_active_magic_effect_changes.cpp:768] Source name: Ancient Seed | Source FormID: 241553DB | Source EDID: UD_AncientSeed 
+[2026-09-06 15:17:37.685] [log] [info] [handle_active_magic_effect_changes.cpp:774] Form LookupByID 241553D6 found: Reduce Orgasm Resistance
 */
-
+	if (base && ( (std::strcmp(base_name, "Reduce Orgasm Resistance") == 0) && (std::strcmp(source->GetName(), "Spider Silk") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for REDUCE ORGASM RESISTANCE effect application from Ancient Seed!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just consumed Ancient Seed and received a reduce orgasm resistance effect from it.    Say as much in your response, and make sure you make it clear that Ancient Seed simply causes reduce orgasm resistance effect.")); //  + standard_thought_instruction;
+		} 
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
 
 
 	if (base && ( (std::strcmp(base_name, "Restraint Trap") == 0) ) )   // We already know, that this is about the player at this point, so no need to double-check!
