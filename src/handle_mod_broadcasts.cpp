@@ -86,7 +86,7 @@ namespace
 			return false;
 		}
 
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName()) {
+		if (std::strcmp(a_event->strArg.c_str(), RE::PlayerCharacter::GetSingleton()->GetName()) == 0) {
 
 			//  We POTENTIALLY throw out a thought message about the devices being equipped.  But we don't want to flood the queue.
 			auto now = std::chrono::steady_clock::now();
@@ -160,7 +160,7 @@ namespace
 			return false;
 		}
 
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() && !it->second.empty()) {
+		if (std::strcmp(a_event->strArg.c_str(), RE::PlayerCharacter::GetSingleton()->GetName()) == 0 && !it->second.empty()) {
 
 			//  We POTENTIALLY throw out a thought message about the devices being removed.  But we don't want to flood the queue.
 			auto now = std::chrono::steady_clock::now();
@@ -597,7 +597,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 	// MOD EVENT:  Name: DeviousEventStruggle  :  this seems to be a random forced struggle event with no real struggle but just for roleplay.  We make a comment.
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventStruggle") == 0)  ) {
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+		if (std::strcmp(a_event->strArg.c_str(), RE::PlayerCharacter::GetSingleton()->GetName()) == 0) {
 			std::string  thought_message = std::format("YOU, the player character, just can't take it any more.  In a frenzy, you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		} else {
@@ -607,7 +607,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}
 	// MOD EVENT:  Name: DeviousEventArm cuff fumble  StrArg: Lillith  NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventArm cuff fumble") == 0)  ) {
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+		if (std::strcmp(a_event->strArg.c_str(), RE::PlayerCharacter::GetSingleton()->GetName()) == 0) {
 			std::string  thought_message = std::format("YOU, the player character, just can't take having these arm cuffs locked onto your wrists any more.  In a frenzy, you panic and feel that you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking about these arm cuffs locked onto your wrists.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		} else {
@@ -617,7 +617,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}
 	// MOD EVENT:  Name: DeviousEventNipple Piercings  StrArg: Lillith  NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventNipple Piercings") == 0)  ) {
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+		if (std::strcmp(a_event->strArg.c_str(), RE::PlayerCharacter::GetSingleton()->GetName()) == 0) {
 			std::string  thought_message = std::format("YOU, the player character, just can't take having these nipple piercings locked onto you any more.  In a frenzy, you panic and feel that you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking about these nipple piercings locked onto you.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		} else {
@@ -627,7 +627,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}
 	// MOD EVENT:  Name: DeviousEventTight Corset  StrArg: Lillith  NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviousEventTight Corset") == 0)  ) {
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+		if (std::strcmp(a_event->strArg.c_str(), RE::PlayerCharacter::GetSingleton()->GetName()) == 0) {
 			std::string  thought_message = std::format("YOU, the player character, just can't take having this tight corset locked onto you any more.  In a frenzy, you panic and feel that you must get out of your bondage items now.  Say so and let us know what you are feeling and thinking about this tight corset locked onto you.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		} else {
@@ -639,7 +639,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 	// MOD EVENT:  Name: DeviceActorOrgasm  StrArg: Lillith  NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "DeviceActorOrgasm") == 0)  ) {
-		if (a_event->strArg.c_str() == RE::PlayerCharacter::GetSingleton()->GetName() ) {
+		if (std::strcmp(a_event->strArg.c_str(), RE::PlayerCharacter::GetSingleton()->GetName()) == 0) {
 			std::string  thought_message = std::format("YOU, the player, just orgasmed from the vibrating devices locked onto your body and into your sensitive parts.  You couldn't prevent it.  Gods, that was intense!  Say so and let us know what you are feeling and thinking.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		} else {
