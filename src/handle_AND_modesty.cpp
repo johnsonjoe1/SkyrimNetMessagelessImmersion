@@ -406,19 +406,9 @@ bool hard_change_in_slots_0_to_7()
 		logger::info("SEVERE ERROR: Querying the player failed in the handle_AND_modesty--change_in_slots_0_to_7 function!!");
 		return false;
 	}
-	// "AND_FlashingChestCurtain",    // 8
-	// "AND_FlashingPelvicCurtain",   // 9
-	// "AND_FlashingAssCurtain",      // 10
-	auto* current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[8].c_str());
-	int flashing_chest = player->GetFactionRank(current_Faction, true);
-	current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[9].c_str());
-	int flashing_pelvis = player->GetFactionRank(current_Faction, true);
-	current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[10].c_str());
-	int flashing_ass = player->GetFactionRank(current_Faction, true);
-
 	bool found_change = false;
 	for (std::size_t my_i = 0; my_i <= 7; ++my_i) {  // The first 0-7 slots are REAL CLOTHING CHANGES!!!
-		current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
+		auto* current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
 		if (!current_Faction) {
 			logger::info("SEVERE ERROR: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
 			continue;
@@ -459,9 +449,6 @@ bool hard_change_in_slots_0_to_7()
 		}
 	}
 	logger::info("SUCCESSFULLY QUERIED FOR HARD CLOTHING CHANGE-Factions: >>>>>>>>>>>>>>>>>>>>>>>>>> FINAL RESULT IS READY:  found_change = {} ", found_change);
-
-
-
 	return found_change;
 }
 
@@ -656,4 +643,3 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 	reset_previous_rank_to_current_rank();
 
 }
-
