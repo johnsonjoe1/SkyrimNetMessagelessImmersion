@@ -13,7 +13,15 @@ So everything should play the same, just with an potentially messageless and wid
 # Installation instructions and technicallities
 
 This is mainly an SKSE plugin with CommonLibSSE-NG, meaning that is *should* work with Skyrim version 1.6.1170, as well as the latest GOG versions.
-There are *no* hard requirements for other mods (except for SkyrimNet, which is required).
+There are *no* hard requirements for other mods (except for SkyrimNet, which is required, and therefore all of it's dependencies, so we can safely
+assume hard dependency on the following is already confirmed:
+[Skyrim Script Extender (SKSE)] https://skse.silverlock.org/
+[Address Library for SKSE Plugins] https://www.nexusmods.com/skyrimspecialedition/mods/32444
+[PowerOfThree's Papyrus Extender] https://www.nexusmods.com/skyrimspecialedition/mods/22854
+[PapyrusUtil SE] https://www.nexusmods.com/skyrimspecialedition/mods/13048
+[Latest Microsoft Visual C++ Redistributable] https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170
+[Native EditorID Fix] https://www.nexusmods.com/skyrimspecialedition/mods/85260
+[Prisma UI] https://www.nexusmods.com/skyrimspecialedition/mods/148718 ).
 Any other mods, that would benefit from the plugin are not required, as it doesn't change them, it just listens to them and reads out stuff from them. 
 
 How does it work?  It's a noob project.  It just hooks into magic effect changes and mod broadcasts from other mods (or the base game), and if something
@@ -89,7 +97,7 @@ There is some sensitivity to overall SkyrimNet talk going on, so as to not babbl
 # Usage/Configuration
 
 The mod includes a limited configuration file at `SKSE/Plugins/SkyrimNetMessagelessImmersion.ini`.
-The following switches in its `[Thoughts]` section are live and accept `true` or `false`:
+The following switches in its `[Thoughts]` section are live and accept `1` or `0`:
 
 * `EnableMilkThoughts`
 * `EnableLicensesPlayerOppressionThoughts`
