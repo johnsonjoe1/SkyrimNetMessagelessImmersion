@@ -15,6 +15,7 @@ set(headers ${headers}
     src/handle_furniture_activation.h
     src/handle_mod_broadcasts.h
     src/handle_active_magic_effect_changes.h
+    src/handle_debug_notifications.h
     src/handle_config_ini_file.h
     src/handle_player_dirt.h
 )

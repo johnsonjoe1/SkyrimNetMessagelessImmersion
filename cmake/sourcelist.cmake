@@ -15,6 +15,7 @@ set(sources ${sources}
 	src/handle_licenses_player_oppression.cpp
 	src/player_thought_history.cpp
     src/handle_active_magic_effect_changes.cpp
+    src/handle_debug_notifications.cpp
     src/handle_config_ini_file.cpp
     src/handle_player_dirt.cpp
 )

@@ -7,6 +7,7 @@
 #include "handle_furniture_activation.h"
 #include "handle_mod_broadcasts.h"
 #include "handle_active_magic_effect_changes.h"
+#include "handle_debug_notifications.h"
 #include "handle_iNeed.h"
 #include "handle_yps.h"
 #include "handle_fame.h"
@@ -203,6 +204,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 	switch (a_msg->type) {
 	case SKSE::MessagingInterface::kDataLoaded:
         
+		install_debug_notification_hook();
 
 		SKSE::log::info("[SkyrimNetMessagelessImmersion] STARTUP BEFORE THE LIKELY CRASH done.");
 
