@@ -15,6 +15,7 @@ namespace logger = SKSE::log;
 static auto last_drool_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_chain_sound_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_disease_cure_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Stomach Rot",
@@ -333,10 +334,19 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	// For the removal of a disease, we can simply handle them all in the same way.  At least for now.
 	if (base && std::find(list_of_all_sicknesses.begin(), list_of_all_sicknesses.end(), base_name) != list_of_all_sicknesses.end() && !a_event->isApplied)
 	{
+		// NOTE:  We add a cooldown here, because stage2, stage1 and stage0 are all removed separately, so we would trigger 3 messages, if
+		//        the disease was at RND (realistic-needs-and-diseases-mod) stage2 already.  A finer handling in the future might mention the
+		//        specific stage that was removed, but for now we just want to avoid spamming the player with multiple messages in quick succession.
+		if (!cooldown_has_passed(last_disease_cure_thought_timestamp, 10))
+		{
+			return;
+		}
+
 		std::string stomach_rot_status = std::format("CURE OF {} DISEASE DETECTED! ", base_name);
 		LillithOnlyBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
 		SKSE::log::info("Event handler for ALL DISEASED BEING REMOVED, i.e CURED!");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, just got cured of your {} Disease!  What a relief.  Your body has recoverd so quickly from the cure!  You need to announce great relief and successful cure!  You may do that implicitly, in the form of relief and gratitude.  Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
+		last_disease_cure_thought_timestamp = std::chrono::steady_clock::now();
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
@@ -360,31 +370,28 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	// Let's try to track ALL combat-related diseases here.  
 	if (base && std::find(list_of_enemy_contracted_sicknesses.begin(), list_of_enemy_contracted_sicknesses.end(), base_name) != list_of_enemy_contracted_sicknesses.end() && a_event->isApplied)
 	{
-		std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for FOOD-BASED-DISEASE! ", base_name);
+		std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for ENEMY-CONTRACTED-DISEASE! ", base_name);
 		LillithOnlyBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
 		SKSE::log::info("Event handler for ENEMY-CONTRACTED-DISEASE!");
 
-		if (std::string_view(base->GetFormEditorID()).find("Stage1") != std::string_view::npos)
+		if (std::string_view(base->GetFormEditorID()).find("Stage0") != std::string_view::npos)
 		{
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, just got infected with '{}' disease!  This must be something you contracted during combat with an infected creature.  You are already starting to feel the sickening effect.  You already feel the symptoms.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
-			RE::DebugMessageBox("DISEASE HANDLER STAGE 1!!");  
-			RE::DebugMessageBox("DISEASE HANDLER STAGE 1!!");  
+			RE::DebugMessageBox("DISEASE HANDLER STAGE 0!!");   
 			if (std::strcmp(base_name, "Ataxia") == 0) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("The disease is making it harder for you to do lockpicking and pickpocketing.  Say so in your response."));
 			}
-		} else if (std::string_view(base->GetFormEditorID()).find("Stage2") != std::string_view::npos)
+		} else if (std::string_view(base->GetFormEditorID()).find("Stage1") != std::string_view::npos)
 		{
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, have now been infected with '{}' disease for quite a while.  And the effects of the disease are now suddenly getting worse!  You are now feeling much worse from the sickening effect.  You already feel heavy symptoms.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
-			RE::DebugMessageBox("DISEASE HANDLER STAGE 2!!");
-			RE::DebugMessageBox("DISEASE HANDLER STAGE 2!!");		
+			RE::DebugMessageBox("DISEASE HANDLER STAGE 1!!");	
 			if (std::strcmp(base_name, "Ataxia") == 0) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("The disease is making it not only harder for you to do lockpicking and  pickpocketing, but at this stage of the disease, it also becomes harder to sneak and to carry so much weight.  Say so in your response."));
 			}				
 		} else 
 		{
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, have now reached the most severe stage of '{}' disease!  The effects are overwhelming, and you are feeling extremely sick.  You already feel the heaviest symptoms.  This could maybe end your life, if you don't manage to get treated in time.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
-			RE::DebugMessageBox("DISEASE HANDLER STAGE 3!!");
-			RE::DebugMessageBox("DISEASE HANDLER STAGE 3!!");
+			RE::DebugMessageBox("DISEASE HANDLER STAGE 2!!");
 			if (std::strcmp(base_name, "Ataxia") == 0) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("The disease has reached the worst state, and now you cannot move so fast any more and you can do only less damage to enemies in this sick state.  Say so in your response."));
 			}					
