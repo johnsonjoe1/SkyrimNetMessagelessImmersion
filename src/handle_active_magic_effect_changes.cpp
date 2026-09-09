@@ -393,7 +393,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, have now reached the most severe stage of '{}' disease!  The effects are overwhelming, and you are feeling extremely sick.  You already feel the heaviest symptoms.  This could maybe end your life, if you don't manage to get treated in time.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
 			RE::DebugMessageBox("DISEASE HANDLER STAGE 2!!");
 			if (std::strcmp(base_name, "Ataxia") == 0) {
-				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("The disease has reached the worst state, and now you cannot move so fast any more and you can do only less damage to enemies in this sick state.  Say so in your response."));
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("The disease has reached the worst state. That means from now on, you cannot move so fast and it also means you do less damage to enemies.  Say so in your response and make sure you mention both effects of the disease."));
 			}					
 		}
 
