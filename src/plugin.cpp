@@ -22,6 +22,47 @@
 
 namespace logger = SKSE::log;
 
+namespace
+{
+	void LogStartupInformation(const SKSE::LoadInterface* a_skse)
+	{
+		const auto* plugin = SKSE::PluginDeclaration::GetSingleton();
+		const auto runtime = a_skse->RuntimeVersion();
+		const auto skseVersion = REL::Version::unpack(a_skse->SKSEVersion());
+		const auto* runtimeType = REL::Module::IsVR() ? "VR" : REL::Module::IsAE() ? "Anniversary Edition" : "Special Edition";
+
+#if defined(_M_X64)
+		constexpr auto processArchitecture = "x64";
+#elif defined(_M_IX86)
+		constexpr auto processArchitecture = "x86";
+#elif defined(_M_ARM64)
+		constexpr auto processArchitecture = "ARM64";
+#else
+		constexpr auto processArchitecture = "unknown";
+#endif
+
+#if defined(NDEBUG)
+		constexpr auto buildType = "Release";
+#else
+		constexpr auto buildType = "Debug";
+#endif
+
+		logger::info("==================== STARTUP INFORMATION ====================");
+		logger::info("Plugin: {}", plugin->GetName());
+		logger::info("SNMI release: {}", plugin->GetVersion().string("."));
+		logger::info("Skyrim: {} {}", runtimeType, runtime.string("."));
+		logger::info("SKSE: {}", skseVersion.string("."));
+		if (const auto* skyrimNet = a_skse->GetPluginInfo("SkyrimNet")) {
+			logger::info("SkyrimNet: {}", REL::Version::unpack(skyrimNet->version).string("."));
+		} else {
+			logger::info("SkyrimNet: version unavailable (plugin not registered yet)");
+		}
+		logger::info("Machine: Windows {}", processArchitecture);
+		logger::info("Build: {} (compiled {} {})", buildType, __DATE__, __TIME__);
+		logger::info("=============================================================");
+	}
+}
+
 /*  TODO-LIST   
 **  Handle the changes in YPS-Buffs:  (Maybe also remember the clothing-contribution (manually) from last time.  Mabe also the makeup/nails/hair from last time.)
 **  Reign in the SLSF-Messageboxes by making them conditional on a constant flag.
@@ -272,6 +313,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 SKSEPluginLoad(const SKSE::LoadInterface *skse) {
     SKSE::Init(skse);
 	SetupLog();
+	LogStartupInformation(skse);
 
     auto messaging = SKSE::GetMessagingInterface();
 	if (!messaging->RegisterListener("SKSE", MessageHandler)) {
