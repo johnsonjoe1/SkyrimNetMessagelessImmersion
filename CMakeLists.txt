@@ -82,6 +82,16 @@ if(DEFINED OUTPUT_FOLDER)
             VERBATIM
         )
     endif()
+
+    # NOTE:  We add additional copy of the new RC7 required file structure to the live installation directory, so we can always playtest
+    #        immediately after making changes.
+    add_custom_command(
+        TARGET "${PROJECT_NAME}"
+        POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory_if_different "${CMAKE_SOURCE_DIR}/release/SKSE/Plugins/SkyrimNet" "${DLL_FOLDER}/SkyrimNet"
+        VERBATIM
+    )
+
     # If you perform a "Debug" build, also copy .pdb file (for debug symbols)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_custom_command(
