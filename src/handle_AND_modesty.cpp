@@ -84,6 +84,10 @@ RE::TESFaction* get_AND_faction(std::size_t faction_index)
 	return faction;
 }
 
+int get_pelvic_property(const CurrentlyWornItemRecord& worn_item);
+int get_chest_property(const CurrentlyWornItemRecord& worn_item);
+int get_ass_property(const CurrentlyWornItemRecord& worn_item);
+
 void refresh_currently_worn_item_records()
 {
 	logger::info("ENTERING:  refresh_currently_worn_item_records");
@@ -119,6 +123,9 @@ void refresh_currently_worn_item_records()
 				record.keywords.push_back(keyword);
 			}
 		}
+		record.pelvic_property = get_pelvic_property(record);
+		record.chest_property = get_chest_property(record);
+		record.ass_property = get_ass_property(record);
 		bool full_spam_of_equipment_keywords = true;
 		if (full_spam_of_equipment_keywords) {
 			logger::info("Worn item:  {}", item->GetName());
@@ -255,27 +262,27 @@ int get_ass_property(const CurrentlyWornItemRecord& worn_item)
 	return 0;
 }
 
-void trigger_immediate_message_if_flashing_item_was_added(CurrentlyWornItemRecord my_record)
+void trigger_immediate_message_if_flashing_item_was_added(const CurrentlyWornItemRecord& my_record)
 {
 	logger::info("ENTERING:  trigger_immediate_message_if_flashing_item_was_added");
 	// On equipping any flashing item, we immediately report that to the player.
-	if ( (get_pelvic_property(my_record)+get_chest_property(my_record)+get_ass_property(my_record)) > 0 ) 
+	if ( (my_record.pelvic_property + my_record.chest_property + my_record.ass_property) > 0 )
 	{
 		// We have a flashing item.
 		bool previous_flash = false;
 		std::string flash_item_message = std::format("The equipment item {} you just put on is flashing ", my_record.item->GetName());
-		if (get_pelvic_property(my_record)) {
+		if (my_record.pelvic_property) {
 			flash_item_message += " your pelvic area at least. ";
 			previous_flash = true;
 		}
-		if (get_chest_property(my_record)) {
+		if (my_record.chest_property) {
 			if (previous_flash) {
 				flash_item_message += "And it is also flashing ";
 			}
 			flash_item_message += " your chest area at least. ";
 			previous_flash = true;
 		}
-		if (get_ass_property(my_record)) {
+		if (my_record.ass_property) {
 			if (previous_flash) {
 				flash_item_message += "And it is also flashing ";
 			}
@@ -366,15 +373,15 @@ void ListWornItems_and_update_global_curtain_flags()
 			worn_item.slot_mask);
 		PrintSlots(worn_item.slot_mask);
 
-		if (get_pelvic_property(worn_item)>0) {
+		if (worn_item.pelvic_property > 0) {
 			logger::info("      ======================>Found AND_PelvicFlashRisk keyword, setting global_pelvic_curtain_flag to true.");	
 			global_pelvic_curtain_flag = true;
 		}
-		if (get_chest_property(worn_item) > 0) {
+		if (worn_item.chest_property > 0) {
 			global_chest_curtain_flag = true;
 			logger::info("      ======================>Found AND_ChestCurtain keyword, setting global_chest_curtain_flag to true.");
 		}
-		if (get_ass_property(worn_item) > 0) {
+		if (worn_item.ass_property > 0) {
 			global_ass_curtain_flag = true;
 			logger::info("      ======================>Found AND_AssCurtain keyword, setting global_ass_curtain_flag to true.");
 		}

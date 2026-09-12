@@ -12,6 +12,9 @@ struct CurrentlyWornItemRecord
 	std::uint32_t slot_mask{0};
 	RE::TESBoundObject* item{nullptr};
 	std::vector<RE::BGSKeyword*> keywords;
+	int pelvic_property{0};
+	int chest_property{0};
+	int ass_property{0};
 };
 
 extern std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
