@@ -23,6 +23,8 @@ There are *no* hard requirements for other mods (except for SkyrimNet, which is 
 [Prisma UI] https://www.nexusmods.com/skyrimspecialedition/mods/148718 ).
 Any other mods, that would benefit from the plugin are not required, as it doesn't change them, it just listens to them and reads out stuff from them. 
 
+Version 0.6.12 and later supports both the legacy SkyrimNet trigger layout used through beta25 RC6 and the external content-plugin layout introduced in beta25 RC7. Both layouts are included in the same archive; no installer choice or manual migration is required.
+
 How does it work?  It's a noob project.  It just hooks into magic effect changes and mod broadcasts from other mods (or the base game), and if something
 relevant shows up, we trigger a player-thought response.  
 Any other prompts from SkyrimNet are aware of the player-thoughts anyway, and therefore are also informed.  So SkyrimNet might pick up on the additional
@@ -107,7 +109,7 @@ The following switches in its `[Thoughts]` section are live and accept `1` or `0
 * `EnableANDNudityThoughts`
 
 The `EnablePlugin`, `DebugLogging`, `UpdateInterval`, `EnableAproposThoughts`, and `EnableYPSThoughts` entries are placeholders and currently have no effect. Most other behavior remains hard-coded, and there is no MCM.
-If you want, you can disable e.g. the background thought channel by deleting the SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought.yaml file. You can do that from within SkyrimNet by editing the list of triggers there.
+If you want, you can disable e.g. the background thought channel. On SkyrimNet beta25 RC7 or later, disable or edit it through the `johnsonjoe1.snmi` external plugin in SkyrimNet's dashboard. On RC6 or earlier, delete or edit `SKSE/Plugins/SkyrimNet/config/triggers/SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought.yaml`.
 
 # Contributing guidelines
 You really want to help?  Great!  There are no rules.  Do what you want and can.  

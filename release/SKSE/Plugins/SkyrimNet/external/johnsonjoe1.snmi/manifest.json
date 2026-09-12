@@ -1,0 +1,13 @@
+{
+  "id": "johnsonjoe1.snmi",
+  "type": "bundle",
+  "title": "SkyrimNet Messageless Immersion",
+  "tagline": "Player-thought triggers for SkyrimNet Messageless Immersion.",
+  "description": "Adds the SkyrimNet triggers used by SkyrimNet Messageless Immersion to turn game and mod events into player thoughts.",
+  "author": "johnsonjoe1",
+  "tags": ["immersion", "player-thoughts", "triggers"],
+  "nsfw": true,
+  "icon": "sparkles",
+  "version": "0.6.12",
+  "min_skyrimnet_version": "0.25.0"
+}
