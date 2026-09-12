@@ -157,8 +157,8 @@ int get_pelvic_property(const CurrentlyWornItemRecord& worn_item)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
 		if (!keyword) {
-			logger::info("LEAVING:  get_pelvic_property:  Found NO keyword for worn item {}.  Returning 0.", worn_item.item->GetName());
-			return 0;
+			logger::info("get_pelvic_property:  Found NO keyword for worn item {}.  Skipping it.", worn_item.item->GetName());
+			continue;
 		}
 		// logger::info("      Keyword: {} ({:08X})", 				keyword->GetFormEditorID(), 				keyword->GetFormID());
 		if ( (strcmp(keyword->GetFormEditorID(), "AND_PelvicCurtain") == 0) ||
@@ -194,8 +194,8 @@ int get_chest_property(const CurrentlyWornItemRecord& worn_item)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
 		if (!keyword) {
-			logger::info("LEAVING:  get_chest_property:  Found NO keyword for worn item {}.  Returning 0.", worn_item.item->GetName());
-			return 0;
+			logger::info("get_chest_property:  Found NO keyword for worn item {}.  Skipping it.", worn_item.item->GetName());
+			continue;
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_ChestCurtain") == 0) ||
 			(strcmp(keyword->GetFormEditorID(), "AND_ChestFlashRisk") == 0)) {
@@ -230,8 +230,8 @@ int get_ass_property(const CurrentlyWornItemRecord& worn_item)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
 		if (!keyword) {
-			logger::info("LEAVING:  get_ass_property:  Found NO keyword for worn item {}.  Returning 0.", worn_item.item->GetName());
-			return 0;
+			logger::info("get_ass_property:  Found NO keyword for worn item {}.  Skipping it.", worn_item.item->GetName());
+			continue;
 		}
 		if ((strcmp(keyword->GetFormEditorID(), "AND_AssCurtain") == 0) ||
 			(strcmp(keyword->GetFormEditorID(), "AND_AssFlashRisk") == 0)) {
