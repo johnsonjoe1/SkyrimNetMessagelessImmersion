@@ -87,6 +87,7 @@ RE::TESFaction* get_AND_faction(std::size_t faction_index)
 int get_pelvic_property(const CurrentlyWornItemRecord& worn_item);
 int get_chest_property(const CurrentlyWornItemRecord& worn_item);
 int get_ass_property(const CurrentlyWornItemRecord& worn_item);
+int get_transparent_top_property(const CurrentlyWornItemRecord& worn_item);
 
 void refresh_currently_worn_item_records()
 {
@@ -132,7 +133,8 @@ void refresh_currently_worn_item_records()
 		}
 		record.pelvic_property = get_pelvic_property(record);
 		record.chest_property = get_chest_property(record);
-		record.ass_property = get_ass_property(record);		
+		record.ass_property = get_ass_property(record);
+		record.transparent_top_property = get_transparent_top_property(record);
 		if (record.pelvic_property > 0 || record.chest_property > 0 || record.ass_property > 0) {
 			logger::info("************");
 			logger::info("************");
@@ -166,6 +168,24 @@ void refresh_currently_worn_item_records()
 
 std::string get_currently_worn_transparent_top_item_names()
 {
+	refresh_currently_worn_item_records();
+
+	std::string item_names;
+	for (const auto& worn_item : currently_worn_item_records) {
+		if (!worn_item.transparent_top_property || !worn_item.item) {
+			continue;
+		}
+		if (!item_names.empty()) {
+			item_names += " and ";
+		}
+		item_names += worn_item.item->GetName();
+	}
+
+	return item_names;
+}
+
+int get_transparent_top_property(const CurrentlyWornItemRecord& worn_item)
+{
 	static constexpr std::array<std::string_view, 10> top_keywords = {
 		"AND_BraT",
 		"AND_ArmorTopT_Low",
@@ -179,26 +199,12 @@ std::string get_currently_worn_transparent_top_item_names()
 		"AND_BraT_Male"
 	};
 
-	refresh_currently_worn_item_records();
-
-	std::string item_names;
-	for (const auto& worn_item : currently_worn_item_records) {
-		const bool has_top_keyword = std::any_of(
-			worn_item.keywords.begin(),
-			worn_item.keywords.end(),
-			[](const RE::BGSKeyword* keyword) {
-				return std::ranges::find(top_keywords, keyword->GetFormEditorID()) != top_keywords.end();
-			});
-		if (!has_top_keyword || !worn_item.item) {
-			continue;
-		}
-		if (!item_names.empty()) {
-			item_names += " and ";
-		}
-		item_names += worn_item.item->GetName();
-	}
-
-	return item_names;
+	return std::any_of(
+		worn_item.keywords.begin(),
+		worn_item.keywords.end(),
+		[](const RE::BGSKeyword* keyword) {
+			return std::ranges::find(top_keywords, keyword->GetFormEditorID()) != top_keywords.end();
+		}) ? 1 : 0;
 }
 
 int get_pelvic_property(const CurrentlyWornItemRecord& worn_item)
@@ -314,7 +320,7 @@ void trigger_immediate_message_if_flashing_item_was_added(const CurrentlyWornIte
 {
 	logger::info("ENTERING:  trigger_immediate_message_if_flashing_item_was_added");
 	// On equipping any flashing item, we immediately report that to the player.
-	if ( (my_record.pelvic_property + my_record.chest_property + my_record.ass_property) > 0 )
+	if ( (my_record.pelvic_property + my_record.chest_property + my_record.ass_property + my_record.transparent_top_property) > 0 )
 	{
 		// We have a flashing item.
 		bool previous_flash = false;
@@ -330,6 +336,7 @@ void trigger_immediate_message_if_flashing_item_was_added(const CurrentlyWornIte
 			flash_item_message += " your chest area at least. ";
 			previous_flash = true;
 		}
+
 		if (my_record.ass_property) {
 			if (previous_flash) {
 				flash_item_message += "And it is also flashing ";
@@ -337,7 +344,14 @@ void trigger_immediate_message_if_flashing_item_was_added(const CurrentlyWornIte
 			flash_item_message += " your ass area at least. ";
 			previous_flash = true;
 		}
-		flash_item_message += " The player doesn't know which item you are speaking about, so be sure to mention the name of the item in your response and also describe the item's flashing property, not the general state of flashing your private areas. You can add that on top, but in this case, the item is what it's all about.  The item is probably so loose fitting or flapping around so much, that the flashing chance happens.";
+
+		// Check for transparent top property as well.
+		if (my_record.transparent_top_property) {
+
+				flash_item_message = std::format("The equipment item {} you just put on is semi-transparent, so that every now and then your chest will be plain to see for everybody through the {}! How embarrassing!", my_record.item->GetName(), my_record.item->GetName());
+		}
+
+		flash_item_message += " Tell that to the player through your response.  But the player doesn't know which item you are speaking about, so be sure to mention the name of the item in your response and also describe the item's flashing/transparency property, not the general state of nudity or non-nudity you are in. You can add that on top, but in this case, the item is what it's all about.  If the item is flashing, you can lament about how cumbersome it is to hold it in place and keep from it slipping or revealing more than intended.  If the item is transparent, you can lament about the material having too many holes or wide gaps, making it difficult to maintain modesty.  But in any case be sure to mention the name of the item.";
 		LillithOnlyBox(flash_item_message);
 		if (SNMI::GetSettings().enableANDNudityThoughts) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(flash_item_message);
@@ -346,6 +360,7 @@ void trigger_immediate_message_if_flashing_item_was_added(const CurrentlyWornIte
 		}
 		// continue;
 	}
+	logger::info("LEAVING:  trigger_immediate_message_if_flashing_item_was_added");
 }
 
 void run_change_report_on_worn_items(

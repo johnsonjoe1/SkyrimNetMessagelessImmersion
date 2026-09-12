@@ -15,6 +15,7 @@ struct CurrentlyWornItemRecord
 	int pelvic_property{0};
 	int chest_property{0};
 	int ass_property{0};
+	int transparent_top_property{0};
 };
 
 extern std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
