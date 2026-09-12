@@ -36,57 +36,37 @@ std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
 
 std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
 
-std::array<std::string, 23> AND_faction_list_sorted = {
-"AND_ShowingAssFaction",       // 0
-"AND_ShowingChestFaction",     // 1
-"AND_ShowingGenitalsFaction",  // 2
-"AND_NudeActorFaction",        // 3
-"AND_ToplessFaction",          // 4
-"AND_BottomlessFaction",       // 5
-"AND_ShowingBraFaction",       // 6
-"AND_ShowingUnderwearFaction", // 7
-"AND_FlashingChestCurtain",    // 8
-"AND_FlashingPelvicCurtain",   // 9
-"AND_FlashingAssCurtain",      // 10
-"AND_FlashingTop", 
-"AND_FlashingBra", 
-"AND_FlashingBottom", 
-"AND_FlashingUnderwear", 
-"AND_FlashingHotpants", 
-"AND_FlashingSkirt", 
-"AND_FlashingCString", 
-"AND_ShyWithMales", 
-"AND_ShyWithFemales", 
-"AND_TopModestyFaction", 
-"AND_BottomModestyFaction", 
-"AND_ModestyFaction"
+struct ANDFactionMetadata
+{
+	std::string editor_id;
+	std::string description;
 };
 
-std::array<std::string, 23> AND_faction_verbalalized_and_sorted = {
-"showing your ass", 
-"showing your chest",
-"showing your genitals",
-"completely nude",
-"completely topless",
-"completely bottomless",
-"showing your bra",
-"showing your underwear",
-"flashing your chest",
-"flashing your pelvic",
-"flashing your ass",
-"flashing your top",
-"flashing your bra",
-"flashing your bottom",
-"flashing your underwear",
-"flashing your hotpants", 
-"flashing your skirt", 
-"flashing your C-string", 
-"shy with males",
-"shy with females",
-"top modesty faction", 
-"bottom modesty faction", 
-"modesty faction"
-};
+std::array<ANDFactionMetadata, 23> AND_factions = {{
+	{"AND_ShowingAssFaction", "showing your ass"},       // 0
+	{"AND_ShowingChestFaction", "showing your chest"},
+	{"AND_ShowingGenitalsFaction", "showing your genitals"},
+	{"AND_NudeActorFaction", "completely nude"},
+	{"AND_ToplessFaction", "completely topless"},
+	{"AND_BottomlessFaction", "completely bottomless"},
+	{"AND_ShowingBraFaction", "showing your bra"},
+	{"AND_ShowingUnderwearFaction", "showing your underwear"}, // 7
+	{"AND_FlashingChestCurtain", "flashing your chest"},    // 8
+	{"AND_FlashingPelvicCurtain", "flashing your pelvic"},
+	{"AND_FlashingAssCurtain", "flashing your ass"},
+	{"AND_FlashingTop", "flashing your top"},
+	{"AND_FlashingBra", "flashing your bra"},
+	{"AND_FlashingBottom", "flashing your bottom"},
+	{"AND_FlashingUnderwear", "flashing your underwear"},
+	{"AND_FlashingHotpants", "flashing your hotpants"},
+	{"AND_FlashingSkirt", "flashing your skirt"},
+	{"AND_FlashingCString", "flashing your C-string"},
+	{"AND_ShyWithMales", "shy with males"},
+	{"AND_ShyWithFemales", "shy with females"},
+	{"AND_TopModestyFaction", "top modesty faction"},
+	{"AND_BottomModestyFaction", "bottom modesty faction"},
+	{"AND_ModestyFaction", "modesty faction"}
+}};
 
 void refresh_currently_worn_item_records()
 {
@@ -408,13 +388,13 @@ bool hard_change_in_slots_0_to_7()
 	}
 	bool found_change = false;
 	for (std::size_t my_i = 0; my_i <= 7; ++my_i) {  // The first 0-7 slots are REAL CLOTHING CHANGES!!!
-		auto* current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
+		auto* current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
 		if (!current_Faction) {
-			logger::info("SEVERE ERROR: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
+			logger::info("SEVERE ERROR: {} doesn't seem to exist!!", AND_factions[my_i].editor_id);
 			continue;
 		}
 		int rank = player->GetFactionRank(current_Faction, true);
-		logger::info("SUCCESSFULLY QUERIED FOR HARD CLOTHING CHANGE-Factions: current_Faction={}, rank={} old_rank={} ", AND_faction_list_sorted[my_i], rank, AND_previous_faction_rank_sorted[my_i]);
+		logger::info("SUCCESSFULLY QUERIED FOR HARD CLOTHING CHANGE-Factions: current_Faction={}, rank={} old_rank={} ", AND_factions[my_i].editor_id, rank, AND_previous_faction_rank_sorted[my_i]);
 		if ( (rank != AND_previous_faction_rank_sorted[my_i]) ) {
 			logger::info("==>  THE ABOVE INDICATES A HARD CLOTHING CHANGE HAS HAPPEND!!!!");
 /*
@@ -462,16 +442,16 @@ void debug_boxes_for_flashing_state_understanding()
 	}
 	int my_i = 10;  // Flashing-Ass, nothing else
 	auto* current_Faction =
-	RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
+	RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
 	if (!current_Faction) {
-		logger::info("SEVERE ERROR IN INITIALIZATION RUN: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
+		logger::info("SEVERE ERROR IN INITIALIZATION RUN: {} doesn't seem to exist!!", AND_factions[my_i].editor_id);
 		return;
 	}
 	int rank = player->GetFactionRank(current_Faction, true);
-	logger::info("SUCCESSFULLY QUERIED AND-Modesty-Factions IN INITIALIZATION RUN: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
+	logger::info("SUCCESSFULLY QUERIED AND-Modesty-Factions IN INITIALIZATION RUN: current_Faction={}, rank={}", AND_factions[my_i].editor_id, rank);
 	if (rank != AND_previous_faction_rank_sorted[my_i]) {
 		LillithOnlyBox(std::format("CHANGE DETECTED IN AND-Modesty-Factions: {}'s rank changed from {} to {}", 
-			AND_faction_list_sorted[my_i], AND_previous_faction_rank_sorted[my_i], rank));
+			AND_factions[my_i].editor_id, AND_previous_faction_rank_sorted[my_i], rank));
 	}
 }
 
@@ -485,16 +465,16 @@ void handle_hard_change_in_slots_0_to_7()
 	std::string constructed_change_description = R"SKSE(From the change of clothing, you are now suddenly )SKSE";
 	bool first_boolean_element = true;
 	for (std::size_t my_i = 0; my_i <= 7; ++my_i) {  // The first 0-7 slots are REAL CLOTHING CHANGES!!!
-		// logger::info("{} = {}", my_i, AND_faction_list_sorted[my_i]);
+		// logger::info("{} = {}", my_i, AND_factions[my_i].editor_id);
 
 		auto* current_Faction =
-		RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
+		RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
 		if (!current_Faction) {
-			logger::info("SEVERE ERROR: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
+			logger::info("SEVERE ERROR: {} doesn't seem to exist!!", AND_factions[my_i].editor_id);
 			continue;
 		}
 		int rank = player->GetFactionRank(current_Faction, true);
-		logger::info("NOW HANDLING HARD CLOTHING CHANGE-Factions: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
+		logger::info("NOW HANDLING HARD CLOTHING CHANGE-Factions: current_Faction={}, rank={}", AND_factions[my_i].editor_id, rank);
 
 		if ( (rank != AND_previous_faction_rank_sorted[my_i])  ) {
 			logger::info("Player changed rank from previously {} to now {}!", AND_previous_faction_rank_sorted[my_i], rank);
@@ -506,7 +486,7 @@ void handle_hard_change_in_slots_0_to_7()
 			if ((rank == 0) ){ // Not showing anything now but was showing in the past.  but in case of quick flashing, the no-longer isn't needed either. 
 				constructed_change_description += " NO LONGER ";
 			}
-			constructed_change_description += AND_faction_verbalalized_and_sorted[my_i]; // This is the verbalized version of the faction name, used for messages to the player.
+			constructed_change_description += AND_factions[my_i].description; // This is the verbalized version of the faction name, used for messages to the player.
 		} 
 	}
 	constructed_change_description += ". Say so in your response to the player, to make him aware of your modesty situation, and tell us how that makes you feel.";
@@ -531,15 +511,15 @@ void handle_AND_modesty::reset_previous_rank_to_current_rank()
 		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AND-Modesty-Factions:  SEVERE ERROR: IN reset_previous_rank_to_current_rank: Querying the player failed in the handle_AND_modesty_and_nakedness_stuff function!!");
 		return;
 	}
-	for (std::size_t my_i = 0; my_i < AND_faction_list_sorted.size(); ++my_i) {
-		auto* current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
+	for (std::size_t my_i = 0; my_i < AND_factions.size(); ++my_i) {
+		auto* current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
 		if (!current_Faction) {
-			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AND-Modesty-Factions:  SEVERE ERROR:  IN reset_previous_rank_to_current_rank: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
+			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AND-Modesty-Factions:  SEVERE ERROR:  IN reset_previous_rank_to_current_rank: {} doesn't seem to exist!!", AND_factions[my_i].editor_id);
 			continue;
 		}
 		int rank = player->GetFactionRank(current_Faction, true);
 		AND_previous_faction_rank_sorted[my_i] = rank;
-		// logger::info("SUCCESSFULLY QUERIED AND-Modesty-Factions IN INITIALIZATION RUN: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
+		// logger::info("SUCCESSFULLY QUERIED AND-Modesty-Factions IN INITIALIZATION RUN: current_Faction={}, rank={}", AND_factions[my_i].editor_id, rank);
 	}
 	logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AND-Modesty-Factions:  FINISHED RESETTING ALL PREVIOUS-RANKS TO CURRENT-RANKS");
 }
@@ -557,22 +537,22 @@ void handle_current_flashing_state()
 	bool first_boolean_element = true;
 	for (std::size_t my_i = 8; my_i < 22-5; ++my_i) {
 		auto* current_Faction =
-		RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_faction_list_sorted[my_i].c_str());
+		RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
 		if (!current_Faction) {
-			logger::info("AND-Modesty-Factions:  SEVERE ERROR: {} doesn't seem to exist!!", AND_faction_list_sorted[my_i]);
+			logger::info("AND-Modesty-Factions:  SEVERE ERROR: {} doesn't seem to exist!!", AND_factions[my_i].editor_id);
 			continue;
 		}
 		int rank = player->GetFactionRank(current_Faction, true);
-		logger::info("AND-Modesty-Factions:  SUCCESSFULLY QUERIED FOR SOFT-AND-FLASHING-Factions: current_Faction={}, rank={}", AND_faction_list_sorted[my_i], rank);
+		logger::info("AND-Modesty-Factions:  SUCCESSFULLY QUERIED FOR SOFT-AND-FLASHING-Factions: current_Faction={}, rank={}", AND_factions[my_i].editor_id, rank);
 		bool real_clothes_change = false;
 
 		if (rank) {
-			logger::info("Player didn't change rank, but is currently flashing something! {} is flashing because rank={} !", AND_faction_list_sorted[my_i], rank);
+			logger::info("Player didn't change rank, but is currently flashing something! {} is flashing because rank={} !", AND_factions[my_i].editor_id, rank);
 			if (!first_boolean_element) {
 				constructed_change_description += " and you are ";
 			}
 			first_boolean_element = false;
-			constructed_change_description += AND_faction_verbalalized_and_sorted[my_i]; // This is the verbalized version of the faction name, used for messages to the player.
+			constructed_change_description += AND_factions[my_i].description; // This is the verbalized version of the faction name, used for messages to the player.
 		}
 	}
 	constructed_change_description = R"SKSE(Due to wind and movement, you are currently )SKSE" + constructed_change_description;			
