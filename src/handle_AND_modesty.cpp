@@ -73,6 +73,17 @@ constexpr std::size_t hard_change_faction_end = 8;
 constexpr std::size_t flashing_faction_start = 8;
 constexpr std::size_t flashing_faction_end = 17;
 
+std::array<RE::TESFaction*, 23> AND_faction_cache{};
+
+RE::TESFaction* get_AND_faction(std::size_t faction_index)
+{
+	auto*& faction = AND_faction_cache[faction_index];
+	if (!faction) {
+		faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[faction_index].editor_id.c_str());
+	}
+	return faction;
+}
+
 void refresh_currently_worn_item_records()
 {
 	logger::info("ENTERING:  refresh_currently_worn_item_records");
@@ -393,7 +404,7 @@ bool hard_change_in_slots_0_to_7()
 	}
 	bool found_change = false;
 	for (std::size_t my_i = hard_change_faction_start; my_i < hard_change_faction_end; ++my_i) {
-		auto* current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
+		auto* current_Faction = get_AND_faction(my_i);
 		if (!current_Faction) {
 			logger::info("SEVERE ERROR: {} doesn't seem to exist!!", AND_factions[my_i].editor_id);
 			continue;
@@ -447,7 +458,7 @@ void debug_boxes_for_flashing_state_understanding()
 	}
 	int my_i = 10;  // Flashing-Ass, nothing else
 	auto* current_Faction =
-	RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
+	get_AND_faction(my_i);
 	if (!current_Faction) {
 		logger::info("SEVERE ERROR IN INITIALIZATION RUN: {} doesn't seem to exist!!", AND_factions[my_i].editor_id);
 		return;
@@ -473,7 +484,7 @@ void handle_hard_change_in_slots_0_to_7()
 		// logger::info("{} = {}", my_i, AND_factions[my_i].editor_id);
 
 		auto* current_Faction =
-		RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
+		get_AND_faction(my_i);
 		if (!current_Faction) {
 			logger::info("SEVERE ERROR: {} doesn't seem to exist!!", AND_factions[my_i].editor_id);
 			continue;
@@ -517,7 +528,7 @@ void handle_AND_modesty::reset_previous_rank_to_current_rank()
 		return;
 	}
 	for (std::size_t my_i = 0; my_i < AND_factions.size(); ++my_i) {
-		auto* current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
+		auto* current_Faction = get_AND_faction(my_i);
 		if (!current_Faction) {
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AND-Modesty-Factions:  SEVERE ERROR:  IN reset_previous_rank_to_current_rank: {} doesn't seem to exist!!", AND_factions[my_i].editor_id);
 			continue;
@@ -542,7 +553,7 @@ void handle_current_flashing_state()
 	bool first_boolean_element = true;
 	for (std::size_t my_i = flashing_faction_start; my_i < flashing_faction_end; ++my_i) {
 		auto* current_Faction =
-		RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
+		get_AND_faction(my_i);
 		if (!current_Faction) {
 			logger::info("AND-Modesty-Factions:  SEVERE ERROR: {} doesn't seem to exist!!", AND_factions[my_i].editor_id);
 			continue;
