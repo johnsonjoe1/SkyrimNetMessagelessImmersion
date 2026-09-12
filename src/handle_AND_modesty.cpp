@@ -68,6 +68,11 @@ std::array<ANDFactionMetadata, 23> AND_factions = {{
 	{"AND_ModestyFaction", "modesty faction"}
 }};
 
+constexpr std::size_t hard_change_faction_start = 0;
+constexpr std::size_t hard_change_faction_end = 8;
+constexpr std::size_t flashing_faction_start = 8;
+constexpr std::size_t flashing_faction_end = 17;
+
 void refresh_currently_worn_item_records()
 {
 	logger::info("ENTERING:  refresh_currently_worn_item_records");
@@ -387,7 +392,7 @@ bool hard_change_in_slots_0_to_7()
 		return false;
 	}
 	bool found_change = false;
-	for (std::size_t my_i = 0; my_i <= 7; ++my_i) {  // The first 0-7 slots are REAL CLOTHING CHANGES!!!
+	for (std::size_t my_i = hard_change_faction_start; my_i < hard_change_faction_end; ++my_i) {
 		auto* current_Faction = RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
 		if (!current_Faction) {
 			logger::info("SEVERE ERROR: {} doesn't seem to exist!!", AND_factions[my_i].editor_id);
@@ -464,7 +469,7 @@ void handle_hard_change_in_slots_0_to_7()
 	}
 	std::string constructed_change_description = R"SKSE(From the change of clothing, you are now suddenly )SKSE";
 	bool first_boolean_element = true;
-	for (std::size_t my_i = 0; my_i <= 7; ++my_i) {  // The first 0-7 slots are REAL CLOTHING CHANGES!!!
+	for (std::size_t my_i = hard_change_faction_start; my_i < hard_change_faction_end; ++my_i) {
 		// logger::info("{} = {}", my_i, AND_factions[my_i].editor_id);
 
 		auto* current_Faction =
@@ -535,7 +540,7 @@ void handle_current_flashing_state()
 	std::string constructed_change_description;
 	
 	bool first_boolean_element = true;
-	for (std::size_t my_i = 8; my_i < 22-5; ++my_i) {
+	for (std::size_t my_i = flashing_faction_start; my_i < flashing_faction_end; ++my_i) {
 		auto* current_Faction =
 		RE::TESForm::LookupByEditorID<RE::TESFaction>(AND_factions[my_i].editor_id.c_str());
 		if (!current_Faction) {
