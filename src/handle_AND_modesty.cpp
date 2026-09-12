@@ -429,18 +429,18 @@ bool hard_change_in_slots_0_to_7()
 */
 			bool bottom_flashing=false;
 			// if (flashing_ass | flashing_pelvis) {
-			 if (global_ass_curtain_flag | global_pelvic_curtain_flag) {
+			 if (global_ass_curtain_flag || global_pelvic_curtain_flag) {
 				bottom_flashing=true;
 			} 
 
 
 			// bottom stuff will only count with no bottom-flashing active
-			if ( (my_i == 0) | (my_i == 2) | (my_i == 7) )  { // bottom stuff
+			if ( (my_i == 0) || (my_i == 2) || (my_i == 7) )  { // bottom stuff
 				if (!bottom_flashing) {
 					found_change = true;
 				}
 			}
-			if ( (my_i == 1) | (my_i == 4) | (my_i == 6) )  { // bottom stuff
+			if ( (my_i == 1) || (my_i == 4) || (my_i == 6) )  { // bottom stuff
 				// if (!flashing_chest) {
 				if (!global_chest_curtain_flag) {
 					found_change = true;
