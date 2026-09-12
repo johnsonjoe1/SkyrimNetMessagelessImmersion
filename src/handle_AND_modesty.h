@@ -21,6 +21,7 @@ extern std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
 extern std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
 
 void refresh_currently_worn_item_records();
+std::string get_currently_worn_transparent_top_item_names();
 
 class handle_AND_modesty 
 {

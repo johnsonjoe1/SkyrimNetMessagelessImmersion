@@ -123,15 +123,26 @@ void refresh_currently_worn_item_records()
 				record.keywords.push_back(keyword);
 			}
 		}
-		record.pelvic_property = get_pelvic_property(record);
-		record.chest_property = get_chest_property(record);
-		record.ass_property = get_ass_property(record);
 		bool full_spam_of_equipment_keywords = true;
 		if (full_spam_of_equipment_keywords) {
 			logger::info("Worn item:  {}", item->GetName());
 			for (const auto* keyword : record.keywords) {
 				logger::info("    Keyword:  {}", keyword->GetFormEditorID());
 			}
+		}
+		record.pelvic_property = get_pelvic_property(record);
+		record.chest_property = get_chest_property(record);
+		record.ass_property = get_ass_property(record);		
+		if (record.pelvic_property > 0 || record.chest_property > 0 || record.ass_property > 0) {
+			logger::info("************");
+			logger::info("************");
+			logger::info("************");
+			logger::info("Result of scan for FLASHING KEYWORDS:   Pelvic: {}, Chest: {}, Ass: {}", record.pelvic_property, record.chest_property, record.ass_property);
+			logger::info("************");
+			logger::info("************");
+			logger::info("************");
+		} else {
+			logger::info("Result of scan for FLASHING KEYWORDS:   NOTHING!!!");
 		}
 	}
 	
@@ -153,9 +164,46 @@ void refresh_currently_worn_item_records()
 	logger::info("LEAVING:  refresh_currently_worn_item_records");
 }
 
+std::string get_currently_worn_transparent_top_item_names()
+{
+	static constexpr std::array<std::string_view, 10> top_keywords = {
+		"AND_BraT",
+		"AND_ArmorTopT_Low",
+		"AND_ArmorTopT_High",
+		"AND_ArmorTopT_Low_Male",
+		"AND_ArmorTopT_High_Male",
+		"AND_BraT_Low",
+		"AND_BraT_High",
+		"AND_BraT_Low_Male",
+		"AND_BraT_High_Male",
+		"AND_BraT_Male"
+	};
+
+	refresh_currently_worn_item_records();
+
+	std::string item_names;
+	for (const auto& worn_item : currently_worn_item_records) {
+		const bool has_top_keyword = std::any_of(
+			worn_item.keywords.begin(),
+			worn_item.keywords.end(),
+			[](const RE::BGSKeyword* keyword) {
+				return std::ranges::find(top_keywords, keyword->GetFormEditorID()) != top_keywords.end();
+			});
+		if (!has_top_keyword || !worn_item.item) {
+			continue;
+		}
+		if (!item_names.empty()) {
+			item_names += " and ";
+		}
+		item_names += worn_item.item->GetName();
+	}
+
+	return item_names;
+}
+
 int get_pelvic_property(const CurrentlyWornItemRecord& worn_item)
 {
-	logger::info("ENTERING:  get_pelvic_property");
+	// logger::info("ENTERING:  get_pelvic_property");
 	for (std::uint32_t i = 0; i < worn_item.armor->numKeywords; i++)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
@@ -186,13 +234,13 @@ int get_pelvic_property(const CurrentlyWornItemRecord& worn_item)
 			return 5;  // ultra risk
 		}				
 	}
-	logger::info("LEAVING:  get_pelvic_property:  Returning 0, so no risk whatsoever and no prior keyword before that would have indicated any risk.  Worn item = {}", worn_item.item->GetName());
+	// logger::info("LEAVING:  get_pelvic_property:  Returning 0, so no risk whatsoever and no prior keyword before that would have indicated any risk.  Worn item = {}", worn_item.item->GetName());
 	return 0;
 }
 
 int get_chest_property(const CurrentlyWornItemRecord& worn_item)
 {
-	logger::info("ENTERING:  get_chest_property");
+	// logger::info("ENTERING:  get_chest_property");
 	for (std::uint32_t i = 0; i < worn_item.armor->numKeywords; i++)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
@@ -222,13 +270,13 @@ int get_chest_property(const CurrentlyWornItemRecord& worn_item)
 			return 5;  // ultra risk
 		}
 	}
-	logger::info("LEAVING:  get_chest_property:  Returning 0, so no risk whatsoever and no prior keyword before that would have indicated any risk.  Worn item = {}", worn_item.item->GetName());
+	// logger::info("LEAVING:  get_chest_property:  Returning 0, so no risk whatsoever and no prior keyword before that would have indicated any risk.  Worn item = {}", worn_item.item->GetName());
 	return 0;
 }
 
 int get_ass_property(const CurrentlyWornItemRecord& worn_item)
 {
-	logger::info("ENTERING:  get_ass_property");
+	// logger::info("ENTERING:  get_ass_property");
 	for (std::uint32_t i = 0; i < worn_item.armor->numKeywords; i++)
 	{
 		auto* keyword = worn_item.armor->keywords[i];
@@ -258,7 +306,7 @@ int get_ass_property(const CurrentlyWornItemRecord& worn_item)
 			return 5;  // ultra risk
 		}
 	}
-	logger::info("LEAVING:  get_ass_property:  Returning 0, so no risk whatsoever and no prior keyword before that would have indicated any risk.  Worn item = {}", worn_item.item->GetName());
+	// logger::info("LEAVING:  get_ass_property:  Returning 0, so no risk whatsoever and no prior keyword before that would have indicated any risk.  Worn item = {}", worn_item.item->GetName());
 	return 0;
 }
 
@@ -510,6 +558,14 @@ void handle_hard_change_in_slots_0_to_7()
 				constructed_change_description += " NO LONGER ";
 			}
 			constructed_change_description += AND_factions[my_i].description; // This is the verbalized version of the faction name, used for messages to the player.
+
+			// If it is a chest-showing situation, then it might be due to transparent top clothing.  We handle that case.
+			if (AND_factions[my_i].editor_id == "AND_ShowingChestFaction") {
+				if (auto transparent_top_item_names = get_currently_worn_transparent_top_item_names(); !transparent_top_item_names.empty()) {
+					constructed_change_description += " which may be due to the partially transparent " + transparent_top_item_names + " which you are wearing and which sometimes reveal your chest and sometimes hides it better, so that you can now really complain about that items and it's flimsy nature that it is just too transparent and revealing, BUT BE SURE TO MENTION THE NAME OF THE ITEM, SO THAT THE PLAYER KNOWS WHAT YOU ARE TALKING ABOUT ";
+				}
+			}
+
 		} 
 	}
 	constructed_change_description += ". Say so in your response to the player, to make him aware of your modesty situation, and tell us how that makes you feel.";
