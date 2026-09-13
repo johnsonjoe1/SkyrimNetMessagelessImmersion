@@ -143,7 +143,7 @@ void SNMIPapyrus::set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value)
 	if (_yps_AddictionBuff == 0 && previous_yps_AddictionBuff == 0) {
 		return;
 	}
-	if (previous_yps_AddictionBuff == -1.0f) {  // This is the initial value, so we just set it without any checks, to avoid any weird messages at game start.
+	if (previous_yps_AddictionBuff == -99.0f) {  // This is impossible prior value indicates, that there was no update yet.
 		previous_yps_AddictionBuff = _yps_AddictionBuff;
 		return;
 	}	
