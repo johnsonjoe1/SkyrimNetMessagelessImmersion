@@ -385,20 +385,10 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 			}				
 		}
 		
-		SKSE::ModCallbackEvent my_event(
-			mod_event_name,                        // event name
-			mod_event_string_arg,                  // arbitrary string argument 
-			123.0f,                                // arbitrary float argument
-			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-		);
-		eventSource->SendEvent(&my_event);
+		DumpThoughts::throw_out_TTS_thought_message(mod_event_string_arg);
 		if (selected_furniture_prompt) {
 			selected_furniture_prompt->last_thought_timestamp = std::chrono::steady_clock::now();
 		}
-		// This seems to have worked, so we say as much in the log.
-		spdlog::info("[SkyrimNetMessagelessImmersion] Mod-event string:  {}", base->GetName());
-		spdlog::info("[SkyrimNetMessagelessImmersion] Mod-event sender:  {}", RE::PlayerCharacter::GetSingleton()->GetName());
-		spdlog::info("[SkyrimNetMessagelessImmersion] ********************** Sent mod event: {} completed.", mod_event_name);
 	} else {
 		SKSE::log::error("[SkyrimNetMessagelessImmersion] Failed to get mod event broadcast callback event source!");
 	};
