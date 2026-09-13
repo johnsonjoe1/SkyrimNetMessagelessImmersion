@@ -6,6 +6,7 @@
 #include <array>
 #include <string_view>  
 #include <unordered_set>
+#include "handle_worn_equipment_change.h"
 
 std::string general_word_on_milk_pumps = R"SKSE(
 A general word on Milk Pumps: Milk pumps in Skyrim are milking stalls, much like for a milk cow, only that this device is designed for human women.
@@ -106,7 +107,7 @@ std::array<FurniturePrompt, 36> furniture_prompts = {{
 	{ "Pull Chain", R"SKSE(Now the situation is this: YOU, the player, are about to use a Pull Chain. )SKSE" + standard_thought_instruction },
 	// Note:  Lever may be in the list, but will be captured and suppressed before it is used.  Don't make philosophical comments on levers and pullchains.
 	{ "Lever", R"SKSE(Now the situation is this: YOU, the player, are about to use a Lever. )SKSE" + standard_thought_instruction },
-	{ "This should not be visible", R"SKSE(Now the situation is this: YOU, the player, are about to TRY and use a mining spot, where you can mine ores, but only if you have a pickaxe, otherwise this will fail and you can do nothing to mine the ores here." )SKSE" + standard_thought_instruction },
+	{ "This should not be visible", R"SKSE(Now the situation is this: YOU, the player, are about to use a mining spot, where you can mine ores. You can try and get what you can.  Maybe the deposit isn't depleted yet." )SKSE" + standard_thought_instruction },
 	{ "The Mournful Throne", R"SKSE(Now the situation is this: YOU, the player, are about to use the throne in Markath, which is also called The Mournful Throne. )SKSE" + standard_thought_instruction },
 	{ "Shor’s Throne", R"SKSE(Now the situation is this: YOU, the player, are about to use Shor’s Throne. )SKSE" + standard_thought_instruction },
 	{ "Skyforge", R"SKSE(Now the situation is this: YOU, the player, are about to use Skyforge. )SKSE" + standard_thought_instruction },
@@ -338,22 +339,6 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 				SKSE::log::info("THIS IS THE 1st Event for ACTIVATION of Milk Pump!");
 			}
 			mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
-		} else if (std::strcmp(furniture_name , "This should not be visible") == 0) {
-			// NOTE:  This is an ore mining spot.  It has this strange name, but that is the one.
-			//        Unfortunately we can't infer from the name what kind of ore (or clay) it is.
-			//        But it requires a pickaxe in all cases.  So we check for that and then make a proper
-			//        statement.
-			auto* player = RE::PlayerCharacter::GetSingleton();
-			auto furniture = player->GetOccupiedFurniture().get();
-			if (furniture) {
-				// player is already using furniture, so this is the end of the mining operation and we DO NOTHING
-				SKSE::log::info("No comment upon EXITING THE ORE-MINING-SPOT and stopping the mining operation.");
-				return;
-			} else {
-				mod_event_string_arg = R"SKSE(Now the situation is this: YOU, the player, are about to TRY and use a mining spot, where you can mine ores, but only if you have a pickaxe, otherwise this will fail and you can do nothing to mine the ores here." )SKSE" + standard_thought_instruction;
-			}
-			mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
-
 		} else if (auto* furniture_prompt = find_furniture_prompt(furniture_name)) {
 			SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated a piece of furniture that is in our list of special furniture!  This gets a SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
 		
