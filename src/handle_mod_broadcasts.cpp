@@ -458,9 +458,12 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"Helpless_RemoveSpell",  // Unknown what this is
 		"CaptiveDefeatInit"  // This is called every time a new cell is entered and merely a technical event,  probably for CaptivePlayer.
 	};		
-	if (ignored_mod_events.contains(event_name)) {
+
+	// We ignore SeverActions_LLM_RelAssess_ for the moment as well, because it doesn't even mention the actor involved.
+	if (ignored_mod_events.contains(event_name) || event_name.starts_with("SeverActions_LLM_RelAssess_")) {
 		return true;
 	}
+
 	return false;
 }
 
