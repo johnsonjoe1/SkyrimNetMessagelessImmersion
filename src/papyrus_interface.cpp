@@ -118,7 +118,7 @@ void SNMIPapyrus::set_yps_AddictionLevel(RE::StaticFunctionTag*, float a_value)
 	if (_yps_AddictionLevel == 0 && previous_yps_AddictionLevel == 0) {
 		return;
 	}
-	if (previous_yps_AddictionLevel == -1.0f) {  // This is the initial value, so we just set it without any checks, to avoid any weird messages at game start.
+	if (previous_yps_AddictionLevel == -99.0f) {  // This is the initial value, so we just set it without any checks, to avoid any weird messages at game start.
 		previous_yps_AddictionLevel = _yps_AddictionLevel;
 		return;
 	}	
