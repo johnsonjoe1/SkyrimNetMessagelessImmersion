@@ -106,7 +106,8 @@ RE::BSEventNotifyControl handle_worn_equipment_change::ProcessEvent(
 	RE::BSTEventSource<RE::TESEquipEvent>*)
 {
 	if (a_event) {
-		LillithOnlyBox("Worn-equipment change event received.");
+		LillithOnlyBox("Worn-equipment change event received.  -->  Triggering a refresh of the currently worn items records.");
+		refresh_currently_worn_item_records();  
 	}
 
 	return RE::BSEventNotifyControl::kContinue;

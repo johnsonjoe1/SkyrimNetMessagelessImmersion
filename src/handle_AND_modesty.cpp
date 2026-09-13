@@ -82,7 +82,8 @@ RE::TESFaction* get_AND_faction(std::size_t faction_index)
 
 std::string get_currently_worn_transparent_top_item_names()
 {
-	refresh_currently_worn_item_records();
+	// Lets try to do that only upon the trigger of a worn equipment change event:
+	// refresh_currently_worn_item_records();  
 
 	std::string item_names;
 	for (const auto& worn_item : currently_worn_item_records) {
@@ -333,7 +334,8 @@ void run_change_report_on_worn_items(
 void ListWornItems_and_update_global_curtain_flags()
 {
 	logger::info("ENTERING:  ListWornItems_and_update_global_curtain_flags");
-	refresh_currently_worn_item_records();
+	// Lets try to do that only upon the trigger of a worn equipment change event:
+	// refresh_currently_worn_item_records();  
 
 	// By default, the curtain flags are all off.
 	global_pelvic_curtain_flag = false;
