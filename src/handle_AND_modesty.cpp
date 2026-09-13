@@ -427,7 +427,7 @@ void ListWornItems_and_update_global_curtain_flags()
 	global_ass_curtain_flag = false;
 
 	// Loop through the cached worn-item snapshot and list everything.
-    logger::info("Currently worn items:");
+    logger::info("ListWornItems_and_update_global_curtain_flags: -->  Currently worn items:");
 	for (const auto& worn_item : currently_worn_item_records)
     {
         logger::info("  {} (FormID {:08X})  on slot 0x{:08X}",

@@ -17,10 +17,9 @@ void check_armor_for_bikini_property()
         return;
     }
 
-
 	// Loop through inventory and list everything
     auto inventory = actor->GetInventory();
-    logger::info("Currently worn items:");
+    logger::info("check_armor_for_bikini_property: -->  Currently worn items:  ");
     for (const auto& [item, entry] : inventory)
     {
         if (!entry.second->IsWorn()) {
@@ -51,8 +50,7 @@ void check_armor_for_bikini_property()
 			if ( 
 				(strcmp(keyword->GetFormEditorID(), "_SLS_BikiniArmor") == 0)
 			) {
-				
-				logger::info("      ======================>Found AND_AssCurtain keyword, setting global_ass_curtain_flag to true.");
+				logger::info("      ======================>Found _SLS_BikiniArmor keyword, **BUT DOING NOTHING HERE**.");
 			}
 		}
     }
