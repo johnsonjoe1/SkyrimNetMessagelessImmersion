@@ -319,6 +319,10 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 		std::string  mod_event_string_arg = "Mod event string not set yet";
 		FurniturePrompt* selected_furniture_prompt = nullptr;
 
+
+
+		// NOTE:  Milk pump gets a special treatment, because it gets a comment on ENTERING the furniture, and also on
+		//        leaving the furniture again.
 		if (std::strcmp(furniture_name , "Milk Pump") == 0) {
 			SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated the Milk Pump!  THIS GETS A SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
 			auto* player = RE::PlayerCharacter::GetSingleton();
@@ -334,6 +338,22 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 				SKSE::log::info("THIS IS THE 1st Event for ACTIVATION of Milk Pump!");
 			}
 			mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
+		} else if (std::strcmp(furniture_name , "This should not be visible") == 0) {
+			// NOTE:  This is an ore mining spot.  It has this strange name, but that is the one.
+			//        Unfortunately we can't infer from the name what kind of ore (or clay) it is.
+			//        But it requires a pickaxe in all cases.  So we check for that and then make a proper
+			//        statement.
+			auto* player = RE::PlayerCharacter::GetSingleton();
+			auto furniture = player->GetOccupiedFurniture().get();
+			if (furniture) {
+				// player is already using furniture, so this is the end of the mining operation and we DO NOTHING
+				SKSE::log::info("No comment upon EXITING THE ORE-MINING-SPOT and stopping the mining operation.");
+				return;
+			} else {
+				mod_event_string_arg = R"SKSE(Now the situation is this: YOU, the player, are about to TRY and use a mining spot, where you can mine ores, but only if you have a pickaxe, otherwise this will fail and you can do nothing to mine the ores here." )SKSE" + standard_thought_instruction;
+			}
+			mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";
+
 		} else if (auto* furniture_prompt = find_furniture_prompt(furniture_name)) {
 			SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated a piece of furniture that is in our list of special furniture!  This gets a SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
 		
