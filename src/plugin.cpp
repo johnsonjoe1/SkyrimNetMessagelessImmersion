@@ -13,6 +13,7 @@
 #include "handle_fame.h"
 #include "handle_config_ini_file.h"
 #include "handle_player_dirt.h"
+#include "handle_worn_equipment_change.h"
 #include "misc.h"
 #include "papyrus_interface.h"
 #include <unordered_set>
@@ -258,6 +259,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 
 		// Now we register the event handler for the Tanning Rack, Benches and all the other crap.
 		RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink<RE::TESActivateEvent>(&g_activateHandler);
+		handle_worn_equipment_change::register_event_handler();
 
 		if (source) {
 			source->AddEventSink<RE::TESActiveEffectApplyRemoveEvent>(&g_ChangesToTheActiveMagicEffectListEventHandler);
