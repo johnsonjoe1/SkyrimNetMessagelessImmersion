@@ -19,6 +19,8 @@ struct CurrentlyWornItemRecord
 extern std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
 extern std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
 
+void refresh_currently_worn_item_records();
+
 class handle_worn_equipment_change : public RE::BSTEventSink<RE::TESEquipEvent>
 {
 public:

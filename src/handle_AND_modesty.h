@@ -3,7 +3,6 @@
 #include <string>   //  ChatGPT suggested this might be needed?????
 #include "handle_worn_equipment_change.h"
 
-void refresh_currently_worn_item_records();
 std::string get_currently_worn_transparent_top_item_names();
 
 class handle_AND_modesty 
