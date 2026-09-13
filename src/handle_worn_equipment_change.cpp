@@ -90,6 +90,27 @@ void refresh_currently_worn_item_records()
 	logger::info("LEAVING:  refresh_currently_worn_item_records");
 }
 
+bool player_has_item_in_inventory(const std::string& item_name)
+{
+	auto* player = RE::PlayerCharacter::GetSingleton();
+	if (!player || item_name.empty()) {
+		return false;
+	}
+
+	for (const auto& [item, entry] : player->GetInventory()) {
+		if (!item || entry.first <= 0) {
+			continue;
+		}
+
+		const auto* name = item->GetName();
+		if (name && ::_stricmp(name, item_name.c_str()) == 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 handle_worn_equipment_change* handle_worn_equipment_change::get_singleton()
 {
 	static handle_worn_equipment_change singleton;

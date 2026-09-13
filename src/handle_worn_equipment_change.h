@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RE/Skyrim.h"
+#include <string>
 #include <vector>
 
 struct CurrentlyWornItemRecord
@@ -20,6 +21,7 @@ extern std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
 extern std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
 
 void refresh_currently_worn_item_records();
+bool player_has_item_in_inventory(const std::string& item_name);
 
 class handle_worn_equipment_change : public RE::BSTEventSink<RE::TESEquipEvent>
 {
