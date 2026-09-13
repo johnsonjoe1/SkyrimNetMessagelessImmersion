@@ -105,10 +105,12 @@ RE::BSEventNotifyControl handle_worn_equipment_change::ProcessEvent(
 	const RE::TESEquipEvent* a_event,
 	RE::BSTEventSource<RE::TESEquipEvent>*)
 {
-	if (a_event) {
-		LillithOnlyBox("Worn-equipment change event received.  -->  Triggering a refresh of the currently worn items records.");
-		refresh_currently_worn_item_records();  
+	if (!a_event || a_event->actor.get() != RE::PlayerCharacter::GetSingleton()) {
+		return RE::BSEventNotifyControl::kContinue;
 	}
+
+	LillithOnlyBox("Player worn-equipment change event received.  -->  Triggering a refresh of the currently worn items records.");
+	refresh_currently_worn_item_records();
 
 	return RE::BSEventNotifyControl::kContinue;
 }
