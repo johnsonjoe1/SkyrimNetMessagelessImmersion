@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -16,4 +17,5 @@ namespace PlayerThoughtHistory
 	const std::vector<PlayerThoughtRecord>& GetRecords();
 	void LogRecords();
 	std::string GetLogSince(std::chrono::system_clock::time_point a_since);
+	std::string get_thought_history_as_a_string(std::uint32_t lookback_period_in_seconds);
 }

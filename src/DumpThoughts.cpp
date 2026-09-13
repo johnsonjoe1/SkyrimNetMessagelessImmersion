@@ -5,6 +5,7 @@
 #include "SKSE/SKSE.h"
 #include "misc.h"
 #include "DumpThoughts.h"
+#include "player_thought_history.h"
 
 namespace logger = SKSE::log;
 
@@ -94,6 +95,10 @@ void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_messa
 		// We want to broadcast mod events.  So we need this event source.
 		std::string  mod_event_name = "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought";
 		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
+
+		mod_event_string_arg = mod_event_string_arg + "\n\nIn order for this to not be too repetitive and in order to build on previous thoughts, please find below the recent thought history, so that you can avoid repeating yourself too much and also you can build on what was already though before:\n\n";
+		mod_event_string_arg = mod_event_string_arg + PlayerThoughtHistory::get_thought_history_as_a_string(60*5); // look back some minutes
+
 		auto eventSource = SKSE::GetModCallbackEventSource();
 
 		if (DumpThoughts::too_early_after_game_load()) {
@@ -117,6 +122,10 @@ void DumpThoughts::throw_out_TTS_thought_message(std::string my_message) {
 	// We want to broadcast mod events.  So we need this event source.
 	std::string  mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";  //  was, but was probably wrong:   SNMI_PlayerActivatedSomething";
 	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
+
+	mod_event_string_arg = mod_event_string_arg + "\n\nIn order for this to not be too repetitive and in order to build on previous thoughts, please find below the recent thought history, so that you can avoid repeating yourself too much and also you can build on what was already though before:\n\n";
+	mod_event_string_arg = mod_event_string_arg + PlayerThoughtHistory::get_thought_history_as_a_string(60*5); // look back some minutes
+
 	auto eventSource = SKSE::GetModCallbackEventSource();
 
 	if (DumpThoughts::too_early_after_game_load()) {
@@ -166,6 +175,11 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_messag
 	// We want to broadcast mod events.  So we need this event source.
 	std::string  mod_event_name = "SNMI_Pump_IMPORANT_PlayerThought";
 	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
+
+	mod_event_string_arg = mod_event_string_arg + "\n\nIn order for this to not be too repetitive and in order to build on previous thoughts, please find below the recent thought history, so that you can avoid repeating yourself too much and also you can build on what was already though before:\n\n";
+	mod_event_string_arg = mod_event_string_arg + PlayerThoughtHistory::get_thought_history_as_a_string(60*5); // look back some minutes
+	
+
 	auto eventSource = SKSE::GetModCallbackEventSource();
 
 	if (DumpThoughts::too_early_after_game_load()) {
@@ -191,6 +205,10 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std
 	// We want to broadcast mod events.  So we need this event source.
 	std::string  mod_event_name = "SNMI_Pump_IMPORANT_PlayerThought";
 	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
+
+	mod_event_string_arg = mod_event_string_arg + "\n\nIn order for this to not be too repetitive and in order to build on previous thoughts, please find below the recent thought history, so that you can avoid repeating yourself too much and also you can build on what was already though before:\n\n";
+	mod_event_string_arg = mod_event_string_arg + PlayerThoughtHistory::get_thought_history_as_a_string(60*5); // look back some minutes
+
 	auto eventSource = SKSE::GetModCallbackEventSource();
 
 	if (DumpThoughts::too_early_after_game_load()) {

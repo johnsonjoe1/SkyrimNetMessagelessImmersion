@@ -4,6 +4,7 @@
 #include "RE/Skyrim.h"
 
 #include <ctime>
+#include <format>
 #include <iomanip>
 #include <nlohmann/json.hpp>
 #include <sstream>
@@ -93,6 +94,22 @@ std::string PlayerThoughtHistory::GetLogSince(std::chrono::system_clock::time_po
 	}
 
 	return thoughtLog.str();
+}
+
+std::string PlayerThoughtHistory::get_thought_history_as_a_string(std::uint32_t lookback_period_in_seconds)
+{
+	const auto since = std::chrono::system_clock::now() - std::chrono::seconds(lookback_period_in_seconds);
+	const auto thoughtLog = GetLogSince(since);
+	if (thoughtLog.empty()) {
+		return std::format(
+			"No player thoughts were recorded within the last {} seconds.",
+			lookback_period_in_seconds);
+	}
+
+	return std::format(
+		"Previous player thoughts from the last {} seconds, in chronological order:\n{}",
+		lookback_period_in_seconds,
+		thoughtLog);
 }
 
 
