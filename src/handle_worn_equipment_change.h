@@ -1,6 +1,23 @@
 #pragma once
 
 #include "RE/Skyrim.h"
+#include <vector>
+
+struct CurrentlyWornItemRecord
+{
+	RE::FormID form_id{};
+	RE::TESObjectARMO* armor{nullptr};
+	std::uint32_t slot_mask{0};
+	RE::TESBoundObject* item{nullptr};
+	std::vector<RE::BGSKeyword*> keywords;
+	int pelvic_property{0};
+	int chest_property{0};
+	int ass_property{0};
+	int transparent_top_property{0};
+};
+
+extern std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
+extern std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
 
 class handle_worn_equipment_change : public RE::BSTEventSink<RE::TESEquipEvent>
 {

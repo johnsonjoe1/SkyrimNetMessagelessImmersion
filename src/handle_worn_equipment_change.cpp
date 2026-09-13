@@ -1,6 +1,9 @@
 #include "handle_worn_equipment_change.h"
 #include "misc.h"
 
+std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
+std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
+
 handle_worn_equipment_change* handle_worn_equipment_change::get_singleton()
 {
 	static handle_worn_equipment_change singleton;

@@ -32,10 +32,6 @@ bool global_pelvic_curtain_flag = false;
 bool global_chest_curtain_flag = false;
 bool global_ass_curtain_flag = false;
 
-std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
-
-std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
-
 struct ANDFactionMetadata
 {
 	std::string editor_id;

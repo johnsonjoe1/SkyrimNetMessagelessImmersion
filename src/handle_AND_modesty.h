@@ -1,25 +1,7 @@
 #pragma once
 
 #include <string>   //  ChatGPT suggested this might be needed?????
-#include <vector>
-
-#include "RE/Skyrim.h"
-
-struct CurrentlyWornItemRecord
-{
-	RE::FormID form_id{};
-	RE::TESObjectARMO* armor{nullptr};
-	std::uint32_t slot_mask{0};
-	RE::TESBoundObject* item{nullptr};
-	std::vector<RE::BGSKeyword*> keywords;
-	int pelvic_property{0};
-	int chest_property{0};
-	int ass_property{0};
-	int transparent_top_property{0};
-};
-
-extern std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
-extern std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
+#include "handle_worn_equipment_change.h"
 
 void refresh_currently_worn_item_records();
 std::string get_currently_worn_transparent_top_item_names();
@@ -30,4 +12,3 @@ public:
 	static void handle_AND_modesty_and_nakedness_stuff();
 	static void reset_previous_rank_to_current_rank();
 };
-
