@@ -18,4 +18,5 @@ set(headers ${headers}
     src/handle_debug_notifications.h
     src/handle_config_ini_file.h
     src/handle_player_dirt.h
+    src/handle_worn_equipment_change.h
 )

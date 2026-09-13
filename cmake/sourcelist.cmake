@@ -18,4 +18,5 @@ set(sources ${sources}
     src/handle_debug_notifications.cpp
     src/handle_config_ini_file.cpp
     src/handle_player_dirt.cpp
+    src/handle_worn_equipment_change.cpp
 )

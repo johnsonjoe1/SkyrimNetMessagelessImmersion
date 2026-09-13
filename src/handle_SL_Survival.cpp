@@ -17,6 +17,7 @@ void check_armor_for_bikini_property()
         return;
     }
 
+	logger::info("ENTERING:  check_armor_for_bikini_property");
 	// Loop through inventory and list everything
     auto inventory = actor->GetInventory();
     logger::info("check_armor_for_bikini_property: -->  Currently worn items:  ");
@@ -54,6 +55,7 @@ void check_armor_for_bikini_property()
 			}
 		}
     }
+	logger::info("LEAVING:  check_armor_for_bikini_property");
 }
 
 
