@@ -295,12 +295,17 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		
 		SNMIPapyrus::suppress_next_Apropos2_state_updates();
+		SNMIPapyrus::previous_yps_AddictionLevel = -99.0f;
+		SNMIPapyrus::previous_yps_AddictionBuff = -99.0f;
 		handle_AND_modesty::reset_previous_rank_to_current_rank();
 		handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
 		handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start();
 		refresh_currently_worn_item_records();
 		historic_worn_item_records = currently_worn_item_records;  // We eliminate any fake changes due to game load or new game
-        break;
+        
+		
+		
+		break;
 	case SKSE::MessagingInterface::kNewGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		handle_AND_modesty::reset_previous_rank_to_current_rank();
