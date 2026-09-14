@@ -54,8 +54,7 @@ namespace SNMI
         settings.enableLicensesPlayerOppressionThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableLicensesPlayerOppressionThoughts", 0, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableLicensesPlayerOppressionThoughts.  New variable value = {}", settings.enableLicensesPlayerOppressionThoughts);
 
-        settings.updateInterval = GetPrivateProfileIntW(L"Timing", L"UpdateInterval", 33, configPath.c_str());
+        settings.updateInterval = GetPrivateProfileIntW(L"Timing", L"UpdateInterval", 5, configPath.c_str());
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.updateInterval.  New variable value = {}", settings.updateInterval);
     }
 }
-

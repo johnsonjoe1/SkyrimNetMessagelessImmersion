@@ -9,7 +9,7 @@ namespace SNMI
 		bool enableMilkThoughts{ false };
         bool enableANDNudityThoughts{ false };
         bool enableLicensesPlayerOppressionThoughts{ false };
-		int updateInterval{ 33 };
+		int updateInterval{ 5 };
     };
 
     Settings& GetSettings();

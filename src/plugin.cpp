@@ -16,10 +16,13 @@
 #include "handle_worn_equipment_change.h"
 #include "misc.h"
 #include "papyrus_interface.h"
+#include <algorithm>
+#include <atomic>
 #include <unordered_set>
 #include <optional>
 #include <chrono>
 #include <string>
+#include <thread>
 
 namespace logger = SKSE::log;
 
@@ -98,8 +101,62 @@ MUCH LATER:  ** Try to find out the (other) actor of an SL scene and then commen
 
 */
 
-static auto last_periodic_check_for_changes = std::chrono::steady_clock::now();
-// static auto last_speech_timestamp = std::chrono::steady_clock::now();
+namespace
+{
+	std::atomic_bool periodicChecksEnabled{ false };
+	std::atomic_bool periodicTaskQueued{ false };
+	std::chrono::steady_clock::time_point nextPeriodicCheck;
+	std::jthread periodicSchedulerThread;
+
+	void RunPeriodicChecksIfDue();
+
+	void StartPeriodicScheduler()
+	{
+		if (periodicSchedulerThread.joinable()) {
+			return;
+		}
+
+		periodicSchedulerThread = std::jthread([](std::stop_token a_stopToken) {
+			while (!a_stopToken.stop_requested()) {
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+				if (a_stopToken.stop_requested() || !periodicChecksEnabled.load()) {
+					continue;
+				}
+
+				bool expected = false;
+				if (!periodicTaskQueued.compare_exchange_strong(expected, true)) {
+					continue;
+				}
+
+				if (auto* taskInterface = SKSE::GetTaskInterface()) {
+					taskInterface->AddTask([]() {
+						periodicTaskQueued.store(false);
+						RunPeriodicChecksIfDue();
+					});
+				} else {
+					periodicTaskQueued.store(false);
+				}
+			}
+		});
+
+		logger::info("Started the periodic-check scheduler.");
+	}
+
+	void SuspendPeriodicChecks()
+	{
+		periodicChecksEnabled.store(false);
+		logger::info("Suspended periodic checks for game loading.");
+	}
+
+	void ResumePeriodicChecks()
+	{
+		// Run the first pass promptly, while the existing post-load thought-output
+		// guard is active, so every handler establishes a baseline for this game.
+		nextPeriodicCheck = std::chrono::steady_clock::now();
+		periodicChecksEnabled.store(true);
+		logger::info("Enabled periodic checks for the loaded game.");
+	}
+}
 
 void handle_check_for_close_conversations()
 {
@@ -124,6 +181,40 @@ void handle_check_for_close_conversations()
 	}
 }
 
+namespace
+{
+	void RunPeriodicChecksIfDue()
+	{
+		if (!periodicChecksEnabled.load() || !RE::PlayerCharacter::GetSingleton()) {
+			return;
+		}
+
+		if (auto* ui = RE::UI::GetSingleton(); ui && ui->GameIsPaused()) {
+			return;
+		}
+
+		const auto now = std::chrono::steady_clock::now();
+		if (now < nextPeriodicCheck) {
+			return;
+		}
+
+		logger::info("\n***********************************************************\n***** RunPeriodicChecksIfDue():  5 seconds elapsed:  TIME TO DO PERIODIC CHECKS *****\n***********************************************************");
+
+		const auto interval = std::chrono::seconds(std::max(1, SNMI::GetSettings().updateInterval));
+		nextPeriodicCheck = now + interval;
+
+		logger::info("Starting periodic checks (interval: {} seconds).", interval.count());
+		handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff();
+		handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff();
+		handle_yps::handle_yps_fashion_detection_stuff();
+		handle_fame::handle_SLSF_Reloaded_fame_stuff();
+		handle_check_for_close_conversations();
+		handle_player_dirt::handle_player_dirt_changes();
+		handle_timeout_for_stale_scenes();
+		logger::info("\n******************************************************************************\n***** RunPeriodicChecksIfDue():  FINISHED DOING PERIODIC CHECKS *****\n***** Callbacks and events, that happen driven by other mods are handled separately *****\n******************************************************************************");
+	}
+}
+
 
 //  Here comes the code for hooking into the active effect application and removal, i.e. the list of currently active effects.
 class ChangesToTheActiveMagicEffectListEventHandler : public RE::BSTEventSink<RE::TESActiveEffectApplyRemoveEvent>
@@ -132,25 +223,6 @@ public:
     RE::BSEventNotifyControl ProcessEvent( const RE::TESActiveEffectApplyRemoveEvent* a_event, RE::BSTEventSource<RE::TESActiveEffectApplyRemoveEvent>*
     ) override
     {
-
-		// THIS SECTION OF THE CODE SHOULD BE CALLED VERY FREQUENTLY IN THE COURSE OF MAGIC EFFECTS, handled and even unhandled magic effects.
-		// So we put periodic checks here with AT LEAST 5 seconds pause in between.  This should be faily consistent though.
-		//
-		auto now = std::chrono::steady_clock::now();
-		if (now - last_periodic_check_for_changes >= std::chrono::seconds(5)) {
-			last_periodic_check_for_changes = now;
-			logger::info("\n***********************************************************\n***** 5 seconds elapsed:  TIME TO DO PERIODIC CHECKS *****\n***********************************************************");
-			handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff();
-			handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff();
-			handle_yps::handle_yps_fashion_detection_stuff();
-			handle_fame::handle_SLSF_Reloaded_fame_stuff();
-			handle_check_for_close_conversations();
-			handle_player_dirt::handle_player_dirt_changes();
-			
-			handle_timeout_for_stale_scenes();  // just a periodic check, that we don't think we are in a SL scene forever (i.e. no more than 90 seconds after the previous SL_stage_advance)
-			logger::info("\n******************************************************************************\n***** FINISHED DOING PERIODIC CHECKS *****\n***** The rest is callbacks and events, that happen driven by other mods *****\n******************************************************************************");
-		}
-
 		handle_changes_in_active_magic_effects(a_event);
 
 
@@ -273,23 +345,16 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		// auto* mod_event_source = SKSE::GetModCallbackEventSource();
 		// mod_event_source->AddEventSink(&g_mod_event_handler);
 		SKSE::GetModCallbackEventSource()->AddEventSink(&g_mod_event_handler);
+		StartPeriodicScheduler();
 
 		break;
 
 	case SKSE::MessagingInterface::kPostLoad:
-		// DANGER HERE:  The player name may not be availabe.  This might crash!!	
-		//  DumpThoughts::reset_last_game_load_or_reload_timestamp();	
-		//  CRASHING AT THIS CALL POINT:   handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
-		DumpThoughts::reset_last_game_load_or_reload_timestamp();
-		handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
-		handle_AND_modesty::reset_previous_rank_to_current_rank();
-		handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start();
-		refresh_currently_worn_item_records();
-		historic_worn_item_records = currently_worn_item_records;  // We eliminate any fake changes due to game load or new game
+		// This is an SKSE/plugin lifecycle event; no playable game is ready yet.
 		break;
 	case SKSE::MessagingInterface::kPreLoadGame:
-		// DANGER HERE:  The player name may not be availabe.  This might crash!!	
-		//  DumpThoughts::reset_last_game_load_or_reload_timestamp();
+		SuspendPeriodicChecks();
+		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		break;
 	case SKSE::MessagingInterface::kPostLoadGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
@@ -302,9 +367,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start();
 		refresh_currently_worn_item_records();
 		historic_worn_item_records = currently_worn_item_records;  // We eliminate any fake changes due to game load or new game
-        
-		
-		
+		ResumePeriodicChecks();
 		break;
 	case SKSE::MessagingInterface::kNewGame:
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
@@ -313,6 +376,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start();
 		refresh_currently_worn_item_records();
 		historic_worn_item_records = currently_worn_item_records;  // We eliminate any fake changes due to game load or new game
+		ResumePeriodicChecks();
 		break;
 	};
 }

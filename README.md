@@ -108,7 +108,7 @@ The following switches in its `[Thoughts]` section are live and accept `1` or `0
 * `EnablePlayerDirtThoughts`
 * `EnableANDNudityThoughts`
 
-The `EnablePlugin`, `DebugLogging`, `UpdateInterval`, `EnableAproposThoughts`, and `EnableYPSThoughts` entries are placeholders and currently have no effect. Most other behavior remains hard-coded, and there is no MCM.
+The `EnablePlugin`, `DebugLogging`, `EnableAproposThoughts`, and `EnableYPSThoughts` entries are placeholders and currently have no effect. `UpdateInterval` controls how often periodic status checks run, in whole seconds. Most other behavior remains hard-coded, and there is no MCM.
 If you want, you can disable e.g. the background thought channel. On SkyrimNet beta25 RC7 or later, disable or edit it through the `johnsonjoe1.snmi` external plugin in SkyrimNet's dashboard. On RC6 or earlier, delete or edit `SKSE/Plugins/SkyrimNet/config/triggers/SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought.yaml`.
 
 # Contributing guidelines
