@@ -25,6 +25,7 @@ namespace
 	};
 
 	std::optional<int> previous_yps_hair_stage;
+	bool yps_hair_redye_reminder_active = false;
 }
 
 struct ParsedCondition
@@ -95,6 +96,11 @@ void handle_yps::reset_hair_stage_tracking()
 	previous_yps_hair_stage.reset();
 }
 
+void handle_yps::reset_hair_dye_tracking()
+{
+	yps_hair_redye_reminder_active = false;
+}
+
 void handle_yps::handle_yps_fashion_detection_stuff()
 {
 	auto* player = RE::PlayerCharacter::GetSingleton();
@@ -131,6 +137,47 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		LillithOnlyBox("YPS-AddictionBuffChange event detected.  NO HANDLING AT PRESENT!!!");
 		// For the moment, this shoudl still raise a popup...
 		return false;
+	}
+
+	if (std::strcmp(a_event->eventName.c_str(), "yps_HairDyeColourChange") == 0) {
+		yps_hair_redye_reminder_active = false;
+		if (a_event->strArg.empty()) {
+			SKSE::log::warn("Ignoring yps_HairDyeColourChange event without a colour name.");
+			return true;
+		}
+
+		const auto final_thought_string = std::format(
+			"YOU, the player, have just had your hair dyed {}. Notice how the new colour changes your appearance and describe what you think and feel about it. Be sure to mention both your hair and its new {} colour explicitly so the reason for the thought is clear.",
+			a_event->strArg.c_str(), a_event->strArg.c_str());
+		SKSE::log::info("YPS reports that the player's hair was dyed {} (colour value {}).", a_event->strArg.c_str(), a_event->numArg);
+		LillithOnlyBox(final_thought_string);
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string);
+		return true;
+	}
+
+	if (std::strcmp(a_event->eventName.c_str(), "yps_ShouldRedyeHairEvent") == 0) {
+		if (a_event->numArg != 0.0f && a_event->numArg != 1.0f) {
+			SKSE::log::warn("Ignoring yps_ShouldRedyeHairEvent with invalid state: {}", a_event->numArg);
+			return true;
+		}
+
+		const bool should_redye_hair = a_event->numArg == 1.0f;
+		if (should_redye_hair && !yps_hair_redye_reminder_active) {
+			const std::string final_thought_string =
+				"YOU, the player, have just noticed that your dyed hair no longer looks freshly coloured. Either your natural-coloured roots are visibly growing out or your semi-permanent hair colour is beginning to fade. Think about how the change looks and whether you should visit a hairdresser to refresh the dye. Be sure to mention your fading or grown-out hair dye explicitly so the reason for the thought is clear.";
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string);
+		}
+
+		yps_hair_redye_reminder_active = should_redye_hair;
+		SKSE::log::info("YPS hair-redye reminder is now {}.", should_redye_hair ? "active" : "inactive");
+		return true;
+	}
+
+	if (std::strcmp(a_event->eventName.c_str(), "yps_CanRedyeHairEvent") == 0 ||
+		std::strcmp(a_event->eventName.c_str(), "yps_CanChangeHairColourEvent") == 0) {
+		SKSE::log::info("YPS hair-colour capability event {} changed to {}; no thought generated.", a_event->eventName.c_str(), a_event->numArg);
+		return true;
 	}
 
 	if (std::strcmp(a_event->eventName.c_str() , "yps_HairStageChange") == 0) {			
