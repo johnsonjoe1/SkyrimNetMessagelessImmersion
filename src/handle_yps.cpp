@@ -17,6 +17,14 @@ bool actually_wearing_heels_according_to_yps_thoughts = false;
 
 namespace
 {
+	struct YpsFashionState
+	{
+		std::string colour_or_item;
+		int state;
+
+		bool operator==(const YpsFashionState&) const = default;
+	};
+
 	constexpr std::array<std::string_view, 21> yps_hair_stage_names{
 		"bald", "short stubbles", "long stubbles", "cropped", "ear length", "chin length", "neck length",
 		"shoulder length", "armpit length", "bra strap length", "mid-back length", "waist length", "hip length",
@@ -26,6 +34,50 @@ namespace
 
 	std::optional<int> previous_yps_hair_stage;
 	bool yps_hair_redye_reminder_active = false;
+	std::optional<YpsFashionState> previous_yps_lipstick_state;
+	std::optional<YpsFashionState> previous_yps_eyeshadow_state;
+	std::optional<YpsFashionState> previous_yps_fingernail_state;
+	std::optional<YpsFashionState> previous_yps_toenail_state;
+	std::optional<YpsFashionState> previous_yps_stockings_state;
+	std::array<std::optional<bool>, 13> previous_yps_piercing_states;
+
+	void throw_out_yps_fashion_thought(const std::string& thought)
+	{
+		LillithOnlyBox(thought);
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought);
+	}
+
+	std::string nail_polish_thought(bool fingernails, int previous_stage, int stage, const std::string& colour)
+	{
+		const auto nails = fingernails ? "fingernails" : "toenails";
+		const auto professional_service = fingernails ? "manicure" : "pedicure";
+		const auto colour_description = colour.empty() ? std::string("polish") : std::format("{} polish", colour);
+		switch (stage) {
+		case 0:
+			if (previous_stage == -10) {
+				return "YOU, the player, have just noticed that your damaged fingernails have finally recovered. They can safely be polished or manicured again. Be sure to mention your recovered fingernails explicitly and describe how you feel about being able to care for them normally again.";
+			}
+			return std::format("YOU, the player, have just noticed that no polish remains on your {} now, whether it was removed or finally chipped away. Notice how bare they look and describe what you think and feel about no longer wearing nail polish there. Be sure to mention your {} explicitly so the reason for the thought is clear.", nails, nails);
+		case 20:
+			return std::format("YOU, the player, have just finished applying {} to your {}. The fresh polish is still wet and can easily smudge, so you should avoid moving around until it dries. Notice how it looks and let us know how you feel about it.", colour_description, nails);
+		case 30:
+			return std::format("YOU, the player, have just noticed that the fresh {} on your {} has become visibly smudged, probably because you moved before it dried. React to the spoiled finish and be sure to mention your {} explicitly.", colour_description, nails, nails);
+		case 40:
+			return std::format("YOU, the player, have just noticed that the {} on your {} has completely dried. You can move normally again without worrying about smudging it. Admire the finished result and mention your {} explicitly.", colour_description, nails, nails);
+		case 50:
+			return std::format("YOU, the player, now have a finished professional {} on your {} with {}. Notice the durable, carefully finished result and describe how it makes you feel. Be sure to mention your {} explicitly.", professional_service, nails, colour_description, nails);
+		case 54:
+			return "YOU, the player, have just noticed that the artificial tips of your professionally manicured fingernails are cracked or broken. You now need a refill at a nail salon before the damage becomes worse. Be sure to mention your broken fingernail tips explicitly and react to the spoiled manicure.";
+		case 60:
+			return std::format("YOU, the player, have just noticed that the {} on your {} is beginning to chip. It is still present, but the finish no longer looks fresh. React to the deterioration and mention your {} explicitly.", colour_description, nails, nails);
+		case 70:
+			return std::format("YOU, the player, have just noticed that only untidy remnants of {} remain on your {}. They will not disappear cleanly on their own, so you should use nail-polish remover. Mention your {} explicitly and let us know how the neglected finish makes you feel.", colour_description, nails, nails);
+		case -10:
+			return "YOU, the player, have just noticed that your fingernails are scratched and damaged after losing their artificial nail tips. They need time to recover, and you cannot safely polish them again yet. Be sure to mention your damaged fingernails explicitly and consider visiting a nail salon.";
+		default:
+			return {};
+		}
+	}
 }
 
 struct ParsedCondition
@@ -99,6 +151,16 @@ void handle_yps::reset_hair_stage_tracking()
 void handle_yps::reset_hair_dye_tracking()
 {
 	yps_hair_redye_reminder_active = false;
+}
+
+void handle_yps::reset_fashion_tracking()
+{
+	previous_yps_lipstick_state.reset();
+	previous_yps_eyeshadow_state.reset();
+	previous_yps_fingernail_state.reset();
+	previous_yps_toenail_state.reset();
+	previous_yps_stockings_state.reset();
+	previous_yps_piercing_states.fill(std::nullopt);
 }
 
 void handle_yps::handle_yps_fashion_detection_stuff()
@@ -183,6 +245,150 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		return true;
 	}
 
+	if (std::strcmp(a_event->eventName.c_str(), "SNMI_YPSLipstickChange") == 0 ||
+		std::strcmp(a_event->eventName.c_str(), "SNMI_YPSEyeShadowChange") == 0) {
+		LillithOnlyBox(std::format("YPS mod event detected: {}", a_event->eventName.c_str()));
+		const auto state = static_cast<int>(a_event->numArg);
+		if (a_event->numArg != static_cast<float>(state) || state < 0 || state > 3) {
+			SKSE::log::warn("Ignoring {} with invalid cosmetic state: {}", a_event->eventName.c_str(), a_event->numArg);
+			return true;
+		}
+
+		const bool is_lipstick = std::strcmp(a_event->eventName.c_str(), "SNMI_YPSLipstickChange") == 0;
+		auto& previous_state = is_lipstick ? previous_yps_lipstick_state : previous_yps_eyeshadow_state;
+		const YpsFashionState current_state{ a_event->strArg.c_str(), state };
+		if (previous_state && *previous_state == current_state) {
+			SKSE::log::info("Ignoring duplicate {} state.", a_event->eventName.c_str());
+			return true;
+		}
+
+		const bool had_previous_state = previous_state.has_value();
+		previous_state = current_state;
+		const bool worn = (state & 1) != 0;
+		const bool smudged = (state & 2) != 0;
+		if (!had_previous_state && !worn) {
+			SKSE::log::info("Established initial absent {} state; no thought generated.", is_lipstick ? "lipstick" : "eyeshadow");
+			return true;
+		}
+
+		const auto cosmetic = is_lipstick ? "lipstick" : "eyeshadow";
+		const auto location = is_lipstick ? "lips" : "eyelids";
+		const auto colour = current_state.colour_or_item.empty() ? std::string{} : std::format(" {}", current_state.colour_or_item);
+		std::string final_thought_string;
+		if (smudged) {
+			final_thought_string = std::format(
+				"YOU, the player, have just noticed that your{} {} is visibly smudged. React to the spoiled makeup and consider whether you need to fix it. Be sure to mention your {} explicitly so the reason for the thought is clear.",
+				colour, cosmetic, cosmetic);
+		} else if (!worn) {
+			final_thought_string = std::format(
+				"YOU, the player, have just removed or worn away your {}. Notice how bare your {} look without it and describe what you think and feel about no longer wearing it. Be sure to mention your {} explicitly so the reason for the thought is clear.",
+				cosmetic, location, cosmetic);
+		} else {
+			final_thought_string = std::format(
+				"YOU, the player, have just applied or refreshed your{} {}. Notice how the colour changes the appearance of your {} and describe what you think and feel about the result. Be sure to mention your {} explicitly so the reason for the thought is clear.",
+				colour, cosmetic, location, cosmetic);
+		}
+
+		throw_out_yps_fashion_thought(final_thought_string);
+		return true;
+	}
+
+	if (std::strcmp(a_event->eventName.c_str(), "SNMI_YPSFingerNailPolishChange") == 0 ||
+		std::strcmp(a_event->eventName.c_str(), "SNMI_YPSToeNailPolishChange") == 0) {
+		LillithOnlyBox(std::format("YPS mod event detected: {}", a_event->eventName.c_str()));
+		const auto stage = static_cast<int>(a_event->numArg);
+		if (a_event->numArg != static_cast<float>(stage)) {
+			SKSE::log::warn("Ignoring {} with non-integral nail-polish stage: {}", a_event->eventName.c_str(), a_event->numArg);
+			return true;
+		}
+
+		const bool fingernails = std::strcmp(a_event->eventName.c_str(), "SNMI_YPSFingerNailPolishChange") == 0;
+		auto& previous_state = fingernails ? previous_yps_fingernail_state : previous_yps_toenail_state;
+		const YpsFashionState current_state{ a_event->strArg.c_str(), stage };
+		if (previous_state && *previous_state == current_state) {
+			SKSE::log::info("Ignoring duplicate {} state.", a_event->eventName.c_str());
+			return true;
+		}
+
+		const bool had_previous_state = previous_state.has_value();
+		const int previous_stage = had_previous_state ? previous_state->state : 0;
+		previous_state = current_state;
+		if (!had_previous_state && stage == 0) {
+			SKSE::log::info("Established initial unpolished {} state; no thought generated.", fingernails ? "fingernail" : "toenail");
+			return true;
+		}
+
+		const auto final_thought_string = nail_polish_thought(fingernails, previous_stage, stage, current_state.colour_or_item);
+		if (final_thought_string.empty()) {
+			SKSE::log::info("YPS {} polish reached stage {}; no thought is configured for this intermediate or special stage.", fingernails ? "fingernail" : "toenail", stage);
+			return true;
+		}
+
+		throw_out_yps_fashion_thought(final_thought_string);
+		return true;
+	}
+
+	if (std::strcmp(a_event->eventName.c_str(), "SNMI_YPSStockingsChange") == 0) {
+		LillithOnlyBox("YPS mod event detected: SNMI_YPSStockingsChange");
+		const auto state = static_cast<int>(a_event->numArg);
+		if (a_event->numArg != static_cast<float>(state) || state < 0 || state > 1) {
+			SKSE::log::warn("Ignoring SNMI_YPSStockingsChange with invalid state: {}", a_event->numArg);
+			return true;
+		}
+
+		const YpsFashionState current_state{ a_event->strArg.c_str(), state };
+		if (previous_yps_stockings_state && *previous_yps_stockings_state == current_state) {
+			SKSE::log::info("Ignoring duplicate YPS stockings state.");
+			return true;
+		}
+
+		const bool had_previous_state = previous_yps_stockings_state.has_value();
+		previous_yps_stockings_state = current_state;
+		if (!had_previous_state && state == 0) {
+			SKSE::log::info("Established initial absent YPS stockings state; no thought generated.");
+			return true;
+		}
+
+		const auto final_thought_string = state == 1 ?
+			std::format("YOU, the player, have just put on {}. Notice how the stockings look and feel on your legs and describe what you think about wearing them. Be sure to mention the stockings explicitly so the reason for the thought is clear.", current_state.colour_or_item.empty() ? "a pair of stockings" : current_state.colour_or_item) :
+			std::string("YOU, the player, have just taken off your stockings. Notice how different your bare legs look and feel now and describe what you think about removing them. Be sure to mention the stockings explicitly so the reason for the thought is clear.");
+		throw_out_yps_fashion_thought(final_thought_string);
+		return true;
+	}
+
+	if (std::strcmp(a_event->eventName.c_str(), "SNMI_YPSPiercingChange") == 0) {
+		LillithOnlyBox("YPS mod event detected: SNMI_YPSPiercingChange");
+		const auto signed_slot = static_cast<int>(a_event->numArg);
+		if (a_event->numArg != static_cast<float>(signed_slot) || signed_slot == 0 || signed_slot < -12 || signed_slot > 12) {
+			SKSE::log::warn("Ignoring SNMI_YPSPiercingChange with invalid signed slot: {}", a_event->numArg);
+			return true;
+		}
+
+		constexpr std::array<std::string_view, 13> piercing_slot_names{
+			"unused", "earlobes", "left nostril", "septum", "snake bites", "right labret", "labret",
+			"right eyebrow", "nose bridge", "navel", "nipples", "clitoris", "labia"
+		};
+		const bool equipped = signed_slot > 0;
+		const auto slot = static_cast<std::size_t>(equipped ? signed_slot : -signed_slot);
+		if (previous_yps_piercing_states[slot] && *previous_yps_piercing_states[slot] == equipped) {
+			SKSE::log::info("Ignoring duplicate YPS piercing state for slot {} ({}).", slot, piercing_slot_names[slot]);
+			return true;
+		}
+
+		const bool had_previous_state = previous_yps_piercing_states[slot].has_value();
+		previous_yps_piercing_states[slot] = equipped;
+		if (!had_previous_state && !equipped) {
+			SKSE::log::info("Established initial absent YPS piercing state for slot {} ({}); no thought generated.", slot, piercing_slot_names[slot]);
+			return true;
+		}
+
+		const auto final_thought_string = equipped ?
+			std::format("YOU, the player, have just put jewellery into the piercing at your {}. Notice the jewellery and how it feels there, and describe what you think about wearing it. Be sure to mention the {} piercing explicitly so the reason for the thought is clear.", piercing_slot_names[slot], piercing_slot_names[slot]) :
+			std::format("YOU, the player, have just removed the jewellery from the piercing at your {}. Notice how the empty piercing feels and describe what you think about no longer wearing jewellery there. Be sure to mention the {} piercing explicitly so the reason for the thought is clear.", piercing_slot_names[slot], piercing_slot_names[slot]);
+		throw_out_yps_fashion_thought(final_thought_string);
+		return true;
+	}
+
 	if (std::strcmp(a_event->eventName.c_str() , "yps_HairStageChange") == 0) {			
 		LillithOnlyBox("YPS mod event detected: yps_HairStageChange");
 		const auto hair_stage = static_cast<int>(a_event->numArg);
@@ -253,9 +459,8 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 
 
 	if ( (std::strcmp(a_event->eventName.c_str() , "yps_FashionChange") == 0)  ) {			
-		LillithOnlyBox("YPS-FashionChange event detected.  NO HANDLING AT PRESENT!!!");
-		// For the moment, this shoudl still raise a popup...
-		return false;
+		LillithOnlyBox(std::format("YPS mod event detected: yps_FashionChange ({})", a_event->strArg.c_str()));
+		return true;
 	}
 	return false;
 

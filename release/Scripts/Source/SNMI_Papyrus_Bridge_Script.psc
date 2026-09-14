@@ -15,6 +15,15 @@ float LVSK_IsLovesick = 0.0
 
 int sparcity_counter = 0
 int sparcity_threshold = 6
+bool yps_fashion_event_registered = false
+
+function ensure_yps_fashion_event_registration()
+	if !yps_fashion_event_registered
+		RegisterForModEvent("yps_FashionChange", "OnYpsFashionChange")
+		yps_fashion_event_registered = true
+		lillith_notification("[SNMI] Registered YPS fashion-change relay.")
+	endif
+endfunction
 
 Event OnInit()
     RegisterForSingleUpdate(10.0)
@@ -23,6 +32,53 @@ Event OnInit()
 	RegisterForModEvent("HookAnimationStart", "OnSexLabAnimationStart")
 	lillith_notification("[SNMI] INITIAL HOOK INTO SexLab AnimationStart FINISHED.")
 
+	ensure_yps_fashion_event_registration()
+
+EndEvent
+
+Event OnYpsFashionChange(string eventName, string changeType, float slot, Form sender)
+	string colour
+	int worn
+	int smudged
+	int stage
+	Form stockings
+	int piercing_slot
+	int equipped
+
+	if changeType == "Lipstick"
+		colour = StorageUtil.GetStringValue(None, "yps_LipstickColor")
+		worn = StorageUtil.GetIntValue(None, "ypsLipstickWorn")
+		smudged = StorageUtil.GetIntValue(None, "yps_LipstickSmudged")
+		SendModEvent("SNMI_YPSLipstickChange", colour, worn + (2 * smudged))
+	elseif changeType == "EyeShadow"
+		colour = StorageUtil.GetStringValue(None, "yps_EyeShadowColor")
+		worn = StorageUtil.GetIntValue(None, "ypsEyeshadowWorn")
+		smudged = StorageUtil.GetIntValue(None, "yps_EyeShadowSmudged")
+		SendModEvent("SNMI_YPSEyeShadowChange", colour, worn + (2 * smudged))
+	elseif changeType == "FingerNailPolish"
+		colour = StorageUtil.GetStringValue(None, "yps_FingerNailPolishColor")
+		stage = StorageUtil.GetIntValue(None, "yps_FingerNailPolishStage")
+		SendModEvent("SNMI_YPSFingerNailPolishChange", colour, stage)
+	elseif changeType == "ToeNailPolish"
+		colour = StorageUtil.GetStringValue(None, "yps_ToeNailPolishColor")
+		stage = StorageUtil.GetIntValue(None, "yps_ToeNailPolishStage")
+		SendModEvent("SNMI_YPSToeNailPolishChange", colour, stage)
+	elseif changeType == "Stockings"
+		stockings = StorageUtil.GetFormValue(None, "yps_Stockings")
+		if stockings
+			SendModEvent("SNMI_YPSStockingsChange", stockings.GetName(), 1.0)
+		else
+			SendModEvent("SNMI_YPSStockingsChange", "", 0.0)
+		endif
+	elseif changeType == "Piercings"
+		piercing_slot = slot as int
+		equipped = StorageUtil.IntListGet(None, "yps_PiercingsStatus", piercing_slot)
+		if equipped
+			SendModEvent("SNMI_YPSPiercingChange", "", piercing_slot as float)
+		else
+			SendModEvent("SNMI_YPSPiercingChange", "", (0 - piercing_slot) as float)
+		endif
+	endif
 EndEvent
 
 Event OnSexLabAnimationStart(int threadId, bool hasPlayer)
@@ -397,6 +453,7 @@ endfunction
 
 
 Event OnUpdate()
+	ensure_yps_fashion_event_registration()
 
     keepalive_value += 1.0    ; This is just an internal counter, that will count the number of times this has run so far
     SNMI_Native.SetKeepaliveLevel(keepalive_value)
