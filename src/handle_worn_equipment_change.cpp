@@ -130,7 +130,10 @@ RE::BSEventNotifyControl handle_worn_equipment_change::ProcessEvent(
 		return RE::BSEventNotifyControl::kContinue;
 	}
 
-	LillithOnlyBox("Player worn-equipment change event received.  -->  Triggering a refresh of the currently worn items records.");
+	// NOTE:  This event isn't just triggerd by change in WORN equipment, it is triggered by ANY change in 
+	//        inventory.  Therefore we have to disable this message, at least for now, because it triggers
+	//        excessively during normal gameplay.
+	// LillithOnlyBox("Player worn-equipment change event received.  -->  Triggering a refresh of the currently worn items records.");
 	refresh_currently_worn_item_records();
 
 	return RE::BSEventNotifyControl::kContinue;

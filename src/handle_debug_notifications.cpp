@@ -185,6 +185,7 @@ namespace
 	static auto last_fishing_rod_equipped_notification_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 	static auto last_nothing_on_line_notification_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 	static auto last_reel_in_too_early_notification_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+	static auto last_not_enough_gold_notification_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 	RE::UI_MESSAGE_RESULTS process_hud_message(RE::HUDMenu* a_menu, RE::UIMessage& a_message)
 	{
@@ -228,7 +229,7 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		last_gag_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: You can't eat or drink while wearing this gag. Non-Relevant: {}", notification);
+		SKSE::log::info("Test failed.  This isnt: You can't eat or drink while wearing this gag.");
 	}
 
 	if (strcmp(notification, "You are surrendering!") == 0) {
@@ -240,7 +241,7 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		last_surrender_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: You are surrendering! Non-Relevant: {}", notification);
+		SKSE::log::info("Test failed.  This isnt: You are surrendering!");
 	}
 	
 	if (strcmp(notification, "You need a pickaxe to use this.") == 0) {
@@ -252,7 +253,7 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		last_pickaxe_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: You need a pickaxe to use this. Non-Relevant: {}", notification);
+		SKSE::log::info("Test failed.  This isnt: You need a pickaxe to use this.");
 	}	
 
 	if (strcmp(notification, "You reeled in your line too early.") == 0) {
@@ -264,7 +265,7 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		last_reel_in_too_early_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: You reeled in your line too early. Non-Relevant: {}", notification);
+		SKSE::log::info("Test failed.  This isnt: You reeled in your line too early.");
 	}
 	
 	if (strcmp(notification, "You must have a fishing rod equipped to use this.") == 0) {
@@ -276,7 +277,7 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		last_fishing_rod_equipped_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: You must have a fishing rod equipped to use this. Non-Relevant: {}", notification);
+		SKSE::log::info("Test failed.  This isnt: You must have a fishing rod equipped to use this.");
 	}
 
 	if (strcmp(notification, "There was nothing on your line.") == 0) {
@@ -288,6 +289,21 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		last_nothing_on_line_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: There was nothing on your line. Non-Relevant: {}", notification);
+		SKSE::log::info("Test failed.  This isnt: There was nothing on your line.");
 	}
+
+	if (strcmp(notification, "You don't have enough gold.") == 0) {
+		if (!cooldown_has_passed(last_not_enough_gold_notification_thought_timestamp, 60)) {
+			return;
+		}
+		LillithOnlyBox("Notification detected: You don't have enough gold.");
+		std::string  thought_message = std::format("YOU, the player, tried to make a purchase but didn't have enough gold.  Say so in your response and let us know how you feel about it.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		last_not_enough_gold_notification_thought_timestamp = std::chrono::steady_clock::now();
+	} else {
+		SKSE::log::info("Test failed.  This isnt: You don't have enough gold.");
+	}
+
+
+	
 }
