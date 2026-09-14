@@ -140,6 +140,7 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 	}
 
 	if (std::strcmp(a_event->eventName.c_str(), "yps_HairDyeColourChange") == 0) {
+		LillithOnlyBox("YPS mod event detected: yps_HairDyeColourChange");
 		yps_hair_redye_reminder_active = false;
 		if (a_event->strArg.empty()) {
 			SKSE::log::warn("Ignoring yps_HairDyeColourChange event without a colour name.");
@@ -156,6 +157,7 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 	}
 
 	if (std::strcmp(a_event->eventName.c_str(), "yps_ShouldRedyeHairEvent") == 0) {
+		LillithOnlyBox("YPS mod event detected: yps_ShouldRedyeHairEvent");
 		if (a_event->numArg != 0.0f && a_event->numArg != 1.0f) {
 			SKSE::log::warn("Ignoring yps_ShouldRedyeHairEvent with invalid state: {}", a_event->numArg);
 			return true;
@@ -176,11 +178,13 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 
 	if (std::strcmp(a_event->eventName.c_str(), "yps_CanRedyeHairEvent") == 0 ||
 		std::strcmp(a_event->eventName.c_str(), "yps_CanChangeHairColourEvent") == 0) {
+		LillithOnlyBox(std::format("YPS mod event detected: {}", a_event->eventName.c_str()));
 		SKSE::log::info("YPS hair-colour capability event {} changed to {}; no thought generated.", a_event->eventName.c_str(), a_event->numArg);
 		return true;
 	}
 
 	if (std::strcmp(a_event->eventName.c_str() , "yps_HairStageChange") == 0) {			
+		LillithOnlyBox("YPS mod event detected: yps_HairStageChange");
 		const auto hair_stage = static_cast<int>(a_event->numArg);
 		if (a_event->numArg != static_cast<float>(hair_stage) || hair_stage < 1 || hair_stage > static_cast<int>(yps_hair_stage_names.size())) {
 			SKSE::log::warn("Ignoring yps_HairStageChange event with invalid stage: {}", a_event->numArg);
