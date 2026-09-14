@@ -7,11 +7,25 @@
 #include "handle_yps.h"
 #include "misc.h"
 #include "papyrus_interface.h"
+#include <array>
 #include <unordered_set>
 #include <optional>
+#include <string_view>
 
 namespace logger = SKSE::log;
 bool actually_wearing_heels_according_to_yps_thoughts = false;
+
+namespace
+{
+	constexpr std::array<std::string_view, 21> yps_hair_stage_names{
+		"bald", "short stubbles", "long stubbles", "cropped", "ear length", "chin length", "neck length",
+		"shoulder length", "armpit length", "bra strap length", "mid-back length", "waist length", "hip length",
+		"tailbone length", "classic length", "mid-thigh length", "knee length", "calf length", "ankle length",
+		"floor length", "Rapunzel length"
+	};
+
+	std::optional<int> previous_yps_hair_stage;
+}
 
 struct ParsedCondition
 {
@@ -76,6 +90,11 @@ std::unordered_set<std::string> ParseConditions(const std::string& str)
 //  Note to self:  static keyword only belongs in the header, not in the .cpp file.
 //  Note to self:  public: private: keywords only belong in the header, not in the .cpp file.  
 
+void handle_yps::reset_hair_stage_tracking()
+{
+	previous_yps_hair_stage.reset();
+}
+
 void handle_yps::handle_yps_fashion_detection_stuff()
 {
 	auto* player = RE::PlayerCharacter::GetSingleton();
@@ -115,10 +134,40 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 	}
 
 	if (std::strcmp(a_event->eventName.c_str() , "yps_HairStageChange") == 0) {			
-		SKSE::log::info("yps_HairStageChange event detected.");
-		LillithOnlyBox("YPS-HairStageChange event detected.  NO HANDLING AT PRESENT!!!");
-		// For the moment, this should still raise a popup...
-		return false;
+		const auto hair_stage = static_cast<int>(a_event->numArg);
+		if (a_event->numArg != static_cast<float>(hair_stage) || hair_stage < 1 || hair_stage > static_cast<int>(yps_hair_stage_names.size())) {
+			SKSE::log::warn("Ignoring yps_HairStageChange event with invalid stage: {}", a_event->numArg);
+			return true;
+		}
+
+		if (!previous_yps_hair_stage) {
+			previous_yps_hair_stage = hair_stage;
+			SKSE::log::info("Established initial YPS hair stage {} ({}); no thought generated.", hair_stage, yps_hair_stage_names[hair_stage - 1]);
+			return true;
+		}
+
+		if (*previous_yps_hair_stage == hair_stage) {
+			SKSE::log::info("Ignoring duplicate yps_HairStageChange event for stage {} ({}).", hair_stage, yps_hair_stage_names[hair_stage - 1]);
+			return true;
+		}
+
+		const auto previous_stage = *previous_yps_hair_stage;
+		previous_yps_hair_stage = hair_stage;
+		std::string final_thought_string;
+		if (hair_stage > previous_stage) {
+			final_thought_string = std::format(
+				"YOU, the player, have just noticed that your hair has grown from {} to {}. Describe how the new length looks and feels, and let us know what you think about your visibly longer hair. Be sure to mention your hair explicitly so the reason for the thought is clear.",
+				yps_hair_stage_names[previous_stage - 1], yps_hair_stage_names[hair_stage - 1]);
+		} else {
+			final_thought_string = std::format(
+				"YOU, the player, have just noticed that your hair length has changed from {} to {}, probably because it was cut. Describe how the shorter style looks and feels, and let us know what you think about it. Be sure to mention your hair explicitly so the reason for the thought is clear.",
+				yps_hair_stage_names[previous_stage - 1], yps_hair_stage_names[hair_stage - 1]);
+		}
+
+		SKSE::log::info("YPS hair stage changed from {} ({}) to {} ({}).", previous_stage, yps_hair_stage_names[previous_stage - 1], hair_stage, yps_hair_stage_names[hair_stage - 1]);
+		LillithOnlyBox(final_thought_string);
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string);
+		return true;
 	}
 
 	if (std::strcmp(a_event->eventName.c_str() , "yps_ArmpitHairStageChange") == 0) {			
