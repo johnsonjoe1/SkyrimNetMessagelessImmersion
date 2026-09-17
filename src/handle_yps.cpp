@@ -195,10 +195,11 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		return true;  // In this case it really was a YPS event and that means no further processing necessary in the main mod boadcast module.
 	}
 
-	if ( (std::strcmp(a_event->eventName.c_str() , "yps_AddictionBuffChange") == 0) ) {			
-		LillithOnlyBox("YPS-AddictionBuffChange event detected.  NO HANDLING AT PRESENT!!!");
-		// For the moment, this shoudl still raise a popup...
-		return false;
+	if (std::strcmp(a_event->eventName.c_str(), "yps_AddictionBuffChange") == 0 ||
+		std::strcmp(a_event->eventName.c_str(), "yps_AddictionLevel") == 0) {
+		LillithOnlyBox(std::format("YPS mod event detected: {}", a_event->eventName.c_str()));
+		SKSE::log::info("YPS addiction event {} detected; the synchronized Papyrus state push will produce the cause-aware thought.", a_event->eventName.c_str());
+		return true;
 	}
 
 	if (std::strcmp(a_event->eventName.c_str(), "yps_HairDyeColourChange") == 0) {

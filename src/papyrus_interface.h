@@ -50,6 +50,7 @@ public:
 
 	inline static float previous_yps_AddictionLevel = -99;  // this is an impossible initial value to indicate there was no prior value and therefore no need to trigger a message about an increase or decrease.
 	inline static float previous_yps_AddictionBuff = -99;  // this is an impossible initial value to indicate there was no prior value and therefore no need to trigger a message about an increase or decrease.
+	inline static int yps_AddictionLevelChangeSinceLastBuff = 0;
 	inline static float previous_yps_HeelsWorn = 0;
 	inline static float previous_Apropos2Vstate = 0;
 	inline static float previous_Apropos2Astate = 0;
@@ -81,4 +82,3 @@ public:
 
 	static inline std::string _yps_condition_string = "No yps condition string defined IN PLUGIN yet!";
 };
-

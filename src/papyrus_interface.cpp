@@ -116,23 +116,20 @@ void SNMIPapyrus::set_yps_AddictionLevel(RE::StaticFunctionTag*, float a_value)
 
 	// maybe the mod isn't even installed.  in that case the level and previous level would be 0 and nothing needs to be done
 	if (_yps_AddictionLevel == 0 && previous_yps_AddictionLevel == 0) {
+		yps_AddictionLevelChangeSinceLastBuff = 0;
 		return;
 	}
 	if (previous_yps_AddictionLevel == -99.0f) {  // This is the initial value, so we just set it without any checks, to avoid any weird messages at game start.
 		previous_yps_AddictionLevel = _yps_AddictionLevel;
+		yps_AddictionLevelChangeSinceLastBuff = 0;
 		return;
 	}	
 
     SKSE::log::info("Note:  yps_AddictionLevel updated VIA PUSH FROM PAPYRUS: {}", a_value);
-	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
-	if ( (previous_yps_AddictionLevel < _yps_AddictionLevel) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just gained a level in overall fashion addiction according to the YPS fashion vendor!  Say so and let us know how that makes you feel!");
-		SKSE::log::info("Note:  Fashion-Addiction-level-GAIN thought was delivered.");
+	yps_AddictionLevelChangeSinceLastBuff = (_yps_AddictionLevel > previous_yps_AddictionLevel) - (_yps_AddictionLevel < previous_yps_AddictionLevel);
+	if (yps_AddictionLevelChangeSinceLastBuff != 0) {
+		LillithOnlyBox(std::format("YPS state change detected: yps_AddictionLevel ({} -> {})", previous_yps_AddictionLevel, _yps_AddictionLevel));
 	}
-	if ( (previous_yps_AddictionLevel > _yps_AddictionLevel) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("You just lost a level in overall fashion addiction according to the YPS fashion vendor!  Say so and let us know how that makes you feel!");
-		SKSE::log::info("Note:  Fashion-Addiction-level-LOSS thought was delivered.");
-	}	
 	previous_yps_AddictionLevel = _yps_AddictionLevel;  // update the previous level for the next check
 }
 void SNMIPapyrus::set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value)
@@ -141,24 +138,47 @@ void SNMIPapyrus::set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value)
 
 	// maybe the mod isn't even installed.  in that case the level and previous level would be 0 and nothing needs to be done
 	if (_yps_AddictionBuff == 0 && previous_yps_AddictionBuff == 0) {
+		yps_AddictionLevelChangeSinceLastBuff = 0;
 		return;
 	}
 	if (previous_yps_AddictionBuff == -99.0f) {  // This is impossible prior value indicates, that there was no update yet.
 		previous_yps_AddictionBuff = _yps_AddictionBuff;
+		yps_AddictionLevelChangeSinceLastBuff = 0;
 		return;
 	}	
 
     SKSE::log::info("Note:  yps_AddicitonBuff updated VIA PUSH FROM PAPYRUS: {}", a_value);
-	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
+	std::string final_thought_string;
 	if ( (previous_yps_AddictionBuff < _yps_AddictionBuff) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Due to some change in your fashion or in your styling, you now appear even more radiant (or less disgusting) and people will respond more favorable to you this way!  Say as much in your thoughts, and let us know how that makes you feel, given that you like fasion and styling!");
-		SKSE::log::info("Note:  yps_AddictionBuff-update thought was delivered.");
+		if (yps_AddictionLevelChangeSinceLastBuff < 0) {
+			final_thought_string = "YOU, the player, have become a little less dependent on fashion than before, so your current styling feels more satisfying again. Reflect on this easing of your fashion addiction and how it changes the way you feel about your appearance. Be sure to mention your fashion addiction explicitly so the reason for the thought is clear.";
+		} else {
+			final_thought_string = "YOU, the player, feel better styled and more fashionable than before. Notice the renewed satisfaction and confidence your current appearance gives you, and describe how it makes you feel. Be sure to mention your improved styling explicitly so the reason for the thought is clear.";
+		}
 	}
 	if ( (previous_yps_AddictionBuff > _yps_AddictionBuff) ) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("Due to some change in your fashion or in your styling, you now appear even LESS radiant (or even more disgusting) and people will respond less favorable to you this way!  Say as much in your thoughts, and let us know how that makes you feel, given that you like fasion and styling!");
-		SKSE::log::info("Note:  yps_AddictionBuff-update thought was delivered.");
+		if (yps_AddictionLevelChangeSinceLastBuff > 0) {
+			final_thought_string = "YOU, the player, are getting so used to being styled well that it no longer gives you quite the same thrill as before. Your fashion addiction and expectations have increased even though your current styling has not necessarily become worse. Reflect on this growing tolerance and whether you need to take your fashion further to feel that good again. Be sure to mention your increasing fashion addiction explicitly so the reason for the thought is clear.";
+		} else if (_yps_AddictionBuff <= 0) {
+			final_thought_string = "YOU, the player, are not styled nearly as well as you have become accustomed to. Feeling this underdressed is horrible, and you urgently want to get yourself back into style. Describe what feels missing from your appearance and how strongly you want to correct it. Be sure to mention feeling underdressed explicitly so the reason for the thought is clear.";
+		} else {
+			final_thought_string = "YOU, the player, do not feel quite as stylish as you did before. Something about your appearance is now less satisfying, even though you are still reasonably well put together. Reflect on what may be missing and how you might restore your previous sense of style. Be sure to mention your reduced satisfaction with your styling explicitly so the reason for the thought is clear.";
+		}
+	}
+	if (previous_yps_AddictionBuff == _yps_AddictionBuff && yps_AddictionLevelChangeSinceLastBuff > 0) {
+		final_thought_string = "YOU, the player, have become more accustomed to being fashionable, and your expectations about your appearance have risen. Reflect on your growing fashion addiction and whether maintaining or improving your styling is becoming more important to you. Be sure to mention your increasing fashion addiction explicitly so the reason for the thought is clear.";
+	}
+	if (previous_yps_AddictionBuff == _yps_AddictionBuff && yps_AddictionLevelChangeSinceLastBuff < 0) {
+		final_thought_string = "YOU, the player, have become a little less dependent on fashion than before. Reflect on this easing of your fashion addiction and how it changes the importance you place on being perfectly styled. Be sure to mention your decreasing fashion addiction explicitly so the reason for the thought is clear.";
+	}
+	if (!final_thought_string.empty()) {
+		LillithOnlyBox(std::format("YPS state change detected: yps_AddictionBuff ({} -> {})", previous_yps_AddictionBuff, _yps_AddictionBuff));
+		LillithOnlyBox(final_thought_string);
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string);
+		SKSE::log::info("Note: Cause-aware YPS addiction thought was delivered.");
 	}
 	previous_yps_AddictionBuff = _yps_AddictionBuff;  // update the previous level for the next check
+	yps_AddictionLevelChangeSinceLastBuff = 0;
 }
 
 void SNMIPapyrus::set_yps_HeelsWorn(RE::StaticFunctionTag*, float a_value)
