@@ -731,7 +731,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for Not Tired-EFFECT-APPLICATION! ", base_name);
 			// RE::DebugMessageBox(stomach_rot_status.c_str());	
 			SKSE::log::info("Event handler for Not Tired effect application!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("You just received the Not Tired effect.  Probably because you just slept long and good.  How do you feel about this change in your state? Mention, that you are not tired any more.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message(std::format("You just received the Not Tired effect.  Probably because you just slept long and good.  How do you feel about this change in your state?  Be sure to mention, that you are not tired any more.")); //  + standard_thought_instruction;
 		}
 		// No thought on removal of that, because there are more interesting stages of tiredness when real fatigue sets in.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
