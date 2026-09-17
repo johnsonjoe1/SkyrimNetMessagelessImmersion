@@ -549,6 +549,34 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		}
 	}
+	if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "Arched Feet") == 0)  ) )
+	{
+		LillithOnlyBox("YPS magic effect detected: Arched Feet");
+		if ((a_event->isApplied) && (effect->magnitude < 0) )
+		{
+			SKSE::log::info("xxxxxxxxxxx YPS 'Arched Feet' MAGIC EFFECT PROPERLY DETECTED");
+			const std::string final_thought_string = "YOU, the player, have trained in high heels so extensively that your feet have become permanently arched. Walking without heels now feels awkward and difficult because your feet are more comfortable in a raised position. Describe how this physical change and dependence on high heels makes you feel. Be sure to mention your arched feet explicitly so the reason for the thought is clear.";
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(final_thought_string);
+		}
+		if ( (!a_event->isApplied) ) {
+			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of Arched Feet MAGIC EFFECT.");
+		}
+	}
+	if (base && ( (std::strcmp(base->GetName(), "Movement Speed Penalty") == 0)  ) && ( (std::strcmp(source->GetName(), "Bondage Feet") == 0)  ) )
+	{
+		LillithOnlyBox("YPS magic effect detected: Bondage Feet");
+		if ((a_event->isApplied) && (effect->magnitude < 0) )
+		{
+			SKSE::log::info("xxxxxxxxxxx YPS 'Bondage Feet' MAGIC EFFECT PROPERLY DETECTED");
+			const std::string final_thought_string = "YOU, the player, have completed your high heel training and your feet have become extremely and permanently arched. Walking barefoot or in ordinary high heels is now difficult; only very steep bondage boots properly support the shape of your feet. Describe how this severe physical change and dependence on bondage boots makes you feel. Be sure to mention your bondage feet explicitly so the reason for the thought is clear.";
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(final_thought_string);
+		}
+		if ( (!a_event->isApplied) ) {
+			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of Bondage Feet MAGIC EFFECT.");
+		}
+	}
 
 
 	logger::info("*********************YPS-MAGIC-EFFECT-HANDLER FINISHED!!!**********************************");
