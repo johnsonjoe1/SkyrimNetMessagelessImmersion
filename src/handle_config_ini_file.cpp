@@ -54,6 +54,9 @@ namespace SNMI
         settings.enableLicensesPlayerOppressionThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableLicensesPlayerOppressionThoughts", 0, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableLicensesPlayerOppressionThoughts.  New variable value = {}", settings.enableLicensesPlayerOppressionThoughts);
 
+        settings.enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts", 0, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts.  New variable value = {}", settings.enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts);
+
         settings.updateInterval = GetPrivateProfileIntW(L"Timing", L"UpdateInterval", 5, configPath.c_str());
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.updateInterval.  New variable value = {}", settings.updateInterval);
     }
