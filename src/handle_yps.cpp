@@ -7,6 +7,7 @@
 #include "handle_yps.h"
 #include "misc.h"
 #include "papyrus_interface.h"
+#include <algorithm>
 #include <array>
 #include <unordered_set>
 #include <optional>
@@ -40,6 +41,7 @@ namespace
 	std::optional<YpsFashionState> previous_yps_toenail_state;
 	std::optional<YpsFashionState> previous_yps_stockings_state;
 	std::array<std::optional<bool>, 13> previous_yps_piercing_states;
+	std::array<std::optional<bool>, 4> previous_yps_care_product_states;
 
 	void throw_out_yps_fashion_thought(const std::string& thought)
 	{
@@ -161,6 +163,7 @@ void handle_yps::reset_fashion_tracking()
 	previous_yps_toenail_state.reset();
 	previous_yps_stockings_state.reset();
 	previous_yps_piercing_states.fill(std::nullopt);
+	previous_yps_care_product_states.fill(std::nullopt);
 }
 
 void handle_yps::handle_yps_fashion_detection_stuff()
@@ -386,6 +389,76 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		const auto final_thought_string = equipped ?
 			std::format("YOU, the player, have just put jewellery into the piercing at your {}. Notice the jewellery and how it feels there, and describe what you think about wearing it. Be sure to mention the {} piercing explicitly so the reason for the thought is clear.", piercing_slot_names[slot], piercing_slot_names[slot]) :
 			std::format("YOU, the player, have just removed the jewellery from the piercing at your {}. Notice how the empty piercing feels and describe what you think about no longer wearing jewellery there. Be sure to mention the {} piercing explicitly so the reason for the thought is clear.", piercing_slot_names[slot], piercing_slot_names[slot]);
+		throw_out_yps_fashion_thought(final_thought_string);
+		return true;
+	}
+
+	if (std::strcmp(a_event->eventName.c_str(), "SNMI_YPSCareProductChange") == 0) {
+		const auto state = static_cast<int>(a_event->numArg);
+		if (a_event->numArg != static_cast<float>(state) || state < 0 || state > 1) {
+			SKSE::log::warn("Ignoring SNMI_YPSCareProductChange with invalid state: {}", a_event->numArg);
+			return true;
+		}
+
+		const std::array<std::string_view, 4> product_names{ "LipBalm", "AntiAgingCream", "FingerNailOil", "Perfume" };
+		auto product = std::find(product_names.begin(), product_names.end(), a_event->strArg.c_str());
+		if (product == product_names.end()) {
+			SKSE::log::warn("Ignoring SNMI_YPSCareProductChange for unknown product: {}", a_event->strArg.c_str());
+			return true;
+		}
+
+		const auto product_index = static_cast<std::size_t>(std::distance(product_names.begin(), product));
+		auto& previous_state = previous_yps_care_product_states[product_index];
+		const bool applied = state == 1;
+		if (!previous_state) {
+			previous_state = applied;
+			SKSE::log::info("Established initial YPS {} state as {}; no thought generated.", a_event->strArg.c_str(), applied);
+			return true;
+		}
+		if (*previous_state == applied) {
+			return true;
+		}
+		previous_state = applied;
+
+		LillithOnlyBox(std::format("YPS mod event detected: SNMI_YPSCareProductChange ({})", a_event->strArg.c_str()));
+		std::string final_thought_string;
+		switch (product_index) {
+		case 0:
+			if (applied) {
+				final_thought_string = "YOU, the player, have just gently spread lip balm over your lips. Notice their softer, smoother feeling and subtle sheen, and describe how this small act of care makes you feel. Be sure to mention the lip balm explicitly so the reason for the thought is clear.";
+			} else if (previous_yps_lipstick_state && previous_yps_lipstick_state->state > 0) {
+				final_thought_string = "YOU, the player, are no longer wearing lip balm because it has been replaced by lipstick. Notice the change from simple lip care to visible colour and describe how the more decorative look makes you feel. Be sure to mention both the lip balm and lipstick explicitly so the reason for the thought is clear.";
+			} else {
+				final_thought_string = "YOU, the player, have just noticed that your lip balm has faded away. Your lips no longer feel as freshly softened or protected, so consider whether you want to apply it again. Be sure to mention the faded lip balm explicitly so the reason for the thought is clear.";
+			}
+			break;
+		case 1:
+			if (applied) {
+				final_thought_string = "YOU, the player, have just gently applied anti-aging cream around your eyes. Notice the cared-for feeling of the skin there and describe how tending to your appearance makes you feel. Be sure to mention the anti-aging cream explicitly so the reason for the thought is clear.";
+			} else if (previous_yps_eyeshadow_state && previous_yps_eyeshadow_state->state > 0) {
+				final_thought_string = "YOU, the player, are no longer wearing anti-aging cream because it has been replaced by eyeshadow. Notice the change from understated skin care to visible eye makeup and describe how the more decorative look makes you feel. Be sure to mention both the cream and eyeshadow explicitly so the reason for the thought is clear.";
+			} else {
+				final_thought_string = "YOU, the player, have just noticed that the anti-aging cream around your eyes has faded away. The cared-for effect no longer feels fresh, so consider whether you want to apply it again. Be sure to mention the faded anti-aging cream explicitly so the reason for the thought is clear.";
+			}
+			break;
+		case 2:
+			if (applied) {
+				final_thought_string = "YOU, the player, have just gently spread nail oil over your fingernails. Notice their freshly cared-for sheen and smooth feeling, and describe how this simple manicure care makes you feel. Be sure to mention the fingernail oil explicitly so the reason for the thought is clear.";
+			} else if (previous_yps_fingernail_state && previous_yps_fingernail_state->state > 0) {
+				final_thought_string = "YOU, the player, are no longer wearing fingernail oil because it has been replaced by nail polish. Notice the change from a natural cared-for sheen to a visibly polished manicure and describe how it makes you feel. Be sure to mention both the nail oil and nail polish explicitly so the reason for the thought is clear.";
+			} else {
+				final_thought_string = "YOU, the player, have just noticed that the oil on your fingernails has faded away. They no longer have that freshly cared-for sheen, so consider whether you want to oil them again. Be sure to mention the faded fingernail oil explicitly so the reason for the thought is clear.";
+			}
+			break;
+		case 3:
+			final_thought_string = applied ?
+				"YOU, the player, have just applied perfume to your body. Notice the fragrance surrounding you and describe how wearing this scent affects your mood and sense of style. Be sure to mention the perfume explicitly so the reason for the thought is clear." :
+				"YOU, the player, have just noticed that your perfume has faded away. The fragrance that accompanied you is gone now, so consider whether you miss it or want to apply another scent. Be sure to mention the faded perfume explicitly so the reason for the thought is clear.";
+			break;
+		default:
+			return true;
+		}
+
 		throw_out_yps_fashion_thought(final_thought_string);
 		return true;
 	}

@@ -324,8 +324,13 @@ function push_all_YPS_variables_to_the_plugin()
 	float yps_HeelsWorn = StorageUtil.GetIntValue(None, "ypsHeelsWorn")            ;
 
 	SNMI_Native.set_yps_AddictionLevel(yps_AddictionLevel)
-	SNMI_Native.set_yps_AddictionBuff(yps_AddictionBuff)	
+	SNMI_Native.set_yps_AddictionBuff(yps_AddictionBuff)
 	SNMI_Native.set_yps_HeelsWorn(yps_HeelsWorn)
+
+	SendModEvent("SNMI_YPSCareProductChange", "LipBalm", StorageUtil.GetIntValue(None, "ypsLipBalmWorn"))
+	SendModEvent("SNMI_YPSCareProductChange", "AntiAgingCream", StorageUtil.GetIntValue(None, "ypsAntiAgingCreamWorn"))
+	SendModEvent("SNMI_YPSCareProductChange", "FingerNailOil", StorageUtil.GetIntValue(None, "ypsFingerNailOilWorn"))
+	SendModEvent("SNMI_YPSCareProductChange", "Perfume", StorageUtil.GetIntValue(None, "ypsPerfumeWorn"))
 
 	if sparcity_counter == 0
 		lillith_notification("YPS Addiction Buff: " + yps_AddictionBuff + ", YPS Addiction Level: " + yps_AddictionLevel + ", YPS Heels Worn: " + yps_HeelsWorn)
