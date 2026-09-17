@@ -377,6 +377,8 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		handle_yps::reset_hair_stage_tracking();
 		handle_yps::reset_hair_dye_tracking();
 		handle_yps::reset_fashion_tracking();
+		SNMIPapyrus::previous_yps_AddictionLevel = -99.0f;
+		SNMIPapyrus::previous_yps_AddictionBuff = -99.0f;
 		handle_AND_modesty::reset_previous_rank_to_current_rank();
 		handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start();
 		handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start();
