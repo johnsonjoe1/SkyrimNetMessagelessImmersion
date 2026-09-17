@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 # Set your project name. This will be the name of your SKSE .dll file.
-project(SkyrimNetMessagelessImmersion VERSION 0.6.13 LANGUAGES CXX)  # first release was 0.1.1
+project(SkyrimNetMessagelessImmersion VERSION 0.6.14 LANGUAGES CXX)  # first release was 0.1.1
 
 #
 
