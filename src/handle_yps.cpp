@@ -7,6 +7,7 @@
 #include "handle_yps.h"
 #include "misc.h"
 #include "papyrus_interface.h"
+#include "handle_config_ini_file.h"
 #include <algorithm>
 #include <array>
 #include <unordered_set>
@@ -193,6 +194,11 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		if (player_is_in_a_SL_scene()) {
 			SKSE::log::info("YPS-ThoughtEvent detected, but player is in a scene, so we will not process it.");
 			return true;  // In this case it really was a YPS event and that means no further processing necessary in the main mod boadcast module.
+		}
+
+		if (!(SNMI::GetSettings().enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts)) {
+			SKSE::log::info("YPS-ThoughtEvent detected, but direct push of YPS thoughts to SkyrimNet player thoughts is disabled, so we will not process it.");
+			return true;  // If direct push is disabled, we do not handle the YPS thought here.
 		}
 		DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(a_event->strArg.c_str());   // this shouldn't be overdone, but the background code makes sure of that.
 		return true;  // In this case it really was a YPS event and that means no further processing necessary in the main mod boadcast module.
