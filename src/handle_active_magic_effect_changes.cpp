@@ -472,7 +472,6 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		}
 
 
-		
 
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
@@ -717,6 +716,26 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
+		/*  This is probably just a standard effect after sleeping a lot
+[2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:845] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:846] Effect APPLIED on Lillith | UID=28
+[2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:849] Base name: Not Tired | Base ptr: 0x192042c7e40 | Base-FormID: 695D2184 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:850] base-Effect EDID:  | Source ptr: 0x192041ba680  |  Caster: Lillith 
+[2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:854] Magnitude: 0 | Duration: 1440
+[2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:857] Source name: Not Tired | Source FormID: 695D21AA | Source EDID:  
+[2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:863] Form LookupByID 695D2184 found: Not Tired  */
+	if (base && ( (std::strcmp(base_name, "Not Tired") == 0) || std::strcmp(base_name, "Slept 8 hours") == 0 )  )
+	{
+		if (a_event->isApplied) 
+		{
+			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for Not Tired-EFFECT-APPLICATION! ", base_name);
+			// RE::DebugMessageBox(stomach_rot_status.c_str());	
+			SKSE::log::info("Event handler for Not Tired effect application!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("You just received the Not Tired effect.  Probably because you just slept long and good.  How do you feel about this change in your state? Mention, that you are not tired any more.")); //  + standard_thought_instruction;
+		}
+		// No thought on removal of that, because there are more interesting stages of tiredness when real fatigue sets in.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
 
 	if (base && ( (std::strcmp(base_name, "Restraint Trap") == 0) ) )   // We already know, that this is about the player at this point, so no need to double-check!
 	{
