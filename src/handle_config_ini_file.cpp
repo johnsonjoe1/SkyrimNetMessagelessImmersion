@@ -42,19 +42,19 @@ namespace SNMI
         settings.debugLogging = GetPrivateProfileIntW(L"General", L"DebugLogging", 0, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.debug.  New variable value = {}", settings.debugLogging);
 
-		settings.enablePlayerDirtThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnablePlayerDirtThoughts", 0, configPath.c_str()) != 0;
+		settings.enablePlayerDirtThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnablePlayerDirtThoughts", 1, configPath.c_str()) != 0;
 		SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enablePlayerDirtThoughts.  New variable value = {}", settings.enablePlayerDirtThoughts);
 
-        settings.enableMilkThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableMilkThoughts", 0, configPath.c_str()) != 0;
+        settings.enableMilkThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableMilkThoughts", 1, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableMilkThoughts.  New variable value = {}", settings.enableMilkThoughts);
 
-        settings.enableANDNudityThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableANDNudityThoughts", 0, configPath.c_str()) != 0;
+        settings.enableANDNudityThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableANDNudityThoughts", 1, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableANDNudityThoughts.  New variable value = {}", settings.enableANDNudityThoughts);
 
-        settings.enableLicensesPlayerOppressionThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableLicensesPlayerOppressionThoughts", 0, configPath.c_str()) != 0;
+        settings.enableLicensesPlayerOppressionThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableLicensesPlayerOppressionThoughts", 1, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableLicensesPlayerOppressionThoughts.  New variable value = {}", settings.enableLicensesPlayerOppressionThoughts);
 
-        settings.enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts", 0, configPath.c_str()) != 0;
+        settings.enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts", 1, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts.  New variable value = {}", settings.enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts);
 
         settings.updateInterval = GetPrivateProfileIntW(L"Timing", L"UpdateInterval", 5, configPath.c_str());
