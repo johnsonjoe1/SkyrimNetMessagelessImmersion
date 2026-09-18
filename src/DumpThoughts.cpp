@@ -13,6 +13,28 @@ static auto last_speech_timestamp = std::chrono::steady_clock::now();
 static auto last_game_load_or_reload_timestamp = std::chrono::steady_clock::now();
 static auto last_lactacid_added_speech_timestamp = std::chrono::steady_clock::now();
 
+namespace
+{
+	bool IsPlayerInDialogue()
+	{
+		auto* ui = RE::UI::GetSingleton();
+		return ui && ui->IsMenuOpen(RE::DialogueMenu::MENU_NAME);
+	}
+
+	bool SuppressThoughtDuringDialogue(std::string_view a_thought)
+	{
+		if (!IsPlayerInDialogue()) {
+			return false;
+		}
+
+		SKSE::log::info("Suppressing thought output because IsPlayerInDialogue() is true. Suppressed thought:\n{}", a_thought);
+		LillithOnlyBox(std::format(
+			"Thought suppressed because IsPlayerInDialogue() is true:\n{}",
+			a_thought));
+		return true;
+	}
+}
+
 // ****************************************************************************************************************
 //  Now some utility stuff:  The basic message dumping functions and message queuing function for thoughts are all
 //  what this class can do.  
@@ -106,6 +128,9 @@ void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_messa
 			SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
 			return;
 		}
+		if (SuppressThoughtDuringDialogue(my_message)) {
+			return;
+		}
 		SKSE::ModCallbackEvent my_event(
 			mod_event_name,                        // event name
 			mod_event_string_arg,                  // arbitrary string argument 
@@ -133,6 +158,9 @@ void DumpThoughts::throw_out_TTS_thought_message(std::string my_message) {
 		SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
 		return;
 	}
+	if (SuppressThoughtDuringDialogue(my_message)) {
+		return;
+	}
 	SKSE::ModCallbackEvent my_event(
 		mod_event_name,                        // event name
 		mod_event_string_arg,                  // arbitrary string argument 
@@ -156,6 +184,9 @@ void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string
 	if (DumpThoughts::too_early_after_game_load()) {
 		SKSE::log::info("////////BLOCKING AS_LITTERAL_AS_POSSIBLE thought message BECAUSE TOO EARLY AFTER RELOAD/////////");
 		SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
+		return;
+	}
+	if (SuppressThoughtDuringDialogue(my_message)) {
 		return;
 	}
 
@@ -187,6 +218,9 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_messag
 		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
 		return;
 	}
+	if (SuppressThoughtDuringDialogue(my_message)) {
+		return;
+	}
 
 	SKSE::ModCallbackEvent my_event(
 		mod_event_name,                        // event name
@@ -216,6 +250,9 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std
 		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
 		return;
 	}
+	if (SuppressThoughtDuringDialogue(my_message)) {
+		return;
+	}
 
 	LillithOnlyBox(my_message.c_str());
 	SKSE::ModCallbackEvent my_event(
@@ -227,6 +264,5 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std
 	eventSource->SendEvent(&my_event);
 	last_speech_timestamp=std::chrono::steady_clock::now();
 }
-
 
 
