@@ -68,13 +68,19 @@ namespace
 }
 
 /*  TODO-LIST   
-**  Handle the changes in YPS-Buffs:  (Maybe also remember the clothing-contribution (manually) from last time.  Mabe also the makeup/nails/hair from last time.)
-**  Reign in the SLSF-Messageboxes by making them conditional on a constant flag.
+**  
+**  Place a timeout on fame-changes of all kind.
+**  Undo the 15-days-comment in YPS thought messages.
+**  Double-Check the broken main quest.
+**  Reinstal without dd-for-men.
+**  Make a real option for the horny creatures thing, because the non-detection of involved parties is really a killer.
+**  Absolutely find out if a real dialog (or scene) is going on and block *all* thoughts during that time.  The game can run without.  
+    Maybe add a flag for some thoughts to be delayed-if-necessary-and-processed-after-scene/dialog-end.
 
 MUCH LATER:  ** Try to find out the (other) actor of an SL scene and then comment at the beginning of the scene, maybe even based on the tags of the scene.
 
 ** Build the periodic check status-thought-message:
-   --  YPS Thought:  Take the latest one queued from the YPS thought mod event and bring it forward
+   --  YPS Thought:   Take the latest one queued from the YPS thought mod event and bring it forward
    --  YPS Shoes Penalty
    --  Thirst-Max-Reached
    --  Fatigue-Max-Reached
