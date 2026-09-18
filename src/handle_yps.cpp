@@ -590,7 +590,7 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 		{
 			SKSE::log::info("xxxxxxxxxxx YPS 'Untrained Feet' (high heels) MAGIC EFFECT PROPERLY DETECTED");
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS UNTRAINED FEET! ", base_name);
-			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now.  Sometimes you may also mention, that you have heard, that it takes up to 3 days in these heels (and enough practice) until your feet adapt and you officially become a High-Heel-Walker.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now.  It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
 			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		}
 		if ( (!a_event->isApplied) ) {
@@ -605,7 +605,7 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 		{
 			SKSE::log::info("xxxxxxxxxxx YPS 'Flexible Feet' (high heels) MAGIC EFFECT PROPERLY DETECTED");
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS FLEXIBLE FEET! ", base_name);
-			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, have been wearing high heels quite a while now. Your feet are now bent to the shape of the heels.  That means you are just as clumsy without the heels now than you are with the heels.  This means you might just as well continue your high heels training, so that you will be able to move faster again once your feet permanently reach even more permanently arched state.  Sometimes you may also mention, that you have heard, that it takes up to 8 days in these heels (and enough practice) until your feet adapt and you officially become a High-Heel-Walker.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, have been wearing high heels quite a while now. Your feet are now bent to the shape of the heels.  That means you are just as clumsy without the heels now than you are with the heels.  This means you might just as well continue your high heels training, so that you will be able to move faster again once your feet permanently reach even more permanently arched state.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
 			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		}
 		if ( (!a_event->isApplied) ) {
@@ -620,12 +620,7 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 		{
 			SKSE::log::info("xxxxxxxxxxx YPS 'High Heel Walker' (high heels) MAGIC EFFECT PROPERLY DETECTED");
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS HIGH HEEL WALKER! ", base_name);
-			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, have been wearing high heels quite a while now. Your feet are now bent to the shape of the heels, more than they are adapted to flat shoes.  That means you are now more clumsy without the heels than you are with the heels.  This means you need to continue walking in high heels, because this is a bit faster now, and going without high heels will just slow you down.  And when you train your feet even more with high heels, you will be faster still.  Sometimes you may also mention, that you have heard, that it takes up to 15 days in these heels (and enough practice) until your feet fully adapt to the shape of the heels and your feet officially become arched. Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
-			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
-		}
-		if ( (!a_event->isApplied) ) {
-			// We do nothing here, as we just have stopped moving, nothing else.
-			SKSE::log::info("xxxxxxxxxxx SKIPPING:  IT's REMOVAL of Untrained Feet MAGIC EFFECT.");
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, have been wearing high heels quite a while now. Your feet are now bent to the shape of the heels, more than they are adapted to flat shoes.  That means you are now more clumsy without the heels than you are with the heels.  This means you need to continue walking in high heels, because this is a bit faster now, and going without high heels will just slow you down.  And when you train your feet even more with high heels, you will be faster still.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
 			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		}
 	}
