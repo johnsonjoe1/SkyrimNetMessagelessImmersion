@@ -1017,14 +1017,31 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 			return;  // In this case it really was a CC_ModBimboCorruption event and that means no further processing necessary in the main mod boadcast module.
 		}
 
+
+		
+
 		std::string  thought_message="";
 		if ( (std::strcmp(a_event->strArg.c_str() , "I love pretty jewellery!") == 0) ) {	
 			std::string slutty_item_worn = name_of_worn_slutty_item();
 			if (slutty_item_worn.empty()) {
 				// No matching named worn item
+				LillithOnlyBox("No matching named worn item found for the bimbo corruption event, even though 'I love pretty jewellery!' was detected.  THIS IS A BUG!!");
+				LillithOnlyBox("No matching named worn item found for the bimbo corruption event, even though 'I love pretty jewellery!' was detected.  THIS IS A BUG!!");
+				LillithOnlyBox("No matching named worn item found for the bimbo corruption event, even though 'I love pretty jewellery!' was detected.  THIS IS A BUG!!");
+
 				thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  That is, beause she is wearing the bimbo jewelry, usually some piercings with jewelry to be precise, that add to the bimbo corruption of the PC.  Speak in character and let us know, that the pretty jewellery is getting to your mind and enhancing the bimbo corruption, turning you a bit more into a bimbo, or that you may end up a total bimbo, if you keep wearing it too long.");
 			} else {
 				thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  That is, beause she is wearing the a very slutty item, the {} , and that adds to the bimbo corruption of the player.  Speak in character and let us know, that the extremely slutty item, is getting to your mind and enhancing the bimbo corruption, turning you a bit more into a bimbo, or that you may end up a total bimbo, if you keep wearing it too long.  And be sure to name the item {} in your response.", slutty_item_worn, slutty_item_worn);
+			}
+			debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
+		} else if ( (std::strcmp(a_event->strArg.c_str() , "Dragons are so powerful. They just make me feel like... submitting.") == 0) ) {	
+			
+			if (a_event->numArg < 0) {
+				// Killing the dragon reduced bimbo corruption
+				thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  But now some of the bimbo corruption has been reduced from killing a dragon and absorbing its power.  Submitting to the dragon had cleared your mind a bit about what is important.  Speak in character and let us know, that your mind feel clearer and sharper now.");
+			} else {
+				thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  At present, present the source of the additional bimbo corruption is revealed via the string: {} .  Speak in character and let the player know, that additional bimbo corruption is seeping into your mind and turning you more into a bimbo from the source revealed in that string we just gave you.", a_event->strArg.c_str());
+				debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
 			}
 			debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
 		} else {
