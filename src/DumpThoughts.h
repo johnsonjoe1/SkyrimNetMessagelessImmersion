@@ -16,8 +16,8 @@ public:
 	static void reset_last_speech_timestamp();
 	static void reset_lactacid_added_speech_timestamp();
 	static void reset_last_game_load_or_reload_timestamp();
+	static void play_dialogue_suppressed_thoughts_if_possible();
 	static bool too_early_after_game_load();
 	static float seconds_since_game_load();
 	static bool too_early_for_next_lactacid_speech();
 };
-

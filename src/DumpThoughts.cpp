@@ -118,6 +118,57 @@ void DumpThoughts::reset_last_game_load_or_reload_timestamp() {
 	}
 	SKSE::log::info("Cleared {} dialogue-suppressed thought(s) because a game was loaded or started.", clearedThoughtCount);
 }
+void DumpThoughts::play_dialogue_suppressed_thoughts_if_possible()
+{
+	if (IsPlayerInDialogue()) {
+		return;
+	}
+
+	std::deque<DialogueSuppressedThought> queuedThoughts;
+	{
+		std::lock_guard lock(dialogueSuppressedThoughtQueueMutex);
+		if (dialogueSuppressedThoughtQueue.empty()) {
+			return;
+		}
+		queuedThoughts.swap(dialogueSuppressedThoughtQueue);
+	}
+
+	const auto playThoughtsFromChannel = [&queuedThoughts](ThoughtChannel a_channel, auto a_playThought) {
+		for (auto& thought : queuedThoughts) {
+			if (thought.channel == a_channel) {
+				const auto age = std::chrono::duration_cast<std::chrono::seconds>(
+					std::chrono::steady_clock::now() - thought.queuedAt);
+				SKSE::log::info(
+					"Playing queued {} thought after {} second(s):\n{}",
+					GetThoughtChannelName(a_channel),
+					age.count(),
+					thought.message);
+				a_playThought(std::move(thought.message));
+			}
+		}
+	};
+
+	playThoughtsFromChannel(ThoughtChannel::kImportant, [](std::string a_thought) {
+		LillithOnlyBox(std::format("Playing an IMPORTANT thought from the QUEUE NOW: {}", a_thought));
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::move(a_thought));
+	});
+	playThoughtsFromChannel(ThoughtChannel::kImportantWithLillithDebugWindow, [](std::string a_thought) {
+		LillithOnlyBox(std::format("Playing an IMPORTANT-WITH-DEBUG-WINDOW thought from the QUEUE NOW: (but we don't double-show the debug window) {}", a_thought));
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::move(a_thought));
+	});
+	playThoughtsFromChannel(ThoughtChannel::kNormal, [](std::string a_thought) {
+		LillithOnlyBox(std::format("Playing a NORMAL thought from the QUEUE NOW: {}", a_thought));
+		DumpThoughts::throw_out_TTS_thought_message(std::move(a_thought));
+	});
+
+	const auto discardedThoughtCount = std::ranges::count_if(queuedThoughts, [](const auto& a_thought) {
+		return a_thought.channel == ThoughtChannel::kLiteral || a_thought.channel == ThoughtChannel::kBackground;
+	});
+	SKSE::log::info(
+		"Finished processing {} dialogue-suppressed thought(s); discarded {} literal/background thought(s).",
+		queuedThoughts.size(),
+		discardedThoughtCount);
+}
 bool DumpThoughts::too_early_after_game_load()
 {
 	auto now = std::chrono::steady_clock::now();
