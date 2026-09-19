@@ -109,6 +109,14 @@ void DumpThoughts::reset_last_game_load_or_reload_timestamp() {
 	// We reset the game-reloaded-timestamp for silence and thus avoiding messages from reload-induced changes
 	SKSE::log::info(">>>>>>>>>>>>>>>>> RESETTING THE TIME since game-start-or-game-reload-now.");
 	last_game_load_or_reload_timestamp = std::chrono::steady_clock::now();
+
+	std::size_t clearedThoughtCount;
+	{
+		std::lock_guard lock(dialogueSuppressedThoughtQueueMutex);
+		clearedThoughtCount = dialogueSuppressedThoughtQueue.size();
+		dialogueSuppressedThoughtQueue.clear();
+	}
+	SKSE::log::info("Cleared {} dialogue-suppressed thought(s) because a game was loaded or started.", clearedThoughtCount);
 }
 bool DumpThoughts::too_early_after_game_load()
 {
@@ -319,4 +327,3 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std
 	eventSource->SendEvent(&my_event);
 	last_speech_timestamp=std::chrono::steady_clock::now();
 }
-
