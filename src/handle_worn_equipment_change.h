@@ -22,6 +22,7 @@ extern std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
 
 void refresh_currently_worn_item_records();
 bool player_has_item_in_inventory(const std::string& item_name);
+std::string name_of_worn_slutty_item();
 
 class handle_worn_equipment_change : public RE::BSTEventSink<RE::TESEquipEvent>
 {

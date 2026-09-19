@@ -111,6 +111,40 @@ bool player_has_item_in_inventory(const std::string& item_name)
 	return false;
 }
 
+std::string name_of_worn_slutty_item()
+{
+	auto* player = RE::PlayerCharacter::GetSingleton();
+	if (!player) {
+		return {};
+	}
+
+	for (const auto& [item, entry] : player->GetInventory()) {
+		if (!item || !entry.second || !entry.second->IsWorn()) {
+			continue;
+		}
+
+		auto* armor = item->As<RE::TESObjectARMO>();
+		if (!armor) {
+			continue;
+		}
+
+		const auto* name = item->GetName();
+		if (!name || !*name) {
+			continue;
+		}
+
+		for (std::uint32_t index = 0; index < armor->numKeywords; ++index) {
+			auto* keyword = armor->keywords[index];
+			const auto* editorID = keyword ? keyword->GetFormEditorID() : nullptr;
+			if (editorID && std::strcmp(editorID, "CC_SluttyItem") == 0) {
+				return name;
+			}
+		}
+	}
+
+	return {};
+}
+
 handle_worn_equipment_change* handle_worn_equipment_change::get_singleton()
 {
 	static handle_worn_equipment_change singleton;
