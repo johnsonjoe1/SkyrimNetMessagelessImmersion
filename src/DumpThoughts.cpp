@@ -6,6 +6,8 @@
 #include "misc.h"
 #include "DumpThoughts.h"
 #include "player_thought_history.h"
+#include <deque>
+#include <mutex>
 
 namespace logger = SKSE::log;
 
@@ -15,21 +17,74 @@ static auto last_lactacid_added_speech_timestamp = std::chrono::steady_clock::no
 
 namespace
 {
+	enum class ThoughtChannel
+	{
+		kBackground,
+		kNormal,
+		kLiteral,
+		kImportant,
+		kImportantWithLillithDebugWindow
+	};
+
+	struct DialogueSuppressedThought
+	{
+		std::string message;
+		ThoughtChannel channel;
+		std::chrono::steady_clock::time_point queuedAt;
+	};
+
+	std::deque<DialogueSuppressedThought> dialogueSuppressedThoughtQueue;
+	std::mutex dialogueSuppressedThoughtQueueMutex;
+
+	std::string_view GetThoughtChannelName(ThoughtChannel a_channel)
+	{
+		switch (a_channel) {
+		case ThoughtChannel::kBackground:
+			return "BACKGROUND";
+		case ThoughtChannel::kNormal:
+			return "NORMAL";
+		case ThoughtChannel::kLiteral:
+			return "AS_LITTERAL_AS_POSSIBLE";
+		case ThoughtChannel::kImportant:
+			return "IMPORTANT";
+		case ThoughtChannel::kImportantWithLillithDebugWindow:
+			return "IMPORTANT_WITH_LILLITH_DEBUG_WINDOW";
+		default:
+			return "UNKNOWN";
+		}
+	}
+
 	bool IsPlayerInDialogue()
 	{
 		auto* ui = RE::UI::GetSingleton();
 		return ui && ui->IsMenuOpen(RE::DialogueMenu::MENU_NAME);
 	}
 
-	bool SuppressThoughtDuringDialogue(std::string_view a_thought)
+	bool QueueThoughtDuringDialogue(ThoughtChannel a_channel, std::string_view a_thought)
 	{
 		if (!IsPlayerInDialogue()) {
 			return false;
 		}
 
-		SKSE::log::info("Suppressing thought output because IsPlayerInDialogue() is true. Suppressed thought:\n{}", a_thought);
+		std::size_t queueSize;
+		{
+			std::lock_guard lock(dialogueSuppressedThoughtQueueMutex);
+			dialogueSuppressedThoughtQueue.push_back({
+				std::string(a_thought),
+				a_channel,
+				std::chrono::steady_clock::now()
+			});
+			queueSize = dialogueSuppressedThoughtQueue.size();
+		}
+
+		SKSE::log::info(
+			"Queued {} thought because IsPlayerInDialogue() is true. Dialogue-suppressed queue size: {}. Queued thought:\n{}",
+			GetThoughtChannelName(a_channel),
+			queueSize,
+			a_thought);
 		LillithOnlyBox(std::format(
-			"Thought suppressed because IsPlayerInDialogue() is true:\n{}",
+			"{} thought suppressed for now and queued because IsPlayerInDialogue() is true:\n{}",
+			GetThoughtChannelName(a_channel),
 			a_thought));
 		return true;
 	}
@@ -128,7 +183,7 @@ void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_messa
 			SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
 			return;
 		}
-		if (SuppressThoughtDuringDialogue(my_message)) {
+		if (QueueThoughtDuringDialogue(ThoughtChannel::kBackground, my_message)) {
 			return;
 		}
 		SKSE::ModCallbackEvent my_event(
@@ -158,7 +213,7 @@ void DumpThoughts::throw_out_TTS_thought_message(std::string my_message) {
 		SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
 		return;
 	}
-	if (SuppressThoughtDuringDialogue(my_message)) {
+	if (QueueThoughtDuringDialogue(ThoughtChannel::kNormal, my_message)) {
 		return;
 	}
 	SKSE::ModCallbackEvent my_event(
@@ -186,7 +241,7 @@ void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string
 		SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
 		return;
 	}
-	if (SuppressThoughtDuringDialogue(my_message)) {
+	if (QueueThoughtDuringDialogue(ThoughtChannel::kLiteral, my_message)) {
 		return;
 	}
 
@@ -218,7 +273,7 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_messag
 		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
 		return;
 	}
-	if (SuppressThoughtDuringDialogue(my_message)) {
+	if (QueueThoughtDuringDialogue(ThoughtChannel::kImportant, my_message)) {
 		return;
 	}
 
@@ -250,7 +305,7 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std
 		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
 		return;
 	}
-	if (SuppressThoughtDuringDialogue(my_message)) {
+	if (QueueThoughtDuringDialogue(ThoughtChannel::kImportantWithLillithDebugWindow, my_message)) {
 		return;
 	}
 
@@ -264,5 +319,4 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std
 	eventSource->SendEvent(&my_event);
 	last_speech_timestamp=std::chrono::steady_clock::now();
 }
-
 
