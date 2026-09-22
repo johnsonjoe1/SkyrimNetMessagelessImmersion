@@ -7,11 +7,18 @@
 class DumpThoughts
 {
 public:
-	static void throw_out_BACKGROUND_TTS_thought_message(std::string my_message);
-	static void throw_out_TTS_thought_message(std::string my_message);
-	static void throw_out_IMPORTANT_TTS_thought_message(std::string my_message);
-	static void throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std::string my_message);
-	static void throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string my_message);
+	enum class DialogueHandling
+	{
+		kQueue,
+		kProcessImmediately,
+		kDrop
+	};
+
+	static void throw_out_BACKGROUND_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling = DialogueHandling::kQueue);
+	static void throw_out_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling = DialogueHandling::kQueue);
+	static void throw_out_IMPORTANT_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling = DialogueHandling::kQueue);
+	static void throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std::string my_message, DialogueHandling a_dialogueHandling = DialogueHandling::kQueue);
+	static void throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string my_message, DialogueHandling a_dialogueHandling = DialogueHandling::kQueue);
 	static std::chrono::steady_clock::time_point GetLastSpeechTimestamp();
 	static void reset_last_speech_timestamp();
 	static void reset_lactacid_added_speech_timestamp();

@@ -298,7 +298,7 @@ void check_for_relevant_notifications(const char* notification)
 		}
 		LillithOnlyBox("Notification detected: You don't have enough gold.");
 		std::string  thought_message = std::format("YOU, the player, tried to make a purchase but didn't have enough gold.  Say so in your response and let us know how you feel about it.");
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message, DumpThoughts::DialogueHandling::kProcessImmediately);
 		last_not_enough_gold_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
 		SKSE::log::info("Test failed.  This isnt: You don't have enough gold.");

@@ -60,10 +60,19 @@ namespace
 		return ui && ui->IsMenuOpen(RE::DialogueMenu::MENU_NAME);
 	}
 
-	bool QueueThoughtDuringDialogue(ThoughtChannel a_channel, std::string_view a_thought)
+	bool HandleThoughtDuringDialogue(
+		ThoughtChannel a_channel,
+		std::string_view a_thought,
+		DumpThoughts::DialogueHandling a_dialogueHandling)
 	{
 		if (!IsPlayerInDialogue()) {
 			return false;
+		}
+		if (a_dialogueHandling == DumpThoughts::DialogueHandling::kProcessImmediately) {
+			return false;
+		}
+		if (a_dialogueHandling == DumpThoughts::DialogueHandling::kDrop) {
+			return true;
 		}
 
 		std::size_t queueSize;
@@ -210,7 +219,10 @@ bool DumpThoughts::too_early_for_next_lactacid_speech()
 	}
 }
 
-void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_message) {
+void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling) {
+	if (a_dialogueHandling == DialogueHandling::kDrop && IsPlayerInDialogue()) {
+		return;
+	}
 	// The background channel shouldn't be flooded with text all the time.  Give the real user a chance to relax.  So only bring background stuff, when nothing else is going on.
 	auto now = std::chrono::steady_clock::now();
 	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
@@ -242,7 +254,7 @@ void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_messa
 			SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
 			return;
 		}
-		if (QueueThoughtDuringDialogue(ThoughtChannel::kBackground, my_message)) {
+		if (HandleThoughtDuringDialogue(ThoughtChannel::kBackground, my_message, a_dialogueHandling)) {
 			return;
 		}
 		SKSE::ModCallbackEvent my_event(
@@ -255,7 +267,10 @@ void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_messa
 		last_speech_timestamp=std::chrono::steady_clock::now();  // only reset the timer if real speech has been produced
 	}
 }	
-void DumpThoughts::throw_out_TTS_thought_message(std::string my_message) {
+void DumpThoughts::throw_out_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling) {
+	if (a_dialogueHandling == DialogueHandling::kDrop && IsPlayerInDialogue()) {
+		return;
+	}
 	// RE::DebugMessageBox(my_message.c_str());
 	SKSE::log::info("The thought for the NORMAL THOUGHT channel is: \n\n{} ", my_message.c_str());
 	// We want to broadcast mod events.  So we need this event source.
@@ -272,7 +287,7 @@ void DumpThoughts::throw_out_TTS_thought_message(std::string my_message) {
 		SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
 		return;
 	}
-	if (QueueThoughtDuringDialogue(ThoughtChannel::kNormal, my_message)) {
+	if (HandleThoughtDuringDialogue(ThoughtChannel::kNormal, my_message, a_dialogueHandling)) {
 		return;
 	}
 	SKSE::ModCallbackEvent my_event(
@@ -287,7 +302,10 @@ void DumpThoughts::throw_out_TTS_thought_message(std::string my_message) {
 
 
 
-void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string my_message) {
+void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string my_message, DialogueHandling a_dialogueHandling) {
+	if (a_dialogueHandling == DialogueHandling::kDrop && IsPlayerInDialogue()) {
+		return;
+	}
 	// RE::DebugMessageBox(my_message.c_str());
 	SKSE::log::info("The thought for the AS_LITTERAL_AS_POSSIBLE channel is: \n\n{} ", my_message.c_str());
 	// We want to broadcast mod events.  So we need this event source.
@@ -300,7 +318,7 @@ void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string
 		SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
 		return;
 	}
-	if (QueueThoughtDuringDialogue(ThoughtChannel::kLiteral, my_message)) {
+	if (HandleThoughtDuringDialogue(ThoughtChannel::kLiteral, my_message, a_dialogueHandling)) {
 		return;
 	}
 
@@ -314,7 +332,10 @@ void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string
 	last_speech_timestamp=std::chrono::steady_clock::now();
 }
 
-void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_message) {
+void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling) {
+	if (a_dialogueHandling == DialogueHandling::kDrop && IsPlayerInDialogue()) {
+		return;
+	}
 	// RE::DebugMessageBox(my_message.c_str());
 	SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: \n\n{} ", my_message.c_str());
 	// We want to broadcast mod events.  So we need this event source.
@@ -332,7 +353,7 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_messag
 		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
 		return;
 	}
-	if (QueueThoughtDuringDialogue(ThoughtChannel::kImportant, my_message)) {
+	if (HandleThoughtDuringDialogue(ThoughtChannel::kImportant, my_message, a_dialogueHandling)) {
 		return;
 	}
 
@@ -347,7 +368,10 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_messag
 }
 
 
-void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std::string my_message) {
+void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std::string my_message, DialogueHandling a_dialogueHandling) {
+	if (a_dialogueHandling == DialogueHandling::kDrop && IsPlayerInDialogue()) {
+		return;
+	}
 	// RE::DebugMessageBox(my_message.c_str());
 	SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: \n\n{} ", my_message.c_str());
 	// We want to broadcast mod events.  So we need this event source.
@@ -364,7 +388,7 @@ void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std
 		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
 		return;
 	}
-	if (QueueThoughtDuringDialogue(ThoughtChannel::kImportantWithLillithDebugWindow, my_message)) {
+	if (HandleThoughtDuringDialogue(ThoughtChannel::kImportantWithLillithDebugWindow, my_message, a_dialogueHandling)) {
 		return;
 	}
 
