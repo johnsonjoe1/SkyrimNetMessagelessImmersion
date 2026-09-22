@@ -123,6 +123,7 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"BM_ME_DetectLocCity",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
 		"BM_ME_DetectLocTown",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
 		"BM_ME_PeriodicCheck",  // The mod Licenses-Player Oppression periodically doing something I presume.
+		"BM_ME_DetectStateJail",  // The mod Licenses-Player Oppression checking for jail state changes, can be ignored.
 
 		"BM_ME_HostArmorLicense",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 		"BM_ME_HostBikiniExemption",   // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
@@ -944,6 +945,33 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
+// *************************************************
+// *** HERE WE PUT SOME EXTRA NOTIFICATIONS FOR UNHANDLED MAGIC EFFECTS THAT WE DON'T UNDERSTAND AND WANT MORE POPUP MESSAGES FOR, TO BETTER DETECT THEM AND THEN UNDERSTAND THEM ***
+// ********************************************************
+/*  
+[2026-09-21 22:40:07.282] [log] [info] [handle_active_magic_effect_changes.cpp:865] Effect APPLIED on Lillith | UID=35
+[2026-09-21 22:40:07.282] [log] [info] [handle_active_magic_effect_changes.cpp:868] Base name: Training | Base ptr: 0x18a9b81a940 | Base-FormID: 1003C907 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-21 22:40:07.282] [log] [info] [handle_active_magic_effect_changes.cpp:869] base-Effect EDID:  | Source ptr: 0x18a9b492f80  |  Caster: Lillith 
+[2026-09-21 22:40:07.282] [log] [info] [handle_active_magic_effect_changes.cpp:873] Magnitude: 0 | Duration: 0
+[2026-09-21 22:40:07.282] [log] [info] [handle_active_magic_effect_changes.cpp:876] Source name:  | Source FormID: 1003C3A2 | Source EDID:  
+[2026-09-21 22:40:07.282] [log] [info] [handle_active_magic_effect_changes.cpp:882] Form LookupByID 1003C907 found: Training
+[2026-09-21 22:40:07.282] [log] [info] [handle_active_magic_effect_changes.cpp:888] .
+[2026-09-21 22:40:07.282] [log] [info] [handle_active_magic_effect_changes.cpp:889] .
+[2026-09-21 22:35:25.721] [log] [info] [handle_active_magic_effect_changes.cpp:864] 
+[2026-09-21 22:35:25.721] [log] [info] [handle_active_magic_effect_changes.cpp:865] Effect APPLIED on Lillith | UID=36
+[2026-09-21 22:35:25.721] [log] [info] [handle_active_magic_effect_changes.cpp:868] Base name: Nullify Magicka | Base ptr: 0x18abcd58480 | Base-FormID: FE0608FB | Base-Form Type: 18 
+[2026-09-21 22:35:25.721] [log] [info] [handle_active_magic_effect_changes.cpp:869] base-Effect EDID:  | Source ptr: 0x18abcce2500  |  Caster: Lillith 
+[2026-09-21 22:35:25.721] [log] [info] [handle_active_magic_effect_changes.cpp:873] Magnitude: 0 | Duration: 0
+[2026-09-21 22:35:25.721] [log] [info] [handle_active_magic_effect_changes.cpp:876] Source name: Nullify Magic Enchantment | Source FormID: FE0608FC | Source EDID:  
+[2026-09-21 22:35:25.721] [log] [info] [handle_active_magic_effect_changes.cpp:882] Form LookupByID FE0608FB found: Nullify Magicka
+*/
+	if (base && ( (std::strcmp(base_name, "Training") == 0) && (std::strcmp(base->GetFormEditorID(), "Nullify Magicka") == 0) ) )
+	{
+		std::string final_thought_string = std::format("STRANGE BUT INTERESTING MAGIC EFFECT:  {} WAS JUST APPLIED= {}  The effect will be in the log as UNHANDLED, so you can look up all the details there.", base_name, a_event->isApplied ? "APPLIED" : "REMOVED");
+		LillithOnlyBox(final_thought_string);
+		LillithOnlyBox(final_thought_string);
+		LillithOnlyBox(final_thought_string);
+	}
 
 	//  CODE-MARKER:  THIS IS THE ENTRY POINT FOR MORE ACTIVE MAGIC EFFECTS TO BE HANDLED.
 

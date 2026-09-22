@@ -153,6 +153,7 @@ namespace
 			{"DeviceRemovedGag", "YOU, the player, just got your gag removed.  Your mouth is no longer restrained, and you can speak and breathe freely again.   "},
 			{"DeviceRemovedblindfold", "YOU, the player, just got your blindfold removed.  Your vision is no longer obstructed, so that sensory restriction no longer applies.   "},
 			{"DeviceRemovedChain Harness Wrist Shackles", "YOU, the player, just got your chain harness wrist shackles removed.  Your wrists are no longer locked by those shackles, so those restraints no longer apply.   "},
+			{"DeviceRemovedHood", "YOU, the player, just got your hood removed.  Your head and face are no longer covered, so that sensory restriction no longer applies.   "},
 		};
 
 		const std::string_view event_name = a_event->eventName.c_str();
@@ -750,7 +751,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}		
 	if ( (std::strcmp(a_event->eventName.c_str() , "StageEnd_BodySearch") == 0) 
 	|| (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BodySearch") == 0) 
-	|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BodySearch") == 0) ) {
+	|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnd_BodySearch") == 0) ) {
 		// nothing to do here, just exit.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
