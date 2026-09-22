@@ -475,6 +475,97 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
+
+	/*
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:864] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:865] Effect APPLIED on Lillith | UID=12
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:868] Base name: Blindfold Script | Base ptr: 0x18a9a8f3900 | Base-FormID: 10031C77 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:869] base-Effect EDID:  | Source ptr: 0x18a9b41d780  |  Caster: Lillith 
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:873] Magnitude: 0 | Duration: 0
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:876] Source name: Hood Script | Source FormID: 1103D2DF | Source EDID:  
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:882] Form LookupByID 10031C77 found: Blindfold Script
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:888] .
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:889] .
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:865] Effect APPLIED on Lillith | UID=32
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:868] Base name: Gag Food Removal Script | Base ptr: 0x18a9a8f2b00 | Base-FormID: 1002F13F | Base-Form Type: 18   
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:869] base-Effect EDID:  | Source ptr: 0x18a9b41d780  |  Caster: Lillith 
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:873] Magnitude: 0 | Duration: 0
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:876] Source name: Hood Script | Source FormID: 1103D2DF | Source EDID:  
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:882] Form LookupByID 1002F13F found: Gag Food Removal Script
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:888] .
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:889] .
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:865] Effect APPLIED on Lillith | UID=33
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:868] Base name: Gag Script | Base ptr: 0x18a9b818f00 | Base-FormID: 1002B077 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:869] base-Effect EDID:  | Source ptr: 0x18a9b41d780  |  Caster: Lillith 
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:873] Magnitude: 0 | Duration: 0
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:876] Source name: Hood Script | Source FormID: 1103D2DF | Source EDID:  
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:882] Form LookupByID 1002B077 found: Gag Script
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:888] .
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:889] .
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:865] Effect APPLIED on Lillith | UID=34
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:868] Base name: Muffling Script | Base ptr: 0x18a9b6ee400 | Base-FormID: 10090000 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:869] base-Effect EDID:  | Source ptr: 0x18a9b41d780  |  Caster: Lillith 
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:873] Magnitude: 0 | Duration: 0
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:876] Source name: Hood Script | Source FormID: 1103D2DF | Source EDID:  
+[2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:882] Form LookupByID 10090000 found: Muffling Script
+*/
+	if (std::strcmp(source->GetName(), "Hood Script") == 0) {   // We have 4 EFFECTS FROM HOODS here, and make the prompt specific to the hood (not some gag or blindfold)
+		if (std::strcmp(base_name, "Blindfold Script") == 0) {
+			if (a_event->isApplied)
+			{
+				SKSE::log::info("Event handler for Blindfold-through-Hood Script APPLICATION!");
+				std::string final_thought_string = std::format("YOU, the player, just got looked into a hood, and that hood doesn't even let you see anything, so that you are completely blindfolded.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you are wearing now."); //  + standard_thought_instruction;
+				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Blindfold-through-Hood: APPLIED-THOUGHT: " + final_thought_string);
+				LillithOnlyBox(final_thought_string);
+			} 
+			else // i.e.  if (!a_event->isApplied) )
+			{
+				SKSE::log::info("Event handler for Blindfold-through-Hood Script APPLICATION!");
+				std::string final_thought_string = std::format("YOU, the player, just escaped of of a locking bondage hood, and that hood was keeping you completely blindfolded, but now you can see again.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you were wearing just moments ago."); //  + standard_thought_instruction;
+				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Blindfold-through-Hood: RELEASE-THOUGHT: " + final_thought_string);
+				LillithOnlyBox(final_thought_string);
+			}
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} else if (std::strcmp(base_name, "Gag Food Removal Script") == 0) {
+			if (a_event->isApplied)
+			{
+				SKSE::log::info("Event handler for Gag-Food-Removal-through-Hood Script APPLICATION!");
+				std::string final_thought_string = std::format("YOU, the player, just got looked into a hood, and that hood doesn't even let you eat or drink anything.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you are wearing now."); //  + standard_thought_instruction;
+				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Gag-Food-Removal-through-Hood: APPLIED-THOUGHT: " + final_thought_string);
+				LillithOnlyBox(final_thought_string);
+			} 
+			else // i.e.  if (!a_event->isApplied) )
+			{
+				SKSE::log::info("Event handler for Gag-Food-Removal-through-Hood Script APPLICATION!");
+				std::string final_thought_string = std::format("YOU, the player, just escaped of of a locking bondage hood, and that hood was keeping you from eating or drinking anything, but now you can eat and drink again.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you were wearing just moments ago."); //  + standard_thought_instruction;
+				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Gag-Food-Removal-through-Hood: RELEASE-THOUGHT: " + final_thought_string);
+				LillithOnlyBox(final_thought_string);
+			}
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} else if (std::strcmp(base_name, "Gag Script") == 0) {
+			if (a_event->isApplied)
+			{
+				SKSE::log::info("Event handler for Gag-through-Hood Script APPLICATION!");
+				std::string final_thought_string = std::format("YOU, the player, just got looked into a hood, and that hood gags you completely so that you cannot utter a single word.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you are wearing now."); //  + standard_thought_instruction;
+				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Gag-through-Hood: APPLIED-THOUGHT: " + final_thought_string);
+				LillithOnlyBox(final_thought_string);
+			} 
+			else // i.e.  if (!a_event->isApplied) )
+			{
+				SKSE::log::info("Event handler for Gag-through-Hood Script APPLICATION!");
+				std::string final_thought_string = std::format("YOU, the player, just escaped of of a locking bondage hood, and that hood was keeping you completely gagged, but now you can speak again.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you were wearing just moments ago."); //  + standard_thought_instruction;
+				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Gag-through-Hood: RELEASE-THOUGHT: " + final_thought_string);
+				LillithOnlyBox(final_thought_string);
+			}
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} else if (std::strcmp(base_name, "Muffling Script") == 0) {
+			// NOT SURE WHAT MUFFLING ACTUALLY DOES????  DOES THAT MEAN NO HEARING???  NOT SURE AND THEREFORE WE DON'T DO ANYTHING FOR NOW.
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		} 
+	}
+
+
+
 /*[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=47
 [2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: Stagger when shouting | Base ptr: 0x20e387bae80 | Base-FormID: 1005380A | Base-Form Type: 18   (This means: MGEF) 
 [2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:540] base-Effect EDID: zad_effShoutStagger | Source ptr: 0x20e3854ee00  |  Caster: Lillith 
@@ -486,7 +577,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for Stagger when shouting APPLICATION!");
-			std::string final_thought_string = std::format("YOU, the player, the corset you just got locked in is so restrictive, that you can't even shout properly without staggering in this thing!  Say as much in your response, and be sure to make it clear, that you speak about the corset that you are wearing and also make it clear, that you can't shout properly any more (without staggering) while locked into this item."); //  + standard_thought_instruction;
+			std::string final_thought_string = std::format("The corset you as the player just got locked into is so restrictive, that you can't even shout properly without staggering in this thing!  Say as much in your response, and be sure to make it clear, that you speak about the corset that you are wearing and also make it clear, that you can't shout properly any more (without staggering) while locked into this item."); //  + standard_thought_instruction;
 			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Stagger when shouting: THOUGHT: " + final_thought_string);
 			LillithOnlyBox(final_thought_string);
 		} 
