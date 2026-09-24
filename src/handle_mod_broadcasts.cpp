@@ -731,14 +731,6 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		// StageStart_BodySearch
 		// 4 seconds later:  AnimationStart_BodySearch
 		// StageEnd_BodySearch
-		// SSL_PREPARE_Thread1
-		// SSL_LOCK_Thread1
-		// AnimationStarting_slacEngagement
-		// StageStart_slacEngagement
-		// AnimationStart_slacEngagement
-		// StageEnd_slacEngagement
-		// SSL_CLEAR_Thread1
-		// AnimationEnding_slacEngagement
 	}	
 	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_BodySearch") == 0)  ) {
 		std::string  thought_message = std::format("A guard has just brought you to their guards baracks, saying he needs to do a body search.  But now the search turns out to be mainly him groping your body everywhere for his pleasure and amusement. That has been going on for a while.  And now he is continuing to grope you even more as he pleases. Let us know your response to that. ");
@@ -766,18 +758,16 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_slacEngagement") == 0)  ) {
 		std::string  thought_message = std::format("A creature, an animal or a monster, has just managed to take advantage of you and start a sexual encounter with you, and you somehow couldn't resist or didn't resist and submitted into the sexual encounter.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having sex with a creature. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("AnimationStarting_slacEngagement:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		// More in this context:
 		// StageStart_slacEngagement
 		// 4 seconds later:  AnimationStart_slacEngagement
 		// StageEnd_slacEngagement
-		// SSL_PREPARE_Thread1
-		// SSL_LOCK_Thread1
 		// AnimationStarting_slacEngagement
 		// StageStart_slacEngagement
 		// AnimationStart_slacEngagement
 		// StageEnd_slacEngagement
-		// SSL_CLEAR_Thread1
 		// AnimationEnding_slacEngagement
 	}	
 	
@@ -786,18 +776,6 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		std::string  thought_message = std::format("You just managed to successfully prostitute yourself to a man and were paid the usual price of this profession.  You are now starting a sexual encounter with him, like a normal prostitute would.  Let us know your response to that, and make sure you implicitly explain that you are letting him fuck you and use you for his pleasure in your response as well. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		// More in this context:
-		// StageStart_slacEngagement
-		// 4 seconds later:  AnimationStart_slacEngagement
-		// StageEnd_slacEngagement
-		// SSL_PREPARE_Thread1
-		// SSL_LOCK_Thread1
-		// AnimationStarting_slacEngagement
-		// StageStart_slacEngagement
-		// AnimationStart_slacEngagement
-		// StageEnd_slacEngagement
-		// SSL_CLEAR_Thread1
-		// AnimationEnding_slacEngagement
 	}	
 
 	// MOD EVENT:  From some animal mod, creature maybe, we have the following event:  AnimationStarting_HelplessCreature
