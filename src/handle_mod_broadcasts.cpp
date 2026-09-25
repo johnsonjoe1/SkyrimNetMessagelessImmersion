@@ -360,6 +360,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"OrgasmStart_HelplessFollower",  //	those two are both followers, I think.  MOD EVENT:  Name: OrgasmStart_HelplessFollower  StrArg: 1  NumArg: 0
 		"OrgasmStart",                   //	those two are both followers, I think.  MOD EVENT:  Name: OrgasmStart  StrArg: 1  NumArg: 0	
 		"OrgasmStart_slacEngagement",   //  Hmmm, not now, I guess.
+		"AnimationStarting_slacEngagement", // The player-filtered Papyrus relay handles SLAC scene starts.
 		
 		// Technical mod events from Sexlab P+.  There can be up to 15 threads, but I guess those are edge cases that we don't need to handle for now.  
 		"SSL_PREPARE_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
@@ -446,11 +447,12 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 
 		"AnimationStart_slacEngagement",   // 4 seconds after AnimationStarting_....
 		"StageEnd_slacEngagement",
-		// "AnimationStarting_slacEngagement",  
+		// AnimationStarting_slacEngagement is handled through a player-filtered Papyrus relay.
 		"StageStart_slacEngagement",
 		"AnimationChange_slacEngagement",
 		"AnimationEnding_slacEngagement",
 		"AnimationEnd_slacEngagement",
+		"SNMI_SLACAnimationEnding", // Player-filtered relay used only to restore scene state.
 
 		"ActorChangeStart",                  //  This *might* be relevant, if that has some extra detail about the current SL scene and changes there, but it's just not a priority now.
 		"ActorChangeStart_slacEngagement",   //  This *might* be relevant, if that has some extra detail about the current SL scene and changes there, but it's just not a priority now.
@@ -484,9 +486,7 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		"AnimationChange",
 		"AnimationChange_CreatureSummoner",
 		// "AnimationStart_BodySearch" is intentionally excluded: body search itself is about clothing, especially in the second part.
-		"AnimationStarting_slacEngagement",
-		"AnimationStart_slacEngagement",
-		"StageStart_slacEngagement",
+		"SNMI_SLACAnimationStarting",
 		"StageStart_TAPPlayerFreelance",
 		"StageStart_",
 		"SL_AdvanceScene",
@@ -509,8 +509,7 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		"AnimationEnd_CreatureSummoner",
 		"AnimationEnd_MatchMaker",
 		"AnimationEnding_MatchMaker",
-		"AnimationEnding_slacEngagement",
-		"AnimationEnd_slacEngagement",
+		"SNMI_SLACAnimationEnding",
 		"AnimationEnding_HelplessCreature",   //  This is from Aroused Creatures (I think)
 		"AnimationEnd_HelplessCreature",      //  This is from Aroused Creatures (I think)
 		"AnimationEnd_Helpless",    // This is from Devious Helplessness.
@@ -754,11 +753,11 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}	
 
 	
-	// MOD EVENT:  From some animal mod, creature maybe, we have the following event:  AnimationStarting_slacEngagement
-	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_slacEngagement") == 0)  ) {
-		std::string  thought_message = std::format("A creature, an animal or a monster, has just managed to take advantage of you and start a sexual encounter with you, and you somehow couldn't resist or didn't resist and submitted into the sexual encounter.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having sex with a creature. ");
+	// Player-involved SLAC animation start, filtered and relayed by SNMI_Papyrus_Bridge_Script.
+	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_SLACAnimationStarting") == 0)  ) {
+		std::string  thought_message = std::format("A creature, an animal or a monster, has just managed to take advantage of you and start a sexual encounter with you, and you somehow were too horny and couldn't resist or couldn't escape in time and then just submitted into the sexual encounter.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having sex with a creature. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-		LillithOnlyBox("AnimationStarting_slacEngagement:  " + thought_message);
+		LillithOnlyBox("SNMI_SLACAnimationStarting:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		// More in this context:
 		// StageStart_slacEngagement

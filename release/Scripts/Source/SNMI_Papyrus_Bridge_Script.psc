@@ -16,12 +16,22 @@ float LVSK_IsLovesick = 0.0
 int sparcity_counter = 0
 int sparcity_threshold = 6
 bool yps_fashion_event_registered = false
+bool slac_events_registered = false
 
 function ensure_yps_fashion_event_registration()
 	if !yps_fashion_event_registered
 		RegisterForModEvent("yps_FashionChange", "OnYpsFashionChange")
 		yps_fashion_event_registered = true
 		lillith_notification("[SNMI] Registered YPS fashion-change relay.")
+	endif
+endfunction
+
+function ensure_slac_event_registration()
+	if !slac_events_registered
+		RegisterForModEvent("HookAnimationStarting_slacEngagement", "OnSLACAnimationStarting")
+		RegisterForModEvent("HookAnimationEnding_slacEngagement", "OnSLACAnimationEnding")
+		slac_events_registered = true
+		lillith_notification("[SNMI] Registered player-filtered SLAC animation relays.")
 	endif
 endfunction
 
@@ -33,7 +43,20 @@ Event OnInit()
 	lillith_notification("[SNMI] INITIAL HOOK INTO SexLab AnimationStart FINISHED.")
 
 	ensure_yps_fashion_event_registration()
+	ensure_slac_event_registration()
 
+EndEvent
+
+Event OnSLACAnimationStarting(int threadId, bool hasPlayer)
+	if hasPlayer
+		SendModEvent("SNMI_SLACAnimationStarting", threadId)
+	endif
+EndEvent
+
+Event OnSLACAnimationEnding(int threadId, bool hasPlayer)
+	if hasPlayer
+		SendModEvent("SNMI_SLACAnimationEnding", threadId)
+	endif
 EndEvent
 
 Event OnYpsFashionChange(string eventName, string changeType, float slot, Form sender)
@@ -459,6 +482,7 @@ endfunction
 
 Event OnUpdate()
 	ensure_yps_fashion_event_registration()
+	ensure_slac_event_registration()
 
     keepalive_value += 1.0    ; This is just an internal counter, that will count the number of times this has run so far
     SNMI_Native.SetKeepaliveLevel(keepalive_value)
