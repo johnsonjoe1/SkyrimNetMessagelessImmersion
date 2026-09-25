@@ -452,7 +452,6 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"AnimationChange_slacEngagement",
 		"AnimationEnding_slacEngagement",
 		"AnimationEnd_slacEngagement",
-		"SNMI_SLACAnimationEnding", // Player-filtered relay used only to restore scene state.
 
 		"ActorChangeStart",                  //  This *might* be relevant, if that has some extra detail about the current SL scene and changes there, but it's just not a priority now.
 		"ActorChangeStart_slacEngagement",   //  This *might* be relevant, if that has some extra detail about the current SL scene and changes there, but it's just not a priority now.
@@ -769,6 +768,14 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		// StageEnd_slacEngagement
 		// AnimationEnding_slacEngagement
 	}	
+
+	// Player-involved SLAC animation end, filtered and relayed by SNMI_Papyrus_Bridge_Script.
+	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_SLACAnimationEnding") == 0)  ) {
+		std::string thought_message = std::format("Your sexual encounter with a creature, animal, or monster has just ended, and you are free to move on again. Let us know your immediate response to the encounter ending, and make sure you mention or implicitly point out that you just had sex with a creature. ");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		LillithOnlyBox("SNMI_SLACAnimationEnding:  " + thought_message);
+		return;
+	}
 	
 	// MOD EVENT:  From The Ancient Profession mod, we have the following event:  AnimationStarting_TAPPlayerFreelance
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_TAPPlayerFreelance") == 0)  ) {
