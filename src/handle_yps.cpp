@@ -46,8 +46,13 @@ namespace
 
 	void throw_out_yps_fashion_thought(const std::string& thought)
 	{
-		LillithOnlyBox(thought);
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought);
+		if (player_is_in_a_SL_scene()) {
+			LillithOnlyBox(std::format("SUPPRESSING YPS thought because of ongoing SL scene: {}", thought));
+			return;
+		} else {
+			LillithOnlyBox(thought);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought);
+		}
 	}
 
 	std::string nail_polish_thought(bool fingernails, int previous_stage, int stage, const std::string& colour)
