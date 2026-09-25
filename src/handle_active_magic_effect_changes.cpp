@@ -16,6 +16,8 @@ static auto last_drool_thought_timestamp = std::chrono::steady_clock::now() - st
 static auto last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_chain_sound_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_disease_cure_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_cum_effect_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_cum_effect_removal_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Stomach Rot",
@@ -950,26 +952,57 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
-/*-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:419] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+/*
+========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
 [2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:420] Effect REMOVED on Lillith | UID=39
 [2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:423] Base name: Covered In Cum | Base ptr: 0x1d03d86cb80 | Base-FormID: 9041477 | Base-Form Type: 18   (This means: MGEF) 
 [2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:424] base-Effect EDID: SexLabCumVaginalEffect | Source ptr: 0x1d03d723600  |  Caster: Lillith 
 [2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:428] Magnitude: 0 | Duration: 0
 [2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:431] Source name: Sexual Encounter | Source FormID: 9041478 | Source EDID: SexLabCumVaginalSpell 
-[2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:437] Form LookupByID 9041477 found: Covered In Cum*/
-	if (base && ( (std::strcmp(base_name, "Covered In Cum") == 0) && (std::strcmp(base->GetFormEditorID(), "SexLabCumVaginalEffect") == 0) ) )
+[2026-08-09 13:37:47.489] [log] [info] [handle_active_magic_effect_changes.cpp:437] Form LookupByID 9041477 found: Covered In Cum
+.
+========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-25 12:47:18.258] [log] [info] [handle_active_magic_effect_changes.cpp:1039] Effect APPLIED on Lillith | UID=12
+[2026-09-25 12:47:18.258] [log] [info] [handle_active_magic_effect_changes.cpp:1042] Base name: SexLab Cum Effect (Main) | Base ptr: 0x23beb1add00 | Base-FormID: 90CD86D | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-25 12:47:18.258] [log] [info] [handle_active_magic_effect_changes.cpp:1043] base-Effect EDID:  | Source ptr: 0x23beb097a00  |  Caster: Lillith 
+[2026-09-25 12:47:18.258] [log] [info] [handle_active_magic_effect_changes.cpp:1047] Magnitude: 0 | Duration: 0
+[2026-09-25 12:47:18.258] [log] [info] [handle_active_magic_effect_changes.cpp:1050] Source name: Sexual Encounter | Source FormID: 90CD86F | Source EDID:  
+[2026-09-25 12:47:18.258] [log] [info] [handle_active_magic_effect_changes.cpp:1056] Form LookupByID 90CD86D found: SexLab Cum Effect (Main)
+.
+========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-25 12:47:18.274] [log] [info] [handle_active_magic_effect_changes.cpp:1039] Effect APPLIED on Lillith | UID=35
+[2026-09-25 12:47:18.274] [log] [info] [handle_active_magic_effect_changes.cpp:1042] Base name: Covered In Cum | Base ptr: 0x23beb1ae240 | Base-FormID: 90434D0 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-25 12:47:18.274] [log] [info] [handle_active_magic_effect_changes.cpp:1043] base-Effect EDID:  | Source ptr: 0x23beb097b00  |  Caster: Lillith 
+[2026-09-25 12:47:18.274] [log] [info] [handle_active_magic_effect_changes.cpp:1047] Magnitude: 0 | Duration: 0
+[2026-09-25 12:47:18.274] [log] [info] [handle_active_magic_effect_changes.cpp:1050] Source name: Sexual Encounter | Source FormID: 90434D5 | Source EDID:  
+[2026-09-25 12:47:18.274] [log] [info] [handle_active_magic_effect_changes.cpp:1056] Form LookupByID 90434D0 found: Covered In Cum
+
+*/
+	// if (base && ( (std::strcmp(base_name, "Covered In Cum") == 0) && (std::strcmp(base->GetFormEditorID(), "SexLabCumVaginalEffect") == 0) ) )
+	if (base && ( (std::strcmp(base_name, "Covered In Cum") == 0) || (std::strcmp(base_name, "SexLab Cum Effect (Main)") == 0) ) )
 	{
+		// We implement just one handler for all of these cum-effect-applied and cum-effect-removed events.
 		if (a_event->isApplied)
 		{
+			if (!cooldown_has_passed(last_cum_effect_thought_timestamp, 60))
+			{
+				return;
+			}
 			SKSE::log::info("Event handler for Covered In Cum/SexLabCumVaginalEffect effect application!");
-			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, now have fresh cum dripping from your vagina.  This is so humiliating and disgusting. Say as much in your response and be sure to mention that his sperm is now oozing out of your vagina.  This event is so important, that you can elaborate in many words about your desperation here.");
+			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, now have fresh cum dripping from your body.  This is so humiliating and disgusting. Say as much in your response and be sure to mention that his sperm is now oozing from your body.  This event is so important, that you can elaborate in many words about your desperation here.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+			last_cum_effect_thought_timestamp = std::chrono::steady_clock::now();
 		} else {
+			if (!cooldown_has_passed(last_cum_effect_removal_thought_timestamp, 60))
+			{
+				return;
+			}
 			SKSE::log::info("Event handler for Covered In Cum/SexLabCumVaginalEffect effect removal!");
-			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, had fresh cum dripping from your vagina, up until now.  This was so humiliating and disgusting.  But now the cum dripping has stopped.  It probably all oozed out now.  Say as much in your response and be sure to mention that his sperm is stopped oozing out of your vagina now.  It is a little bit of a relief.  This event is so important, that you can elaborate in many words about your desperation here.");
+			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, had fresh cum dripping from your body, up until now.  This was so humiliating and disgusting.  But now the cum dripping has stopped.  It probably all oozed out now.  Say as much in your response and be sure to mention that his sperm stopped oozing from your body now.  It is a little bit of a relief.  This event is so important, that you can elaborate in many words about your desperation here.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+			last_cum_effect_removal_thought_timestamp = std::chrono::steady_clock::now();
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
