@@ -18,6 +18,8 @@ static auto last_device_removed_thought_timestamp = std::chrono::steady_clock::n
 static auto last_devious_helplessness_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_random_run_up_and_spank_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_captive_defeat_end_sex_scene_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_player_involving_SLAC_scene_start = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_player_involving_SLAC_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 namespace
 {
 	bool try_handle_device_equipped_event(const SKSE::ModCallbackEvent* a_event)
@@ -448,7 +450,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"AnimationStart_slacEngagement",   // 4 seconds after AnimationStarting_....
 		"StageEnd_slacEngagement",
 		// AnimationStarting_slacEngagement is handled through a player-filtered Papyrus relay.
-		"StageStart_slacEngagement",
+		// NOW WE HAVE AT LEAST SOME HEURISTICS TO INFER WHETHER the SLAC-Scene involves the player or not, so we can re-enable that:"StageStart_slacEngagement",
 		"AnimationChange_slacEngagement",
 		"AnimationEnding_slacEngagement",
 		"AnimationEnd_slacEngagement",
@@ -754,23 +756,36 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	
 	// Player-involved SLAC animation start, filtered and relayed by SNMI_Papyrus_Bridge_Script.
 	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_SLACAnimationStarting") == 0)  ) {
+		last_player_involving_SLAC_scene_start = std::chrono::steady_clock::now();
 		std::string  thought_message = std::format("A creature, an animal or a monster, has just managed to take advantage of you and start a sexual encounter with you, and you somehow were too horny and couldn't resist or couldn't escape in time and then just submitted into the sexual encounter.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having sex with a creature. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("SNMI_SLACAnimationStarting:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		// More in this context:
-		// StageStart_slacEngagement
-		// 4 seconds later:  AnimationStart_slacEngagement
-		// StageEnd_slacEngagement
-		// AnimationStarting_slacEngagement
-		// StageStart_slacEngagement
-		// AnimationStart_slacEngagement
-		// StageEnd_slacEngagement
-		// AnimationEnding_slacEngagement
+	}	
+
+	// Player-involved SLAC animation start, filtered and relayed by SNMI_Papyrus_Bridge_Script.
+	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_slacEngagement") == 0)  ) {
+		// We only use this even, if a player-involving scene has started recently, i.e. in the last 3 minutes,
+		// so this is kind of an INVERSE COOLDOWN, where we only proceed if the event happened recently.
+		if (cooldown_has_passed(last_player_involving_SLAC_scene_start, 180)) {
+			return;
+		}
+		// However, for the messages themselves, we still implement a cooldown
+		if (!cooldown_has_passed(last_player_involving_SLAC_thought_timestamp, 20)) {
+			return;
+		}
+		last_player_involving_SLAC_thought_timestamp = std::chrono::steady_clock::now();
+
+		// Now at this point, we can throw out another SLAC thought message.
+		std::string  thought_message = std::format("The creature, animal or monster, that came after you to have sex with you got you and it still isn't satisfied and wants to have even more sex with you and you were also too horny to really stop yourself.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having sex with a creature.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("StageStart_slacEngagement:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
 	// Player-involved SLAC animation end, filtered and relayed by SNMI_Papyrus_Bridge_Script.
 	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_SLACAnimationEnding") == 0)  ) {
+		last_player_involving_SLAC_scene_start = std::chrono::steady_clock::now() - std::chrono::hours(1);
 		std::string thought_message = std::format("Your sexual encounter with a creature, animal, or monster has just ended, and you are free to move on again. Let us know your immediate response to the encounter ending, and make sure you mention or implicitly point out that you just had sex with a creature. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		LillithOnlyBox("SNMI_SLACAnimationEnding:  " + thought_message);
