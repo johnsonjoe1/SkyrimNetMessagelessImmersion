@@ -123,6 +123,14 @@ So all credit goes to whoever contributes there and is credited there.
 
 # Technical information for mod developers on how to compile this stuff
 
-See the template from https://github.com/Monitor221hz/CommonLibSSE-NG-Template-Plugin
+CommonLibSSE-NG 9.1.0 is pinned as a Git submodule. After cloning or updating this repository, initialize it and its nested OpenVR submodule before configuring the project:
+
+```powershell
+git submodule update --init --recursive
+cmake --preset build-release-msvc
+cmake --build --preset release-msvc
+```
+
+The build requires Visual Studio 2022 with Desktop development with C++, CMake, Ninja, and a `VCPKG_ROOT` environment variable pointing to vcpkg. The vcpkg manifest installs the remaining build dependencies.
 
 Thanks!

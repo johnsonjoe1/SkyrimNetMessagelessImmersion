@@ -192,7 +192,7 @@ namespace
 	{
 		if (a_message.data) {
 			if (const auto hud_data = skyrim_cast<RE::HUDData*>(a_message.data);
-				hud_data && hud_data->type == RE::HUDData::Type::kNotification) {
+				hud_data && hud_data->type == RE::HUD_MESSAGE_TYPE::kNotification) {
 				const char* notification = hud_data->text.c_str();
 				if (notification && notification[0] != '\0') {
 					SKSE::log::info("HUD notification: {}", notification);

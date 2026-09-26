@@ -37,7 +37,7 @@ void refresh_currently_worn_item_records()
 		currently_worn_item_records.push_back(CurrentlyWornItemRecord{
 			.form_id = item->GetFormID(),
 			.armor = armor,
-			.slot_mask = static_cast<std::uint32_t>(armor->GetSlotMask()),
+			.slot_mask = armor->GetSlotMask().underlying(),
 			.item = item
 		});
 		auto& record = currently_worn_item_records.back();

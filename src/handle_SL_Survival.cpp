@@ -37,8 +37,8 @@ void check_armor_for_bikini_property()
         logger::info("  {} (FormID {:08X})  on slot 0x{:08X}",
             form->GetName(),
             form->GetFormID(),
-            static_cast<std::uint32_t>(slots));
-		PrintSlots(static_cast<std::uint32_t>(slots));
+			slots.underlying());
+		PrintSlots(slots.underlying());
 
 		for (std::uint32_t i = 0; i < armor->numKeywords; i++)
 		{
