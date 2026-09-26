@@ -6,6 +6,8 @@ Version 0.6.13 and higher support both SkyrimNet beta25-RC6 and earlier (beta24)
 
 On RC7 or later, SNMI's triggers appear in the SkyrimNet dashboard as the external plugin "SkyrimNet Messageless Immersion" (johnsonjoe1.snmi), where individual triggers can be disabled or edited. On RC6 or earlier, the legacy trigger files remain under SKSE/Plugins/SkyrimNet/config/triggers/.
 
+Version 0.7.0 and higher *SHOULD* support also SkyrimVR and Skyrim 1.7.104, but this is COMPLETELY UNTESTED and based solely on the upgrade to CommonLibSSE-NG 0.9.1 in this version.  Please let us know if you have any success or failure using those versions (but I won't upgrade for the moment).
+
 All sources and description of SkyrimNetMeesagelessImmersion can be found here:
 https://github.com/johnsonjoe1/SkyrimNetMessagelessImmersion
 

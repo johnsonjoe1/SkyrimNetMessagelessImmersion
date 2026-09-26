@@ -10,20 +10,36 @@ So that in an ideal scenario, all widgets and all fonts could be removed from th
 The idea is, not to change anything about what you do in game.  The only change should be more immersion and more responsiveness concerning SkyrimNet player-thoughts, which in turn should be enough to make all other prompts also aware of relevant proceedings.
 So everything should play the same, just with an potentially messageless and widgetless interface if you want it that way.
 
-# Installation instructions and technicallities
+# Compatibility
 
-This is mainly an SKSE plugin with CommonLibSSE-NG, meaning that is *should* work with Skyrim version 1.6.1170, as well as the latest GOG versions.
-There are *no* hard requirements for other mods (except for SkyrimNet, which is required, and therefore all of it's dependencies, so we can silently assume hard dependency on the following is already resolved:
-[Skyrim Script Extender (SKSE)] https://skse.silverlock.org/
-[Address Library for SKSE Plugins] https://www.nexusmods.com/skyrimspecialedition/mods/32444
-[PowerOfThree's Papyrus Extender] https://www.nexusmods.com/skyrimspecialedition/mods/22854
-[PapyrusUtil SE] https://www.nexusmods.com/skyrimspecialedition/mods/13048
-[Latest Microsoft Visual C++ Redistributable] https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170
-[Native EditorID Fix] https://www.nexusmods.com/skyrimspecialedition/mods/85260
-[Prisma UI] https://www.nexusmods.com/skyrimspecialedition/mods/148718 ).
-Any other mods, that would benefit from the plugin are not required, as it doesn't change them, it just listens to them and reads out stuff from them. 
+The current build uses CommonLibSSE-NG 9.1.0 and has been tested successfully on the Steam version of Skyrim 1.6.1170 with SKSE 2.2.6. It is built as an Address Library-compatible, version-independent SKSE plugin and is expected to support Skyrim 1.7.104 when used with SKSE 2.3.1 and Address Library v13, but that runtime has not yet been tested. GOG and Skyrim VR are also currently untested.
+
+# Installation and requirements
+
+SkyrimNet is the only direct mod requirement. Its own requirements must also be installed and working:
+
+* [Skyrim Script Extender (SKSE)](https://skse.silverlock.org/)
+* [Address Library for SKSE Plugins](https://www.nexusmods.com/skyrimspecialedition/mods/32444)
+* [powerofthree's Papyrus Extender](https://www.nexusmods.com/skyrimspecialedition/mods/22854)
+* [PapyrusUtil SE](https://www.nexusmods.com/skyrimspecialedition/mods/13048)
+* [Latest Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
+* [Native EditorID Fix](https://www.nexusmods.com/skyrimspecialedition/mods/85260)
+* [Prisma UI](https://www.nexusmods.com/skyrimspecialedition/mods/148718)
+
+The other mods mentioned below are optional. SNMI does not modify them; it listens for their events or reads their state when they are present.
 
 Version 0.6.12 and later supports both the legacy SkyrimNet trigger layout used through beta25 RC6 and the external content-plugin layout introduced in beta25 RC7. Both layouts are included in the same archive; no installer choice or manual migration is required.
+
+# Recent changes
+
+* Migrated from the obsolete CommonLib vcpkg port to upstream CommonLibSSE-NG 9.1.0, pinned as a Git submodule for reproducible builds and future Skyrim 1.7.x support.
+* Thoughts that occur during player dialogue are queued and played afterwards. Individual call sites may instead discard a thought or process it immediately, and the queue is cleared when a game is loaded or started.
+* Recent player thoughts from the preceding five minutes are included as context to improve continuity between successive SkyrimNet responses.
+* Added HUD-notification handling for events that do not expose a more useful native event, including gag restrictions, surrender, missing pickaxes, fishing failures, insufficient gold, and supported arousal notifications.
+* Added player worn-equipment tracking, including immediate AND transparency/flashing observations and better identification of relevant worn items.
+* Expanded YPS handling for hair, cosmetics, stockings, nails, care products, fashion addiction, foot conditions, and heel-training status. YPS thoughts are suppressed during SexLab scenes.
+* Expanded SLAC handling for player-involved scene starts, stage changes, scene endings, and approaching creatures, with filtering and cooldowns to reduce unrelated or repeated thoughts.
+* Expanded active-magic-effect handling, including additional restraint, hood, bimbo-corruption, and cum-effect cases.
 
 How does it work?  It's a noob project.  It just hooks into magic effect changes and mod broadcasts from other mods (or the base game), and if something
 relevant shows up, we trigger a player-thought response.  
@@ -42,11 +58,12 @@ Other mods that are being picked on (at least in minimal amounts) when they are 
 * Battlefuck:  Start of struggle comments, (https://www.loverslab.com/files/file/18241-battle-fuck/),
 * FINISHED in 0.6.3:  Support for BodySearch mod (https://www.loverslab.com/files/file/9318-sexlab-body-search/),
 * Unforgiving Devices / Unforgiving Skyrim:  Application and removal of certain devices, 
-* SLAC:  Start of scenes and end of scenes, (https://www.loverslab.com/files/file/6022-sexlab-aroused-creatures-se-2026-02-20/),
+* SLAC:  Player-involved scene starts, stage changes and endings, plus approaching-creature events, (https://www.loverslab.com/files/file/6022-sexlab-aroused-creatures-se-2026-02-20/),
 * SL Survival 0.685 Beta SE: barefoot effect, (https://www.loverslab.com/blogs/entry/20175-sl-survival/)
 * STA v4.8 BETA SE: run-up-and-spank mod broadcast, (https://www.loverslab.com/blogs/entry/20176-spank-that-ass/)
 * The Ancient Profession:  Generic freelance work scene. (https://www.loverslab.com/files/file/11556-the-ancient-profession-2024-06-24/),
 * Some basic support for Jailrape mod. (https://www.loverslab.com/files/file/9111-sexlab-jail-rape/),
+* Some basic support for Devious Followers mod. (https://www.loverslab.com/files/file/44435-devious-followers-203-2025/)
 * Some basic support for Licenses - Player Oppression mod. (https://www.nexusmods.com/skyrimspecialedition/mods/110418?tab=description),
 * Some basic support for the SE Version of the Apropos 2 mod (from the LL forum:  https://www.loverslab.com/topic/136768-apropos-2-for-sse/),
 * Vanilla Skyrim:  disease application and cure (partial, only stomach rot disease so far).
@@ -107,8 +124,9 @@ The following switches in its `[Thoughts]` section are live and accept `1` or `0
 * `EnableLicensesPlayerOppressionThoughts`
 * `EnablePlayerDirtThoughts`
 * `EnableANDNudityThoughts`
+* `EnableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts`
 
-The `EnablePlugin`, `DebugLogging`, `EnableAproposThoughts`, and `EnableYPSThoughts` entries are placeholders and currently have no effect. `UpdateInterval` controls how often periodic status checks run, in whole seconds. Most other behavior remains hard-coded, and there is no MCM.
+The `EnablePlugin`, `DebugLogging`, and `EnableAproposThoughts` entries are placeholders and currently have no effect. `UpdateInterval` controls how often periodic status checks run, in whole seconds. Most other behavior remains hard-coded, and there is no MCM.
 If you want, you can disable e.g. the background thought channel. On SkyrimNet beta25 RC7 or later, disable or edit it through the `johnsonjoe1.snmi` external plugin in SkyrimNet's dashboard. On RC6 or earlier, delete or edit `SKSE/Plugins/SkyrimNet/config/triggers/SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought.yaml`.
 
 # Contributing guidelines
@@ -123,7 +141,7 @@ So all credit goes to whoever contributes there and is credited there.
 
 # Technical information for mod developers on how to compile this stuff
 
-CommonLibSSE-NG 9.1.0 is pinned as a Git submodule. After cloning or updating this repository, initialize it and its nested OpenVR submodule before configuring the project:
+CommonLibSSE-NG 9.1.0 (commit `a898f469851c464d05137bb74b069dd234897643`) is pinned as a Git submodule. After cloning or updating this repository, initialize it and its nested OpenVR submodule before configuring the project:
 
 ```powershell
 git submodule update --init --recursive
@@ -131,6 +149,6 @@ cmake --preset build-release-msvc
 cmake --build --preset release-msvc
 ```
 
-The build requires Visual Studio 2022 with Desktop development with C++, CMake, Ninja, and a `VCPKG_ROOT` environment variable pointing to vcpkg. The vcpkg manifest installs the remaining build dependencies.
+The build requires Visual Studio 2022 with Desktop development with C++, CMake, Ninja, and a `VCPKG_ROOT` environment variable pointing to vcpkg. The vcpkg manifest installs the remaining build dependencies from the baseline pinned in `vcpkg-configuration.json`.
 
 Thanks!
