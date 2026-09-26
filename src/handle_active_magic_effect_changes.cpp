@@ -18,6 +18,8 @@ static auto last_chain_sound_thought_timestamp = std::chrono::steady_clock::now(
 static auto last_disease_cure_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_cum_effect_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_cum_effect_removal_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_entered_water_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_exited_water_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Stomach Rot",
@@ -1032,6 +1034,44 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
+
+	/*
+[2026-09-26 09:17:19.628] [log] [info] [handle_active_magic_effect_changes.cpp:1071] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-26 09:17:19.628] [log] [info] [handle_active_magic_effect_changes.cpp:1072] Effect APPLIED on Lillith | UID=1
+[2026-09-26 09:17:19.628] [log] [info] [handle_active_magic_effect_changes.cpp:1075] Base name: Is In Water Script | Base ptr: 0x272d014e400 | Base-FormID: 2B08AC45 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-26 09:17:19.628] [log] [info] [handle_active_magic_effect_changes.cpp:1076] base-Effect EDID:  | Source ptr: 0x272d0238400  |  Caster: Lillith 
+[2026-09-26 09:17:19.628] [log] [info] [handle_active_magic_effect_changes.cpp:1080] Magnitude: 0 | Duration: 0
+[2026-09-26 09:17:19.628] [log] [info] [handle_active_magic_effect_changes.cpp:1083] Source name: iNeed | Source FormID: 2B000D63 | Source EDID:  
+[2026-09-26 09:17:19.628] [log] [info] [handle_active_magic_effect_changes.cpp:1089] Form LookupByID 2B08AC45 found: Is In Water Script
+	*/	
+	if (base && ( (std::strcmp(base_name, "Is In Water Script") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			if (!cooldown_has_passed(last_entered_water_thought_timestamp, 60*5))
+			{
+				return;
+			}
+			SKSE::log::info("Event handler for Is In Water Script effect application!");
+			std::string final_thought_string = std::format("You have entered the water.  It may be quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now in the water.");
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+			last_entered_water_thought_timestamp = std::chrono::steady_clock::now();
+		} else {
+			if (!cooldown_has_passed(last_exited_water_thought_timestamp, 60*5))
+			{
+				return;
+			}
+			SKSE::log::info("Event handler for Is In Water Script effect removal!");
+			std::string final_thought_string = std::format("You have exited the water.  It may have been quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now out of the water.");
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;	
+			last_exited_water_thought_timestamp = std::chrono::steady_clock::now();
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+
+
 
 // *************************************************
 // *** HERE WE PUT SOME EXTRA NOTIFICATIONS FOR UNHANDLED MAGIC EFFECTS THAT WE DON'T UNDERSTAND AND WANT MORE POPUP MESSAGES FOR, TO BETTER DETECT THEM AND THEN UNDERSTAND THEM ***
