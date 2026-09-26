@@ -802,16 +802,42 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 [2026-09-06 09:23:36.988] [log] [info] [handle_active_magic_effect_changes.cpp:686] Magnitude: -1.38 | Duration: 30
 [2026-09-06 09:23:36.988] [log] [info] [handle_active_magic_effect_changes.cpp:689] Source name: Red Mountain Flower | Source FormID: 77E1D | Source EDID: MountainFlower01Red 
 [2026-09-06 09:23:36.988] [log] [info] [handle_active_magic_effect_changes.cpp:695] Form LookupByID 6904C7FB found: Drain Intelligence
+
+[2026-09-26 15:43:14.067] [log] [info] [handle_active_magic_effect_changes.cpp:1111] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-26 15:43:14.067] [log] [info] [handle_active_magic_effect_changes.cpp:1112] Effect APPLIED on Lillith | UID=33
+[2026-09-26 15:43:14.067] [log] [info] [handle_active_magic_effect_changes.cpp:1115] Base name: Drain Intelligence | Base ptr: 0x1d9f0da5d00 | Base-FormID: 6604C7FB | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-26 15:43:14.067] [log] [info] [handle_active_magic_effect_changes.cpp:1116] base-Effect EDID:  | Source ptr: 0x1da0c6342c0  |  Caster: Lillith 
+[2026-09-26 15:43:14.067] [log] [info] [handle_active_magic_effect_changes.cpp:1120] Magnitude: -3.16 | Duration: 30
+[2026-09-26 15:43:14.067] [log] [info] [handle_active_magic_effect_changes.cpp:1123] Source name: Ayleid Moon Moth | Source FormID: 6632B1A3 | Source EDID:  
+[2026-09-26 15:43:14.067] [log] [info] [handle_active_magic_effect_changes.cpp:1129] Form LookupByID 6604C7FB found: Drain Intelligence
+
+[2026-09-26 15:43:27.173] [log] [info] [handle_active_magic_effect_changes.cpp:1111] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-26 15:43:27.173] [log] [info] [handle_active_magic_effect_changes.cpp:1112] Effect APPLIED on Lillith | UID=36
+[2026-09-26 15:43:27.173] [log] [info] [handle_active_magic_effect_changes.cpp:1115] Base name: Damage Health | Base ptr: 0x1d9dea5f200 | Base-FormID: 3EB42 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-26 15:43:27.173] [log] [info] [handle_active_magic_effect_changes.cpp:1116] base-Effect EDID:  | Source ptr: 0x1d9dd14c2c0  |  Caster: Lillith 
+[2026-09-26 15:43:27.173] [log] [info] [handle_active_magic_effect_changes.cpp:1120] Magnitude: -9.38 | Duration: 0.01
+[2026-09-26 15:43:27.173] [log] [info] [handle_active_magic_effect_changes.cpp:1123] Source name: Nirnroot | Source FormID: 59B86 | Source EDID:  
+[2026-09-26 15:43:27.173] [log] [info] [handle_active_magic_effect_changes.cpp:1129] Form LookupByID 3EB42 found: Damage Health
+
 */
-	if (base && ( (std::strcmp(base_name, "Drain Intelligence") == 0) && (std::strcmp(source->GetName(), "Red Mountain Flower") == 0) ) )
+	if (base && ( (std::strcmp(base_name, "Drain Intelligence") == 0) && ( (std::strcmp(source->GetName(), "Red Mountain Flower") == 0) || (std::strcmp(source->GetName(), "Ayleid Moon Moth") == 0) ) ) )
 	{
 		if (a_event->isApplied)
 		{
-			SKSE::log::info("Event handler for DRAIN INTELLIGENCE effect application from Red Mountain Flower!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate a piece of Red Mountain Flower and received a drain intelligence effect from it.    Say as much in your response, and make sure you make it clear that Red Mountain Flower simply causes drain intelligence effect.")); //  + standard_thought_instruction;
+			SKSE::log::info("Event handler for DRAIN INTELLIGENCE effect application from Red Mountain Flower or Ayleid Moon Moth!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate a piece of {} and received a drain intelligence effect from it.    Say as much in your response, and make sure you make it clear that {} simply causes drain intelligence effect.", source->GetName(), source->GetName())); //  + standard_thought_instruction;
 		} 
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
+	if (base && ( (std::strcmp(base_name, "Damage Health") == 0) && ( (std::strcmp(source->GetName(), "Nirnroot") == 0) ) ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for DAMAGE HEALTH effect application from Nirnroot or Ayleid Moon Moth!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate a piece of {} and received a damage health effect from it.    Say as much in your response, and make sure you make it clear that {} simply causes damage health effect.", source->GetName(), source->GetName())); //  + standard_thought_instruction;
+		} 
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}		
 /*
 [2026-09-06 12:17:39.192] [log] [info] [handle_active_magic_effect_changes.cpp:718] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
 [2026-09-06 12:17:39.192] [log] [info] [handle_active_magic_effect_changes.cpp:719] Effect APPLIED on Non-Lillith | UID=39
