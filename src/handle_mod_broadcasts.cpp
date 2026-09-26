@@ -270,6 +270,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		//"SkyrimNet_AudioEnded",
 		"SkyrimNet_MemoryCreated",  // No need to respond to this, as it's internal memory creation and not relevant to direct game status.^
 		"SkyrimNet_MoodChanged",  // No need to respond to this, as it's native to SkyrimNet anyway and probably already handled by SkyrimNet itself.
+		"SkyrimNet_DiaryCreated",  // This is internal.  No player thoughts.
 
 		"UIWheelMenu_LoadMenu",      //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
 		"UIWheelMenu_SetOption",     //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
@@ -409,9 +410,10 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"AnimationEnd_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"StageEnd_",                            //  This might be from The-Ancient-Profession.
 		"StageStart_",                          //  This might be from The-Ancient-Profession.
+
 		// "AnimationStarting_TAPPlayerFreelance", //  This might be from The-Ancient-Profession.  We need this one for a comment at animation overall start.
 		"AnimationStart_TAPPlayerFreelance",    //  This might be from The-Ancient-Profession.
-		"AnimationEnding_TAPPlayerFreelance",   //  This might be from The-Ancient-Profession.
+		// "AnimationEnding_TAPPlayerFreelance",   //  This might be from The-Ancient-Profession.  We need this one for a comment at animation overall end.
 		"AnimationEnd_TAPPlayerFreelance",      //  This might be from The-Ancient-Profession.
 		"StageStart_TAPPlayerFreelance",        //  This might be from The-Ancient-Profession.
 		"StageEnd_TAPPlayerFreelance",          //  This might be from The-Ancient-Profession.
@@ -794,10 +796,23 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	
 	// MOD EVENT:  From The Ancient Profession mod, we have the following event:  AnimationStarting_TAPPlayerFreelance
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_TAPPlayerFreelance") == 0)  ) {
-		std::string  thought_message = std::format("You just managed to successfully prostitute yourself to a man and were paid the usual price of this profession.  You are now starting a sexual encounter with him, like a normal prostitute would.  Let us know your response to that, and make sure you implicitly explain that you are letting him fuck you and use you for his pleasure in your response as well. ");
+		std::string  thought_message = std::format("You just managed to successfully prostitute yourself to a man and were paid the usual price of this profession.  You are now starting a sexual encounter with him, like any normal prostitute would.  Let us know your response to that, and make sure you implicitly explain that you are letting him fuck you and use you for his pleasure in your response as well. ");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	       
+	// MOD EVENT:  From The Ancient Profession mod, we have the following event:  AnimationStarting_TAPPlayerFreelance
+	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_TAPPlayerFreelance") == 0)  ) {
+		std::string  thought_message = std::format("You are fucking a client as a sex worker.  But it seems the client wants yet another sex position, so you go along with it as agreed for that price and let him use you as he wishes.  Let us know your response to that, and make sure you implicitly explain that you are letting him fuck you and use you for his pleasure in your response as well. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
+	// MOD EVENT:  From The Ancient Profession mod, we have the following event:  AnimationEnding_TAPPlayerFreelance
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_TAPPlayerFreelance") == 0)  ) {
+		std::string  thought_message = std::format("You have just finished a sexual encounter with a client as part of your freelance sex work.  Reflect on the experience and let us know your thoughts on it.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
 
 	// MOD EVENT:  From some animal mod, creature maybe, we have the following event:  AnimationStarting_HelplessCreature
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_HelplessCreature") == 0)  ) {
