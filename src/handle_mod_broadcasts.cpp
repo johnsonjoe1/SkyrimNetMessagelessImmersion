@@ -20,6 +20,7 @@ static auto last_random_run_up_and_spank_thought_timestamp = std::chrono::steady
 static auto last_captive_defeat_end_sex_scene_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_player_involving_SLAC_scene_start = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_player_involving_SLAC_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_tap_player_freelance_stage_start_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 namespace
 {
 	bool try_handle_device_equipped_event(const SKSE::ModCallbackEvent* a_event)
@@ -802,8 +803,12 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}	       
 	// MOD EVENT:  From The Ancient Profession mod, we have the following event:  AnimationStarting_TAPPlayerFreelance
 	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_TAPPlayerFreelance") == 0)  ) {
+		if (!cooldown_has_passed(last_tap_player_freelance_stage_start_thought_timestamp, 40)) {
+			return;
+		}
 		std::string  thought_message = std::format("You are fucking a client as a sex worker.  But it seems the client wants yet another sex position, so you go along with it as agreed for that price and let him use you as he wishes.  Let us know your response to that, and make sure you implicitly explain that you are letting him fuck you and use you for his pleasure in your response as well. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		last_tap_player_freelance_stage_start_thought_timestamp = std::chrono::steady_clock::now();
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 	// MOD EVENT:  From The Ancient Profession mod, we have the following event:  AnimationEnding_TAPPlayerFreelance
