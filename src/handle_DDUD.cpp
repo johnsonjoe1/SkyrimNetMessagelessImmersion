@@ -10,6 +10,7 @@
 namespace
 {
 	auto last_chain_sound_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+	auto last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 /*
 [2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:864] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
@@ -251,6 +252,47 @@ bool handle_DDUD::handle_DDUD_chain_sound_effect(
 			last_chain_sound_thought_timestamp = std::chrono::steady_clock::now();
 		} else {
 			SKSE::log::info("Skipping ChainSoundEffect thought because cooldown has not expired yet.");
+		}
+	}
+
+	return true;
+}
+
+/*[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:419] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:420] Effect APPLIED on Lillith | UID=33
+[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:423] Base name: Muzzle Gag Ding-a-Ling Sounds Slow | Base ptr: 0x1d03e5c0d40 | Base-FormID: 110586B9 | Base-Form Type: 18   (This means: MGEF) 
+[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:424] base-Effect EDID: zadx_SndMuzzleGagDingaLingSlowMgef | Source ptr: 0x1d03e1c1f00  |  Caster: Lillith 
+[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:428] Magnitude: 0 | Duration: 0
+[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:431] Source name: Muzzle Gag Script | Source FormID: 110586B4 | Source EDID: zad_enchGagDingaLing 
+[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:437] Form LookupByID 110586B9 found: Muzzle Gag Ding-a-Ling Sounds Slow*/
+
+bool handle_DDUD::handle_DDUD_muzzle_gag_ding_a_ling_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+
+	auto* base = a_effect->GetBaseObject();
+	if (!base) {
+		return false;
+	}
+
+	const auto* base_name = base->GetName();
+	if (std::strcmp(base_name, "Muzzle Gag Ding-a-Ling Sounds Slow") != 0 &&
+		std::strcmp(base_name, "Muzzle Gag Ding-a-Ling Sounds Medium") != 0 &&
+		std::strcmp(base_name, "Muzzle Gag Ding-a-Ling Sounds Fast") != 0) {
+		return false;
+	}
+
+	if (a_event->isApplied) {
+		SKSE::log::info("Event handler for Muzzle Gag Ding-a-Ling Sounds effect application!");
+		if (cooldown_has_passed(last_muzzle_gag_ding_a_ling_sound_timestamp, 60 * 5)) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player, are now dangling a little bell, that is attached to your muzzle gag and keeps dingling little bell sounds whenever you move.  This is so humiliating.  It's all just because of the gag you are wearing.  In your response, you should cry out in desperation, that you are feeling so humiliated with that little bell, that you are unable to remove or muffle due to your bondage.  This event is so important, that you can elaborate in many words about your desperation here.");
+			last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now();
+		} else {
+			SKSE::log::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> But the cooldown in Event handler for Muzzle Gag Ding-a-Ling Sounds effect application hasn't passed yet!");
 		}
 	}
 

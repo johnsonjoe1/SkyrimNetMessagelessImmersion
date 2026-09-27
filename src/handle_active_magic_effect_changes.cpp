@@ -16,7 +16,6 @@
 namespace logger = SKSE::log;
 
 static auto last_drool_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
-static auto last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_disease_cure_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_cum_effect_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_cum_effect_removal_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
@@ -460,6 +459,10 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;
 	}
 
+	if (handle_DDUD::handle_DDUD_muzzle_gag_ding_a_ling_effect(a_event, effect)) {
+		return;
+	}
+
 	if (handle_alchemy_magic_effects::handle_magic_effect(a_event, effect)) {
 		return;
 	}
@@ -628,33 +631,6 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
-/*[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:419] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
-[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:420] Effect APPLIED on Lillith | UID=33
-[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:423] Base name: Muzzle Gag Ding-a-Ling Sounds Slow | Base ptr: 0x1d03e5c0d40 | Base-FormID: 110586B9 | Base-Form Type: 18   (This means: MGEF) 
-[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:424] base-Effect EDID: zadx_SndMuzzleGagDingaLingSlowMgef | Source ptr: 0x1d03e1c1f00  |  Caster: Lillith 
-[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:428] Magnitude: 0 | Duration: 0
-[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:431] Source name: Muzzle Gag Script | Source FormID: 110586B4 | Source EDID: zad_enchGagDingaLing 
-[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:437] Form LookupByID 110586B9 found: Muzzle Gag Ding-a-Ling Sounds Slow*/
-	if (base && ( (std::strcmp(base_name, "Muzzle Gag Ding-a-Ling Sounds Slow") == 0) 
-	|| (std::strcmp(base_name, "Muzzle Gag Ding-a-Ling Sounds Medium") == 0) 
-	|| (std::strcmp(base_name, "Muzzle Gag Ding-a-Ling Sounds Fast") == 0) ) )   // We already know, that this is about the player at this point, so no need to double-check!
-	{
-		if (a_event->isApplied)
-		{
-			SKSE::log::info("Event handler for Muzzle Gag Ding-a-Ling Sounds effect application!");
-			// We implement a cooldown here, just to be safe.
-			if (cooldown_has_passed(last_muzzle_gag_ding_a_ling_sound_timestamp, 60*5))  //  5 minutes cooldown
-			{
-				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, are now dangling a little bell, that is attached to your muzzle gag and keeps dingling little bell sounds whenever you move.  This is so humiliating.  It's all just because of the gag you are wearing.  In your response, you should cry out in desperation, that you are feeling so humiliated with that little bell, that you are unable to remove or muffle due to your bondage.  This event is so important, that you can elaborate in many words about your desperation here.")); //  + standard_thought_instruction;				
-				last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now();
-			} else {
-				SKSE::log::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> But the cooldown in Event handler for Muzzle Gag Ding-a-Ling Sounds effect application hasn't passed yet!");
-				return;
-			}
-		} 
-		//  The REMOVAL happens immediately afterwards and doesn't need to be mentioned again.
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}	
 
 /*
 ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============

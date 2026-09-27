@@ -20,4 +20,7 @@ public:
 	static bool handle_DDUD_chain_sound_effect(
 		const RE::TESActiveEffectApplyRemoveEvent* a_event,
 		RE::ActiveEffect* a_effect);
+	static bool handle_DDUD_muzzle_gag_ding_a_ling_effect(
+		const RE::TESActiveEffectApplyRemoveEvent* a_event,
+		RE::ActiveEffect* a_effect);
 };
