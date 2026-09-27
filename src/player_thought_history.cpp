@@ -37,6 +37,9 @@ void PlayerThoughtHistory::TryRecordSkyrimNetSpeech(std::string_view a_eventName
 		SKSE::log::warn("SkyrimNet player-thought event contained no text.");
 		return;
 	}
+	if (text.front() == '*' && text.back() == '*') {
+		return;
+	}
 
 	records.push_back({ std::chrono::system_clock::now(), text });
 	if (records.size() > maxThoughtHistory) {
