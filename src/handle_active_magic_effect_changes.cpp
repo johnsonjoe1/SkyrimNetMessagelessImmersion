@@ -143,6 +143,12 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"BM_ME_HostWeaponLicense",     // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 		"BM_ME_HostWhoreLicense",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 		"BM_ME_DetectStateWorkbench",  // The mod Licenses-Player Oppression checking for workbench state changes, can be ignored.
+		"BM_ME_DetectItemWeaponOut",
+
+		"BF SetInvulnerable Effect",
+		"BF Call Follower For Help Effect",
+		"BF Combat Player Effect",
+		"BF Stop Combat Effect",
 
 		// NOW HANDLED:   ""Muzzle Gag Ding-a-Ling Sounds Slow",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
 		// NOW HANDLED:   ""Muzzle Gag Ding-a-Ling Sounds Medium",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
@@ -1098,6 +1104,26 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	}	
 
 
+
+	
+	if (base && ( (std::strcmp(base_name, "Nullify Magicka") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for Nullify Magicka effect application!");
+			std::string final_thought_string = std::format("You have been cursed with a Nullify Magicka effect.  Your magicka has been nullified.  You feel powerless and unable to cast spells and unable to shout as well.  This curse is so strong, it renders you completly unable to use magic.  That is the effect of the curse, because you do not have a magic License.  Respond in character and say something and be sure to mention that you are now under the Nullify Magicka effect, because you have no license to use magic.");
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+			last_entered_water_thought_timestamp = std::chrono::steady_clock::now();
+		} else {
+			SKSE::log::info("Event handler for Nullify Magicka effect removal!");
+			std::string final_thought_string = std::format("The Nullify Magicka effect is now removed.  Your magicka is no longer nullified and you can cast spells and shout again.  Respond in character and say something and be sure to mention that you are now free from the suppression of your magical abilities.");
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;	
+			last_exited_water_thought_timestamp = std::chrono::steady_clock::now();
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
 
 // *************************************************
 // *** HERE WE PUT SOME EXTRA NOTIFICATIONS FOR UNHANDLED MAGIC EFFECTS THAT WE DON'T UNDERSTAND AND WANT MORE POPUP MESSAGES FOR, TO BETTER DETECT THEM AND THEN UNDERSTAND THEM ***
