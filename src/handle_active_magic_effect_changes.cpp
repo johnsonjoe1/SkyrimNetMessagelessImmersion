@@ -5,6 +5,7 @@
 #include "DumpThoughts.h"
 #include "handle_yps.h"
 #include "handle_SL_Survival.h"
+#include "handle_active_magic_effect_changes.h"
 #include <algorithm>
 #include <string_view>
 #include <unordered_set>
@@ -53,6 +54,31 @@ std::array<std::string, 12> list_of_all_sicknesses = {
     "Stomach Rot",
     "Food Poisoning"	
 };
+
+AtaxiaStage get_current_ataxia_stage()
+{
+	auto* player = RE::PlayerCharacter::GetSingleton();
+	if (!player) {
+		return AtaxiaStage::none;
+	}
+
+	auto has_spell = [player](std::string_view editorID) {
+		auto* spell = RE::TESForm::LookupByEditorID<RE::SpellItem>(editorID);
+		return spell && player->HasSpell(spell);
+	};
+
+	if (has_spell("RND_DiseaseAtaxiaStage2")) {
+		return AtaxiaStage::stage2;
+	}
+	if (has_spell("RND_DiseaseAtaxiaStage1")) {
+		return AtaxiaStage::stage1;
+	}
+	if (has_spell("RND_DiseaseAtaxiaStage0")) {
+		return AtaxiaStage::stage0;
+	}
+
+	return AtaxiaStage::none;
+}
 
 
 int IsAFoodBasedDisease(std::string_view keyword)
