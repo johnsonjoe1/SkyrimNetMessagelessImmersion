@@ -123,11 +123,13 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"_SLS_CombatBeginMgef",
 		"_SLS_CombatEndMgef",
 
-		"BM_ME_DetectLocChange",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
-		"BM_ME_DetectLocCity",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
-		"BM_ME_DetectLocTown",  // The mod Licenses-Player Oppression checking for location changes, can be ignored.
-		"BM_ME_PeriodicCheck",  // The mod Licenses-Player Oppression periodically doing something I presume.
-		"BM_ME_DetectStateJail",  // The mod Licenses-Player Oppression checking for jail state changes, can be ignored.
+		"BM_ME_PeriodicCheck",         // The mod Licenses-Player Oppression periodically doing something I presume.
+		"BM_ME_DetectLocChange",       // The mod Licenses-Player Oppression checking for location changes, can be ignored.
+		"BM_ME_DetectLocCity",         // The mod Licenses-Player Oppression checking for location changes, can be ignored.
+		"BM_ME_DetectLocTown",         // The mod Licenses-Player Oppression checking for location changes, can be ignored.
+		"BM_ME_DetectStateWorkbench",  // The mod Licenses-Player Oppression checking for workbench state changes, can be ignored.
+		"BM_ME_DetectItemWeaponOut",   // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.		
+		"BM_ME_DetectStateJail",       // The mod Licenses-Player Oppression checking for jail state changes, can be ignored.
 
 		"BM_ME_HostArmorLicense",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 		"BM_ME_HostBikiniExemption",   // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
@@ -142,13 +144,12 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"BM_ME_HostTravelPermit",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 		"BM_ME_HostWeaponLicense",     // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 		"BM_ME_HostWhoreLicense",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
-		"BM_ME_DetectStateWorkbench",  // The mod Licenses-Player Oppression checking for workbench state changes, can be ignored.
-		"BM_ME_DetectItemWeaponOut",
 
-		"BF SetInvulnerable Effect",
-		"BF Call Follower For Help Effect",
-		"BF Combat Player Effect",
-		"BF Stop Combat Effect",
+
+		"BF SetInvulnerable Effect",            // This is *PROBABLY* from Battlefuck, but I'm not sure
+		"BF Call Follower For Help Effect",     // This is *PROBABLY* from Battlefuck, but I'm not sure
+		"BF Combat Player Effect",              // This is *PROBABLY* from Battlefuck, but I'm not sure
+		"BF Stop Combat Effect",                // This is *PROBABLY* from Battlefuck, but I'm not sure
 
 		// NOW HANDLED:   ""Muzzle Gag Ding-a-Ling Sounds Slow",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
 		// NOW HANDLED:   ""Muzzle Gag Ding-a-Ling Sounds Medium",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
@@ -156,7 +157,7 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		// NOW HANDLED:   "Drool",   // This is from UD/DD/ZAD and from some gag, and COULD be used later.
 
 
-		"Quest Start Routine",  // This is from Mod Sleep-in-Lingerie, and startup/initialization of the Mod.
+		"Quest Start Routine",     // This is from Mod Sleep-in-Lingerie, and startup/initialization of the Mod.
 
 		"Standing Moving Detector Effect",   // This is also from SL Survival and runs all the time, like every 2 to 5 seconds, so useless for our purposes here.
 
