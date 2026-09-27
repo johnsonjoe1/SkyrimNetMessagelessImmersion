@@ -51,29 +51,27 @@ information as well, without extra code from then on.  So minimal invasiveness a
 
 # Supported mods
 
-Support doesn't mean full integration of everything. It means we pick up what is important and what is easy to get technically without invading and overwriting the old ESPs.  Given that, here is the list and some details on what is picked up.
+Support is intentionally selective rather than complete. SNMI does not modify these mods; it observes their exposed events, state, equipment, or magic effects and turns selected changes into SkyrimNet player thoughts.
 
-* YPS fashion mod:  YPS thoughts piped to SkyrimNet, YPS heels and feet training status and slowdown effects, comments on activation of clothing with YPS keywords, 
-  (https://www.loverslab.com/files/file/2583-immersive-hair-growth-and-styling-yps-devious-immersive-fashion-2025-06-08/),
-  Recommended setting for this one:  Turn off the in-build thought volume to zero, so that you don't have like an echo of the original sound sample from YPS and 
-  the player-thought voice from SkyrimNet.  Also, reduce the default frequency of thoughts, so that they integrate well with the
-  higher chatter frequency from SkyrimNet.  I use a setting of 4 percent probability per frame on 60 fps myself.
-* MME Milk mod:  Full milk, halfway full, empty, lactacid level rise, milk pump usage, maid level rise,  (https://www.loverslab.com/files/file/6103-milk-mod-economy-se/),
-* Advanced Nudity Detection (AND) mod:  Change of (partial) nudity state, (https://www.nexusmods.com/skyrimspecialedition/mods/165289),
-* SLSF:  Major changes of fame,  (https://www.loverslab.com/files/file/35874-sexlab-sexual-fame-reloaded/),
-* Battlefuck:  Start of struggle comments, (https://www.loverslab.com/files/file/18241-battle-fuck/),
-* FINISHED in 0.6.3:  Support for BodySearch mod (https://www.loverslab.com/files/file/9318-sexlab-body-search/),
-* Unforgiving Devices / Unforgiving Skyrim:  Application and removal of certain devices, 
-* SLAC:  Player-involved scene starts, stage changes and endings, plus approaching-creature events, (https://www.loverslab.com/files/file/6022-sexlab-aroused-creatures-se-2026-02-20/),
-* SL Survival 0.685 Beta SE: barefoot effect, (https://www.loverslab.com/blogs/entry/20175-sl-survival/)
-* STA v4.8 BETA SE: run-up-and-spank mod broadcast, (https://www.loverslab.com/blogs/entry/20176-spank-that-ass/)
-* The Ancient Profession:  Generic freelance work scene. (https://www.loverslab.com/files/file/11556-the-ancient-profession-2024-06-24/),
-* Some basic support for Jailrape mod. (https://www.loverslab.com/files/file/9111-sexlab-jail-rape/),
-* Some basic support for Devious Followers mod. (https://www.loverslab.com/files/file/44435-devious-followers-203-2025/)
-* Some basic support for Licenses - Player Oppression mod. (https://www.nexusmods.com/skyrimspecialedition/mods/110418?tab=description),
-* Some basic support for the SE Version of the Apropos 2 mod (from the LL forum:  https://www.loverslab.com/topic/136768-apropos-2-for-sse/),
-* Vanilla Skyrim:  disease application and cure (partial, only stomach rot disease so far).
-* Vanilla Skyrim:  furniture use, now with a furniture-type specific cooldown (0.6.6).
+* [YPS Fashion](https://www.loverslab.com/files/file/2583-immersive-hair-growth-and-styling-yps-devious-immersive-fashion-2025-06-08/): relays YPS's own thoughts, and comments on hair length and dye changes, makeup, nail polish, stockings, piercings, fashion addiction, foot conditions, heel training, and YPS movement penalties. YPS thoughts are suppressed during SexLab scenes. To avoid duplicate voice lines, set YPS's built-in thought volume to zero and reduce its thought frequency.
+* [Milk Mod Economy (MME)](https://www.loverslab.com/files/file/6103-milk-mod-economy-se/): reports milk fullness changes, Lactacid changes, milk-pump use, and Maid-level progress.
+* [Advanced Nudity Detection (AND)](https://www.nexusmods.com/skyrimspecialedition/mods/165289): reports changes to nudity, partial nudity, modesty, and flashing-risk states; worn equipment is also scanned to identify relevant transparent and flash-risk items.
+* [SexLab Sexual Fame Reloaded (SLSF)](https://www.loverslab.com/files/file/35874-sexlab-sexual-fame-reloaded/): monitors significant increases and decreases in the tracked fame categories and produces a combined response when appropriate.
+* [Battle Fuck](https://www.loverslab.com/files/file/18241-battle-fuck/): comments on player struggle events.
+* [SexLab Body Search](https://www.loverslab.com/files/file/9318-sexlab-body-search/): comments when a player body-search scene begins.
+* Devious Devices, Unforgiving Devices, and Unforgiving Skyrim: reacts to supported device equip/remove events, sentient-device dialogue, device struggles and falls, and blocked inventory, magic, or quick-access hotkeys. Selected restraint, gag, drool, tear, and similar magic effects are also recognized.
+* [SexLab Aroused Creatures (SLAC)](https://www.loverslab.com/files/file/6022-sexlab-aroused-creatures-se-2026-02-20/): handles player-involved scene starts, stage changes, scene endings, and approaching-creature events, with player filtering and cooldowns to limit repeated thoughts.
+* [SL Survival](https://www.loverslab.com/blogs/entry/20175-sl-survival/): comments on becoming barefoot or shod again, and on Bikini Curse and related out-of-breath effects.
+* [Spank That Ass (STA)](https://www.loverslab.com/blogs/entry/20176-spank-that-ass/): reacts to the run-up-and-spank broadcast.
+* [The Ancient Profession](https://www.loverslab.com/files/file/11556-the-ancient-profession-2024-06-24/): comments on the generic freelance-work scene.
+* [SexLab Jail Rape](https://www.loverslab.com/files/file/9111-sexlab-jail-rape/): reacts to player scene starts, position changes, and later stages, with a short stage-thought cooldown.
+* [Devious Followers](https://www.loverslab.com/files/file/44435-devious-followers-203-2025/): comments when the player's resistance is reduced.
+* [Licenses - Player Oppression](https://www.nexusmods.com/skyrimspecialedition/mods/110418?tab=description): reacts to guard bounty pursuit and resolution, license or permit acquisition, and the application or removal of the magic-suppression effect. License thoughts can be disabled in the SNMI INI.
+* iNeed: monitors hunger, thirst, and fatigue level changes; reacts to refilling waterskins and entering or leaving water.
+* Bathing in Skyrim: comments when the player becomes very dirty, is partially cleaned by swimming, or becomes fully clean after bathing. These thoughts can be disabled in the SNMI INI.
+* Creature Summoner: comments when the player summons a supported creature.
+* SexLab P+: tracks player-involved scene boundaries to avoid out-of-place clothing and fashion thoughts, and recognizes supported cum-effect application and removal.
+* Vanilla Skyrim: comments on selected diseases and cures (currently including Stomach Rot), and on using supported furniture such as blacksmith forges, tanning racks, and grindstones. Furniture thoughts use type-specific cooldowns.
 
 Note, that as said, there are only minimal gentle changes, nothing big or invasive.  And none of them are required in any form.  I add more stuff, as I play along and find something is missing and more response from SkyrimNet would be appropriate here and there.  Not a very systematic or completionist approach, but rather picking up stuff here and there.
 
