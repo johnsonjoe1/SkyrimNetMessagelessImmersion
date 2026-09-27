@@ -189,6 +189,14 @@ void handle_check_for_close_conversations()
 
 namespace
 {
+	void run_constant_whining_in_case_of_silence()
+	{
+		const auto silenceDuration = std::chrono::steady_clock::now() - DumpThoughts::GetLastSpeechTimestamp();
+		if (silenceDuration >= std::chrono::seconds(20)) {
+			LillithOnlyBox("run_constant_whining_in_case_of_silence() ran after at least 20 seconds without a thought.");
+		}
+	}
+
 	void RunPeriodicChecksIfDue()
 	{
 		if (!periodicChecksEnabled.load() || !RE::PlayerCharacter::GetSingleton()) {
@@ -218,6 +226,8 @@ namespace
 		handle_check_for_close_conversations();
 		handle_player_dirt::handle_player_dirt_changes();
 		handle_timeout_for_stale_scenes();
+		run_constant_whining_in_case_of_silence();
+
 		logger::info("\n******************************************************************************\n***** RunPeriodicChecksIfDue():  FINISHED DOING PERIODIC CHECKS *****\n***** Callbacks and events, that happen driven by other mods are handled separately *****\n******************************************************************************");
 	}
 }
