@@ -11,6 +11,7 @@
 
 namespace
 {
+	constexpr std::size_t maxThoughtHistory = 60;
 	constexpr std::size_t maxLoggedThoughts = 15;
 	std::vector<PlayerThoughtRecord> records;
 }
@@ -38,6 +39,9 @@ void PlayerThoughtHistory::TryRecordSkyrimNetSpeech(std::string_view a_eventName
 	}
 
 	records.push_back({ std::chrono::system_clock::now(), text });
+	if (records.size() > maxThoughtHistory) {
+		records.erase(records.begin());
+	}
 	SKSE::log::info("Recorded SkyrimNet player thought: {}", text);
 
     SKSE::log::info(">>>>>>>>> The previous log of all player thoughts now looks like this:");
