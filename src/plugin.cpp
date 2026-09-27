@@ -194,7 +194,16 @@ namespace
 		const auto silenceDuration = std::chrono::steady_clock::now() - DumpThoughts::GetLastSpeechTimestamp();
 		if (silenceDuration >= std::chrono::seconds(20)) {
 			LillithOnlyBox("run_constant_whining_in_case_of_silence() ran after at least 20 seconds without a thought.");
+			if (handle_iNeed::previous_iNeed_fatigue_level == 3) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
+					"You are extremely tired. You need a good long night of sleep. Your base Stamina and Magicka are reduced by about 55%. Your movement speed is reduced by 15%. And you can learn new skills 70% slower. Say so in your response and make clear that you are speaking about your fatigue from sleep deprivation.");
+			}
+			if (handle_player_dirt::is_player_very_dirty()) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
+					"You are very dirty. You need a proper bath with soap to get clean again. Your speechcraft effectiveness is reduced by 50%, because other people find you disgusting. And also your sneak ability is reduced by 25, because adversaries can smell you. And also your disease resistance is reduced by 100%, because you are more susceptible to infections. Say so in your response and make clear that you are speaking about your dirtiness.");
+			}
 		}
+		
 	}
 
 	void RunPeriodicChecksIfDue()
