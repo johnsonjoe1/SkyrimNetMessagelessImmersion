@@ -43,10 +43,12 @@ Version 0.6.12 and later supports both the legacy SkyrimNet trigger layout used 
 * Expanded SLAC handling for player-involved scene starts, stage changes, scene endings, and approaching creatures, with filtering and cooldowns to reduce unrelated or repeated thoughts.
 * Expanded active-magic-effect handling, including additional restraint, hood, bimbo-corruption, and cum-effect cases.
 
-How does it work?  It's a noob project.  It just hooks into magic effect changes and mod broadcasts from other mods (or the base game), and if something
+# How does it work?  
+
+It's a simple project.  It just hooks into magic effect changes and mod broadcasts from other mods (or the base game), and if something
 relevant shows up, we trigger a player-thought response.  
-Any other prompts from SkyrimNet are aware of the player-thoughts anyway, and therefore are also informed.  So SkyrimNet might pick up on the additional
-information as well, without extra code from then on.  So minimal invasiveness and a gentle presence in your load order is the goal.
+Any other prompts from SkyrimNet are aware of the player-thoughts.  So SkyrimNet might pick up on the additional
+information as well, without extra code.  Minimal invasiveness and a gentle conflict-free and overwrite-free presence in your load order is the goal.
 
 
 # Supported mods
@@ -76,49 +78,7 @@ Support is intentionally selective rather than complete. SNMI does not modify th
 
 Note, that as said, there are only minimal gentle changes, nothing big or invasive.  And none of them are required in any form.  I add more stuff, as I play along and find something is missing and more response from SkyrimNet would be appropriate here and there.  Not a very systematic or completionist approach, but rather picking up stuff here and there.
 
-# Features list
 
-At present, there are some hooks into the activation of furniture, like Tanning Rack and Blacksmith forge, that should trigger player thought.
-Then there are some hooks into the active magic effect process.  Whatever seems reasonable and can easily be interpreted from what is there in the event data will trigger a response.
-Also, mod event broadcasts from other mods will be listened to, and, where applicable, trigger a player-character thought response (depending on relevance).
-According to importance, some thoughts will be pushed with priority and on a no-cooldown channel.
-Other less important and more backgroundish events and sitation will only trigger thought-responses if it has been quiet for a while and nothing is going on.
-
-At present there is some content from vanilla Skyrim:
-* Thoughts upon using vanilla furniture blacksmith forge, tanning rack, grindstone and others.
-* Thoughts upon contracting certain diseases (Stomach rot, others untested).
-
-At present there is some content from Devious Devices / Unforgiving Devices:
-* Thoughts upon NEW slowdown penatly applied from some Devious Devices/Unforgiving Devices shoes.
-* Thoughts upon equipping / being equipped with yokes and straightjackets (based on hook into Magic Effect).
-* Tripping over your feet due to bondage boots.
-
-At present there is some content from YPS fashion mod:
-* Thoughts upon (recurring) slowdown penalty applied from YPS fashion mod and the current training status (Untrained feet and High Heels novice only so far).
-* YPS thoughts being piped through SkyrimNet player-voice system, but with a minimum time in between, so as to not overwhelm the TTS-channel.
-
-At present there is some content from MME Milk mod:
-* Thoughts upon using Milk-Mod-Economy furniture Milk Pumps.
-* Thoughts upon Milk level status changes (empty, half-full, full).
-* Thoughts upon Lactacid level changes (reaching 0 Lactacid, adding fresh Lactacid).
-* Thoughts upon reaching a new MME Maid Level.
-
-At present there is some support for Advanced-Nudity-Detection (AND) mod:
-* Thoughts upon changing the nakedness for a particular body section for the 17 basic on-off factions of the AND modesty system.
-  Unfortunately at present this does not work so well, when items have the flashing-risk-property enabled, but otherise it should be fine.
-
-Upon picking up items:
-* 0.5.0:  If there are special keywords, such as a YPS-fashion-level or an AND-flash-risk keyword or a SL-Survival-bikini keyword, thoughts upon that implication will be raised.
-* 0.5.1:  Summoning your own bear (and only the bear so far) via creature summoner mod will trigger a response.
-* 0.5.1:  Irresistable Attraction effect will be commented upon as well.  This might not be necessary or too much, but at present we just try how it works out.
-* 0.5.1:  Finer dirtyness handling, as a swim doesn't give the same cleanliness as a bath with soap.
-* 0.5.2:  Filter comments from clothing changes while in a SL scene, because that feels kind of out-of-place there, at least at the start.
-* 0.5.2:  Added basic support for Body-Search Mod:  Comments on scene start.
-* 0.5.2:  Added basic support for BattleFuck Mod.
-* 0.5.2:  yps Flexible Feet training status now handled properly.
-* 0.5.2:  All creature sommonings from creature summoner mod now handled properly, with a comment on the summoning.
-
-There is some sensitivity to overall SkyrimNet talk going on, so as to not babble too much when others are speaking, but on the other hand, give some updates and hopefully immersion and mental self-talk when it's otherwise quiet and alone time in the woods.
 
 # Usage/Configuration
 
