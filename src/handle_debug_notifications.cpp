@@ -22,91 +22,91 @@ namespace
 	constexpr std::array deviousFollowersNotificationThoughts = {
 		DeviousFollowersNotificationThought{
 			"$DF_DEBTADD_NOTI",
-			"Your devious follower has just added more gold to your debt. This is not merely an ordinary wage: unpaid debt gives your follower leverage to demand humiliating deals, control your money, punish you, or eventually treat your body as collateral. Respond in first person and make clear that your debt has just increased.",
+			"Your devious follower has just added more gold to your debt. This is not merely an ordinary wage: unpaid debt gives your follower leverage to demand humiliating deals, control your money, punish you, or eventually treat your body as collateral. Respond in first person and make clear that your debt has just increased.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about and that it is HIM doing all these things to you.",
 			false },
 		DeviousFollowersNotificationThought{
 			"$DF_DEBTTIRED_NOTI",
-			"Your devious follower is tired and has just added more gold to your debt because of it. Their tiredness therefore costs you money and gives them more leverage over you. Respond in first person and make clear why your debt has just increased.",
+			"Your devious follower is tired and has just added more gold to your debt because of it. Their tiredness therefore costs you money and gives them more leverage over you. Respond in first person and make clear why your debt has just increased.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about and that it is HIM doing all these things to you.",
 			false },
 		DeviousFollowersNotificationThought{
 			"$DF_NOREST_NOTI",
-			"Your devious follower believes they have not received enough rest and has just added debt as compensation. Respond in first person, making clear that their need for rest has increased what you owe them and strengthened their leverage over you.",
+			"Your devious follower believes they have not received enough rest and has just added debt as compensation. Respond in first person, making clear that their need for rest has increased what you owe them and strengthened their leverage over you.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about and that it is HIM doing all these things to you.",
 			false },
 		DeviousFollowersNotificationThought{
 			"$DFDANGER",
-			"Your debt to your devious follower has reached a dangerous level. If it keeps growing, they may use it to impose deals, take control of your gold, punish you, or claim your body as collateral. Respond urgently in first person and make clear that the danger comes from your mounting follower debt.",
+			"Your debt to your devious follower has reached a dangerous level. If it keeps growing, they may use it to impose deals, take control of your gold, punish you, or claim your body as collateral. Respond urgently in first person and make clear that the danger comes from your mounting follower debt.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_DEBTOVER_NOTI",
-			"Your devious follower is angry because you have not paid what you owe. Their anger is a warning that payment, another deal, punishment, or a worse consequence may soon be demanded. Respond in first person and make clear that your unpaid follower debt caused this.",
+			"Your devious follower is angry because you have not paid what you owe. Their anger is a warning that payment, another deal, punishment, or a worse consequence may soon be demanded. Respond in first person and make clear that your unpaid follower debt caused this.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_BORED_FOLLOWER",
-			"Your devious follower is becoming bored because you have accepted fewer deals than they currently expect. In Devious Followers, boredom is dangerous: it can increase what they charge and make them more inclined to play cruel tricks or impose new humiliations. Respond in first person and explain this realization naturally.",
+			"Your devious follower is becoming bored because you have accepted fewer deals than they currently expect. In Devious Followers, boredom is dangerous: it can increase what they charge and make them more inclined to play cruel tricks or impose new humiliations. Respond in first person and explain this realization naturally.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			false },
 		DeviousFollowersNotificationThought{
 			"$DF_CONFIDENT_FOLLOWER",
-			"Your devious follower has grown more confident and demanding. Even though you had enough deals to keep them entertained, they now expect still more from you in the future. Respond in first person and make clear that satisfying them has raised their expectations rather than making you safe.",
+			"Your devious follower has grown more confident and demanding. Even though you had enough deals to keep them entertained, they now expect still more from you in the future. Respond in first person and make clear that satisfying them has raised their expectations rather than making you safe.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			false },
 		DeviousFollowersNotificationThought{
 			"$DF_WAKEWILLPREST_NOTI",
-			"After sleeping, you have had time to reflect and your willpower to resist your Devious Followers has been restored. This makes it harder for your follower to control you for now, although they can still build debt and wear down your resistance again. Respond in first person with relief or renewed determination and make clear what the sleep restored.",
+			"After sleeping, you have had time to reflect and your willpower to resist your Devious Followers has been restored. This makes it harder for your follower to control you for now, although they can still build debt and wear down your resistance again. Respond in first person with relief or renewed determination and make clear what the sleep restored.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_PUNDEBT",
-			"Your devious follower has just increased your debt specifically as a punishment. This is not part of the normal daily fee; it is a penalty that also gives them more leverage over you. Respond in first person and make the punitive reason for the added debt clear.",
+			"Your devious follower has just increased your debt specifically as a punishment. This is not part of the normal daily fee; it is a penalty that also gives them more leverage over you. Respond in first person and make the punitive reason for the added debt clear.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DFDEALDAYINC",
-			"Your devious follower has just extended one of your current deals by another full day. You must obey that deal for longer before it becomes normally eligible for repayment. Respond in first person and make clear that a random existing deal was extended, even though you do not know which one yet.",
+			"Your devious follower has just extended one of your current deals by another full day. You must obey that deal for longer before it becomes normally eligible for repayment. Respond in first person and make clear that a random existing deal was extended, even though you do not know which one yet.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_FOLLOWER_TAKE",
-			"Your devious follower is deliberately confiscating some of the items from your inventory. They have not vanished by accident; your follower is taking them as another exercise of control over you. Respond immediately in first person and make clear what is happening.",
+			"Your devious follower is deliberately confiscating some of the items from your inventory. They have not vanished by accident; your follower is taking them as another exercise of control over you. Respond immediately in first person and make clear what is happening.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_KEYS_ALL_TAKEN",
-			"Your devious follower has just taken every restraint key you were carrying. Escaping or unlocking restraints will now depend much more on their permission or help. Respond in first person and make clear that all of your keys have been confiscated.",
+			"Your devious follower has just taken every restraint key you were carrying. Escaping or unlocking restraints will now depend much more on their permission or help. Respond in first person and make clear that all of your keys have been confiscated.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_ZERO_LIVES",
-			"Your devious follower has lost all of their remaining lives and is angry about being bound or incapacitated. They will offer little useful help until they have slept for at least six uninterrupted hours. Respond in first person and make that practical consequence understandable.",
+			"Your devious follower has lost all of their remaining lives and is angry about being bound or incapacitated. They will offer little useful help until they have slept for at least six uninterrupted hours. Respond in first person and make that practical consequence understandable.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_SLEEPTIED_NOTI",
-			"You have just awakened to discover that your devious follower tied you up while you slept and is now grinning about it. Respond in first person to the restraints, the betrayal of your vulnerability during sleep, and your follower's obvious satisfaction.",
+			"You have just awakened to discover that your devious follower tied you up while you slept and is now grinning about it. Respond in first person to the restraints, the betrayal of your vulnerability during sleep, and your follower's obvious satisfaction.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_SLEEPCOUGHT_NOTI",
-			"While you slept, your devious follower tried to tie you up, but you woke in time and caught them before they succeeded. Respond in first person to the attempted betrayal and your narrow escape from waking in restraints.",
+			"While you slept, your devious follower tried to tie you up, but you woke in time and caught them before they succeeded. Respond in first person to the attempted betrayal and your narrow escape from waking in restraints.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_DEALSPULLED",
-			"Your devious follower is physically dragging you toward a client because of your prostitution deal. The encounter is not random: fulfilling that deal is why you are being taken to this person. Respond urgently in first person and make that connection clear.",
+			"Your devious follower is physically dragging you toward a client because of your prostitution deal. The encounter is not random: fulfilling that deal is why you are being taken to this person. Respond urgently in first person and make that connection clear.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_DEALSTHIEF",
-			"During the encounter required by your prostitution deal, the client noticed your gold and stole some of it. Respond in first person, making clear that the client took advantage of you during the encounter and that your money is now gone.",
+			"During the encounter required by your prostitution deal, the client noticed your gold and stole some of it. Respond in first person, making clear that the client took advantage of you during the encounter and that your money is now gone.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_MILKING_NOTICE",
-			"Your devious follower has noticed that you were milked. If a milking deal is active, they care about how much milk you produced and may claim some of it. Respond in first person to the uncomfortable realization that your follower is monitoring your milk production.",
+			"Your devious follower has noticed that you were milked. If a milking deal is active, they care about how much milk you produced and may claim some of it. Respond in first person to the uncomfortable realization that your follower is monitoring your milk production.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			false },
 		DeviousFollowersNotificationThought{
 			"$DF_MILKING_NO_MILKS",
-			"You were milked but produced no bottles, and your devious follower considers that a failure under the milking deal. Respond in first person to being judged as an unproductive milk cow and make clear that no milk bottles were produced.",
+			"You were milked but produced no bottles, and your devious follower considers that a failure under the milking deal. Respond in first person to being judged as an unproductive milk cow and make clear that no milk bottles were produced.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			false },
 		DeviousFollowersNotificationThought{
 			"$DF_MILKING_ONE_MILK",
-			"You produced only one bottle when you were milked, and your devious follower considers that disappointing under the milking deal. Respond in first person to being judged by your follower for your poor milk production.",
+			"You produced only one bottle when you were milked, and your devious follower considers that disappointing under the milking deal. Respond in first person to being judged by your follower for your poor milk production.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			false },
 		DeviousFollowersNotificationThought{
 			"$DF_MILKING_FOLLOWER_DRINKS",
-			"Your devious follower has just taken and drunk some of the milk produced from your breasts. Respond in first person to seeing them claim your breast milk as something that belongs to them under the milking arrangement.",
+			"Your devious follower has just taken and drunk some of the milk produced from your breasts. Respond in first person to seeing them claim your breast milk as something that belongs to them under the milking arrangement.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_MILKING_BOTTLE_TAKEN",
-			"Your devious follower has just confiscated one bottle of milk produced from your breasts. Respond in first person and make clear that the bottle was deliberately claimed by your follower as part of their control over your milk production.",
+			"Your devious follower has just confiscated one bottle of milk produced from your breasts. Respond in first person and make clear that the bottle was deliberately claimed by your follower as part of their control over your milk production.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true }
 	};
 
