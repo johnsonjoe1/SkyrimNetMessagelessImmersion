@@ -15,6 +15,10 @@ namespace logger = SKSE::log;
 
 float previous_dirt_value = 100000;  // some impossible value, so that no message occurs (unless dirt value 0, which wouldn't likely be the case in mid-game)
 
+bool handle_player_dirt::is_player_very_dirty()
+{
+	return previous_dirt_value > 0.6f && previous_dirt_value <= 1.0f;
+}
 
 void handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start()
 {
