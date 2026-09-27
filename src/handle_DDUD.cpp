@@ -9,6 +9,8 @@
 
 namespace
 {
+	auto last_chain_sound_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+
 /*
 [2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:864] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
 [2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:865] Effect APPLIED on Lillith | UID=12
@@ -184,4 +186,73 @@ bool handle_DDUD::handle_DDUD_gag_magic_effect_stuff(
 	}
 
 	return try_handle_gag_effect(a_event, a_effect);
+}
+
+
+/*[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=47
+[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: Stagger when shouting | Base ptr: 0x20e387bae80 | Base-FormID: 1005380A | Base-Form Type: 18   (This means: MGEF) 
+[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:540] base-Effect EDID: zad_effShoutStagger | Source ptr: 0x20e3854ee00  |  Caster: Lillith 
+[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:544] Magnitude: 0 | Duration: 0
+[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:547] Source name: Restrictive Corset | Source FormID: 10052D45 | Source EDID: zad_EnchCorset 
+[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:553] Form LookupByID 1005380A found: Stagger when shouting*/
+bool handle_DDUD::handle_DDUD_restrictive_corset_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+
+	auto* base = a_effect->GetBaseObject();
+	auto* source = a_effect->spell;
+	if (!base || !source || std::strcmp(base->GetName(), "Stagger when shouting") != 0 ||
+		std::strcmp(source->GetName(), "Restrictive Corset") != 0) {
+		return false;
+	}
+
+	if (a_event->isApplied) {
+		SKSE::log::info("Event handler for Stagger when shouting APPLICATION!");
+		const std::string thought = "The corset you as the player just got locked into is so restrictive, that you can't even shout properly without staggering in this thing!  Say as much in your response, and be sure to make it clear, that you speak about the corset that you are wearing and also make it clear, that you can't shout properly any more (without staggering) while locked into this item.";
+		DumpThoughts::throw_out_TTS_thought_message("Active Effect: Stagger when shouting: THOUGHT: " + thought);
+		LillithOnlyBox(thought);
+	}
+
+	return true;
+}
+
+/*[2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=31
+[2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: ChainSoundEffect | Base ptr: 0x20e3799c480 | Base-FormID: 1101BB51 | Base-Form Type: 18   (This means: MGEF) 
+[2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:540] base-Effect EDID: zadx_HR_ChainSoundMagicEffect | Source ptr: 0x20e384a2740  |  Caster: Lillith 
+[2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:544] Magnitude: 0 | Duration: 0
+[2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:547] Source name: AnkleShackles-Enchant | Source FormID: 1102F518 | Source EDID: zadx_EnchAnkleShackles 
+[2026-08-16 17:56:54.805] [log] [info] [handle_active_magic_effect_changes.cpp:553] Form LookupByID 1101BB51 found: ChainSoundEffect*/
+
+bool handle_DDUD::handle_DDUD_chain_sound_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+
+	auto* base = a_effect->GetBaseObject();
+	auto* source = a_effect->spell;
+	if (!base || !source || std::strcmp(base->GetName(), "ChainSoundEffect") != 0 ||
+		std::strcmp(source->GetName(), "AnkleShackles-Enchant") != 0) {
+		return false;
+	}
+
+	if (a_event->isApplied) {
+		if (cooldown_has_passed(last_chain_sound_thought_timestamp, 180)) {
+			SKSE::log::info("Event handler for ChainSoundEffect APPLICATION!");
+			const std::string thought = "YOU, the player, are wearing ankle shackles with a chain, that is making sounds with every movement, so that it's impossible to move silently and sneak away in these things.  Say as much in your response, and be sure to make it clear, that you speak about the sounds from the ankle chains that you are wearing.";
+			DumpThoughts::throw_out_TTS_thought_message("Active Effect: ChainSoundEffect: THOUGHT: " + thought);
+			LillithOnlyBox(thought);
+			last_chain_sound_thought_timestamp = std::chrono::steady_clock::now();
+		} else {
+			SKSE::log::info("Skipping ChainSoundEffect thought because cooldown has not expired yet.");
+		}
+	}
+
+	return true;
 }
