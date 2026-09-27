@@ -13,6 +13,7 @@ namespace
 {
 	constexpr std::size_t maxThoughtHistory = 60;
 	constexpr std::size_t maxLoggedThoughts = 15;
+	constexpr std::size_t maxLoggedThoughtsForLillith = 30;
 	std::vector<PlayerThoughtRecord> records;
 }
 
@@ -66,10 +67,11 @@ void PlayerThoughtHistory::LogRecords()
 
 	const auto* player = RE::PlayerCharacter::GetSingleton();
 	const auto* playerName = player ? player->GetName() : nullptr;
-	const bool logCompleteHistory = playerName && std::string_view(playerName) == "Lillith";
+	const auto maxRecordsToLog = playerName && std::string_view(playerName) == "Lillith" ?
+		maxLoggedThoughtsForLillith : maxLoggedThoughts;
 	auto firstRecordToLog = records.cbegin();
-	if (!logCompleteHistory && records.size() > maxLoggedThoughts) {
-		firstRecordToLog = records.cend() - maxLoggedThoughts;
+	if (records.size() > maxRecordsToLog) {
+		firstRecordToLog = records.cend() - maxRecordsToLog;
 	}
 	const auto loggedRecordCount = static_cast<std::size_t>(records.cend() - firstRecordToLog);
 
