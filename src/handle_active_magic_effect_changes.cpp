@@ -3,6 +3,7 @@
 #include "SKSE/SKSE.h"
 #include "misc.h"
 #include "DumpThoughts.h"
+#include "handle_DDUD.h"
 #include "handle_yps.h"
 #include "handle_SL_Survival.h"
 #include "handle_active_magic_effect_changes.h"
@@ -441,75 +442,12 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 
 
 
-	// Let's try to track Unforgiving Devices Struggle Exhaustion here:  FIRST THE APPLICATION OF THE EFFECT.
-	if (base && ( (std::strcmp(base_name, "Exhaustion") == 0)  ) && ( (std::strcmp(source->GetName(), "Struggle exhaustion") == 0)  ) )
-	{
-		if (a_event->isApplied)
-		{
-			SKSE::log::info("Event handler for UD STRUGGLE EXHAUSTION APPLICATION!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just tried getting out of your locking bondage devices for a whole while. You may have made some progress, but nevertheless now you are too exhausted to continue.  Say as much in your response.")); //  + standard_thought_instruction;
-		} 
-		else  // i.e.  (!a_event->isApplied)
-		{
-			SKSE::log::info("Event handler for UD STRUGGLE EXHAUSTION REMOVAL!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just were trying to get out of your locking bondage devices for a whole while. You may have made some progress, but in any case, that activity had made you exhausted to the point where you couldn't continue any more.  But now time has passed and you're feeling better and you're good to go and maybe could continue trying.  Say as much in your response.")); //  + standard_thought_instruction;
-		}
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	if (handle_DDUD::handle_DDUD_struggle_exhaustion_effect(a_event, effect)) {
+		return;
 	}
-	// Let's try to track UD/US Black-Goo-Application-Effect here:  FIRST THE APPLICATION OF THE EFFECT.
-	if (base && ( (std::strcmp(base_name, "Device Manifest") == 0)  )  )
-	{
-		if (a_event->isApplied) 
-		{
-			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for BLACK-GOO-APPLICATION! ", base_name);
-			// RE::DebugMessageBox(stomach_rot_status.c_str());	
-			SKSE::log::info("Event handler for BLACK-GOO-APPLICATION!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("Some substance called black goo just came in contact with you, and, to your horror, it manifested into a bondage device, thus trapping you as the victim now locked into said device.  What are you thinking in the face of this situation? ")); //  + standard_thought_instruction;
-		}
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}
-	// Let's try to track UD/DD slowdown-effect from bondage boots: 
-	if (base && ( (std::strcmp(base_name, "SpeedMult Penalty") == 0)  ) )
-	{
-		if (std::strcmp(source->GetName(), "BootSlow-Enchant") == 0) {
-			if (a_event->isApplied)
-			{
-				SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN APPLICATION!");
-				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking bondage boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these heels equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
-			} 
-			else // i.e.  if (!a_event->isApplied) )
-			{
-				SKSE::log::info("Event handler for UD BONDAGE BOOTS SLOWDOWN REMOVAL!");
-				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into bondage boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking bondage devices on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
-			}
-		} else if (std::strcmp(source->GetName(), "AnkleShackles-Enchant") == 0) {
-			if (a_event->isApplied)
-			{
-				SKSE::log::info("Event handler for UD ANKLE SHACKLES SLOWDOWN APPLICATION!");
-				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking ankle shackles equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these shackles equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
-			} 
-			else // i.e.  if (!a_event->isApplied) )
-			{
-				SKSE::log::info("Event handler for UD ANKLE SHACKLES SLOWDOWN REMOVAL!");
-				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into ankle shackles the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking ankle shackles on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
-			}
-		} else if (std::strcmp(source->GetName(), "PonyBoot-Enchant") == 0) {
-			if (a_event->isApplied)
-			{
-				SKSE::log::info("Event handler for UD PONY BOOTS SLOWDOWN APPLICATION!");
-				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just got locking pony boots equipped onto your feet and you cannot take them off any more. But the important point is:  You cannot walk or run so fast any more with these boots equipped onto your feet! You will be slowed down for the whole time while wearing them (thus less able to run away from dangerious things)! Say as much in your response.")); //  + standard_thought_instruction;
-			} 
-			else // i.e.  if (!a_event->isApplied) )
-			{
-				SKSE::log::info("Event handler for UD PONY BOOTS SLOWDOWN REMOVAL!");
-				DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, had your feet locked into pony boots the whole time and couldn't get them off. This has slowed you down the whole time. But now you got rid of the locking pony boots on your feet. But the important point is:  This means you can finally move much faster again!  (And you won't trip over your feet any more.)  Say as much in your response.")); //  + standard_thought_instruction;
-			}
-		}
 
 
 
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}
 
 	/*
 [2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:864] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
@@ -544,59 +482,8 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 [2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:876] Source name: Hood Script | Source FormID: 1103D2DF | Source EDID:  
 [2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:882] Form LookupByID 10090000 found: Muffling Script
 */
-	if (std::strcmp(source->GetName(), "Hood Script") == 0) {   // We have 4 EFFECTS FROM HOODS here, and make the prompt specific to the hood (not some gag or blindfold)
-		if (std::strcmp(base_name, "Blindfold Script") == 0) {
-			if (a_event->isApplied)
-			{
-				SKSE::log::info("Event handler for Blindfold-through-Hood Script APPLICATION!");
-				std::string final_thought_string = std::format("YOU, the player, just got looked into a hood, and that hood doesn't even let you see anything, so that you are completely blindfolded.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you are wearing now."); //  + standard_thought_instruction;
-				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Blindfold-through-Hood: APPLIED-THOUGHT: " + final_thought_string);
-				LillithOnlyBox(final_thought_string);
-			} 
-			else // i.e.  if (!a_event->isApplied) )
-			{
-				SKSE::log::info("Event handler for Blindfold-through-Hood Script APPLICATION!");
-				std::string final_thought_string = std::format("YOU, the player, just escaped of of a locking bondage hood, and that hood was keeping you completely blindfolded, but now you can see again.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you were wearing just moments ago."); //  + standard_thought_instruction;
-				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Blindfold-through-Hood: RELEASE-THOUGHT: " + final_thought_string);
-				LillithOnlyBox(final_thought_string);
-			}
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		} else if (std::strcmp(base_name, "Gag Food Removal Script") == 0) {
-			if (a_event->isApplied)
-			{
-				SKSE::log::info("Event handler for Gag-Food-Removal-through-Hood Script APPLICATION!");
-				std::string final_thought_string = std::format("YOU, the player, just got looked into a hood, and that hood doesn't even let you eat or drink anything.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you are wearing now."); //  + standard_thought_instruction;
-				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Gag-Food-Removal-through-Hood: APPLIED-THOUGHT: " + final_thought_string);
-				LillithOnlyBox(final_thought_string);
-			} 
-			else // i.e.  if (!a_event->isApplied) )
-			{
-				SKSE::log::info("Event handler for Gag-Food-Removal-through-Hood Script APPLICATION!");
-				std::string final_thought_string = std::format("YOU, the player, just escaped of of a locking bondage hood, and that hood was keeping you from eating or drinking anything, but now you can eat and drink again.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you were wearing just moments ago."); //  + standard_thought_instruction;
-				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Gag-Food-Removal-through-Hood: RELEASE-THOUGHT: " + final_thought_string);
-				LillithOnlyBox(final_thought_string);
-			}
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		} else if (std::strcmp(base_name, "Gag Script") == 0) {
-			if (a_event->isApplied)
-			{
-				SKSE::log::info("Event handler for Gag-through-Hood Script APPLICATION!");
-				std::string final_thought_string = std::format("YOU, the player, just got looked into a hood, and that hood gags you completely so that you cannot utter a single word.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you are wearing now."); //  + standard_thought_instruction;
-				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Gag-through-Hood: APPLIED-THOUGHT: " + final_thought_string);
-				LillithOnlyBox(final_thought_string);
-			} 
-			else // i.e.  if (!a_event->isApplied) )
-			{
-				SKSE::log::info("Event handler for Gag-through-Hood Script APPLICATION!");
-				std::string final_thought_string = std::format("YOU, the player, just escaped of of a locking bondage hood, and that hood was keeping you completely gagged, but now you can speak again.  Say as much in your response, and be sure to make it clear, that you speak about the hood that you were wearing just moments ago."); //  + standard_thought_instruction;
-				DumpThoughts::throw_out_TTS_thought_message("Active Effect:Gag-through-Hood: RELEASE-THOUGHT: " + final_thought_string);
-				LillithOnlyBox(final_thought_string);
-			}
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		} else if (std::strcmp(base_name, "Muffling Script") == 0) {
-			// NOT SURE WHAT MUFFLING ACTUALLY DOES????  DOES THAT MEAN NO HEARING???  NOT SURE AND THEREFORE WE DON'T DO ANYTHING FOR NOW.
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		} 
+	if (handle_DDUD::handle_DDUD_hood_magic_effect_stuff(a_event, effect)) {
+		return;
 	}
 
 	/*
