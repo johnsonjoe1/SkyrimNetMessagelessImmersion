@@ -223,7 +223,9 @@ bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
 		"RSM_RequestTintSave",
 		"RSM_RequestTintLoad",
 		"RSM_HairColorChange",
-		"RSM_ShadersInvalidated"
+		"RSM_ShadersInvalidated",
+
+		"FW_OMEARefresh",  // No clue what this is, but it doesn't sound very useful for our purposes.
 	};		
 	if (ignored_mod_events.contains(event_name)) {
 		return true;
