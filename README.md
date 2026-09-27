@@ -70,6 +70,7 @@ Support is intentionally selective rather than complete. SNMI does not modify th
 * iNeed: monitors hunger, thirst, and fatigue level changes; reacts to refilling waterskins and entering or leaving water.
 * Bathing in Skyrim: comments when the player becomes very dirty, is partially cleaned by swimming, or becomes fully clean after bathing. These thoughts can be disabled in the SNMI INI.
 * Creature Summoner: comments when the player summons a supported creature.
+* Some basic support for the SE Version of the Apropos 2 mod (from the LL forum:  https://www.loverslab.com/topic/136768-apropos-2-for-sse/),
 * SexLab P+: tracks player-involved scene boundaries to avoid out-of-place clothing and fashion thoughts, and recognizes supported cum-effect application and removal.
 * Vanilla Skyrim: comments on selected diseases and cures (currently including Stomach Rot), and on using supported furniture such as blacksmith forges, tanning racks, and grindstones. Furniture thoughts use type-specific cooldowns.
 
