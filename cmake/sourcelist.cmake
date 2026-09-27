@@ -3,6 +3,7 @@ set(sources ${sources}
     src/DumpThoughts.cpp
     src/handle_AND_modesty.cpp
 	 src/handle_DDUD.cpp
+	 src/handle_alchemy_magic_effects.cpp
     src/handle_SL_Survival.cpp
     src/misc.cpp
     src/papyrus_interface.cpp
