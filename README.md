@@ -14,6 +14,8 @@ So everything should play the same, just with an potentially messageless and wid
 
 The current build uses CommonLibSSE-NG 9.1.0 and has been tested successfully on the Steam version of Skyrim 1.6.1170 with SKSE 2.2.6. It is built as an Address Library-compatible, version-independent SKSE plugin and is expected to support Skyrim 1.7.104 when used with SKSE 2.3.1 and Address Library v13, but that runtime has not yet been tested. GOG and Skyrim VR are also currently untested.
 
+NOTE:  All testing is done for Sexlab P+.  This one is not a hard requirement or anything, but it's API and responses might be slightly different from the older Sexlab 1.66b, so maybe some deterioration of quality or some missing features might happen on systems still running the old 1.66b version.  Sorry for any inconvenience this may cause.
+
 # Installation and requirements
 
 SkyrimNet is the only direct mod requirement. Its own requirements must also be installed and working:
@@ -46,7 +48,11 @@ relevant shows up, we trigger a player-thought response.
 Any other prompts from SkyrimNet are aware of the player-thoughts anyway, and therefore are also informed.  So SkyrimNet might pick up on the additional
 information as well, without extra code from then on.  So minimal invasiveness and a gentle presence in your load order is the goal.
 
-Other mods that are being picked on (at least in minimal amounts) when they are present:
+
+# Supported mods
+
+Support doesn't mean full integration of everything. It means we pick up what is important and what is easy to get technically without invading and overwriting the old ESPs.  Given that, here is the list and some details on what is picked up.
+
 * YPS fashion mod:  YPS thoughts piped to SkyrimNet, YPS heels and feet training status and slowdown effects, comments on activation of clothing with YPS keywords, 
   (https://www.loverslab.com/files/file/2583-immersive-hair-growth-and-styling-yps-devious-immersive-fashion-2025-06-08/),
   Recommended setting for this one:  Turn off the in-build thought volume to zero, so that you don't have like an echo of the original sound sample from YPS and 
