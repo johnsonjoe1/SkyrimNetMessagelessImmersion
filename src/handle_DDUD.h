@@ -28,4 +28,6 @@ public:
 		const SKSE::ModCallbackEvent* a_event);
 	static bool handle_DDUD_skyrimnet_event(
 		const SKSE::ModCallbackEvent* a_event);
+	static bool handle_DDUD_device_events(
+		const SKSE::ModCallbackEvent* a_event);
 };
