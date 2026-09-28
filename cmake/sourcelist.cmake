@@ -14,6 +14,7 @@ set(sources ${sources}
     src/handle_furniture_activation.cpp
     src/handle_mod_broadcasts.cpp
 	src/handle_jailrape.cpp
+    src/handle_captive_defeat.cpp
 	src/handle_licenses_player_oppression.cpp
 	src/player_thought_history.cpp
     src/handle_active_magic_effect_changes.cpp
