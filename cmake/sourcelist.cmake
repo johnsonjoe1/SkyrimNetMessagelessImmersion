@@ -17,6 +17,7 @@ set(sources ${sources}
     src/handle_helplessness.cpp
     src/handle_captive_defeat.cpp
 	 src/handle_bodysearch.cpp
+     src/handle_bimbos.cpp
 	src/handle_licenses_player_oppression.cpp
 	src/player_thought_history.cpp
     src/handle_active_magic_effect_changes.cpp
