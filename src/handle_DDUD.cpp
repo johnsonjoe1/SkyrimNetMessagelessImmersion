@@ -298,3 +298,27 @@ bool handle_DDUD::handle_DDUD_muzzle_gag_ding_a_ling_effect(
 
 	return true;
 }
+
+	// Maybe the player tried to access inventory or magic menu, but was prevented from doing so by Unforgiving Devices to enhance immersion and frustration.
+	// We comment accordingly to enhance player experince.
+	/*[2026-08-14 17:08:20.783] [log] [info] [handle_mod_broadcasts.cpp:547] MOD EVENT:  Name: ''DDUDNG_Event_Hotkey_captured_and_stopped''  StrArg: ''Find the hotkey in the number argument below''  NumArg: 23
+	[2026-08-14 17:08:20.783] [log] [info] [handle_mod_broadcasts.cpp:978] An unhandled mod-event was discovered: MOD EVENT:  Name: DDUDNG_Event_Hotkey_captured_and_stopped  StrArg: Find the hotkey in the number argument below  NumArg: 23  */	
+bool handle_DDUD::handle_DDUD_hotkey_captured_and_stopped_event(
+	const SKSE::ModCallbackEvent* a_event)
+{
+	if (!a_event || std::strcmp(a_event->eventName.c_str(), "DDUDNG_Event_Hotkey_captured_and_stopped") != 0) {
+		return false;
+	}
+
+	std::string thought_message;
+	if (a_event->numArg == 23) {
+		thought_message = std::format("The player just tried to use a hotkey to access your inventory, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the PC should describe to the player in first person, how your hands and fingers are unable to reach the items in your inventory like this.");
+	} else if (a_event->numArg == 15) {
+		thought_message = std::format("The player just tried to use a hotkey to access your magic menu, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the PC should describe to the player in first person, how your hands are bound and you can't do magic like this.");
+	} else if (a_event->numArg == 16) {
+		thought_message = std::format("The player just tried to use a hotkey to access your quick access menu, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the PC should explain to the player in first person, how your hands are bound and you can't reach your weapons or gear like this.");
+	}
+
+	DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+	return true;
+}
