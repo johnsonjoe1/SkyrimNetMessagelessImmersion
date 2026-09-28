@@ -30,4 +30,8 @@ public:
 		const SKSE::ModCallbackEvent* a_event);
 	static bool handle_DDUD_device_events(
 		const SKSE::ModCallbackEvent* a_event);
+	static bool handle_DDUD_device_equipped_event(
+		const SKSE::ModCallbackEvent* a_event);
+	static bool handle_DDUD_device_removed_event(
+		const SKSE::ModCallbackEvent* a_event);
 };
