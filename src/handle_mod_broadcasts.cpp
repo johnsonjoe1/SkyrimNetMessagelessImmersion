@@ -36,7 +36,7 @@ bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
 		"SeverActions_PersuasionFailed",
 		"SeverActions_OrphanCleanup",
 		"SeverActions_CampChallengeCleanup",
-		"CBPCPlayerCollisionWithFemaleEvent",
+		"CBPCPlayerCollisionWithFemaleEvent",   // This event can be triggered by a fall as well as just the idle animation while in an armbinder, so:  NO CHANCE TO MAKE ANYTHING USEFUL FROM THAT, unfortunately.  And it can be super-frequent as well.
 		"Obody_ApplyMorph",
 		"SKICP_configManagerReady",
 		"SKICP_modSelected",         // this is broadcast when the player selects a mod in the SKI Configuration Menu.
@@ -437,7 +437,9 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	if (handle_yps::try_handle_yps_mod_stuff(a_event)) {
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-
+	if (handle_bimbos::try_handle_mod_event(a_event)) {
+		return;
+	}
 
 	// MOD EVENT:  Name: AnimationStarting_BattleFuck :  this is the start of a BattleFuck scene.  We absolutely should comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_BattleFuck") == 0)  ) {
@@ -592,19 +594,9 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}	
 	
 
-
-
-	if (handle_bimbos::try_handle_mod_event(a_event)) {
-		return;
-	}
-
-	
-
 	if (handle_captive_defeat::try_handle_mod_event(a_event)) {
 		return;
 	}
-
-
 
 
 	// MOD EVENT:  IF there was other SkyrimNetSpeech or thoughts, we restart our pause tracking, to not overflow the BACKGROUND TTS channel with too much content for the listener.  There should also be a little bit of pause and quiet here and there.
@@ -625,20 +617,6 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		DumpThoughts::reset_last_speech_timestamp();
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-	// 	|| (std::strcmp(a_event->eventName.c_str() , "SkyrimNet_SpeechComplete") == 0)
-	
-
-
-
-	
-
-
-
-
-
-	
-	// CODE-MARKER:  THIS IS THE ENTRY POINT FOR MORE MOD EVENTS TO BE HANDLED!!!!! kkkk
-
 
 
 	
@@ -646,16 +624,4 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	LillithOnlyBox("An unhandled mod-event was discovered: " + debug_message);
 	logger::info("An unhandled mod-event was discovered: {}" , debug_message );
 
-	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
-	/*  IN THE END, WE CANNOT USE THIS, BECAUSE IT GETS TRIGGERED ALL THE TIME FROM E.g. UD ELLBOW BINDER NON-STOP FROM THE IDLE ANIMATION.
-		And the magnitude is also almost the same as when falling to the floor instead.  That's a shame.
-
-	if ( (std::strcmp(a_event->eventName.c_str() , "CBPCPlayerCollisionWithFemaleEvent") == 0)  ) {
-		// In the CBPS mode, there are these collision configs below, but the str-args observed in real life so far were:  L Breast01
-		// [NPC L Breast] [NPC R Breast] [NPC L Butt] [NPC R Butt]
-		std::string  thought_message = std::format("YOU, the player, just took a hard hit one of your body parts.  You can guess which one it is from this string: '{}'. This was probably very painful. Say as much in your response, also mentioning the respective body part.  What are you thinking now based on this? ", a_event->strArg.c_str());
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-		return RE::BSEventNotifyControl::kContinue;
-	}
-	*/
 }
