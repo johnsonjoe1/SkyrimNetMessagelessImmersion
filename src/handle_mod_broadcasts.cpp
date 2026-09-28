@@ -990,7 +990,6 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}
 
 
-
 	// This is the first thing that happens:  player goes down.   MOD EVENT:  Name: CaptiveDefeatWounded  StrArg:   NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "CaptiveDefeatWounded") == 0) ) {			
 		std::string  thought_message = std::format("It seems you have been wounded badly in your battle with your adversaries.  They have not captured you yet.  You must try to regain your strength quickly, or they might take you captive and do god-knows-what with you.  Explain that to the player via your response.  You can also add your feelings about this, while you speak in-character.  Since this is a major event and will lead to potentially longer enslavement, you can speak in more details and many words about this and understands the implications of what is happening to you now.");
