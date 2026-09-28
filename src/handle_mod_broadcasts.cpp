@@ -6,6 +6,7 @@
 #include "handle_jailrape.h"
 #include "handle_helplessness.h"
 #include "handle_captive_defeat.h"
+#include "handle_bodysearch.h"
 #include "handle_licenses_player_oppression.h"
 #include "handle_worn_equipment_change.h"
 #include "player_thought_history.h"
@@ -415,29 +416,23 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	if (handle_DDUD::handle_DDUD_sentient_dialogue_event(a_event)) {
 		return;
 	}
-
 	if (handle_DDUD::handle_DDUD_device_equipped_event(a_event)) {
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-
 	if (handle_DDUD::handle_DDUD_device_removed_event(a_event)) {
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-
-	if (handle_yps::try_handle_yps_mod_stuff(a_event)) {
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}
-
-
-
 	if (handle_DDUD::handle_DDUD_device_events(a_event)) {
 		return;
 	}
-	
 	if (handle_DDUD::handle_DDUD_skyrimnet_event(a_event)) {
 		return;
 	}
 
+
+	if (handle_yps::try_handle_yps_mod_stuff(a_event)) {
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 
 
 	// MOD EVENT:  Name: AnimationStarting_BattleFuck :  this is the start of a BattleFuck scene.  We absolutely should comment on it.
@@ -459,7 +454,9 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 
 
-	// MOD EVENT:  Generic orgasm start (and end)  [2026-05-21 21:44:52.579] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmStart  StrArg:   NumArg: 0  // [2026-05-21 21:45:00.613] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmEnd  StrArg:   NumArg: 0
+	// MOD EVENT:  Generic orgasm start (and end)  
+	// [2026-05-21 21:44:52.579] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmStart  StrArg:   NumArg: 0  
+	// [2026-05-21 21:45:00.613] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmEnd  StrArg:   NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "PlayerOrgasmStart") == 0)  ) {
 		// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
 		std::string  thought_message = std::format("Regardless whether you like it or not, from all the stimulation, you, the player, are now suddenly having an orgasm! Let us know this via your response. ");
@@ -492,36 +489,9 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}		
 
-	// MOD EVENT:  From BodySearch, we have the following event:  AnimationStarting_BodySearch
-	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_BodySearch") == 0)  ) {
-		std::string  thought_message = std::format("A guard has just brought you to their guards baracks, saying he needs to do a body search.  But now the search turns out to be mainly him groping your body everywhere for his pleasure and amusement. Let us know your response to that, and make sure you implicitly explain that you are being groped for pleasure in your response as well. ");
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		// More in this context:
-		// StageStart_BodySearch
-		// 4 seconds later:  AnimationStart_BodySearch
-		// StageEnd_BodySearch
-	}	
-	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_BodySearch") == 0)  ) {
-		std::string  thought_message = std::format("A guard has just brought you to their guards baracks, saying he needs to do a body search.  But now the search turns out to be mainly him groping your body everywhere for his pleasure and amusement. That has been going on for a while.  And now he is continuing to grope you even more as he pleases. Let us know your response to that. ");
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		// More in this context:
-		// StageStart_BodySearch
-		// 4 seconds later:  AnimationStart_BodySearch
-		// StageEnd_BodySearch
-	}		
-	if ( (std::strcmp(a_event->eventName.c_str() , "StageEnd_BodySearch") == 0) 
-	|| (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BodySearch") == 0) 
-	|| (std::strcmp(a_event->eventName.c_str() , "AnimationEnd_BodySearch") == 0) ) {
-		// nothing to do here, just exit.
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	if (handle_bodysearch::try_handle_mod_event(a_event)) {
+		return;
 	}
-	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BodySearch") == 0)  ) {
-		std::string  thought_message = std::format("A guard has just brought you to their guards baracks, saying he needs to do a body search.  But then the search turns out to be mainly him groping your body everywhere for his pleasure and amusement. Finally now, the guard has finished groping you under the pretext of a body search and is finally letting go of you.  Let us know your response to that.");
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}	
 
 	
 	// Player-involved SLAC animation start, filtered and relayed by SNMI_Papyrus_Bridge_Script.
