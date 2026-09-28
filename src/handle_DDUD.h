@@ -26,4 +26,6 @@ public:
 		RE::ActiveEffect* a_effect);
 	static bool handle_DDUD_hotkey_captured_and_stopped_event(
 		const SKSE::ModCallbackEvent* a_event);
+	static bool handle_DDUD_skyrimnet_event(
+		const SKSE::ModCallbackEvent* a_event);
 };

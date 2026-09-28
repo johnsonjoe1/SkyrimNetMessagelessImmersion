@@ -322,3 +322,19 @@ bool handle_DDUD::handle_DDUD_hotkey_captured_and_stopped_event(
 	DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 	return true;
 }
+
+bool handle_DDUD::handle_DDUD_skyrimnet_event(
+	const SKSE::ModCallbackEvent* a_event)
+{
+	if (!a_event || std::strcmp(a_event->eventName.c_str(), "SkyrimNetDDUDNG_Event") != 0) {
+		return false;
+	}
+
+	if (a_event->strArg == "Lillith's Genital Piercing (Common Soul Gem) stops vibrating." ||
+		a_event->strArg == "Lillith's Genital Piercing (Common Soul Gem) starts vibrating.") {
+		return true;
+	}
+
+	std::string thought_message = std::format("SkyrimNetDDUDNG_Event: ''{}''", a_event->strArg.c_str());
+	return true;
+}

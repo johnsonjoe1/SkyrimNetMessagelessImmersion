@@ -659,19 +659,8 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	
-	// MOD EVENT:  Name: SkyrimNetDDUDNG_Event  StrArg: Lillith's Genital Piercing (Common Soul Gem) stops vibrating.  NumArg: 0
-	// Lillith's Genital Piercing (Common Soul Gem) starts vibrating.
-	if ( (std::strcmp(a_event->eventName.c_str() , "SkyrimNetDDUDNG_Event") == 0)  ) {
-		if ( (a_event->strArg == "Lillith's Genital Piercing (Common Soul Gem) stops vibrating." ) ||
-		     (a_event->strArg == "Lillith's Genital Piercing (Common Soul Gem) starts vibrating.") ) {
-			// do nothing here.  This is already a known event.  But we are specific and want to see the rest of them.
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		} else {
-			std::string thought_message = std::format("SkyrimNetDDUDNG_Event: ''{}''", a_event->strArg.c_str() );
-			// These events are numerous and mostly give text descriptions of what is happening concerning UD/DD device equipments.
-			// LillithOnlyBox(thought_message);
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-		}	
+	if (handle_DDUD::handle_DDUD_skyrimnet_event(a_event)) {
+		return;
 	}
 
 
