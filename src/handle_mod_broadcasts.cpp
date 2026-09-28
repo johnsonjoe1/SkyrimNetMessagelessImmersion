@@ -80,13 +80,11 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"Apropos2GameLoaded",
 		"Apropos2ConfigClose",
 
-
 		// "SNMI_JustPumpMyStringToPlayerThought",             // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_IMPORANT_PlayerThought",                 // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought",        // we can't short-circuit that any more, because it should reset background thought cooldowns
 		// "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought",  // we can't short-circuit that any more, because it should reset background thought cooldowns
 		"SNMI_PlayerActivatedSomething",   //  This is our own event, to be picked up by SkyrimNet, so we don't need to respond to that.
-
 
 		"iWantStatusBarsReady", 
 		"iWantWidgetsReset", 
@@ -246,7 +244,6 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SL_SetSpeed",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SL_EndScene",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SL_AdvanceScene",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
-		"SSL_CLEAR_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"AnimationEnding",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"AnimationEnding_MatchMaker",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"AnimationEnd",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
@@ -415,12 +412,8 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	std::string debug_message = std::format("MOD EVENT:  Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg );
 
 
-	// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
-	if ( (std::strcmp(a_event->eventName.c_str() , "UD_SentientDialogue") == 0)  ) {
-		// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
-		std::string  thought_message = std::format("YOU, the player, suddenly have a feeling like your {} is speaking to you, even though it is just an item and not a living creature.  Is it maybe time to question your sanity?  What is going on?  You have no clue, but you suspect it's some sentient device speaking to you.  Say so in your response. ", a_event->strArg.c_str());
-		DumpThoughts::throw_out_TTS_thought_message(thought_message);
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	if (handle_DDUD::handle_DDUD_sentient_dialogue_event(a_event)) {
+		return;
 	}
 
 	if (handle_DDUD::handle_DDUD_device_equipped_event(a_event)) {

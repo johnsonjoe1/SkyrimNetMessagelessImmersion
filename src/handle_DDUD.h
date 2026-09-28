@@ -34,4 +34,6 @@ public:
 		const SKSE::ModCallbackEvent* a_event);
 	static bool handle_DDUD_device_removed_event(
 		const SKSE::ModCallbackEvent* a_event);
+	static bool handle_DDUD_sentient_dialogue_event(
+		const SKSE::ModCallbackEvent* a_event);
 };

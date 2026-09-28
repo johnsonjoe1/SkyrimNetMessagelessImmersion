@@ -570,3 +570,17 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 
 		return true;
 	}
+
+
+// These are mod events, that we actually could and should use to react to them via thoughts:  DeviceEquippedyoke
+bool handle_DDUD::handle_DDUD_sentient_dialogue_event(const SKSE::ModCallbackEvent* a_event)
+{
+	if (!a_event || std::strcmp(a_event->eventName.c_str(), "UD_SentientDialogue") != 0) {
+		return false;
+	}
+
+	// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
+	std::string thought_message = std::format("YOU, the player, suddenly have a feeling like your {} is speaking to you, even though it is just an item and not a living creature.  Is it maybe time to question your sanity?  What is going on?  You have no clue, but you suspect it's some sentient device speaking to you.  Say so in your response. ", a_event->strArg.c_str());
+	DumpThoughts::throw_out_TTS_thought_message(thought_message);
+	return true;
+}
