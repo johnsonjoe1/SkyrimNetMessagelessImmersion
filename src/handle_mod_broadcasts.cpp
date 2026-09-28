@@ -19,6 +19,8 @@ static auto last_random_run_up_and_spank_thought_timestamp = std::chrono::steady
 static auto last_player_involving_SLAC_scene_start = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_player_involving_SLAC_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_tap_player_freelance_stage_start_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+
+
 bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
 		static const std::unordered_set<std::string> ignored_mod_events = {
 		"SKIWF_widgetLoaded",
@@ -663,7 +665,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 
 
 
-	if (handle_jailrape::try_handle_mod_event(a_event, last_devious_helplessness_thought_timestamp)) {
+	if (handle_jailrape::try_handle_mod_event(a_event)) {
 		return;
 	}
 
@@ -689,7 +691,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}	
 	
 
-	
+
 	if (handle_DDUD::handle_DDUD_hotkey_captured_and_stopped_event(a_event)) {
 		return;
 	}
