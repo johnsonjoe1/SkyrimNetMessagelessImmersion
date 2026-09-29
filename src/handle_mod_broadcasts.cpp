@@ -22,20 +22,14 @@ static auto last_player_involving_SLAC_scene_start = std::chrono::steady_clock::
 static auto last_player_involving_SLAC_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_tap_player_freelance_stage_start_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
+bool shortcircuit_Sever_events(std::string_view event_name)
+{
+	return event_name.starts_with("Sever");
+}
 
 bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
 		static const std::unordered_set<std::string> ignored_mod_events = {
 		"SKIWF_widgetLoaded",
-		"SeverActions_CellLoaded",
-		"SeverActions_Tick_FollowerManager",
-		"SeverActions_Tick_Arrest",
-		"SeverActions_Tick_Brawl",
-		"SeverActions_Tick_SpellTeach",
-		"SeverActions_Tick_Travel",
-		"SeverActions_Tick_Survival",
-		"SeverActions_PersuasionFailed",
-		"SeverActions_OrphanCleanup",
-		"SeverActions_CampChallengeCleanup",
 		"CBPCPlayerCollisionWithFemaleEvent",   // This event can be triggered by a fall as well as just the idle animation while in an armbinder, so:  NO CHANCE TO MAKE ANYTHING USEFUL FROM THAT, unfortunately.  And it can be super-frequent as well.
 		"Obody_ApplyMorph",
 		"SKICP_configManagerReady",
@@ -134,32 +128,6 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"_SLS_Int_PlayerLoadsGame",  // Sexlab-Survival has detected a reload, nothing else.
 		"RSM_LoadPlugins",
 
-		//  Mod events from SeverActions are directly integrated into SkyrimNet anyway, so no need to build a bridge for those in any way.
-		"SeverActions_CellLoaded",
-		"SeverActions_FamiliarityTimestamp",
-		"SeverActions_ReputationAssess",
-		"SeverActions_AmbientBanterReady",
-		"SeverActions_ForcedCombatEnded",   // No need to respond to this, I guess?
-		"SeverActions_NewTeammateDetected",
-		"SeverActionsNative_FurnitureCleanup",
-		"SeverActions_OrphanCleanup",
-		"SeverActions_TeammateRemoved",
-		"SeversHearth_CampTick",
-		"SeverActions_LLM_RelAssess",
-		"SeverActions_BrawlChallengeChoice",
-		"SeverBrawl_Started",
-		"SeverBrawl_Ended",
-		"SeverActions_LLM_RepAssess",
-		"SeverActions_VanillaFollowTopic",
-		"SeverActions_ExternalWaitAdopt",
-		"SeverActions_CombatSpoils",
-		"SeverActions_CampMemberDied",
-		"SeverActions_SetUIScale",
-		"SeverActions_PrismaUI_RequestData",
-		"SeverActions_BrawlChallengeExpired",
-		"SeverActionsNative_SandboxCleanup",
-		"SeverActionsNative_OnArrival",
-		"SeverActions_CampChallenge",
 		"SLOA_PlayerArousalUpdated",   // This update message is nice, but there is already a player response for that it seems.
 		"SLOA_NPCArousalUpdated",      // This update message is nice, but there is no need to respond now.
 
@@ -308,8 +276,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"CaptiveDefeatInit"  // This is called every time a new cell is entered and merely a technical event,  probably for CaptivePlayer.
 	};		
 
-	// We ignore SeverActions_LLM_RelAssess_ for the moment as well, because it doesn't even mention the actor involved.
-	if (ignored_mod_events.contains(event_name) || event_name.starts_with("SeverActions_LLM_RelAssess_")) {
+	if (ignored_mod_events.contains(event_name)) {
 		return true;
 	}
 
@@ -383,6 +350,9 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 
 void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 {
+	if (shortcircuit_Sever_events(a_event->eventName.c_str())) {
+		return;
+	}
 
 	if ( is_known_SUPERIRRELEVANT_mod_event(a_event->eventName.c_str())) {
 		// This mod event is so frequent it clutters up the log even if we just dedicate one line to it, so we will just dismiss this one silently.
