@@ -54,18 +54,12 @@ namespace
 		}
 	}
 
-	bool IsPlayerInDialogue()
-	{
-		auto* ui = RE::UI::GetSingleton();
-		return ui && ui->IsMenuOpen(RE::DialogueMenu::MENU_NAME);
-	}
-
 	bool HandleThoughtDuringDialogue(
 		ThoughtChannel a_channel,
 		std::string_view a_thought,
 		DumpThoughts::DialogueHandling a_dialogueHandling)
 	{
-		if (!IsPlayerInDialogue()) {
+		if (!DumpThoughts::IsPlayerInDialogue()) {
 			return false;
 		}
 		if (a_dialogueHandling == DumpThoughts::DialogueHandling::kProcessImmediately) {
@@ -99,6 +93,12 @@ namespace
 	}
 }
 
+bool DumpThoughts::IsPlayerInDialogue()
+{
+	auto* ui = RE::UI::GetSingleton();
+	return ui && ui->IsMenuOpen(RE::DialogueMenu::MENU_NAME);
+}
+
 // ****************************************************************************************************************
 //  Now some utility stuff:  The basic message dumping functions and message queuing function for thoughts are all
 //  what this class can do.  
@@ -129,7 +129,7 @@ void DumpThoughts::reset_last_game_load_or_reload_timestamp() {
 }
 void DumpThoughts::play_dialogue_suppressed_thoughts_if_possible()
 {
-	if (IsPlayerInDialogue()) {
+	if (DumpThoughts::IsPlayerInDialogue()) {
 		return;
 	}
 
