@@ -202,6 +202,11 @@ namespace
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 					"You are very dirty. You need a proper bath with soap to get clean again. Your speechcraft effectiveness is reduced by 50%, because other people find you disgusting. And also your sneak ability is reduced by 25, because adversaries can smell you. And also your disease resistance is reduced by 100%, because you are more susceptible to infections. Say so in your response and make clear that you are speaking about your dirtiness.");
 			}
+			if (get_current_ataxia_stage() == AtaxiaStage::stage2) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
+					"You are suffering from the most severe stage of Ataxia. The disease is making you move more slowly and deal less damage to enemies. Say so in your response and make clear that these symptoms are caused by your severe Ataxia.");
+			}
+			
 		}
 		
 	}
