@@ -172,6 +172,40 @@ void handle_yps::reset_fashion_tracking()
 	previous_yps_care_product_states.fill(std::nullopt);
 }
 
+YpsHeelTrainingStatus handle_yps::get_current_heels_training_status()
+{
+	auto* player = RE::PlayerCharacter::GetSingleton();
+	if (!player) {
+		return YpsHeelTrainingStatus::unknown;
+	}
+
+	auto has_spell = [player](std::string_view editorID) {
+		auto* spell = RE::TESForm::LookupByEditorID<RE::SpellItem>(editorID);
+		return spell && player->HasSpell(spell);
+	};
+
+	if (has_spell("yps_HeelsSpell50")) {
+		return YpsHeelTrainingStatus::bondage_feet;
+	}
+	if (has_spell("yps_HeelsSpell40")) {
+		return YpsHeelTrainingStatus::arched_feet;
+	}
+	if (has_spell("yps_HeelsSpell30")) {
+		return YpsHeelTrainingStatus::high_heel_walker;
+	}
+	if (has_spell("yps_HeelsSpell20")) {
+		return YpsHeelTrainingStatus::flexible_feet;
+	}
+	if (has_spell("yps_HeelsSpell10")) {
+		return YpsHeelTrainingStatus::high_heel_novice;
+	}
+	if (has_spell("yps_HeelsSpell00")) {
+		return YpsHeelTrainingStatus::untrained_feet;
+	}
+
+	return YpsHeelTrainingStatus::unknown;
+}
+
 void handle_yps::handle_yps_fashion_detection_stuff()
 {
 	auto* player = RE::PlayerCharacter::GetSingleton();
