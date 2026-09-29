@@ -98,7 +98,7 @@ If you want, you can disable e.g. the background thought channel. On SkyrimNet b
 You really want to help?  Great!  There are no rules.  Do what you want and can.  
 
 # License
-As free as possible. I guess nobody want this code anyway.  And that is referring only to the parts I added to the project, not the template/libraries that I started with.  See their license in the respective places.
+SkyrimNet Messageless Immersion is licensed under `GPL-3.0-or-later`. See [LICENSE](LICENSE) for the complete license text. Third-party components, including CommonLibSSE-NG, remain subject to their respective licenses and exceptions.
 
 # Credits
 I took the template from https://github.com/Monitor221hz/CommonLibSSE-NG-Template-Plugin
