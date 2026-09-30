@@ -214,6 +214,9 @@ namespace
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 					"You are suffering from the most severe stage of Ataxia. The disease is making you move more slowly and deal less damage to enemies. Say so in your response and make clear that these symptoms are caused by your severe Ataxia.");
 			}
+			for (const auto& sicknessThought : get_current_other_sickness_thoughts()) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(sicknessThought);
+			}
 			if (actually_wearing_heels_according_to_yps_thoughts) {
 				const char* heelsThought = nullptr;
 				switch (handle_yps::get_current_heels_training_status()) {

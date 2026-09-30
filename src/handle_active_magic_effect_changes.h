@@ -1,5 +1,6 @@
 #pragma once
 #include <string>   //  ChatGPT suggested this might be needed?????
+#include <vector>
 
 enum class AtaxiaStage
 {
@@ -10,4 +11,5 @@ enum class AtaxiaStage
 };
 
 AtaxiaStage get_current_ataxia_stage();
+std::vector<std::string> get_current_other_sickness_thoughts();
 void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemoveEvent* a_event);

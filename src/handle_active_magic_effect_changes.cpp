@@ -81,6 +81,68 @@ AtaxiaStage get_current_ataxia_stage()
 }
 
 
+std::vector<std::string> get_current_other_sickness_thoughts()
+{
+	std::vector<std::string> thoughts;
+	auto* player = RE::PlayerCharacter::GetSingleton();
+	if (!player) {
+		return thoughts;
+	}
+
+	struct SevereDisease
+	{
+		std::string_view spellEditorID;
+		std::string_view name;
+		std::string_view symptoms;
+	};
+	static constexpr std::array<SevereDisease, 5> severeDiseases{{
+		{ "RND_DiseaseBoneBreakFeverStage2", "Bone Break Fever", "The disease reduces your carrying capacity, slows your movement, and makes your attacks deal less damage." },
+		{ "RND_DiseaseBrainRotStage2", "Brain Rot", "The disease reduces your Magicka and makes your spells much less effective." },
+		{ "RND_DiseaseRattlesStage2", "Rattles", "The disease slows the regeneration of your Stamina and Magicka." },
+		{ "RND_DiseaseRockjointStage2", "Rockjoint", "The disease reduces your Stamina and carrying capacity." },
+		{ "RND_DiseaseWitbaneStage2", "Witbane", "The disease reduces your Magicka and makes learning new skills slower." }
+	}};
+	for (const auto& disease : severeDiseases) {
+		auto* spell = RE::TESForm::LookupByEditorID<RE::SpellItem>(disease.spellEditorID);
+		if (spell && player->HasSpell(spell)) {
+			thoughts.push_back(std::format("You are suffering from the most severe stage of {}. {} You need a cure for this disease. Say so in your response and explicitly name {} as the cause of these symptoms.", disease.name, disease.symptoms, disease.name));
+		}
+	}
+
+	// These sicknesses have no progressive stage spells in RND.
+	class SicknessVisitor : public RE::MagicTarget::ForEachActiveEffectVisitor
+	{
+	public:
+		RE::BSContainer::ForEachResult Accept(RE::ActiveEffect* effect) override
+		{
+			if (!effect || effect->flags.any(RE::ActiveEffect::Flag::kInactive, RE::ActiveEffect::Flag::kDispelled)) {
+				return RE::BSContainer::ForEachResult::kContinue;
+			}
+			auto* base = effect->GetBaseObject();
+			if (!base) {
+				return RE::BSContainer::ForEachResult::kContinue;
+			}
+			const std::string_view name = base->GetName();
+			if (name == "Brown Rot" || name == "Droops" || name == "Greenspore" || name == "Gutworm" || name == "Stomach Rot" || name == "Food Poisoning") {
+				names.emplace(name);
+			}
+			return RE::BSContainer::ForEachResult::kContinue;
+		}
+
+		std::unordered_set<std::string> names;
+	};
+	SicknessVisitor visitor;
+	if (auto* target = player->GetMagicTarget()) {
+		target->VisitEffects(visitor);
+	}
+	for (const auto& name : list_of_all_sicknesses) {
+		if (visitor.names.contains(name)) {
+			thoughts.push_back(std::format("You are currently suffering from the disease {} and still need a cure. Describe how you feel about being ill and needing treatment. Explicitly mention {} so the reason for your thought is clear.", name, name));
+		}
+	}
+	return thoughts;
+}
+
 int IsAFoodBasedDisease(std::string_view keyword)
 {
 	for (std::size_t i = 0; i < list_of_food_contracted_sicknesses.size(); ++i)
