@@ -46,6 +46,17 @@ add_commonlibsse_plugin(${PROJECT_NAME} SOURCES ${headers} ${sources}) # <--- sp
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23) # <--- use C++23 standard
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/PCH.h) # <--- PCH.h is required!
 
+# Copy the release INI into the testing mod after each successful build.
+add_custom_command(
+    TARGET "${PROJECT_NAME}"
+    POST_BUILD
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "C:/Modding/SKSE_on_Pandora/mods/SkyrimNetMessagelessImmersion/SKSE/Plugins"
+    COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/release/SKSE/Plugins/SkyrimNetMessagelessImmersion.ini"
+        "C:/Modding/SKSE_on_Pandora/mods/SkyrimNetMessagelessImmersion/SKSE/Plugins/SkyrimNetMessagelessImmersion.ini"
+    VERBATIM
+)
+
 target_include_directories(
 	"${PROJECT_NAME}"
 	PRIVATE
