@@ -11,6 +11,7 @@ namespace SNMI
         bool enableLicensesPlayerOppressionThoughts{ false };
         bool enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts{ false };
 		int updateInterval{ 5 };
+		int silenceRequiredBeforeSpontaneousStatusWhining{ 90 };
     };
 
     Settings& GetSettings();

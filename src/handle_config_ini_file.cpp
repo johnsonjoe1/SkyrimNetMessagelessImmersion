@@ -1,6 +1,10 @@
 #include "handle_config_ini_file.h"
 #include <Windows.h>
 #include <filesystem>
+#include <cerrno>
+#include <cwchar>
+#include <cwctype>
+#include <limits>
 
 namespace
 {
@@ -59,5 +63,22 @@ namespace SNMI
 
         settings.updateInterval = GetPrivateProfileIntW(L"Timing", L"UpdateInterval", 5, configPath.c_str());
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.updateInterval.  New variable value = {}", settings.updateInterval);
+
+        settings.silenceRequiredBeforeSpontaneousStatusWhining = 90;
+        wchar_t silenceValue[64]{};
+        const auto silenceLength = GetPrivateProfileStringW(L"Timing", L"SilenceRequiredBeforeSpontaneousStatusWhining", L"", silenceValue, 64, configPath.c_str());
+        if (silenceLength > 0 && silenceLength < 63) {
+            wchar_t* end = nullptr;
+            errno = 0;
+            const auto seconds = std::wcstol(silenceValue, &end, 10);
+            const bool parsed = end != silenceValue;
+            while (std::iswspace(*end)) {
+                ++end;
+            }
+            if (parsed && *end == L'\0' && errno != ERANGE && seconds >= 0 && seconds <= std::numeric_limits<int>::max()) {
+                settings.silenceRequiredBeforeSpontaneousStatusWhining = static_cast<int>(seconds);
+            }
+        }
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.silenceRequiredBeforeSpontaneousStatusWhining.  New variable value = {}", settings.silenceRequiredBeforeSpontaneousStatusWhining);
     }
 }
