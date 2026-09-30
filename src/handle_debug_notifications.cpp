@@ -218,7 +218,9 @@ void check_for_relevant_notifications(const char* notification)
 {
 	SKSE::log::info("Checking for relevant notification: {}", notification);
 	if (handle_devious_followers_notification(notification)) {
-		return;
+		return;  // It was a devious followers notification.
+	} else {
+		SKSE::log::info("Test failed.  This was NOT A DEVIOUS FOLLOWERS notification.");
 	}
 
 	if (strcmp(notification, "You can't eat or drink while wearing this gag.") == 0) {
