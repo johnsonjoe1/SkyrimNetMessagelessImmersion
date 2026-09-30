@@ -20,6 +20,11 @@ bool handle_player_dirt::is_player_very_dirty()
 	return previous_dirt_value > 0.6f && previous_dirt_value <= 1.0f;
 }
 
+bool handle_player_dirt::is_player_almost_at_filthy_dirt_stage()
+{
+	return previous_dirt_value > 0.98f ;
+}
+
 void handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start()
 {
 	logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start: TRYING to reset player dirt after game load or start.");

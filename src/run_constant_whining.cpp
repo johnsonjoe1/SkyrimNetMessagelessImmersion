@@ -28,7 +28,7 @@ void run_constant_whining_in_case_of_silence()
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 				"You are extremely thirsty. You need to drink a substantial amount of water to stay hydrated. Your base Stamina and Magicka regeneration are reduced by about 70%. And sleeping is less effective by about 20%. And also you need 70% more time in between shouts from your dry throat. Say so in your response and make clear that you are speaking about your thirst.");
 		}
-		if (handle_player_dirt::is_player_very_dirty()) {
+		if (handle_player_dirt::is_player_almost_at_filthy_dirt_stage()) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 				"You are very dirty. You need a proper bath with soap to get clean again. Your speechcraft effectiveness is reduced by 50%, because other people find you disgusting. And also your sneak ability is reduced by 25, because adversaries can smell you. And also your disease resistance is reduced by 100%, because you are more susceptible to infections. Say so in your response and make clear that you are speaking about your dirtiness.");
 		}
