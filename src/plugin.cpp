@@ -215,13 +215,13 @@ namespace
 					"You are suffering from the most severe stage of Ataxia. The disease is making you move more slowly and deal less damage to enemies. Say so in your response and make clear that these symptoms are caused by your severe Ataxia.");
 			}
 			for (const auto& sicknessThought : get_current_other_sickness_thoughts()) {
-				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(sicknessThought);
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(sicknessThought);
 			}
 			if (actually_wearing_heels_according_to_yps_thoughts) {
 				const char* heelsThought = nullptr;
 				switch (handle_yps::get_current_heels_training_status()) {
 				case YpsHeelTrainingStatus::untrained_feet:
-					heelsThought = "YOU, the player, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now. It will take maybe another day or two until you get the hang of them and can move a bit faster in them. Say as much in your response.";
+					heelsThought = "YOU, the player, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now. It will not be long before your feet start adapting to them and you get the hang of them and can move a bit faster in them. Say as much in your response.";
 					break;
 				case YpsHeelTrainingStatus::high_heel_novice:
 					heelsThought = "YOU, the player, are currently wearing high heels. You already have some experience with them, but you are still a High Heels Novice, so they still slow you down a bit. It will take maybe another day or two until you get the hang of them and can move a bit faster in them. Say as much in your response.";
