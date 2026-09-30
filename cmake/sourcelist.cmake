@@ -1,6 +1,7 @@
 set(sources ${sources}
     src/plugin.cpp
     src/DumpThoughts.cpp
+    src/run_constant_whining.cpp
     src/handle_AND_modesty.cpp
 	 src/handle_DDUD.cpp
 	 src/handle_alchemy_magic_effects.cpp

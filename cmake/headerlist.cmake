@@ -2,6 +2,7 @@ set(headers ${headers}
 	src/PCH.h 
     src/log.h
     src/DumpThoughts.h
+    src/run_constant_whining.h
     src/handle_AND_modesty.h
     src/handle_SL_Survival.h
     src/misc.h
