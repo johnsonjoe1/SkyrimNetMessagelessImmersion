@@ -40,6 +40,9 @@ bool handle_jailrape::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event
 		return true;
 	}
 
+
+
+
 	if (eventName == "AnimationChange_JailRapePC") {
 		last_jailrape_thought_timestamp = std::chrono::steady_clock::now();
 		const std::string thoughtMessage = "YOU, the player, are imprisoned by the guards. One of them has already used you for his own fun and pleasure. But now he wants even more sex. He wants to try even more different sex positions with you. And to use your body in yet more ways. You cannot stop him from doing what he wants with you.";
@@ -58,6 +61,32 @@ bool handle_jailrape::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event
 		LillithOnlyBox("StageStart_JailRapePC: " + thoughtMessage);
 		last_jailrape_thought_timestamp = std::chrono::steady_clock::now();
 		return true;
+	}
+
+	// NOW WE ALSO TREAT OTHER PRISONERS BEING USED BY THE GUARDS, but only if there is no scene involving the player yet 
+	if (eventName == "AnimationStarting_JailRapeNPC") {
+		if (!player_is_in_a_SL_scene()) { // We only speak about other prisoners being used, if the player isn't being used herself
+			const std::string thoughtMessage = "YOU, the player, can hear in the distance how the guards are starting to use another prisoner for their own fun and pleasure. Respond in character and let the player know through your response, that the guards are starting to use another prisoner somewhere else in jail. Your response may be full of empathy for the poor woman.";
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thoughtMessage);
+			LillithOnlyBox("AnimationStarting_JailRapeNPC: " + thoughtMessage);
+		}
+		return true;		
+	}
+	if (eventName == "OrgasmStart_JailRapeNPC") {
+		if (!player_is_in_a_SL_scene()) { // We only speak about other prisoners being used, if the player isn't being used herself		
+			const std::string thoughtMessage = "The guards are using another prisoner for their own fun and pleasure in the distance for quite a while.  Now you can hear, how the guards managed to make the poor other woman have an orgasm from that treatment. Respond in character and let the player know through your response, that the other prisoner was just made to orgasm somewhere else in jail. Your response may be full of empathy for the poor woman.";
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thoughtMessage);
+			LillithOnlyBox("OrgasmStart_JailRapeNPC: " + thoughtMessage);
+		}
+		return true;	
+	}
+	if (eventName == "AnimationEnding_JailRapeNPC") {
+		if (!player_is_in_a_SL_scene()) { // We only speak about other prisoners being used, if the player isn't being used herself
+			const std::string thoughtMessage = "YOU, the player, can hear in the distance how the guards have now finished using another prisoner for their own fun and pleasure. Respond in character and let the player know through your response, that the guards now let go of the other woman somewhere else in jail. Your response may be full of empathy for the poor woman.";
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thoughtMessage);
+			LillithOnlyBox("AnimationEnding_JailRapeNPC: " + thoughtMessage);
+		}
+		return true;	
 	}
 
 	return false;
