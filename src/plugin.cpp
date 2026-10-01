@@ -146,7 +146,7 @@ namespace
 			}
 		});
 
-		logger::info("Started the periodic-check scheduler.");
+		logger::info("Started the periodic-check scheduler.");  
 	}
 
 	void SuspendPeriodicChecks()

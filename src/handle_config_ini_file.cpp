@@ -46,7 +46,7 @@ namespace SNMI
         settings.debugLogging = GetPrivateProfileIntW(L"General", L"DebugLogging", 0, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.debug.  New variable value = {}", settings.debugLogging);
         if (!settings.debugLogging) {
-            SKSE::log::info("DebugLogging is disabled. From here onwards, only warnings and errors will be logged.");
+            SKSE::log::info("DebugLogging has been disabled by you via a setting in the SkyrimNetMessagelessImmersion.ini file. From here onwards, only warnings and errors will be logged.");
         }
         spdlog::set_level(settings.debugLogging ? spdlog::level::trace : spdlog::level::warn);
 
