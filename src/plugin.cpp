@@ -214,6 +214,7 @@ namespace
 		if (DumpThoughts::IsPlayerInDialogue()) {
 			DumpThoughts::reset_last_speech_timestamp();
 		}
+		DumpThoughts::play_dialogue_suppressed_thoughts_if_possible();
 		logger::info("Starting periodic checks (interval: {} seconds).", interval.count());
 		handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff();
 		handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff();
