@@ -22,7 +22,7 @@ bool handle_player_dirt::is_player_very_dirty()
 
 bool handle_player_dirt::is_player_almost_at_filthy_dirt_stage()
 {
-	return previous_dirt_value > 0.98f ;
+	return ( (previous_dirt_value > 0.98f) && (previous_dirt_value <= 1.0f) );   // keep the upper bound check as well, because uninitialized values could be higher than 1.0f
 }
 
 void handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start()
