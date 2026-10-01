@@ -26,6 +26,35 @@ namespace
 		kImportantWithLillithDebugWindow
 	};
 
+	enum class ThoughtHistoryPolicy
+	{
+		kExclude,
+		kInclude
+	};
+
+	enum class ThoughtCooldownPolicy
+	{
+		kNone,
+		kBackground
+	};
+
+	enum class ThoughtDebugWindowPolicy
+	{
+		kHide,
+		kShow
+	};
+
+	struct ThoughtRequest
+	{
+		ThoughtChannel channel;
+		std::string message;
+		DumpThoughts::DialogueHandling dialogueHandling;
+		ThoughtHistoryPolicy historyPolicy;
+		ThoughtCooldownPolicy cooldownPolicy;
+		ThoughtDebugWindowPolicy debugWindowPolicy;
+		std::string_view eventName;
+	};
+
 	struct DialogueSuppressedThought
 	{
 		std::string message;
@@ -90,6 +119,71 @@ namespace
 			GetThoughtChannelName(a_channel),
 			a_thought));
 		return true;
+	}
+
+	void EmitThought(ThoughtRequest a_request)
+	{
+		if (a_request.dialogueHandling == DumpThoughts::DialogueHandling::kDrop && DumpThoughts::IsPlayerInDialogue()) {
+			return;
+		}
+
+		if (a_request.cooldownPolicy == ThoughtCooldownPolicy::kBackground) {
+			const auto runtime = std::chrono::duration_cast<std::chrono::seconds>(
+				std::chrono::steady_clock::now() - last_speech_timestamp);
+			SKSE::log::info(
+				"Time since last thought-speech on BACKGROUNDCHANNEL OR PRIORITIES CHANNELS: {} seconds",
+				runtime.count());
+
+			int minimumTimeSinceLastSpeech = 90;
+			if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName(), "Lillith") == 0) {
+				minimumTimeSinceLastSpeech = 20;
+			}
+
+			if (runtime.count() < minimumTimeSinceLastSpeech) {
+				SKSE::log::info(
+					"Not throwing out the BACKGROUNDCHANNEL text as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.  But the disgarded message:\n {}",
+					runtime.count(),
+					minimumTimeSinceLastSpeech,
+					a_request.message);
+				return;
+			}
+		}
+
+		SKSE::log::info(
+			"The thought for the {} channel is: \n\n{} ",
+			GetThoughtChannelName(a_request.channel),
+			a_request.message);
+
+		std::string eventStringArgument = a_request.message;
+		if (a_request.historyPolicy == ThoughtHistoryPolicy::kInclude) {
+			eventStringArgument += "\n\nIn order for this to not be too repetitive and in order to build on previous thoughts, please find below the recent thought history, so that you can avoid repeating yourself too much and also you can build on what was already though before:\n\n";
+			eventStringArgument += PlayerThoughtHistory::get_thought_history_as_a_string(60 * 5);
+		}
+
+		if (DumpThoughts::too_early_after_game_load()) {
+			SKSE::log::info(
+				"////////BLOCKING {} THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////",
+				GetThoughtChannelName(a_request.channel));
+			SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", a_request.message);
+			return;
+		}
+
+		if (HandleThoughtDuringDialogue(a_request.channel, a_request.message, a_request.dialogueHandling)) {
+			return;
+		}
+
+		if (a_request.debugWindowPolicy == ThoughtDebugWindowPolicy::kShow) {
+			LillithOnlyBox(a_request.message);
+		}
+
+		auto* eventSource = SKSE::GetModCallbackEventSource();
+		SKSE::ModCallbackEvent event(
+			std::string(a_request.eventName),
+			eventStringArgument,
+			123.0f,
+			RE::PlayerCharacter::GetSingleton());
+		eventSource->SendEvent(&event);
+		last_speech_timestamp = std::chrono::steady_clock::now();
 	}
 }
 
@@ -219,186 +313,67 @@ bool DumpThoughts::too_early_for_next_lactacid_speech()
 	}
 }
 
-void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling) {
-	if (a_dialogueHandling == DialogueHandling::kDrop && IsPlayerInDialogue()) {
-		return;
-	}
-	// The background channel shouldn't be flooded with text all the time.  Give the real user a chance to relax.  So only bring background stuff, when nothing else is going on.
-	auto now = std::chrono::steady_clock::now();
-	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
-	SKSE::log::info("Time since last thought-speech on BACKGROUNDCHANNEL OR PRIORITIES CHANNELS: {} seconds", runtime.count());
-	int minimum_time_since_last_speech = 90;  // current default for non-debugging mode is 90 seconds between background thoughts (at least, since other dialogue can delay that further)
-	if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
-	{
-		// If player-name is Lillith, it means I'm debugging the plugin:  then show more messages and more quickly
-		minimum_time_since_last_speech = 20;  // in seconds
-	} 
-	// RE::DebugMessageBox(("Time passed since the last speech: " + std::to_string(runtime.count()) + " seconds").c_str());
-	if (runtime.count() < minimum_time_since_last_speech) {
-		SKSE::log::info("Not throwing out the BACKGROUNDCHANNEL text as a TTS thought, because only {} seconds have passed since the last speech, which is less than the minimum of {} seconds.  But the disgarded message was:\n {}", runtime.count(), minimum_time_since_last_speech, my_message.c_str());
-		// return RE::BSEventNotifyControl::kContinue;
-	} else {
-		//RE::DebugMessageBox(my_message.c_str());
-		SKSE::log::info("The thought for the BACKGROUND TTS channel is: \n\n{} ", my_message.c_str());
-		// We want to broadcast mod events.  So we need this event source.
-		std::string  mod_event_name = "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought";
-		std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-
-		mod_event_string_arg = mod_event_string_arg + "\n\nIn order for this to not be too repetitive and in order to build on previous thoughts, please find below the recent thought history, so that you can avoid repeating yourself too much and also you can build on what was already though before:\n\n";
-		mod_event_string_arg = mod_event_string_arg + PlayerThoughtHistory::get_thought_history_as_a_string(60*5); // look back some minutes
-
-		auto eventSource = SKSE::GetModCallbackEventSource();
-
-		if (DumpThoughts::too_early_after_game_load()) {
-			SKSE::log::info("////////BLOCKING BACKGROUND THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
-			SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
-			return;
-		}
-		if (HandleThoughtDuringDialogue(ThoughtChannel::kBackground, my_message, a_dialogueHandling)) {
-			return;
-		}
-		SKSE::ModCallbackEvent my_event(
-			mod_event_name,                        // event name
-			mod_event_string_arg,                  // arbitrary string argument 
-			123.0f,                                // arbitrary float argument
-			RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-		);
-		eventSource->SendEvent(&my_event);
-		last_speech_timestamp=std::chrono::steady_clock::now();  // only reset the timer if real speech has been produced
-	}
-}	
-void DumpThoughts::throw_out_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling) {
-	if (a_dialogueHandling == DialogueHandling::kDrop && IsPlayerInDialogue()) {
-		return;
-	}
-	// RE::DebugMessageBox(my_message.c_str());
-	SKSE::log::info("The thought for the NORMAL THOUGHT channel is: \n\n{} ", my_message.c_str());
-	// We want to broadcast mod events.  So we need this event source.
-	std::string  mod_event_name = "SNMI_JustPumpMyStringToPlayerThought";  //  was, but was probably wrong:   SNMI_PlayerActivatedSomething";
-	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-
-	mod_event_string_arg = mod_event_string_arg + "\n\nIn order for this to not be too repetitive and in order to build on previous thoughts, please find below the recent thought history, so that you can avoid repeating yourself too much and also you can build on what was already though before:\n\n";
-	mod_event_string_arg = mod_event_string_arg + PlayerThoughtHistory::get_thought_history_as_a_string(60*5); // look back some minutes
-
-	auto eventSource = SKSE::GetModCallbackEventSource();
-
-	if (DumpThoughts::too_early_after_game_load()) {
-		SKSE::log::info("////////BLOCKING normal thought message THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
-		SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
-		return;
-	}
-	if (HandleThoughtDuringDialogue(ThoughtChannel::kNormal, my_message, a_dialogueHandling)) {
-		return;
-	}
-	SKSE::ModCallbackEvent my_event(
-		mod_event_name,                        // event name
-		mod_event_string_arg,                  // arbitrary string argument 
-		123.0f,                                // arbitrary float argument
-		RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-	);
-	eventSource->SendEvent(&my_event);
-	last_speech_timestamp=std::chrono::steady_clock::now();		
+void DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling)
+{
+	EmitThought({
+		.channel = ThoughtChannel::kBackground,
+		.message = std::move(my_message),
+		.dialogueHandling = a_dialogueHandling,
+		.historyPolicy = ThoughtHistoryPolicy::kInclude,
+		.cooldownPolicy = ThoughtCooldownPolicy::kBackground,
+		.debugWindowPolicy = ThoughtDebugWindowPolicy::kHide,
+		.eventName = "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought"
+	});
 }
 
-
-
-void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string my_message, DialogueHandling a_dialogueHandling) {
-	if (a_dialogueHandling == DialogueHandling::kDrop && IsPlayerInDialogue()) {
-		return;
-	}
-	// RE::DebugMessageBox(my_message.c_str());
-	SKSE::log::info("The thought for the AS_LITTERAL_AS_POSSIBLE channel is: \n\n{} ", my_message.c_str());
-	// We want to broadcast mod events.  So we need this event source.
-	std::string  mod_event_name = "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought";   // this is the special event for literal and verbatim reproduction of the input text
-	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-	auto eventSource = SKSE::GetModCallbackEventSource();
-
-	if (DumpThoughts::too_early_after_game_load()) {
-		SKSE::log::info("////////BLOCKING AS_LITTERAL_AS_POSSIBLE thought message BECAUSE TOO EARLY AFTER RELOAD/////////");
-		SKSE::log::info("BLOCKED THOUGHT WAS:  \n\n{}", my_message.c_str());
-		return;
-	}
-	if (HandleThoughtDuringDialogue(ThoughtChannel::kLiteral, my_message, a_dialogueHandling)) {
-		return;
-	}
-
-	SKSE::ModCallbackEvent my_event(
-		mod_event_name,                        // event name
-		mod_event_string_arg,                  // arbitrary string argument 
-		123.0f,                                // arbitrary float argument
-		RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-	);
-	eventSource->SendEvent(&my_event);
-	last_speech_timestamp=std::chrono::steady_clock::now();
+void DumpThoughts::throw_out_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling)
+{
+	EmitThought({
+		.channel = ThoughtChannel::kNormal,
+		.message = std::move(my_message),
+		.dialogueHandling = a_dialogueHandling,
+		.historyPolicy = ThoughtHistoryPolicy::kInclude,
+		.cooldownPolicy = ThoughtCooldownPolicy::kNone,
+		.debugWindowPolicy = ThoughtDebugWindowPolicy::kHide,
+		.eventName = "SNMI_JustPumpMyStringToPlayerThought"
+	});
 }
 
-void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling) {
-	if (a_dialogueHandling == DialogueHandling::kDrop && IsPlayerInDialogue()) {
-		return;
-	}
-	// RE::DebugMessageBox(my_message.c_str());
-	SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: \n\n{} ", my_message.c_str());
-	// We want to broadcast mod events.  So we need this event source.
-	std::string  mod_event_name = "SNMI_Pump_IMPORANT_PlayerThought";
-	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-
-	mod_event_string_arg = mod_event_string_arg + "\n\nIn order for this to not be too repetitive and in order to build on previous thoughts, please find below the recent thought history, so that you can avoid repeating yourself too much and also you can build on what was already though before:\n\n";
-	mod_event_string_arg = mod_event_string_arg + PlayerThoughtHistory::get_thought_history_as_a_string(60*5); // look back some minutes
-	
-
-	auto eventSource = SKSE::GetModCallbackEventSource();
-
-	if (DumpThoughts::too_early_after_game_load()) {
-		SKSE::log::info("////////BLOCKING IMPORTANT thought message THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
-		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
-		return;
-	}
-	if (HandleThoughtDuringDialogue(ThoughtChannel::kImportant, my_message, a_dialogueHandling)) {
-		return;
-	}
-
-	SKSE::ModCallbackEvent my_event(
-		mod_event_name,                        // event name
-		mod_event_string_arg,                  // arbitrary string argument 
-		123.0f,                                // arbitrary float argument
-		RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-	);
-	eventSource->SendEvent(&my_event);
-	last_speech_timestamp=std::chrono::steady_clock::now();
+void DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string my_message, DialogueHandling a_dialogueHandling)
+{
+	EmitThought({
+		.channel = ThoughtChannel::kLiteral,
+		.message = std::move(my_message),
+		.dialogueHandling = a_dialogueHandling,
+		.historyPolicy = ThoughtHistoryPolicy::kExclude,
+		.cooldownPolicy = ThoughtCooldownPolicy::kNone,
+		.debugWindowPolicy = ThoughtDebugWindowPolicy::kHide,
+		.eventName = "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought"
+	});
 }
 
+void DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling)
+{
+	EmitThought({
+		.channel = ThoughtChannel::kImportant,
+		.message = std::move(my_message),
+		.dialogueHandling = a_dialogueHandling,
+		.historyPolicy = ThoughtHistoryPolicy::kInclude,
+		.cooldownPolicy = ThoughtCooldownPolicy::kNone,
+		.debugWindowPolicy = ThoughtDebugWindowPolicy::kHide,
+		.eventName = "SNMI_Pump_IMPORANT_PlayerThought"
+	});
+}
 
-void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std::string my_message, DialogueHandling a_dialogueHandling) {
-	if (a_dialogueHandling == DialogueHandling::kDrop && IsPlayerInDialogue()) {
-		return;
-	}
-	// RE::DebugMessageBox(my_message.c_str());
-	SKSE::log::info("The thought for the IMPORTANT THOUGHT channel is: \n\n{} ", my_message.c_str());
-	// We want to broadcast mod events.  So we need this event source.
-	std::string  mod_event_name = "SNMI_Pump_IMPORANT_PlayerThought";
-	std::string  mod_event_string_arg = my_message; //  + standard_thought_instruction;
-
-	mod_event_string_arg = mod_event_string_arg + "\n\nIn order for this to not be too repetitive and in order to build on previous thoughts, please find below the recent thought history, so that you can avoid repeating yourself too much and also you can build on what was already though before:\n\n";
-	mod_event_string_arg = mod_event_string_arg + PlayerThoughtHistory::get_thought_history_as_a_string(60*5); // look back some minutes
-
-	auto eventSource = SKSE::GetModCallbackEventSource();
-
-	if (DumpThoughts::too_early_after_game_load()) {
-		SKSE::log::info("////////BLOCKING IMPORTANT thought message THOUGHT OUTPUT BECAUSE TOO EARLY AFTER RELOAD/////////");
-		SKSE::log::info("BLOCKED THOUGHT WAS:  {}", my_message.c_str());
-		return;
-	}
-	if (HandleThoughtDuringDialogue(ThoughtChannel::kImportantWithLillithDebugWindow, my_message, a_dialogueHandling)) {
-		return;
-	}
-
-	LillithOnlyBox(my_message.c_str());
-	SKSE::ModCallbackEvent my_event(
-		mod_event_name,                        // event name
-		mod_event_string_arg,                  // arbitrary string argument 
-		123.0f,                                // arbitrary float argument
-		RE::PlayerCharacter::GetSingleton()    // sender "Form" argument, can be any form, but here I use the player character as the sender
-	);
-	eventSource->SendEvent(&my_event);
-	last_speech_timestamp=std::chrono::steady_clock::now();
+void DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std::string my_message, DialogueHandling a_dialogueHandling)
+{
+	EmitThought({
+		.channel = ThoughtChannel::kImportantWithLillithDebugWindow,
+		.message = std::move(my_message),
+		.dialogueHandling = a_dialogueHandling,
+		.historyPolicy = ThoughtHistoryPolicy::kInclude,
+		.cooldownPolicy = ThoughtCooldownPolicy::kNone,
+		.debugWindowPolicy = ThoughtDebugWindowPolicy::kShow,
+		.eventName = "SNMI_Pump_IMPORANT_PlayerThought"
+	});
 }
