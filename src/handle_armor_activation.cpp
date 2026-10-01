@@ -101,24 +101,24 @@ void handle_armor_item_activation(RE::TESBoundObject *base)
 		we_have_something_interesting_to_say = true;
 	}	
 
-	if ( (keywordSet.contains("AND_PelvicFlashRisk")) |
-			(keywordSet.contains("AND_PelvicFlashRiskExtreme")) |
-			(keywordSet.contains("AND_PelvicFlashRiskHigh")) |
-			(keywordSet.contains("AND_PelvicFlashRiskLow")) |
-			(keywordSet.contains("AND_PelvicFlashRiskUltra")) |				
-			(keywordSet.contains("AND_AssFlashRisk")) |
-			(keywordSet.contains("AND_AssFlashRiskHigh")) |
-			(keywordSet.contains("AND_AssFlashRiskExtreme")) |
-			(keywordSet.contains("AND_AssFlashRiskUltra")) |				
+	if ( (keywordSet.contains("AND_PelvicFlashRisk")) ||
+			(keywordSet.contains("AND_PelvicFlashRiskExtreme")) ||
+			(keywordSet.contains("AND_PelvicFlashRiskHigh")) ||
+			(keywordSet.contains("AND_PelvicFlashRiskLow")) ||
+			(keywordSet.contains("AND_PelvicFlashRiskUltra")) ||				
+			(keywordSet.contains("AND_AssFlashRisk")) ||
+			(keywordSet.contains("AND_AssFlashRiskHigh")) ||
+			(keywordSet.contains("AND_AssFlashRiskExtreme")) ||
+			(keywordSet.contains("AND_AssFlashRiskUltra")) ||				
 			(keywordSet.contains("AND_AssFlashRiskLow")) ) 
 	{
 		thought_string += " I bet that with this thing on, I would have a risk of flashing my ass or pelvis upon every move. ";
 		we_have_something_interesting_to_say = true;
 	}
-	if ( (keywordSet.contains("AND_ChestFlashRisk")) |
-			(keywordSet.contains("AND_ChestFlashRiskLow")) |
-			(keywordSet.contains("AND_ChestFlashRiskHigh")) |
-			(keywordSet.contains("AND_ChestFlashRiskExtreme")) |
+	if ( (keywordSet.contains("AND_ChestFlashRisk")) ||
+			(keywordSet.contains("AND_ChestFlashRiskLow")) ||
+			(keywordSet.contains("AND_ChestFlashRiskHigh")) ||
+			(keywordSet.contains("AND_ChestFlashRiskExtreme")) ||
 			(keywordSet.contains("AND_ChestFlashRiskUltra")) ) 
 	{
 		thought_string += " I bet that with this thing on, I would have a risk of flashing my chest upon every move. ";

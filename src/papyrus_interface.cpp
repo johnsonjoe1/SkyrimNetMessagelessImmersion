@@ -419,7 +419,7 @@ void SNMIPapyrus::handle_mme_milk_value_changes_and_produce_thoughts_from_them()
 
 	// We check if there is a change in the milk string
 
-	if ( (std::strcmp(current_milk_string.c_str() , previous_milk_string.c_str()) == 0)   |  (std::strcmp(previous_milk_string.c_str() , "No milk string HISTORY defined yet!") == 0)  |  (std::strcmp(previous_milk_string.c_str() , "No milk string defined IN PLUGIN yet!") == 0)) {
+	if ( (std::strcmp(current_milk_string.c_str() , previous_milk_string.c_str()) == 0)   ||  (std::strcmp(previous_milk_string.c_str() , "No milk string HISTORY defined yet!") == 0)  ||  (std::strcmp(previous_milk_string.c_str() , "No milk string defined IN PLUGIN yet!") == 0)) {
 		// There was no change in milk string OR it was still the startup value, so nothing much to do here, except kill the startup value.
 		previous_milk_string = current_milk_string;  // Update the previous milk string to the current one for the next comparison.
 	} else {

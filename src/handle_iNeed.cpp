@@ -54,7 +54,7 @@ void handle_iNeed::handle_iNeed_but_only_fatigue_stuff()
 		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: value={}", fatigue);
 		if (fatigue == 0) {
 			logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>iNeed Fatigue GlobalVariable found: i guess that means NO FATIGUE AT ALL, NOTHING! ");
-			if ( (fatigue < previous_iNeed_fatigue_level) & (previous_iNeed_fatigue_level != 1000000 ) ) {
+			if ( (fatigue < previous_iNeed_fatigue_level) && (previous_iNeed_fatigue_level != 1000000 ) ) {
 				DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("You are full rested from sleep and you are completely rid of your fatigue now!  Say so in your response and let us know how that makes you feel!  And make it clear that you speak about your fatigue in your response!"));
 				SKSE::log::info("Note:  Fatigue-level-update thought 1 was delivered.");
 			}							
