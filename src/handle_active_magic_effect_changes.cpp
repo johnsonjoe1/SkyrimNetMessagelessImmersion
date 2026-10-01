@@ -600,8 +600,55 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
+/*
+[2026-09-30 21:56:10.622] [log] [info] [handle_active_magic_effect_changes.cpp:873] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-30 21:56:10.622] [log] [info] [handle_active_magic_effect_changes.cpp:874] Effect APPLIED on Lillith | UID=40
+[2026-09-30 21:56:10.623] [log] [info] [handle_active_magic_effect_changes.cpp:877] Base name: Resist Disease | Base ptr: 0x23c6ec6acc0 | Base-FormID: FBFF5 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-30 21:56:10.623] [log] [info] [handle_active_magic_effect_changes.cpp:878] base-Effect EDID:  | Source ptr: 0x23c6ebb3900  |  Caster: Lillith 
+[2026-09-30 21:56:10.623] [log] [info] [handle_active_magic_effect_changes.cpp:882] Magnitude: 25 | Duration: 28800
+[2026-09-30 21:56:10.623] [log] [info] [handle_active_magic_effect_changes.cpp:885] Source name: Blessing of Talos | Source FormID: FB99A | Source EDID:  
+[2026-09-30 21:56:10.623] [log] [info] [handle_active_magic_effect_changes.cpp:891] Form LookupByID FBFF5 found: Resist Disease
+*/
+	if (base && ( (std::strcmp(base_name, "Resist Disease") == 0)  ) && ( (std::strcmp(source->GetName(), "Blessing of Talos") == 0)  ))
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for Resist Disease via Blessing of Thalos APPLICATION!");
+			std::string final_thought_string = std::format("YOU, the player character, just received the blessing of Thalos. This gives you improved resistance to disease.  Respond in character and let the player know how you feel about that, but be sure to mention you improved disease resistance thanks to the blessing, because otherwise the player won't know what you are talking about."); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Resist Disease via Blessing of Thalos: THOUGHT: " + final_thought_string);
+			LillithOnlyBox(final_thought_string);
+		} 
+		else // i.e.  if (!a_event->isApplied) )
+		{
+			// Do nothing here, since we only explain the effect when it is applied, that this is a special propery of the current corset.
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 
-
+	/*
+[2026-09-30 22:14:56.866] [log] [info] [handle_active_magic_effect_changes.cpp:873] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-09-30 22:14:56.866] [log] [info] [handle_active_magic_effect_changes.cpp:874] Effect REMOVED on Lillith | UID=36
+[2026-09-30 22:14:56.866] [log] [info] [handle_active_magic_effect_changes.cpp:877] Base name: Get Condition: Swimming | Base ptr: 0x239a1818480 | Base-FormID: FE019033 | Base-Form Type: 18   (This means: MGEF) 
+[2026-09-30 22:14:56.866] [log] [info] [handle_active_magic_effect_changes.cpp:878] base-Effect EDID:  | Source ptr: 0x23c59d42e00  |  Caster: Lillith 
+[2026-09-30 22:14:56.866] [log] [info] [handle_active_magic_effect_changes.cpp:882] Magnitude: 0 | Duration: 0
+[2026-09-30 22:14:56.866] [log] [info] [handle_active_magic_effect_changes.cpp:885] Source name: Get Dirty Over Time - Clean | Source FormID: FE01903A | Source EDID:  
+[2026-09-30 22:14:56.866] [log] [info] [handle_active_magic_effect_changes.cpp:891] Form LookupByID FE019033 found: Get Condition: Swimming
+	*/
+	if (base && ( (std::strcmp(base_name, "Get Condition: Swimming") == 0)  ) && ( (std::strcmp(source->GetName(), "Get Dirty Over Time - Clean") == 0)  ))
+	{
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for Get Condition: Swimming via Get Dirty Over Time - Clean APPLICATION!");
+			std::string final_thought_string = std::format("YOU, the player character, just started a little swim, which is helping to remove some of the dirt you have been aquiring. Respond in character and mention your relief about the little swim, how good it feels and how nice it is, that this will remove even more of the dirt and filth you have been aquiring."); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Get Condition: Swimming via Get Dirty Over Time - Clean: THOUGHT: " + final_thought_string);
+			LillithOnlyBox(final_thought_string);
+		} 
+		else // i.e.  if (!a_event->isApplied) )
+		{
+			// Do nothing here, since we only explain the effect when it is applied, that this is a special propery of the current corset.
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 
 
 

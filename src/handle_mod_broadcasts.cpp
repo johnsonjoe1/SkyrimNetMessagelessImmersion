@@ -85,6 +85,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"iWantWidgetsReset", 
 		"iWantWidgetsDDReset",		
 		"iWantWidgetsPing",
+		"iWantStatusBarsIconStatusChange",
 		"ORS_LinkedWidgetUpdate",    // no clue what this is.
 		"zadRegisterEvents",   			// This is from zadLibs probably and just a technical event anyway.
 		"GagSoundsRegistered",			// This is from zadLibs probably and just a technical event anyway.
