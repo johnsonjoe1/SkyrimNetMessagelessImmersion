@@ -39,10 +39,6 @@ bool handle_jailrape::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event
 		LillithOnlyBox("AnimationStarting_JailRapePC: " + thoughtMessage);
 		return true;
 	}
-
-
-
-
 	if (eventName == "AnimationChange_JailRapePC") {
 		last_jailrape_thought_timestamp = std::chrono::steady_clock::now();
 		const std::string thoughtMessage = "YOU, the player, are imprisoned by the guards. One of them has already used you for his own fun and pleasure. But now he wants even more sex. He wants to try even more different sex positions with you. And to use your body in yet more ways. You cannot stop him from doing what he wants with you.";
@@ -50,7 +46,6 @@ bool handle_jailrape::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event
 		LillithOnlyBox("AnimationChange_JailRapePC: " + thoughtMessage);
 		return true;
 	}
-
 	if (eventName == "StageStart_JailRapePC") {
 		const std::string thoughtMessage = "YOU, the player, are imprisoned by the guards. One of them has already used you for his own fun and pleasure. But he wants even more sex. You are forced to play along and do what he wants. You cannot stop what is happening to you, because the attacker is too strong. You can try to resist, but that might make him even more aggressive. You can try not to get excited from the sexual stimulation of your body, but even that is becoming more difficult, and you can slowly feel yourself getting involuntarily more sexually excited. Or you can start to break and start to submit and lose your will to resist entirely, accepting the guards as your new masters, and accepting that it is better to obey them than face more punishment and hoping, that if you can please the guards better, they might let you go and not be mean to you any more. ";
 		if (std::chrono::steady_clock::now() - last_jailrape_thought_timestamp < std::chrono::seconds(15)) {
