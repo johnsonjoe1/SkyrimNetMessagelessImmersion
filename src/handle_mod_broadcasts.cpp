@@ -13,6 +13,7 @@
 #include "handle_SLAC.h"
 #include "player_thought_history.h"
 #include "DumpThoughts.h"
+#include <optional>
 #include <string_view>
 #include <unordered_set>
 
@@ -20,6 +21,110 @@ namespace logger = SKSE::log;
 
 static auto last_random_run_up_and_spank_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_tap_player_freelance_stage_start_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+
+namespace
+{
+	constexpr RE::FormID deviousFollowersGoldControlQuestFormID = 0x00112478;
+	constexpr std::string_view deviousFollowersPlugin = "DeviousFollowers.esp";
+	constexpr std::string_view deviousFollowersGoldControlScript = "_DFGoldConQScript";
+	constexpr auto dialogueCloseGracePeriod = std::chrono::seconds(3);
+
+	struct DeviousFollowersDialogueSnapshot
+	{
+		bool goldControlEnabled;
+		std::optional<std::chrono::steady_clock::time_point> dialogueClosedAt;
+	};
+
+	std::optional<DeviousFollowersDialogueSnapshot> deviousFollowersDialogueSnapshot;
+
+	std::optional<bool> get_devious_followers_gold_control_enabled()
+	{
+		auto* dataHandler = RE::TESDataHandler::GetSingleton();
+		auto* vm = RE::BSScript::Internal::VirtualMachine::GetSingleton();
+		if (!dataHandler || !vm) {
+			return std::nullopt;
+		}
+
+		auto* quest = dataHandler->LookupForm<RE::TESQuest>(
+			deviousFollowersGoldControlQuestFormID,
+			deviousFollowersPlugin);
+		auto* handlePolicy = vm->GetObjectHandlePolicy();
+		if (!quest || !handlePolicy) {
+			return std::nullopt;
+		}
+
+		const auto handle = handlePolicy->GetHandleForObject(quest->GetFormType(), quest);
+		RE::BSTSmartPointer<RE::BSScript::Object> scriptObject;
+		if (!vm->FindBoundObject(handle, deviousFollowersGoldControlScript.data(), scriptObject) || !scriptObject) {
+			return std::nullopt;
+		}
+
+		RE::BSScript::Variable enabled;
+		if (!vm->GetPropertyValue(scriptObject, "Enabled", enabled) || !enabled.IsBool()) {
+			return std::nullopt;
+		}
+
+		return enabled.GetBool();
+	}
+
+	void handle_devious_followers_scene_end()
+	{
+		if (!deviousFollowersDialogueSnapshot) {
+			logger::info("DF-SceneEnd received without a Devious Followers dialogue snapshot.");
+			return;
+		}
+
+		if (deviousFollowersDialogueSnapshot->dialogueClosedAt &&
+			std::chrono::steady_clock::now() - *deviousFollowersDialogueSnapshot->dialogueClosedAt > dialogueCloseGracePeriod) {
+			logger::info("Ignoring DF-SceneEnd because the dialogue snapshot is stale.");
+			deviousFollowersDialogueSnapshot.reset();
+			return;
+		}
+
+		const auto goldControlEnabledNow = get_devious_followers_gold_control_enabled();
+		if (!goldControlEnabledNow) {
+			logger::info("Could not read Devious Followers gold-control state at DF-SceneEnd.");
+			deviousFollowersDialogueSnapshot.reset();
+			return;
+		}
+
+		const bool goldControlWasEnabled = deviousFollowersDialogueSnapshot->goldControlEnabled;
+		deviousFollowersDialogueSnapshot.reset();
+		logger::info(
+			"Compared Devious Followers gold-control state across dialogue: {} -> {}",
+			goldControlWasEnabled,
+			*goldControlEnabledNow);
+		if (!goldControlWasEnabled && *goldControlEnabledNow) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
+				"You have just finished a conversation in which your devious follower talked you into accepting his control of your gold. From now on, your follower decides how much gold you may carry, takes any excess to reduce your debt, and adds to your debt when you need more. Respond in first person to this new loss of financial freedom. Express your outrage or frustration, but also make sure you mention your follower's name AS WELL AS discribe that he is going to control how much gold you may carry, much like a parent handling an immature child. Maybe express your frustration on how you let yourself be talked into this deal in a weak moment.");
+			logger::info("Devious Followers gold control changed from disabled to enabled during dialogue; emitted a player thought.");
+		}
+	}
+}
+
+void handle_dialogue_menu_event(const RE::MenuOpenCloseEvent* a_event)
+{
+	if (!a_event || a_event->menuName != RE::DialogueMenu::MENU_NAME) {
+		return;
+	}
+
+	if (a_event->opening) {
+		const auto goldControlEnabled = get_devious_followers_gold_control_enabled();
+		if (goldControlEnabled) {
+			deviousFollowersDialogueSnapshot = DeviousFollowersDialogueSnapshot{ *goldControlEnabled, std::nullopt };
+			logger::info("Captured Devious Followers gold-control state at dialogue start: {}", *goldControlEnabled);
+		} else {
+			deviousFollowersDialogueSnapshot.reset();
+		}
+	} else if (deviousFollowersDialogueSnapshot) {
+		deviousFollowersDialogueSnapshot->dialogueClosedAt = std::chrono::steady_clock::now();
+	}
+}
+
+void reset_devious_followers_dialogue_tracking()
+{
+	deviousFollowersDialogueSnapshot.reset();
+}
 
 bool shortcircuit_Sever_events(std::string_view event_name)
 {
@@ -340,6 +445,10 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 
 void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 {
+	if (a_event->eventName == "DF-SceneEnd") {
+		handle_devious_followers_scene_end();
+	}
+
 	if (shortcircuit_Sever_events(a_event->eventName.c_str())) {
 		return;
 	}

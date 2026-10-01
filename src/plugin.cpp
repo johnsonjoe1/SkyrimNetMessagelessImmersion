@@ -260,6 +260,18 @@ public:
 private:
 };
 
+class MenuOpenCloseEventHandler : public RE::BSTEventSink<RE::MenuOpenCloseEvent>
+{
+public:
+	RE::BSEventNotifyControl ProcessEvent(
+		const RE::MenuOpenCloseEvent* a_event,
+		RE::BSTEventSource<RE::MenuOpenCloseEvent>*) override
+	{
+		handle_dialogue_menu_event(a_event);
+		return RE::BSEventNotifyControl::kContinue;
+	}
+};
+
 
 //  Here comes the code for hooking into the furniture usage events, or even all usage events, but for now we focus on furniture.
 class ActivateEventHandler : public RE::BSTEventSink<RE::TESActivateEvent>
@@ -323,6 +335,7 @@ static ChangesToTheActiveMagicEffectListEventHandler g_ChangesToTheActiveMagicEf
 
 //  Instantiate the code for hooking into the mod event listener.
 static ModEventHandler g_mod_event_handler;
+static MenuOpenCloseEventHandler g_menuOpenCloseEventHandler;
 
 auto* source = RE::ScriptEventSourceHolder::GetSingleton();
 
@@ -358,6 +371,10 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		// auto* mod_event_source = SKSE::GetModCallbackEventSource();
 		// mod_event_source->AddEventSink(&g_mod_event_handler);
 		SKSE::GetModCallbackEventSource()->AddEventSink(&g_mod_event_handler);
+		if (auto* ui = RE::UI::GetSingleton()) {
+			ui->AddEventSink<RE::MenuOpenCloseEvent>(&g_menuOpenCloseEventHandler);
+			SKSE::log::info("Registered dialogue menu event sink for Devious Followers gold-control tracking.");
+		}
 		StartPeriodicScheduler();
 
 		break;
@@ -367,6 +384,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		break;
 	case SKSE::MessagingInterface::kPreLoadGame:
 		SuspendPeriodicChecks();
+		reset_devious_followers_dialogue_tracking();
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		break;
 	case SKSE::MessagingInterface::kPostLoadGame:
@@ -386,6 +404,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		ResumePeriodicChecks();
 		break;
 	case SKSE::MessagingInterface::kNewGame:
+		reset_devious_followers_dialogue_tracking();
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		handle_yps::reset_hair_stage_tracking();
 		handle_yps::reset_hair_dye_tracking();
