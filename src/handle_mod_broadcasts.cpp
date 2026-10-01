@@ -10,6 +10,7 @@
 #include "handle_bimbos.h"
 #include "handle_licenses_player_oppression.h"
 #include "handle_worn_equipment_change.h"
+#include "handle_SLAC.h"
 #include "player_thought_history.h"
 #include "DumpThoughts.h"
 #include <string_view>
@@ -18,8 +19,6 @@
 namespace logger = SKSE::log;
 
 static auto last_random_run_up_and_spank_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
-static auto last_player_involving_SLAC_scene_start = std::chrono::steady_clock::now() - std::chrono::hours(1);
-static auto last_player_involving_SLAC_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_tap_player_freelance_stage_start_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 bool shortcircuit_Sever_events(std::string_view event_name)
@@ -174,9 +173,6 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 
 		"OrgasmStart_HelplessFollower",  //	those two are both followers, I think.  MOD EVENT:  Name: OrgasmStart_HelplessFollower  StrArg: 1  NumArg: 0
 		"OrgasmStart",                   //	those two are both followers, I think.  MOD EVENT:  Name: OrgasmStart  StrArg: 1  NumArg: 0	
-		"OrgasmStart_slacEngagement",   //  Hmmm, not now, I guess.
-		"AnimationStarting_slacEngagement", // The player-filtered Papyrus relay handles SLAC scene starts.
-		
 		// Technical mod events from Sexlab P+.  There can be up to 15 threads, but I guess those are edge cases that we don't need to handle for now.  
 		"SSL_PREPARE_Thread0",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
 		"SSL_PREPARE_Thread1",   // This is technical Sexlab-(PPlus?)-related event, thing to do for us now and here.
@@ -260,16 +256,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"AnimationEnd_CreatureSummoner", // This is from the Creature Summoner mod
 		"StageEnd_CreatureSummoner", // This is from the Creature Summoner mod
 
-		"AnimationStart_slacEngagement",   // 4 seconds after AnimationStarting_....
-		"StageEnd_slacEngagement",
-		// AnimationStarting_slacEngagement is handled through a player-filtered Papyrus relay.
-		// NOW WE HAVE AT LEAST SOME HEURISTICS TO INFER WHETHER the SLAC-Scene involves the player or not, so we can re-enable that:"StageStart_slacEngagement",
-		"AnimationChange_slacEngagement",
-		"AnimationEnding_slacEngagement",
-		"AnimationEnd_slacEngagement",
-
 		"ActorChangeStart",                  //  This *might* be relevant, if that has some extra detail about the current SL scene and changes there, but it's just not a priority now.
-		"ActorChangeStart_slacEngagement",   //  This *might* be relevant, if that has some extra detail about the current SL scene and changes there, but it's just not a priority now.
 
 		"PlayDBVOTopic",  // This is from the DragonBornVoiceOver Mod, but we don't need to respond to it, as this is already diaglogue.
 
@@ -299,7 +286,6 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		"AnimationChange",
 		"AnimationChange_CreatureSummoner",
 		// "AnimationStart_BodySearch" is intentionally excluded: body search itself is about clothing, especially in the second part.
-		"SNMI_SLACAnimationStarting",
 		"StageStart_TAPPlayerFreelance",
 		"StageStart_",
 		"SL_AdvanceScene",
@@ -322,7 +308,6 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		"AnimationEnd_CreatureSummoner",
 		"AnimationEnd_MatchMaker",
 		"AnimationEnding_MatchMaker",
-		"SNMI_SLACAnimationEnding",
 		"AnimationEnding_HelplessCreature",   //  This is from Aroused Creatures (I think)
 		"AnimationEnd_HelplessCreature",      //  This is from Aroused Creatures (I think)
 		"AnimationEnd_Helpless",    // This is from Devious Helplessness.
@@ -332,6 +317,9 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 	};
 
 	const std::string_view event_name = a_event->eventName;
+	if (handle_SLAC::update_scene_status_from_mod_event(a_event)) {
+		return;
+	}
 
 	if (scene_start_events.contains(event_name))
 	{
@@ -363,16 +351,17 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	toggle_in_a_scene_or_not_based_on_mod_events(a_event);
 	
 
-	if ( is_known_useless_event_that_can_be_completely_shortcircuited(a_event->eventName.c_str()))
+	if (is_known_useless_event_that_can_be_completely_shortcircuited(a_event->eventName.c_str()) ||
+		handle_SLAC::is_known_irrelevant_event(a_event->eventName.c_str()))
 	{
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 		logger::info("SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: {}  StrArg: {}  NumArg: {}" , a_event->eventName.c_str() , a_event->strArg.c_str() , a_event->numArg);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
-	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)  | 
-		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_IMPORANT_PlayerThought") == 0) |
-		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought") == 0) |
+	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)  || 
+		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_IMPORANT_PlayerThought") == 0) ||
+		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought") == 0) ||
 		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought") == 0) ) 
 	{
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
@@ -479,56 +468,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	}
 
 	
-	// Player-involved SLAC animation start, filtered and relayed by SNMI_Papyrus_Bridge_Script.
-	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_SLACAnimationStarting") == 0)  ) {
-		last_player_involving_SLAC_scene_start = std::chrono::steady_clock::now();
-		std::string  thought_message = std::format("A creature, an animal or a monster, has just managed to take advantage of you and start a sexual encounter with you, and you somehow were too horny and couldn't resist or couldn't escape in time and then just submitted into the sexual encounter.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having sex with a creature. ");
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-		LillithOnlyBox("SNMI_SLACAnimationStarting:  " + thought_message);
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}	
-
-	// Player-involved SLAC animation start, filtered and relayed by SNMI_Papyrus_Bridge_Script.
-	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_slacEngagement") == 0)  ) {
-		// We only use this even, if a player-involving scene has started recently, i.e. in the last 3 minutes,
-		// so this is kind of an INVERSE COOLDOWN, where we only proceed if the event happened recently.
-		if (cooldown_has_passed(last_player_involving_SLAC_scene_start, 180)) {
-			return;
-		}
-		// However, for the messages themselves, we still implement a cooldown
-		if (!cooldown_has_passed(last_player_involving_SLAC_thought_timestamp, 20)) {
-			return;
-		}
-		last_player_involving_SLAC_thought_timestamp = std::chrono::steady_clock::now();
-
-		// Now at this point, we can throw out another SLAC thought message.
-		std::string  thought_message = std::format("The creature, animal or monster, that came after you to have sex with you got you and it still isn't satisfied and wants to have even more sex with you and you were also too horny to really stop yourself.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having sex with a creature.");
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
-		LillithOnlyBox("StageStart_slacEngagement:  " + thought_message);
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}	
-
-	// Player-involved SLAC animation end, filtered and relayed by SNMI_Papyrus_Bridge_Script.
-	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_SLACAnimationEnding") == 0)  ) {
-		last_player_involving_SLAC_scene_start = std::chrono::steady_clock::now() - std::chrono::hours(1);
-		std::string thought_message = std::format("Your sexual encounter with a creature, animal, or monster has just ended, and you are free to move on again. Let us know your immediate response to the encounter ending, and make sure you mention or implicitly point out that you just had sex with a creature. ");
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
-		LillithOnlyBox("SNMI_SLACAnimationEnding:  " + thought_message);
-		return;
-	}
-
-	// SLAC scene involving no player. These string-only relays keep SLAC and SexLab optional.
-	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_SLACNPCAnimationStart") == 0)  ) {
-		std::string thought_message = std::format("A nearby creature, animal, or monster has just successfully engaged someone else in a sexual encounter. You have noticed what is happening. Let us know your response to that.");
-		DumpThoughts::throw_out_TTS_thought_message(thought_message);
-		LillithOnlyBox("SNMI_SLACNPCAnimationStart:  " + thought_message);
-		return;
-	}
-
-	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_SLACNPCAnimationEnding") == 0)  ) {
-		std::string thought_message = std::format("The nearby sexual encounter involving a creature, animal, or monster and someone else has just ended. You have noticed that they are done. Let us know your response to that.");
-		DumpThoughts::throw_out_TTS_thought_message(thought_message);
-		LillithOnlyBox("SNMI_SLACNPCAnimationEnding:  " + thought_message);
+	if (handle_SLAC::try_handle_mod_event(a_event)) {
 		return;
 	}
 	

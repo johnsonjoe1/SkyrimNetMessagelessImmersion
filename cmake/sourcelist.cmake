@@ -14,6 +14,7 @@ set(sources ${sources}
     src/handle_armor_activation.cpp
     src/handle_furniture_activation.cpp
     src/handle_mod_broadcasts.cpp
+	src/handle_SLAC.cpp
 	src/handle_jailrape.cpp
     src/handle_helplessness.cpp
     src/handle_captive_defeat.cpp
