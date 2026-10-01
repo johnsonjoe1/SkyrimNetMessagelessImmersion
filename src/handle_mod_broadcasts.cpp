@@ -370,9 +370,9 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
-	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)  || 
-		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_IMPORANT_PlayerThought") == 0) ||
-		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought") == 0) ||
+	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_JustPumpMyStringToPlayerThought") == 0)  | 
+		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_IMPORANT_PlayerThought") == 0) |
+		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought") == 0) |
 		(std::strcmp(a_event->eventName.c_str() , "SNMI_Pump_AS_LITTERAL_AS_POSSIBLE_PlayerThought") == 0) ) 
 	{
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
@@ -514,6 +514,21 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		std::string thought_message = std::format("Your sexual encounter with a creature, animal, or monster has just ended, and you are free to move on again. Let us know your immediate response to the encounter ending, and make sure you mention or implicitly point out that you just had sex with a creature. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		LillithOnlyBox("SNMI_SLACAnimationEnding:  " + thought_message);
+		return;
+	}
+
+	// SLAC scene involving no player. These string-only relays keep SLAC and SexLab optional.
+	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_SLACNPCAnimationStart") == 0)  ) {
+		std::string thought_message = std::format("A nearby creature, animal, or monster has just successfully engaged someone else in a sexual encounter. You have noticed what is happening. Let us know your response to that.");
+		DumpThoughts::throw_out_TTS_thought_message(thought_message);
+		LillithOnlyBox("SNMI_SLACNPCAnimationStart:  " + thought_message);
+		return;
+	}
+
+	if ( (std::strcmp(a_event->eventName.c_str() , "SNMI_SLACNPCAnimationEnding") == 0)  ) {
+		std::string thought_message = std::format("The nearby sexual encounter involving a creature, animal, or monster and someone else has just ended. You have noticed that they are done. Let us know your response to that.");
+		DumpThoughts::throw_out_TTS_thought_message(thought_message);
+		LillithOnlyBox("SNMI_SLACNPCAnimationEnding:  " + thought_message);
 		return;
 	}
 	

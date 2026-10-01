@@ -17,12 +17,21 @@ int sparcity_counter = 0
 int sparcity_threshold = 6
 bool yps_fashion_event_registered = false
 bool slac_events_registered = false
+bool slac_npc_events_registered = false
 
 function ensure_yps_fashion_event_registration()
 	if !yps_fashion_event_registered
 		RegisterForModEvent("yps_FashionChange", "OnYpsFashionChange")
 		yps_fashion_event_registered = true
 		lillith_notification("[SNMI] Registered YPS fashion-change relay.")
+	endif
+endfunction
+
+function ensure_slac_npc_event_registration()
+	if !slac_npc_events_registered
+		RegisterForModEvent("HookAnimationStart_slacEngagement", "OnSLACAnimationStart")
+		slac_npc_events_registered = true
+		lillith_notification("[SNMI] Registered non-player SLAC animation relay.")
 	endif
 endfunction
 
@@ -44,7 +53,14 @@ Event OnInit()
 
 	ensure_yps_fashion_event_registration()
 	ensure_slac_event_registration()
+	ensure_slac_npc_event_registration()
 
+EndEvent
+
+Event OnSLACAnimationStart(int threadId, bool hasPlayer)
+	if !hasPlayer
+		SendModEvent("SNMI_SLACNPCAnimationStart", threadId)
+	endif
 EndEvent
 
 Event OnSLACAnimationStarting(int threadId, bool hasPlayer)
@@ -56,6 +72,8 @@ EndEvent
 Event OnSLACAnimationEnding(int threadId, bool hasPlayer)
 	if hasPlayer
 		SendModEvent("SNMI_SLACAnimationEnding", threadId)
+	else
+		SendModEvent("SNMI_SLACNPCAnimationEnding", threadId)
 	endif
 EndEvent
 
@@ -483,6 +501,7 @@ endfunction
 Event OnUpdate()
 	ensure_yps_fashion_event_registration()
 	ensure_slac_event_registration()
+	ensure_slac_npc_event_registration()
 
     keepalive_value += 1.0    ; This is just an internal counter, that will count the number of times this has run so far
     SNMI_Native.SetKeepaliveLevel(keepalive_value)
