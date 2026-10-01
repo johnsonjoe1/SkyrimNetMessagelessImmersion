@@ -338,19 +338,6 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"AnimationEnd_BattleFuck",   // This is from the BattleFuck mod.  nothing to do here.
 		//  "AnimationEnding_BattleFuck", // This is from the BattleFuck mod.  We absolutely should comment on that.
 
-		"AnimationStarting_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
-		"AnimationStart_JailRapeNPC",  // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
-		"AnimationChange_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
-		"OrgasmStart_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
-		"StageStart_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
-		"StageEnd_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
-		"AnimationEnding_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
-		"AnimationEnd_JailRapeNPC", // This is from the JailRape mod, but this is about some NPCs somewhere in the background, possibly quite far off, so IGNORE for our purposes.
-
-		// "AnimationStarting_JailRapePC", // This is from the JailRape mod. 
-		"AnimationStart_JailRapePC", // This is from the JailRape mod.  but animation starting event is separate and already all we need.
-		"StageEnd_JailRapePC", // This is from the JailRape mod.  but animation starting event is separate and already all we need.
-		
 		"AnimationStart_CreatureSummoner", // This is from the Creature Summoner mod.
 		"AnimationStarting_CreatureSummoner", // This is from the Creature Summoner mod.
 		"StageStart_CreatureSummoner", // This is from the Creature Summoner mod.
@@ -462,6 +449,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	
 
 	if (is_known_useless_event_that_can_be_completely_shortcircuited(a_event->eventName.c_str()) ||
+		handle_jailrape::is_known_irrelevant_event(a_event->eventName.c_str()) ||
 		handle_SLAC::is_known_irrelevant_event(a_event->eventName.c_str()))
 	{
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 

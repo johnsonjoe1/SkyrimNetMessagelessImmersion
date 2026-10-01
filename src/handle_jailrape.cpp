@@ -5,10 +5,28 @@
 #include "misc.h"
 
 #include <string_view>
+#include <unordered_set>
 
 namespace
 {
 	auto last_jailrape_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+}
+
+bool handle_jailrape::is_known_irrelevant_event(std::string_view a_eventName)
+{
+	static const std::unordered_set<std::string_view> ignoredEvents = {
+		"AnimationStarting_JailRapeNPC",
+		"AnimationStart_JailRapeNPC",
+		"AnimationChange_JailRapeNPC",
+		"OrgasmStart_JailRapeNPC",
+		"StageStart_JailRapeNPC",
+		"StageEnd_JailRapeNPC",
+		"AnimationEnding_JailRapeNPC",
+		"AnimationEnd_JailRapeNPC",
+		"AnimationStart_JailRapePC",
+		"StageEnd_JailRapePC",
+	};
+	return ignoredEvents.contains(a_eventName);
 }
 
 bool handle_jailrape::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
