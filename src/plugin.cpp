@@ -214,6 +214,8 @@ namespace
 		if (DumpThoughts::IsPlayerInDialogue()) {
 			DumpThoughts::reset_last_speech_timestamp();
 		}
+		LillithOnlyHUDmessage(std::format("player_is_in_a_SL_scene():  {}", player_is_in_a_SL_scene() ? "in a scene" : "not in a scene").c_str());
+
 		DumpThoughts::play_dialogue_suppressed_thoughts_if_possible();
 		logger::info("Starting periodic checks (interval: {} seconds).", interval.count());
 		handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff();
