@@ -614,7 +614,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for Resist Disease via Blessing of Thalos APPLICATION!");
-			std::string final_thought_string = std::format("YOU, the player character, just received the blessing of Thalos. This gives you improved resistance to disease.  Respond in character and let the player know how you feel about that, but be sure to mention you improved disease resistance thanks to the blessing, because otherwise the player won't know what you are talking about."); //  + standard_thought_instruction;
+			std::string final_thought_string = std::format("YOU, the player character, just received the blessing of Thalos. This gives you improved resistance to disease for the day (technically for 8 hours).  Respond in character and let the player know how you feel about that, but be sure to mention you improved disease resistance thanks to the blessing, because otherwise the player won't know what you are talking about."); //  + standard_thought_instruction;
 			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Resist Disease via Blessing of Thalos: THOUGHT: " + final_thought_string);
 			LillithOnlyBox(final_thought_string);
 		} 
