@@ -5,6 +5,7 @@
 #include "handle_player_dirt.h"
 #include "handle_yps.h"
 #include "misc.h"
+#include "RE/S/SendHUDMessage.h"
 
 void run_constant_whining_in_case_of_silence()
 {
@@ -15,7 +16,10 @@ void run_constant_whining_in_case_of_silence()
 	const auto requiredSilence = std::string_view(player->GetName()) == "Lillith" ? 20 : SNMI::GetSettings().silenceRequiredBeforeSpontaneousStatusWhining;
 	const auto silenceDuration = std::chrono::steady_clock::now() - DumpThoughts::GetLastSpeechTimestamp();
 	if (silenceDuration >= std::chrono::seconds(requiredSilence)) {
-		LillithOnlyBox(std::format("run_constant_whining_in_case_of_silence() ran after at least {} seconds without a thought.", requiredSilence));
+		// LillithOnlyBox(std::format("run_constant_whining_in_case_of_silence() ran after at least {} seconds without a thought.", requiredSilence));
+		LillithOnlyHUDmessage(std::format("run_constant_whining_in_case_of_silence() ran after at least {} seconds without a thought.", requiredSilence));
+		// RE::SendHUDMessage::ShowHUDMessage("Hello World!!");
+
 		if (handle_iNeed::previous_iNeed_fatigue_level == 3) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 				"You are extremely tired. You need a good long night of sleep. Your base Stamina and Magicka are reduced by about 55%. Your movement speed is reduced by 15%. And you can learn new skills 70% slower. Say so in your response and make clear that you are speaking about your fatigue from sleep deprivation.");

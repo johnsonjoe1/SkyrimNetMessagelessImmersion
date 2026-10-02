@@ -59,6 +59,17 @@ void set_current_animation_status(std::string_view a_status, std::string_view re
 	SKSE::log::info("Current animation status updated to: {}.  Reason: {}", current_animation_status, reason_for_set_current_animation_status);
 }
 
+void LillithOnlyHUDmessage(std::string_view a_message)
+{
+	final_lillith_message = std::string("SNMI: LILLITH: ");
+	final_lillith_message += a_message;
+	if (strcmp(RE::PlayerCharacter::GetSingleton()->GetName() , "Lillith") == 0)
+	{
+		RE::SendHUDMessage::ShowHUDMessage(final_lillith_message.c_str());  // Show the message in the HUD if the player's name is Lillith.
+	} else {
+		SKSE::log::info("LILLITH-HUD-REDIRECTED-TO-LOG: {}", a_message);  // Otherwise, log the message to the console.
+	}  
+}
 void LillithOnlyBox(std::string_view a_message)
 {
 	/*  ORIGINAL:
