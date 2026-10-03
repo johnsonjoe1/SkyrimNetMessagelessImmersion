@@ -15,14 +15,15 @@ namespace
 bool handle_jailrape::is_known_irrelevant_event(std::string_view a_eventName)
 {
 	static const std::unordered_set<std::string_view> ignoredEvents = {
-		"AnimationStarting_JailRapeNPC",
+		// "AnimationStarting_JailRapeNPC",  // this will be used below
 		"AnimationStart_JailRapeNPC",
 		"AnimationChange_JailRapeNPC",
-		"OrgasmStart_JailRapeNPC",
+		// "OrgasmStart_JailRapeNPC",  // this will be used below
 		"StageStart_JailRapeNPC",
 		"StageEnd_JailRapeNPC",
-		"AnimationEnding_JailRapeNPC",
+		// "AnimationEnding_JailRapeNPC",  // this will be used below
 		"AnimationEnd_JailRapeNPC",
+		
 		"AnimationStart_JailRapePC",
 		"StageEnd_JailRapePC",
 	};
