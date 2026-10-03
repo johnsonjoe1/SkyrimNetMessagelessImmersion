@@ -12,6 +12,8 @@
 
 namespace
 {
+	constexpr bool logFailedNotificationTests = false;
+
 	struct DeviousFollowersNotificationThought
 	{
 		std::string_view notification;
@@ -220,7 +222,9 @@ void check_for_relevant_notifications(const char* notification)
 	if (handle_devious_followers_notification(notification)) {
 		return;  // It was a devious followers notification.
 	} else {
-		SKSE::log::info("Test failed.  This was NOT A DEVIOUS FOLLOWERS notification.");
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed.  This was NOT A DEVIOUS FOLLOWERS notification.");
+		}
 	}
 
 	if (strcmp(notification, "You can't eat or drink while wearing this gag.") == 0) {
@@ -232,7 +236,9 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		last_gag_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: You can't eat or drink while wearing this gag.");
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed.  This isnt: You can't eat or drink while wearing this gag.");
+		}
 	}
 
 	if (strcmp(notification, "You are surrendering!") == 0) {
@@ -244,7 +250,9 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		last_surrender_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: You are surrendering!");
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed.  This isnt: You are surrendering!");
+		}
 	}
 	
 	if (strcmp(notification, "You need a pickaxe to use this.") == 0) {
@@ -256,7 +264,9 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		last_pickaxe_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: You need a pickaxe to use this.");
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed.  This isnt: You need a pickaxe to use this.");
+		}
 	}	
 
 	if (strcmp(notification, "You reeled in your line too early.") == 0) {
@@ -268,7 +278,9 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		last_reel_in_too_early_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: You reeled in your line too early.");
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed.  This isnt: You reeled in your line too early.");
+		}
 	}
 	
 	if (strcmp(notification, "You must have a fishing rod equipped to use this.") == 0) {
@@ -280,7 +292,9 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		last_fishing_rod_equipped_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: You must have a fishing rod equipped to use this.");
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed.  This isnt: You must have a fishing rod equipped to use this.");
+		}
 	}
 
 	if (strcmp(notification, "There was nothing on your line.") == 0) {
@@ -292,7 +306,9 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		last_nothing_on_line_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: There was nothing on your line.");
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed.  This isnt: There was nothing on your line.");
+		}
 	}
 
 	if (strcmp(notification, "You don't have enough gold.") == 0) {
@@ -304,7 +320,9 @@ void check_for_relevant_notifications(const char* notification)
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message, DumpThoughts::DialogueHandling::kProcessImmediately);
 		last_not_enough_gold_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
-		SKSE::log::info("Test failed.  This isnt: You don't have enough gold.");
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed.  This isnt: You don't have enough gold.");
+		}
 	}
 
 	// HUD notification: Idolaf Battle-Born slaps your ass hard as you walk by
@@ -322,7 +340,9 @@ void check_for_relevant_notifications(const char* notification)
 		last_SLAC_creature_coming_after_you_tought_timestamp = std::chrono::steady_clock::now();
 		
 	} else {
-		SKSE::log::info("Test failed. Notification does not end with: {}", assSlapSensingSuffix);
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed. Notification does not end with: {}", assSlapSensingSuffix);
+		}
 	}
 
 
@@ -341,7 +361,9 @@ void check_for_relevant_notifications(const char* notification)
 		last_SLAC_creature_coming_after_you_tought_timestamp = std::chrono::steady_clock::now();
 		
 	} else {
-		SKSE::log::info("Test failed. Notification does not end with: {}", titslappSensingSuffix);
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed. Notification does not end with: {}", titslappSensingSuffix);
+		}
 	}
 
 
@@ -359,7 +381,9 @@ void check_for_relevant_notifications(const char* notification)
 		last_SLAC_creature_coming_after_you_tought_timestamp = std::chrono::steady_clock::now();
 		
 	} else {
-		SKSE::log::info("Test failed. Notification does not end with: {}", gropeSensingSuffix);
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed. Notification does not end with: {}", gropeSensingSuffix);
+		}
 	}
 
 
@@ -377,6 +401,8 @@ void check_for_relevant_notifications(const char* notification)
 		last_SLAC_creature_coming_after_you_tought_timestamp = std::chrono::steady_clock::now();
 		
 	} else {
-		SKSE::log::info("Test failed. Notification does not end with: {}", arousalSensingSuffix);
+		if constexpr (logFailedNotificationTests) {
+			SKSE::log::info("Test failed. Notification does not end with: {}", arousalSensingSuffix);
+		}
 	}
 }
