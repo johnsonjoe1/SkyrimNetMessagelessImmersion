@@ -241,7 +241,7 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 			LillithOnlyBox("YPS-ThoughtEvent detected, but direct push of YPS thoughts to SkyrimNet player thoughts is disabled, so we will not process it.");
 			return true;  // If direct push is disabled, we do not handle the YPS thought here.
 		}
-		DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(a_event->strArg.c_str());   // this shouldn't be overdone, but the background code makes sure of that.
+		DumpThoughts::throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(a_event->strArg.c_str(), DumpThoughts::DialogueHandling::kDrop);   // this shouldn't be overdone, but the background code makes sure of that AND WE DROP THE THOUGHT COMPLETELY IF A DIALOG IS ACTIVE.
 		return true;  // In this case it really was a YPS event and that means no further processing necessary in the main mod boadcast module.
 	}
 

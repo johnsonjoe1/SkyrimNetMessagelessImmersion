@@ -395,6 +395,8 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 	static const std::unordered_set<std::string_view> scene_end_events = {
 		"AnimationEnding",
 		"AnimationEnd",
+		"AnimationEnding_",     // sometimes no originator is mentioned
+		"AnimationEnd_",		// sometimes no originator is mentioned
 		"AnimationEnding_TAPPlayerFreelance",
 		"AnimationEnd_TAPPlayerFreelance",
 		"AnimationEnding_CreatureSummoner",
