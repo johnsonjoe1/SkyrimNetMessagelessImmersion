@@ -731,7 +731,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			// We implement a cooldown here, just to be safe.
 			if (cooldown_has_passed(last_drool_thought_timestamp, 180))  // 180 seconds = 3 minutes cooldown
 			{
-				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, are now drooling.  This is so humiliating.  It's probably because of the gag you are wearing or something similar.  In your response, you should cry out in desperation, that you are drooling uncontrollably.  This event is so important, that you can elaborate in many words about your desperation here.")); //  + standard_thought_instruction;				
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, are now drooling.  It's probably because of the gag you are wearing or something similar.  In your response, you should mention, that you are drooling uncontrollably.  This event is so important, that you can elaborate in many words about your situation here.  Your response should match your overall character and can be positive or negative.")); //  + standard_thought_instruction;				
 				last_drool_thought_timestamp = std::chrono::steady_clock::now();
 			} else {
 				SKSE::log::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> But the cooldown in Event handler for Drool effect application hasn't passed yet!");
@@ -780,7 +780,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 				return;
 			}
 			SKSE::log::info("Event handler for Covered In Cum/SexLabCumVaginalEffect effect application!");
-			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, now have fresh cum dripping from your body.  This is so humiliating and disgusting. Say as much in your response and be sure to mention that his sperm is now oozing from your body.  This event is so important, that you can elaborate in many words about your desperation here.");
+			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, now have fresh cum dripping from your body.  Say as much in your response and be sure to mention that his sperm is now oozing from your body.  This event is so important, that you can elaborate in many words about your situation here.  Your response should match your overall character and can be positive or negative.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 			last_cum_effect_thought_timestamp = std::chrono::steady_clock::now();
@@ -790,7 +790,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 				return;
 			}
 			SKSE::log::info("Event handler for Covered In Cum/SexLabCumVaginalEffect effect removal!");
-			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, had fresh cum dripping from your body, up until now.  This was so humiliating and disgusting.  But now the cum dripping has stopped.  It probably all oozed out now.  Say as much in your response and be sure to mention that his sperm stopped oozing from your body now.  It is a little bit of a relief.  This event is so important, that you can elaborate in many words about your desperation here.");
+			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, had fresh cum dripping from your body, up until now.  But now the cum dripping has stopped.  It probably all oozed out now.  Say as much in your response and be sure to mention that his sperm stopped oozing from your body now.  This event is so important, that you can elaborate in many words about your situation here.  Your response should match your overall character and can be positive or negative.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 			last_cum_effect_removal_thought_timestamp = std::chrono::steady_clock::now();
@@ -811,13 +811,13 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for Tears effect application!");
-			std::string final_thought_string = std::format("After the emotional abuse you just felt, you feel something watery drip down your cheeks.  You ask yourself:  Oh my god, could this be tears?  Am I crying?  Say as much in your response and be sure to mention that you think it's tears rolling down your cheeks.  This event is so important, that you can elaborate in many words about your desperation here.");
+			std::string final_thought_string = std::format("After the emotional abuse you just felt, you feel something watery drip down your cheeks.  You ask yourself:  Oh my god, could this be tears?  Am I crying?  Say as much in your response and be sure to mention that you think it's tears rolling down your cheeks.  This event is so important, that you can elaborate in many words about your situation here.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 		} else {
 			// When the tears have stopped, that isn't such a big issue to make an annoucement from that.  So we do nothing in this case.
 			SKSE::log::info("Event handler for Tears effect removal!");
-			std::string final_thought_string = std::format("After the emotional abuse you just felt, the tears on your cheeks have stopped.  You take a moment to compose yourself.  Say as much in your response and be sure to mention that the tears have stopped.  This event is so important, that you can elaborate in many words about your desperation here.");
+			std::string final_thought_string = std::format("After the emotional abuse you just felt, the tears on your cheeks have stopped.  You take a moment to compose yourself.  Say as much in your response and be sure to mention that the tears have stopped.  This event is so important, that you can elaborate in many words about your situation here.");
 			// LillithOnlyBox(final_thought_string);
 			// DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;
 		}
