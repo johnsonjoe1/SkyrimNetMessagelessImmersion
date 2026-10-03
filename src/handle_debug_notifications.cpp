@@ -22,15 +22,15 @@ namespace
 	constexpr std::array deviousFollowersNotificationThoughts = {
 		DeviousFollowersNotificationThought{
 			"$DF_DEBTADD_NOTI",
-			"Your devious follower has just added more gold to your debt. This is not merely an ordinary wage: unpaid debt gives your follower leverage to demand humiliating deals, control your money, punish you, or eventually treat your body as collateral. Respond in first person and make clear that your debt has just increased.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about and that it is HIM doing all these things to you.",
+			"Your devious follower has just deliberately added more gold to your debt. This is not merely an ordinary wage: unpaid debt gives your follower leverage to demand humiliating deals, control your money, punish you, or eventually treat your body as collateral. Respond in first person and make clear why your your follower just increased your debt.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about and that it is HIM doing all these things to you.",
 			false },
 		DeviousFollowersNotificationThought{
 			"$DF_DEBTTIRED_NOTI",
-			"Your devious follower is tired and has just added more gold to your debt because of it. Their tiredness therefore costs you money and gives them more leverage over you. Respond in first person and make clear why your debt has just increased.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about and that it is HIM doing all these things to you.",
+			"Your devious follower is tired and has just deliberately added more gold to your debt because of it. Their tiredness therefore costs you money and gives them more leverage over you. Respond in first person and make clear why your your follower just increased your debt.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about and that it is HIM doing all these things to you.",
 			false },
 		DeviousFollowersNotificationThought{
 			"$DF_NOREST_NOTI",
-			"Your devious follower believes they have not received enough rest and has just added debt as compensation. Respond in first person, making clear that their need for rest has increased what you owe them and strengthened their leverage over you.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about and that it is HIM doing all these things to you.",
+			"Your devious follower believes they have not received enough rest and has just deliberately added more debt to your bill as compensation. Respond in first person, making clear that their need for rest has increased what you owe them and strengthened their leverage over you.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about and that it is HIM doing all these things to you.",
 			false },
 		DeviousFollowersNotificationThought{
 			"$DFDANGER",
@@ -38,7 +38,7 @@ namespace
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_DEBTOVER_NOTI",
-			"Your devious follower is angry because you have not paid what you owe. Their anger is a warning that payment, another deal, punishment, or a worse consequence may soon be demanded. Respond in first person and make clear that your unpaid follower debt caused this.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
+			"Your devious follower is angry because you have not paid what you owe. Their anger means that another deal, a punishment, or a worse consequence may soon be put on you. Respond in first person and make clear that your unpaid debt to your devious follower caused this.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_BORED_FOLLOWER",
@@ -54,11 +54,11 @@ namespace
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_PUNDEBT",
-			"Your devious follower has just increased your debt specifically as a punishment. This is not part of the normal daily fee; it is a penalty that also gives them more leverage over you. Respond in first person and make the punitive reason for the added debt clear.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
+			"Your devious follower has just deliberately increased your debt specifically as a punishment. This is not part of the normal daily fee; it is a penalty that also gives them more leverage over you. Respond in first person and make the punitive reason for the added debt clear.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DFDEALDAYINC",
-			"Your devious follower has just extended one of your current deals by another full day. You must obey that deal for longer before it becomes normally eligible for repayment. Respond in first person and make clear that a random existing deal was extended, even though you do not know which one yet.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
+			"Your devious follower has just deliberately extended one of your current deals by another full day. You must obey that deal for longer before it becomes normally eligible for repayment. Respond in first person and make clear that a random existing deal was extended, even though you do not know which one yet.  Try to mention your follower's name in your response, so that the player knows, that it is your follower you are talking about.",
 			true },
 		DeviousFollowersNotificationThought{
 			"$DF_FOLLOWER_TAKE",
