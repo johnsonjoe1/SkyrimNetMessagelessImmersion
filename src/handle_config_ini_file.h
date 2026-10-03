@@ -8,6 +8,7 @@ namespace SNMI
 		bool enablePlayerDirtThoughts{ false };
 		bool enableMilkThoughts{ false };
         bool enableANDNudityThoughts{ false };
+        bool enableConstantWhining{ true };
         bool enableLicensesPlayerOppressionThoughts{ false };
         bool enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts{ false };
 		int updateInterval{ 5 };

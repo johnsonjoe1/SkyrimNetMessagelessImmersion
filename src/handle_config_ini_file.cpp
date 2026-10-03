@@ -59,6 +59,9 @@ namespace SNMI
         settings.enableANDNudityThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableANDNudityThoughts", 1, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableANDNudityThoughts.  New variable value = {}", settings.enableANDNudityThoughts);
 
+        settings.enableConstantWhining = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhining", 1, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhining.  New variable value = {}", settings.enableConstantWhining);
+
         settings.enableLicensesPlayerOppressionThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableLicensesPlayerOppressionThoughts", 1, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableLicensesPlayerOppressionThoughts.  New variable value = {}", settings.enableLicensesPlayerOppressionThoughts);
 

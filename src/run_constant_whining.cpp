@@ -9,6 +9,9 @@
 
 void run_constant_whining_in_case_of_silence()
 {
+	if (!SNMI::GetSettings().enableConstantWhining) {
+		return;
+	}
 	auto* player = RE::PlayerCharacter::GetSingleton();
 	if (!player) {
 		return;
