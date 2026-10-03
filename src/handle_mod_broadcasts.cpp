@@ -214,6 +214,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SkyrimNet_MemoryCreated",  // No need to respond to this, as it's internal memory creation and not relevant to direct game status.^
 		"SkyrimNet_MoodChanged",  // No need to respond to this, as it's native to SkyrimNet anyway and probably already handled by SkyrimNet itself.
 		"SkyrimNet_DiaryCreated",  // This is internal.  No player thoughts.
+		"SkyrimNet_TimelineResolved",
 
 		"UIWheelMenu_LoadMenu",      //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
 		"UIWheelMenu_SetOption",     //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
