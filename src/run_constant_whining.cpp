@@ -44,12 +44,19 @@ void run_constant_whining_in_case_of_silence()
 				"You are suffering from the most severe stage of Ataxia. The disease is making you move more slowly and deal less damage to enemies. Say so in your response and make clear that these symptoms are caused by your severe Ataxia.");
 		}
 		if (auto* dataHandler = RE::TESDataHandler::GetSingleton()) {
-			auto* corruption = dataHandler->LookupForm<RE::TESGlobal>(0x46441F, "CustomComments.esp");  // CC_PlayerBimboLevel
+			// BoS's CC_SexEventsScript.CC_PlayerBimboLevel property is bound to CC_PlayerBimboScore.
+			auto* corruption = dataHandler->LookupForm<RE::TESGlobal>(0x33192B, "CustomComments.esp");
 			auto* suppressed = dataHandler->LookupForm<RE::TESGlobal>(0x4CBC91, "CustomComments.esp");  // CC_IsPlayerBimboSuppressed
 			// BoS labels corruption above 60 as High, above 80 as Very High, and 100+ as Gone Too Far.
-			if (corruption && suppressed && corruption->value > 60.0f && corruption->value < 99.0f && suppressed->value == 0.0f) {
+			// suppression is only relevant, after you've become a bimbo
+			// && suppressed && suppressed->value == 0.0f
+			if (corruption && corruption->value > 60.0f && corruption->value < 99.0f ) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format(
 					"Your current bimbo corruption level is {:.0f}, which is high or worse, because at 100 you will permanently become a bimbo. Speak in character, like a brainless bimbo, and let the player know how the bimbo corruption makes your mind foggy and unable to focus on anything but fashion and pleasure.  Your thoughts should make is somewhat clear, that you are speaking about very high bimbo corruption levels of your mind.",
+					corruption->value));
+			} else if (corruption) {
+				LillithOnlyBox(std::format(
+					"Your current bimbo corruption level is {:.0f}, which is not high enough to trigger the high corruption response.",
 					corruption->value));
 			}
 		}
