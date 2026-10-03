@@ -851,6 +851,11 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			{
 				return;
 			}
+			if (!cooldown_has_passed(last_entered_water_thought_timestamp, 60))
+			{
+				// If it was only a very brief dip into the water, we don't want to trigger the separate exit thought from that.
+				return;
+			}
 			SKSE::log::info("Event handler for Is In Water Script effect removal!");
 			std::string final_thought_string = std::format("You have exited the water.  It may have been quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now out of the water.");
 			LillithOnlyBox(final_thought_string);
@@ -871,13 +876,11 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			std::string final_thought_string = std::format("You have been cursed with a Nullify Magicka effect.  Your magicka has been nullified.  You feel powerless and unable to cast spells and unable to shout as well.  This curse is so strong, it renders you completly unable to use magic.  That is the effect of the curse, because you do not have a magic License.  Respond in character and say something and be sure to mention that you are now under the Nullify Magicka effect, because you have no license to use magic.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
-			last_entered_water_thought_timestamp = std::chrono::steady_clock::now();
 		} else {
 			SKSE::log::info("Event handler for Nullify Magicka effect removal!");
 			std::string final_thought_string = std::format("The Nullify Magicka effect is now removed.  Your magicka is no longer nullified and you can cast spells and shout again.  Respond in character and say something and be sure to mention that you are now free from the suppression of your magical abilities.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;	
-			last_exited_water_thought_timestamp = std::chrono::steady_clock::now();
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
