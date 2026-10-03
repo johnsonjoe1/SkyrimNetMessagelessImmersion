@@ -37,14 +37,23 @@ bool handle_bimbos::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 	} else if (a_event->strArg == "Dragons are so powerful. They just make me feel like... submitting.") {
 		if (a_event->numArg < 0) {
 			// Killing the dragon reduced bimbo corruption
-			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  But now some of the bimbo corruption has been reduced from killing a dragon and absorbing its power.  Submitting to the dragon had cleared your mind a bit about what is important.  Speak in character and let us know, that your mind feel clearer and sharper now.");
+			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  But now some of the bimbo corruption has been reduced from killing a dragon and absorbing its power.  Submitting to the dragon had cleared your mind a bit from the impure thoughts of the bimbofication curse.  Speak in character and let us know, that your mind feels now.");
 		} else {
-			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  At present, present the source of the additional bimbo corruption is revealed via the string: {} .  Speak in character and let the player know, that additional bimbo corruption is seeping into your mind and turning you more into a bimbo from the source revealed in that string we just gave you.", a_event->strArg.c_str());
+			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  At present, the source of the additional bimbo corruption is revealed via the string: {} .  Speak in character and let the player know, that additional bimbo corruption is seeping into your mind and turning you more into a bimbo from the source revealed in that string we just gave you.", a_event->strArg.c_str());
+			debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
+		}
+		debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
+	} else if (a_event->strArg == "This is a cure so I'd be worried if you saw this....") {
+		if (a_event->numArg < 0) {
+			// Receiving a cure from a priest or vigilant of Stendarr
+			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  But now some of the bimbo corruption has been reduced from the special cure, that you just received from a priest or a vigilant.  This cure has cleared your mind from the impure thoughts of the bimbofication curse.  Speak in character and let us know, how your mind feels now.");
+		} else {
+			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  The player character is slowly turned into a bimbo via a special bimbofication mod.  But now some of the bimbo corruption has been reduced from the special cure, that you just received from a priest or a vigilant.  But somehow the components you offered were too weak or you were just unlucky, and the cure backfired instead, and made the impure thoughts from the bimbofication curse even stronger now.  You can feel your mind slipping away.  Speak in character and let the player know, that something went wrong and additional bimbo corruption is seeping into your mind and turning you more into a bimbo.");
 			debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
 		}
 		debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
 	} else {
-		thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  At present, present the source of the additional bimbo corruption is revealed via the string: {} .  Speak in character and let the player know, that additional bimbo corruption is seeping into your mind and turning you more into a bimbo from the source revealed in that string we just gave you.", a_event->strArg.c_str());
+		thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  At present, the source of the additional bimbo corruption is revealed via the string: {} .  Speak in character and let the player know, that additional bimbo corruption is seeping into your mind and turning you more into a bimbo from the source revealed in that string we just gave you.", a_event->strArg.c_str());
 		debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
 	}
 	DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
