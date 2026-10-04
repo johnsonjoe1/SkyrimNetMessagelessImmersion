@@ -163,10 +163,17 @@ RE::BSEventNotifyControl handle_worn_equipment_change::ProcessEvent(
 	if (!a_event || a_event->actor.get() != RE::PlayerCharacter::GetSingleton()) {
 		return RE::BSEventNotifyControl::kContinue;
 	}
+	logger::info("Hook ENTERED AT ALL");
 
-	// NOTE:  This event isn't just triggerd by change in WORN equipment, it is triggered by ANY change in 
-	//        inventory.  Therefore we have to disable this message, at least for now, because it triggers
-	//        excessively during normal gameplay.
+	auto* item = RE::TESForm::LookupByID(a_event->baseObject);
+	const auto* item_name = item ? item->GetName() : nullptr;
+	logger::info("Hook TRIGGERED for item {}: {} (FormID {:08X})",
+		a_event->equipped ? "equipped" : "unequipped",
+		item_name ? item_name : "<unknown>",
+		a_event->baseObject);
+
+	// NOTE:  This event isn't just triggerd by change in WORN equipment, it is triggered by ANY change in worn items.
+	//        Therefore we have to disable this message, at least for now, because it triggers excessively during normal gameplay.
 	// LillithOnlyBox("Player worn-equipment change event received.  -->  Triggering a refresh of the currently worn items records.");
 	refresh_currently_worn_item_records();
 
