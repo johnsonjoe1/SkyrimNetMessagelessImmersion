@@ -179,3 +179,41 @@ RE::BSEventNotifyControl handle_worn_equipment_change::ProcessEvent(
 
 	return RE::BSEventNotifyControl::kContinue;
 }
+
+handle_inventory_change* handle_inventory_change::get_singleton()
+{
+	static handle_inventory_change singleton;
+	return &singleton;
+}
+
+void handle_inventory_change::register_event_handler()
+{
+	RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink<RE::TESContainerChangedEvent>(get_singleton());
+}
+
+RE::BSEventNotifyControl handle_inventory_change::ProcessEvent(
+	const RE::TESContainerChangedEvent* a_event,
+	RE::BSTEventSource<RE::TESContainerChangedEvent>*)
+{
+	auto* player = RE::PlayerCharacter::GetSingleton();
+	if (!a_event || !player) {
+		return RE::BSEventNotifyControl::kContinue;
+	}
+
+	const auto player_form_id = player->GetFormID();
+	const bool added = a_event->newContainer == player_form_id && a_event->oldContainer != player_form_id;
+	const bool removed = a_event->oldContainer == player_form_id && a_event->newContainer != player_form_id;
+	if (!added && !removed) {
+		return RE::BSEventNotifyControl::kContinue;
+	}
+
+	auto* item = RE::TESForm::LookupByID(a_event->baseObj);
+	const auto* item_name = item ? item->GetName() : nullptr;
+	logger::info("Player inventory item {}: {} x{} (FormID {:08X})",
+		added ? "added" : "removed",
+		item_name ? item_name : "<unknown>",
+		a_event->itemCount,
+		a_event->baseObj);
+
+	return RE::BSEventNotifyControl::kContinue;
+}

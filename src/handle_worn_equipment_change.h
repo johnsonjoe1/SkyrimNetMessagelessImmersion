@@ -36,3 +36,16 @@ public:
 private:
 	static handle_worn_equipment_change* get_singleton();
 };
+
+class handle_inventory_change : public RE::BSTEventSink<RE::TESContainerChangedEvent>
+{
+public:
+	static void register_event_handler();
+
+	RE::BSEventNotifyControl ProcessEvent(
+		const RE::TESContainerChangedEvent* a_event,
+		RE::BSTEventSource<RE::TESContainerChangedEvent>* a_event_source) override;
+
+private:
+	static handle_inventory_change* get_singleton();
+};

@@ -361,6 +361,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		// Now we register the event handler for the Tanning Rack, Benches and all the other crap.
 		RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink<RE::TESActivateEvent>(&g_activateHandler);
 		handle_worn_equipment_change::register_event_handler();
+		handle_inventory_change::register_event_handler();
 
 		if (source) {
 			source->AddEventSink<RE::TESActiveEffectApplyRemoveEvent>(&g_ChangesToTheActiveMagicEffectListEventHandler);
