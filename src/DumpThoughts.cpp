@@ -155,11 +155,13 @@ namespace
 			a_request.message);
 
 		std::string eventStringArgument = a_request.message;
-		if (a_request.historyPolicy == ThoughtHistoryPolicy::kInclude) {
-			eventStringArgument += "\n\nIn order for this to not be too repetitive and in order to build on previous thoughts, please find below the recent thought history, so that you can avoid repeating yourself too much and also you can build on what was already though before:\n\n";
-			eventStringArgument += PlayerThoughtHistory::get_thought_history_as_a_string(60 * 5);
+		if (a_request.channel != ThoughtChannel::kLiteral) {
+			if (a_request.historyPolicy == ThoughtHistoryPolicy::kInclude) {
+				eventStringArgument += "\n\nIn order for this to not be too repetitive and in order to build on previous thoughts, please find below the recent thought history, so that you can avoid repeating yourself too much and also you can build on what was already though before:\n\n";
+				eventStringArgument += PlayerThoughtHistory::get_thought_history_as_a_string(60 * 5);
+			}
+			eventStringArgument += "\n\nResponse format for this thought: Output only first-person silent internal thought. Do not include physical actions, gestures, body language, stage directions, or descriptions of what the character does. Do not append narration or any asterisk-delimited action text, even if earlier instructions allow it or recent thoughts contain it. These are formatting instructions, not part of the thought to express.";
 		}
-		eventStringArgument += "\n\nResponse format for this thought: Output only first-person silent internal thought. Do not include physical actions, gestures, body language, stage directions, or descriptions of what the character does. Do not append narration or any asterisk-delimited action text, even if earlier instructions allow it or recent thoughts contain it. These are formatting instructions, not part of the thought to express.";
 
 		if (DumpThoughts::too_early_after_game_load()) {
 			SKSE::log::info(
