@@ -245,40 +245,40 @@ RE::BSEventNotifyControl handle_inventory_change::ProcessEvent(
 				"You are down to your last 3 lockpicks. You have to be careful now. React to this finding and mention that you are down to your last 3 lockpicks.");
 		} else if ((inventory_count_before>0) && (inventory_count_after==0)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
-				"Your lockpicks are all gone.  How are you supposed to get out of a locked situation now? React to this situation and mention that you have no lockpicks left.");
+				"Your lockpicks are all gone.  How are you supposed to get out of a locked situation now? React to this situation and mention that you have no lockpicks left anymore now.");
 		}	
 	}
 
 	if (added && item_name && _strnicmp(item_name, "Chastity Key", 11) == 0) {
 		// Depending on counts, we might comment on Chastity key
-		if ((inventory_count_before==0) && (inventory_count_after>3)) {
+		if ((inventory_count_before==0) && (inventory_count_after>0)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
 				"You just obtained a Chastity Key. Finally!  React to finding it and make it clear that it is a Chastity Key and that you can now get out of chastity bras and chastity belts now, in case that you ever need to.");
 		} else if ((inventory_count_before>0) && (inventory_count_after==0)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
-				"Your Chastity Keys are all gone. React to this situation and mention that you have no Chastity Keys left and can't get out of chastity bras and chastity belts any more in case you ever need to.");
+				"Your Chastity Keys are all gone. React to this situation and mention that you have no Chastity Keys left and can't get out of chastity bras and chastity belts any more in case you ever need to.  Be sure to mention in your response, that you now do not have any Chastity Keys left.");
 		}	
 	}
 
 	if (added && item_name && _strnicmp(item_name, "Restraints Key", 11) == 0) {
 		// Depending on counts, we might comment on Restraints key
-		if ((inventory_count_before==0) && (inventory_count_after>3)) {
+		if ((inventory_count_before==0) && (inventory_count_after>0)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
 				"You just obtained a Restraints Key. Finally!  React to finding it and make it clear that it is a Restraints Key and that you can now get out of restraints now, in case that you ever need to.");
 		} else if ((inventory_count_before>0) && (inventory_count_after==0)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
-				"Your Restraints Keys are all gone. React to this situation and mention that you have no Restraints Keys left and can't get out of restraints any more in case you ever need to.");
+				"Your Restraints Keys are all gone. React to this situation and mention that you have no Restraints Keys left and can't get out of restraints any more in case you ever need to.  Be sure to mention in your response, that you now do not have any Restraints Keys left.");
 		}	
 	}
 
 	if (added && item_name && _strnicmp(item_name, "Piercing Removal Tool", 21) == 0) {
 		// Depending on counts, we might comment on Piercing Removal Tool
-		if ((inventory_count_before==0) && (inventory_count_after>3)) {
+		if ((inventory_count_before==0) && (inventory_count_after>0)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
 				"You just obtained a Piercing Removal Tool. Finally!  React to finding it and make it clear that it is a Piercing Removal Tool and that you can now remove piercings now, in case that you ever need to.");
 		} else if ((inventory_count_before>0) && (inventory_count_after==0)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
-				"Your Piercing Removal Tools are all gone. React to this situation and mention that you have no Piercing Removal Tools left and can't remove piercings any more in case you ever need to.");
+				"Your Piercing Removal Tools are all gone. React to this situation and mention that you have no Piercing Removal Tools left and can't remove piercings any more in case you ever need to.  Be sure to mention in your response, that you now do not have any Piercing Removal Tools left.");
 		}	
 	}
 
