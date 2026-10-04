@@ -367,6 +367,10 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 
 void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* a_event) 
 {
+	if (!a_event) {
+		return;
+	}
+
 	static const std::unordered_set<std::string_view> scene_start_events = {
 		// "AnimationStarting",   // This can also happen in BattleFuck, where undressing is an important point and SHOULD be commented via player-thoughts.
 		// "AnimationStart",   // This can also happen in BattleFuck, where undressing is an important point and SHOULD be commented via player-thoughts.
@@ -417,15 +421,33 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		return;
 	}
 
-	if (scene_start_events.contains(event_name))
-	{
+	const bool is_scene_start = scene_start_events.contains(event_name);
+	const bool is_scene_end = scene_end_events.contains(event_name);
+	if (!is_scene_start && !is_scene_end) {
+		return;
+	}
+
+	auto* player = RE::PlayerCharacter::GetSingleton();
+	const char* player_name = player ? player->GetName() : nullptr;
+	const bool player_in_scene = player_name && !a_event->strArg.empty() &&
+		std::strcmp(a_event->strArg.c_str(), player_name) == 0;
+	logger::info(
+		"NEW SWITCH TO CHECK FOR PLAYER-INVOLVEMENT BEFORE DECIDING ON PLAYER-SCENE-PARTICIPATION-FLAG: Scene participant check: event={} strArg='{}' player='{}' player_in_scene={}",
+		a_event->eventName.c_str(),
+		a_event->strArg.c_str(),
+		player_name ? player_name : "<unknown>",
+		player_in_scene);
+	if (!player_in_scene) {
+		return;
+	}
+
+	if (is_scene_start) {
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 		logger::info("Mod-Event-Based DISABLING OF CLOTHING-CHANGE-COMMENTS: {}  StrArg: {} ", a_event->eventName.c_str(), a_event->strArg.c_str());  
 		set_current_animation_status("in_a_scene", event_name);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-	if (scene_end_events.contains(event_name))
-	{
+	if (is_scene_end) {
 		// We ignore those mod event broadcasts, because we cannot and do not need to make them into reasonable immersive player thoughts or talk in any way. 
 		logger::info("Mod-Event-Based RE-ENABLING OF CLOTHING-CHANGE-COMMENTS: {}\n{}\n.", a_event->eventName.c_str(), a_event->strArg.c_str());  
 		set_current_animation_status("not_in_a_scene", event_name);
