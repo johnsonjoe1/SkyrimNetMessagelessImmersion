@@ -1,4 +1,5 @@
 #include "handle_worn_equipment_change.h"
+#include "DumpThoughts.h"
 #include "log.h"
 #include "misc.h"
 #include <algorithm>
@@ -209,11 +210,16 @@ RE::BSEventNotifyControl handle_inventory_change::ProcessEvent(
 
 	auto* item = RE::TESForm::LookupByID(a_event->baseObj);
 	const auto* item_name = item ? item->GetName() : nullptr;
-	logger::info("Player inventory item {}: {} x{} (FormID {:08X})",
+	logger::info("Player INVENTORY CHANGED: item {}: {} x{} (FormID {:08X})",
 		added ? "added" : "removed",
 		item_name ? item_name : "<unknown>",
 		a_event->itemCount,
 		a_event->baseObj);
+
+	if (added && item_name && _strnicmp(item_name, "Waifu ", 6) == 0) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
+			"You just found another Waifu card. React to finding another card and make it clear that it is a Waifu card.");
+	}
 
 	return RE::BSEventNotifyControl::kContinue;
 }
