@@ -83,8 +83,9 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 	}
 
 	// NPC SLAC events can also be commented, but only if the player isn't in a scene OF ANY KIND herself.
-	if (! player_is_in_ANY_SL_scene()) {
-		if (eventName == "SNMI_SLACNPCAnimationStart" || eventName == "SNMI_SLACNPCAnimationEnding") {
+
+	if (eventName == "SNMI_SLACNPCAnimationStart" || eventName == "SNMI_SLACNPCAnimationEnding") {
+		if (! player_is_in_ANY_SL_scene()) {			
 			std::string context = a_event->strArg.c_str();
 			const auto separator = context.find('|');
 			const std::string npc_name = separator == std::string::npos ? "a nearby NPC" : context.substr(0, separator);
@@ -95,9 +96,10 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 				: std::format("The sexual encounter between {} and {} that you witnessed nearby has just ended and {} has finally let go of {}. Let us know your immediate response to seeing the creature and NPC finish their scene, maybe with some empathy for the poor and helpless {}.  Be sure to explain what is happening at all in your response, because the player may not see the scene on screen and therefore might be confused if you don't give enough context and and don't explain what you are talking about here.", creature_name, npc_name, creature_name, npc_name, npc_name);
 			DumpThoughts::throw_out_TTS_thought_message(thought_message);
 			LillithOnlyBox(std::string(isStarting ? "SNMI_SLACNPCAnimationStart:  " : "SNMI_SLACNPCAnimationEnding:  ") + thought_message);
-			return true;
+		} else {
+			logger::info("Player is in an SL scene, so NPC SLAC events will not be commented.");
+			return true;		
 		}
 	}
-
 	return false;
 }
