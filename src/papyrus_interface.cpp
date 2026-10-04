@@ -172,7 +172,7 @@ void SNMIPapyrus::set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value)
 		final_thought_string = "YOU, the player, have become a little less dependent on fashion than before. Reflect on this easing of your fashion addiction and how it changes the importance you place on being perfectly styled. Be sure to mention your decreasing fashion addiction explicitly so the reason for the thought is clear.";
 	}
 	if (!final_thought_string.empty()) {
-		if (!player_is_in_a_SL_scene()) {
+		if (!player_is_in_ANY_SL_scene()) {
 			LillithOnlyBox(std::format("YPS state change detected: yps_AddictionBuff ({} -> {})", previous_yps_AddictionBuff, _yps_AddictionBuff));
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string);

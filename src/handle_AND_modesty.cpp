@@ -590,7 +590,7 @@ void handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff()
 		return;
 	}
 
-	if (player_is_in_a_SL_scene()) {
+	if (player_is_in_ANY_SL_scene()) {
 		logger::info("AND-Modesty-Factions:  Player is in a SL scene, so we skip the AND-Modesty-Faction handling for now.");
 		if (hard_change_in_slots_0_to_7()) {
 			// LillithOnlyBox("SNMI:  There was a HARD CHANGE IN CLOTHING, but player is currently in a SL scene, so we skip the AND-Modesty comment here for now.");

@@ -14,7 +14,7 @@ bool handle_bimbos::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 	}
 
 /* [2026-08-16 17:57:25.863] MOD EVENT: Name: CC_ModBimboCorruption  StrArg: I love pretty jewellery!  NumArg: 2*/
-	if (player_is_in_a_SL_scene() && a_event->strArg != "Oooh... I could get used to not being in control...") {
+	if (player_is_in_ANY_SL_scene() && a_event->strArg != "Oooh... I could get used to not being in control...") {
 		SKSE::log::info("CC_ModBimboCorruption event detected, but player is in a scene and it's not the corrupting sex as a message, so we will not process it.");
 		return true;  // In this case it really was a CC_ModBimboCorruption event and that means no further processing necessary in the main mod boadcast module.
 	}

@@ -61,7 +61,7 @@ bool handle_jailrape::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event
 
 	// NOW WE ALSO TREAT OTHER PRISONERS BEING USED BY THE GUARDS, but only if there is no scene involving the player yet 
 	if (eventName == "AnimationStarting_JailRapeNPC") {
-		if (!player_is_in_a_SL_scene()) { // We only speak about other prisoners being used, if the player isn't being used herself
+		if (!player_is_in_ANY_SL_scene()) { // We only speak about other prisoners being used, if the player isn't being used herself
 			const std::string thoughtMessage = "YOU, the player, can hear in the distance how the guards are starting to use another prisoner for their own fun and pleasure. Respond in character and let the player know through your response, that the guards are starting to use another prisoner somewhere else in jail. Your response may be full of empathy for the poor woman.";
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thoughtMessage);
 			LillithOnlyBox("AnimationStarting_JailRapeNPC: " + thoughtMessage);
@@ -69,7 +69,7 @@ bool handle_jailrape::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event
 		return true;		
 	}
 	if (eventName == "OrgasmStart_JailRapeNPC") {
-		if (!player_is_in_a_SL_scene()) { // We only speak about other prisoners being used, if the player isn't being used herself		
+		if (!player_is_in_ANY_SL_scene()) { // We only speak about other prisoners being used, if the player isn't being used herself		
 			const std::string thoughtMessage = "The guards are using another prisoner for their own fun and pleasure in the distance for quite a while.  Now you can hear, how the guards managed to make the poor other woman have an orgasm from that treatment. Respond in character and let the player know through your response, that the other prisoner was just made to orgasm somewhere else in jail. Your response may be full of empathy for the poor woman.";
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thoughtMessage);
 			LillithOnlyBox("OrgasmStart_JailRapeNPC: " + thoughtMessage);
@@ -77,7 +77,7 @@ bool handle_jailrape::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event
 		return true;	
 	}
 	if (eventName == "AnimationEnding_JailRapeNPC") {
-		if (!player_is_in_a_SL_scene()) { // We only speak about other prisoners being used, if the player isn't being used herself
+		if (!player_is_in_ANY_SL_scene()) { // We only speak about other prisoners being used, if the player isn't being used herself
 			const std::string thoughtMessage = "YOU, the player, can hear in the distance how the guards have now finished using another prisoner for their own fun and pleasure. Respond in character and let the player know through your response, that the guards now let go of the other woman somewhere else in jail. Your response may be full of empathy for the poor woman.";
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thoughtMessage);
 			LillithOnlyBox("AnimationEnding_JailRapeNPC: " + thoughtMessage);

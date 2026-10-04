@@ -82,18 +82,21 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 		return true;
 	}
 
-	if (eventName == "SNMI_SLACNPCAnimationStart" || eventName == "SNMI_SLACNPCAnimationEnding") {
-		std::string context = a_event->strArg.c_str();
-		const auto separator = context.find('|');
-		const std::string npc_name = separator == std::string::npos ? "a nearby NPC" : context.substr(0, separator);
-		const std::string creature_name = separator == std::string::npos ? "a creature" : context.substr(separator + 1);
-		const bool isStarting = eventName == "SNMI_SLACNPCAnimationStart";
-		std::string thought_message = isStarting
-			? std::format("You have just witnessed the very horny {} successfully engage with the poor and helpless {} and begin a sexual encounter with them nearby. Let us know your immediate response to seeing the creature and NPC begin their encounter, maybe with some empathy for the poor and helpless {}.", creature_name, npc_name, npc_name)
-			: std::format("The sexual encounter between {} and {} that you witnessed nearby has just ended and {} has finally let go of {}. Let us know your immediate response to seeing the creature and NPC finish their scene, maybe with some empathy for the poor and helpless {}.", creature_name, npc_name, creature_name, npc_name, npc_name);
-		DumpThoughts::throw_out_TTS_thought_message(thought_message);
-		LillithOnlyBox(std::string(isStarting ? "SNMI_SLACNPCAnimationStart:  " : "SNMI_SLACNPCAnimationEnding:  ") + thought_message);
-		return true;
+	// NPC SLAC events can also be commented, but only if the player isn't in a scene OF ANY KIND herself.
+	if (! player_is_in_ANY_SL_scene()) {
+		if (eventName == "SNMI_SLACNPCAnimationStart" || eventName == "SNMI_SLACNPCAnimationEnding") {
+			std::string context = a_event->strArg.c_str();
+			const auto separator = context.find('|');
+			const std::string npc_name = separator == std::string::npos ? "a nearby NPC" : context.substr(0, separator);
+			const std::string creature_name = separator == std::string::npos ? "a creature" : context.substr(separator + 1);
+			const bool isStarting = eventName == "SNMI_SLACNPCAnimationStart";
+			std::string thought_message = isStarting
+				? std::format("You have just witnessed the very horny {} successfully engage with the poor and helpless {} and begin a sexual encounter with them nearby. Let us know your immediate response to seeing the creature and NPC begin their encounter, maybe with some empathy for the poor and helpless {}.  Be sure to explain what is happening at all in your response, because the player may not see the scene on screen and therefore might be confused if you don't give enough context and and don't explain what you are talking about here.", creature_name, npc_name, npc_name)
+				: std::format("The sexual encounter between {} and {} that you witnessed nearby has just ended and {} has finally let go of {}. Let us know your immediate response to seeing the creature and NPC finish their scene, maybe with some empathy for the poor and helpless {}.  Be sure to explain what is happening at all in your response, because the player may not see the scene on screen and therefore might be confused if you don't give enough context and and don't explain what you are talking about here.", creature_name, npc_name, creature_name, npc_name, npc_name);
+			DumpThoughts::throw_out_TTS_thought_message(thought_message);
+			LillithOnlyBox(std::string(isStarting ? "SNMI_SLACNPCAnimationStart:  " : "SNMI_SLACNPCAnimationEnding:  ") + thought_message);
+			return true;
+		}
 	}
 
 	return false;

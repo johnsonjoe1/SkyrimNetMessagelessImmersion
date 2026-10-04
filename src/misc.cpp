@@ -39,7 +39,7 @@ void handle_timeout_for_stale_scenes() {
 	}
 }
 
-bool player_is_in_a_SL_scene() {
+bool player_is_in_ANY_SL_scene() {
 	return current_animation_status == "in_a_scene";
 }
 
