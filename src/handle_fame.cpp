@@ -203,6 +203,7 @@ But maybe they have forgotten about you and what you did there already.
 The detailed categories where you have increased fame here are: {}.   
 What are you thinking now based on this?  How does that make you feel?  
 And let us know from your response, that you speak about your reputation as a potentially perverse person in some of the given categories.
+For this response, you may very well reference in detail to the specific events in your past from memories, so you can be more specific about sexual acts and their location and context from your history.
 )SKSE", fame_increases_as_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
 		}
@@ -215,6 +216,7 @@ In any case, people are less likely to speak about your sexual actions and behav
 The detailed categories where you have decreased fame here are: {}.   
 What are you thinking now based on this?  How does that make you feel?  
 And let us know from your response, that you speak about your reputation as a potentially perverse person in some of the given categories.
+For this response, you may very well reference in detail to the specific events in your past from memories, so you can be more specific about sexual acts and their location and context from your history.
 )SKSE", fame_decreases_as_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
 		}
