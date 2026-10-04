@@ -510,6 +510,15 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		LillithOnlyBox("AnimationStarting_BattleFuck:  " + thought_message);
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
+	// BattleFuck includes the new spectator's display name in this event's string argument.
+	if ( (std::strcmp(a_event->eventName.c_str() , "_BF_Onlookers_AddNotification") == 0)  ) {
+		std::string thought_message = std::format(
+			"YOU, the player, realize that another onlooker has arrived, but instead of helping you, that person has stopped to watch you get molested and used.  Express what you feel and think about that betrayal or humiliation.  BattleFuck described the new spectator as follows: '{}'.  If that description contains the spectator's name, use the name, but do not invent one.",
+			a_event->strArg.c_str());
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		LillithOnlyBox("_BF_Onlookers_AddNotification:  " + thought_message);
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
 	// MOD EVENT:  Name:  "AnimationEnding_BattleFuck" :  this is the end of a BattleFuck scene.  We absolutely should comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BattleFuck") == 0)  ) {
 		// This event is always about the player, nobody else.
