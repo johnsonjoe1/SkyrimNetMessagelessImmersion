@@ -210,16 +210,32 @@ RE::BSEventNotifyControl handle_inventory_change::ProcessEvent(
 
 	auto* item = RE::TESForm::LookupByID(a_event->baseObj);
 	const auto* item_name = item ? item->GetName() : nullptr;
-	logger::info("Player INVENTORY CHANGED: item {}: {} x{} (FormID {:08X})",
+	std::int32_t inventory_count_after = 0;
+	for (const auto& [inventory_item, entry] : player->GetInventory()) {
+		if (inventory_item && inventory_item->GetFormID() == a_event->baseObj) {
+			inventory_count_after = entry.first;
+			break;
+		}
+	}
+	const auto event_count = static_cast<std::int64_t>(a_event->itemCount);
+	const auto changed_count = event_count < 0 ? -event_count : event_count;
+	const auto inventory_count_before = added ?
+		static_cast<std::int64_t>(inventory_count_after) - changed_count :
+		static_cast<std::int64_t>(inventory_count_after) + changed_count;
+
+	logger::info("Player INVENTORY CHANGED: item {}: {} (FormID {:08X}), count before: {}, count after: {}",
 		added ? "added" : "removed",
 		item_name ? item_name : "<unknown>",
-		a_event->itemCount,
-		a_event->baseObj);
+		a_event->baseObj,
+		inventory_count_before,
+		inventory_count_after);
 
 	if (added && item_name && _strnicmp(item_name, "Waifu ", 6) == 0) {
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 			"You just found another Waifu card. React to finding another card and make it clear that it is a Waifu card.");
 	}
+
+	
 
 	return RE::BSEventNotifyControl::kContinue;
 }
