@@ -268,7 +268,17 @@ bool handle_DDUD::handle_DDUD_chain_sound_effect(
 [2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:424] base-Effect EDID: zadx_SndMuzzleGagDingaLingSlowMgef | Source ptr: 0x1d03e1c1f00  |  Caster: Lillith 
 [2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:428] Magnitude: 0 | Duration: 0
 [2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:431] Source name: Muzzle Gag Script | Source FormID: 110586B4 | Source EDID: zad_enchGagDingaLing 
-[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:437] Form LookupByID 110586B9 found: Muzzle Gag Ding-a-Ling Sounds Slow*/
+[2026-08-09 13:38:20.753] [log] [info] [handle_active_magic_effect_changes.cpp:437] Form LookupByID 110586B9 found: Muzzle Gag Ding-a-Ling Sounds Slow
+
+[2026-10-04 10:36:35.098] [log] [info] [handle_active_magic_effect_changes.cpp:923] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-04 10:36:35.098] [log] [info] [handle_active_magic_effect_changes.cpp:924] Effect APPLIED on Lillith | UID=30
+[2026-10-04 10:36:35.098] [log] [info] [handle_active_magic_effect_changes.cpp:927] Base name: BellSoundEffect | Base ptr: 0x20afb956400 | Base-FormID: 1101BB50 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-04 10:36:35.098] [log] [info] [handle_active_magic_effect_changes.cpp:928] base-Effect EDID:  | Source ptr: 0x20afb965fc0  |  Caster: Lillith 
+[2026-10-04 10:36:35.098] [log] [info] [handle_active_magic_effect_changes.cpp:932] Magnitude: 0 | Duration: 0
+[2026-10-04 10:36:35.098] [log] [info] [handle_active_magic_effect_changes.cpp:935] Source name: BellEnchantment | Source FormID: 1101BB4E | Source EDID:  
+[2026-10-04 10:36:35.098] [log] [info] [handle_active_magic_effect_changes.cpp:941] Form LookupByID 1101BB50 found: BellSoundEffect
+
+*/
 
 bool handle_DDUD::handle_DDUD_muzzle_gag_ding_a_ling_effect(
 	const RE::TESActiveEffectApplyRemoveEvent* a_event,
@@ -277,29 +287,30 @@ bool handle_DDUD::handle_DDUD_muzzle_gag_ding_a_ling_effect(
 	if (!a_event || !a_effect) {
 		return false;
 	}
-
 	auto* base = a_effect->GetBaseObject();
 	if (!base) {
 		return false;
 	}
-
 	const auto* base_name = base->GetName();
 	if (std::strcmp(base_name, "Muzzle Gag Ding-a-Ling Sounds Slow") != 0 &&
 		std::strcmp(base_name, "Muzzle Gag Ding-a-Ling Sounds Medium") != 0 &&
-		std::strcmp(base_name, "Muzzle Gag Ding-a-Ling Sounds Fast") != 0) {
+		std::strcmp(base_name, "Muzzle Gag Ding-a-Ling Sounds Fast") != 0 &&
+		std::strcmp(base_name, "BellSoundEffect") != 0) {
 		return false;
 	}
-
 	if (a_event->isApplied) {
-		SKSE::log::info("Event handler for Muzzle Gag Ding-a-Ling Sounds effect application!");
+		SKSE::log::info("Event handler for Muzzle Gag Ding-a-Ling Sounds effect application or general bell!");
 		if (cooldown_has_passed(last_muzzle_gag_ding_a_ling_sound_timestamp, 60 * 5)) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player, are now dangling a little bell, that is attached to your muzzle gag and keeps dingling little bell sounds whenever you move.  This is so humiliating.  It's all just because of the gag you are wearing.  In your response, you should cry out in desperation, that you are feeling so humiliated with that little bell, that you are unable to remove or muffle due to your bondage.  This event is so important, that you can elaborate in many words about your desperation here.");
+			if (std::strcmp(base_name, "BellSoundEffect") == 0) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player, are dangling a cow bell, that is attached to one of your genital plugs and keeps dingling cow bell sounds whenever you move.  This is so humiliating.  In your response, you should cry out in desperation, that you are feeling so humiliated with that cow bell, that you are unable to remove or muffle due to your bondage.  This event is so important, that you can elaborate in many words about your desperation here.");
+			} else {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player, are now dangling a little bell, that is attached to your muzzle gag and keeps dingling little bell sounds whenever you move.  This is so humiliating.  It's all just because of the gag you are wearing.  In your response, you should cry out in desperation, that you are feeling so humiliated with that little bell, that you are unable to remove or muffle due to your bondage.  This event is so important, that you can elaborate in many words about your desperation here.");
+			}
 			last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now();
 		} else {
 			SKSE::log::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> But the cooldown in Event handler for Muzzle Gag Ding-a-Ling Sounds effect application hasn't passed yet!");
 		}
 	}
-
 	return true;
 }
 
