@@ -20,8 +20,7 @@ void run_constant_whining_in_case_of_silence()
 	const auto silenceDuration = std::chrono::steady_clock::now() - DumpThoughts::GetLastSpeechTimestamp();
 	if (silenceDuration >= std::chrono::seconds(requiredSilence)) {
 		// LillithOnlyBox(std::format("run_constant_whining_in_case_of_silence() ran after at least {} seconds without a thought.", requiredSilence));
-		LillithOnlyHUDmessage(std::format("run_constant_whining_in_case_of_silence() ran after at least {} seconds without a thought.", requiredSilence));
-		// RE::SendHUDMessage::ShowHUDMessage("Hello World!!");
+		// LillithOnlyHUDmessage(std::format("run_constant_whining_...() ran ({} sec no thought).", requiredSilence));
 
 		if (handle_iNeed::previous_iNeed_fatigue_level == 3) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
@@ -55,9 +54,9 @@ void run_constant_whining_in_case_of_silence()
 					"Your current bimbo corruption level is {:.0f}, which is high or worse, because at 100 you will permanently become a bimbo. Speak in character, like a brainless bimbo, and let the player know how the bimbo corruption makes your mind foggy and unable to focus on anything but fashion and pleasure.  Your thoughts should make is somewhat clear, that you are speaking about very high bimbo corruption levels of your mind.",
 					corruption->value));
 			} else if (corruption) {
-				LillithOnlyBox(std::format(
-					"Your current bimbo corruption level is {:.0f}, which is not high enough to trigger the high corruption response.",
-					corruption->value));
+				// LillithOnlyBox(std::format(
+				// 	"Your current bimbo corruption level is {:.0f}, which is not high enough to trigger the high corruption response.",
+				// 	corruption->value));
 			}
 		}
 		for (const auto& sicknessThought : get_current_other_sickness_thoughts()) {
