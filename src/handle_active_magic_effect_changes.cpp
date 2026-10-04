@@ -21,6 +21,7 @@ static auto last_cum_effect_thought_timestamp = std::chrono::steady_clock::now()
 static auto last_cum_effect_removal_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_entered_water_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_exited_water_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_firebolt_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Stomach Rot",
@@ -881,6 +882,36 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			std::string final_thought_string = std::format("The Nullify Magicka effect is now removed.  Your magicka is no longer nullified and you can cast spells and shout again.  Respond in character and say something and be sure to mention that you are now free from the suppression of your magical abilities.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;	
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+
+
+/*
+[2026-10-04 17:25:01.250] [log] [info] [handle_active_magic_effect_changes.cpp:923] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-04 17:25:01.250] [log] [info] [handle_active_magic_effect_changes.cpp:924] Effect APPLIED on Lillith | UID=28
+[2026-10-04 17:25:01.250] [log] [info] [handle_active_magic_effect_changes.cpp:927] Base name: Firebolt | Base ptr: 0x251eb919b40 | Base-FormID: 12F03 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-04 17:25:01.250] [log] [info] [handle_active_magic_effect_changes.cpp:928] base-Effect EDID:  | Source ptr: 0x251eb8b5300  |  Caster: Forsworn Looter 
+[2026-10-04 17:25:01.251] [log] [info] [handle_active_magic_effect_changes.cpp:932] Magnitude: -31.25 | Duration: 1
+[2026-10-04 17:25:01.251] [log] [info] [handle_active_magic_effect_changes.cpp:935] Source name: Firebolt | Source FormID: C969B | Source EDID:  
+[2026-10-04 17:25:01.251] [log] [info] [handle_active_magic_effect_changes.cpp:941] Form LookupByID 12F03 found: Firebolt
+*/	
+	if (base && ( (std::strcmp(base_name, "Firebolt") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			if (!cooldown_has_passed(last_firebolt_thought_timestamp, 90)) {
+				logger::info("Skipping Firebolt thought because its 90-second cooldown has not elapsed.");
+				return;
+			}
+
+			SKSE::log::info("Event handler for Firebolt effect application!");
+			std::string final_thought_string = std::format("You have been hit by a Firebolt spell.  The impact sears your skin and you feel the intense heat and magical energy coursing through you.  The firebolt came from: {}.  Respond in character and say something and be sure to mention that you have been struck by a Firebolt.", caster->GetName());
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+			last_firebolt_thought_timestamp = std::chrono::steady_clock::now();
+		} else {
+			// no comment or reaction on removal of firebolt hit effect
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
