@@ -56,7 +56,7 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 		std::string thought_message = std::format("A creature, an animal or a monster, has just managed to take advantage of you and start a sexual encounter with you, and you somehow were too horny and couldn't resist or couldn't escape in time and then just submitted into the sexual encounter.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having sex with a creature. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		LillithOnlyBox("SNMI_SLACAnimationStarting:  " + thought_message);
-		return true;
+		return true;	// Successfully handling and no further processing in the calling function
 	}
 
 	if (eventName == "StageStart_slacEngagement") {
@@ -71,7 +71,7 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 		std::string thought_message = std::format("The creature, animal or monster, that came after you to have sex with you got you and it still isn't satisfied and wants to have even more sex with you and you were also too horny to really stop yourself.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having sex with a creature.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		LillithOnlyBox("StageStart_slacEngagement:  " + thought_message);
-		return true;
+		return true;	// Successfully handling and no further processing in the calling function
 	}
 
 	if (eventName == "SNMI_SLACAnimationEnding") {
@@ -79,7 +79,7 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 		std::string thought_message = std::format("Your sexual encounter with a creature, animal, or monster has just ended, and you are free to move on again. Let us know your immediate response to the encounter ending, and make sure you mention or implicitly point out that you just had sex with a creature. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		LillithOnlyBox("SNMI_SLACAnimationEnding:  " + thought_message);
-		return true;
+		return true;	// Successfully handling and no further processing in the calling function
 	}
 
 	// NPC SLAC events can also be commented, but only if the player isn't in a scene OF ANY KIND herself.
@@ -96,9 +96,10 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 				: std::format("The sexual encounter between {} and {} that you witnessed nearby has just ended and {} has finally let go of {}. Let us know your immediate response to seeing the creature and NPC finish their scene, maybe with some empathy for the poor and helpless {}.  Be sure to explain what is happening at all in your response, because the player may not see the scene on screen and therefore might be confused if you don't give enough context and and don't explain what you are talking about here.", creature_name, npc_name, creature_name, npc_name, npc_name);
 			DumpThoughts::throw_out_TTS_thought_message(thought_message);
 			LillithOnlyBox(std::string(isStarting ? "SNMI_SLACNPCAnimationStart:  " : "SNMI_SLACNPCAnimationEnding:  ") + thought_message);
+			return true;	// Successfully handling and no further processing in the calling function
 		} else {
 			logger::info("Player is in an SL scene, so NPC SLAC events will not be commented.");
-			return true;		
+			return true;	// Successfully handling and no further processing in the calling function
 		}
 	}
 	return false;
