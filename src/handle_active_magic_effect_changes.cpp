@@ -916,6 +916,33 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
+	/*
+[2026-10-04 21:32:12.201] [log] [info] [handle_active_magic_effect_changes.cpp:954] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-04 21:32:12.201] [log] [info] [handle_active_magic_effect_changes.cpp:955] Effect REMOVED on Lillith | UID=44
+[2026-10-04 21:32:12.201] [log] [info] [handle_active_magic_effect_changes.cpp:958] Base name: Orgasm Exhaustion | Base ptr: 0x1f89ed7fc80 | Base-FormID: 241553CF | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-04 21:32:12.201] [log] [info] [handle_active_magic_effect_changes.cpp:959] base-Effect EDID:  | Source ptr: 0x1f89f785100  |  Caster: Lillith 
+[2026-10-04 21:32:12.201] [log] [info] [handle_active_magic_effect_changes.cpp:963] Magnitude: -1 | Duration: 185
+[2026-10-04 21:32:12.201] [log] [info] [handle_active_magic_effect_changes.cpp:966] Source name: Orgasm exhaustion | Source FormID: 2411A34C | Source EDID:  
+[2026-10-04 21:32:12.201] [log] [info] [handle_active_magic_effect_changes.cpp:972] Form LookupByID 241553CF found: Orgasm Exhaustion	
+	*/
+	if (base && ( (std::strcmp(base_name, "Orgasm Exhaustion") == 0) ) )
+	{
+		// Dummy event handler to understand when that happens
+		if (a_event->isApplied)
+		{
+			SKSE::log::info("Event handler for Orgasm Exhaustion effect application!");
+			std::string final_thought_string = std::format("You are experiencing Orgasm Exhaustion.  This effect leaves you drained and unable to engage in further sexual activity for a while.  The source of this effect is: {}.  Respond in character and describe your current state and feelings.", caster->GetName());
+			LillithOnlyBox("NOTE:  Orgasm Exhaustion applied!!");
+			LillithOnlyBox("NOTE:  Orgasm Exhaustion applied!!");
+			// DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+		} else {
+			LillithOnlyBox("NOTE:  Orgasm Exhaustion removed!!");
+			LillithOnlyBox("NOTE:  Orgasm Exhaustion removed!!");
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+
+
 // *************************************************
 // *** HERE WE PUT SOME EXTRA NOTIFICATIONS FOR UNHANDLED MAGIC EFFECTS THAT WE DON'T UNDERSTAND AND WANT MORE POPUP MESSAGES FOR, TO BETTER DETECT THEM AND THEN UNDERSTAND THEM ***
 // ********************************************************
