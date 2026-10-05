@@ -333,13 +333,6 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"StageStart_TAPPlayerFreelance",        //  This might be from The-Ancient-Profession.
 		"StageEnd_TAPPlayerFreelance",          //  This might be from The-Ancient-Profession.
 
-		//  "AnimationStarting_BattleFuck",   //  This is from the BattleFuck mod.  This is the one event, that we respond to.
-		"AnimationStart_BattleFuck",   //  This is from the BattleFuck mod.  This is 4 seconds after the other, so we ignore this one and respond to the other one.
-		"StageStart_BattleFuck", // This is from the BattleFuck mod.  Since this is about undressing itself, we won't stop clothing changes from this one.
-		"StageEnd_BattleFuck",   // This is from the BattleFuck mod.  Since this is about undressing itself, we won't stop clothing changes from this one.
-		"AnimationEnd_BattleFuck",   // This is from the BattleFuck mod.  nothing to do here.
-		//  "AnimationEnding_BattleFuck", // This is from the BattleFuck mod.  We absolutely should comment on that.
-
 		"AnimationStart_CreatureSummoner", // This is from the Creature Summoner mod.
 		"AnimationStarting_CreatureSummoner", // This is from the Creature Summoner mod.
 		"StageStart_CreatureSummoner", // This is from the Creature Summoner mod.
