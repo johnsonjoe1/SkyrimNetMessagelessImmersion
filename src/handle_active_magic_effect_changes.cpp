@@ -641,8 +641,8 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	{
 		if (a_event->isApplied)
 		{
-			if (!cooldown_has_passed(last_swimming_effect_thought_timestamp, 60)) {
-				logger::info("Skipping swimming thought because its 60-second cooldown has not elapsed.");
+			if (!cooldown_has_passed(last_swimming_effect_thought_timestamp, 5*60)) {
+				logger::info("Skipping swimming thought because its 5-minute cooldown has not elapsed.");
 				return;
 			}
 
