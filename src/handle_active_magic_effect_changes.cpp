@@ -222,6 +222,7 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"BM_ME_DetectStateWorkbench",  // The mod Licenses-Player Oppression checking for workbench state changes, can be ignored.
 		"BM_ME_DetectItemWeaponOut",   // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.		
 		"BM_ME_DetectStateJail",       // The mod Licenses-Player Oppression checking for jail state changes, can be ignored.
+		"BM_ME_DetectItemMagicOut",    // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 
 		"BM_ME_HostArmorLicense",      // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.
 		"BM_ME_HostBikiniExemption",   // The mod Licenses-Player:  Seems to be regular checks again, which we can't do anything with, really.

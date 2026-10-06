@@ -216,6 +216,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SkyrimNet_MoodChanged",  // No need to respond to this, as it's native to SkyrimNet anyway and probably already handled by SkyrimNet itself.
 		"SkyrimNet_DiaryCreated",  // This is internal.  No player thoughts.
 		"SkyrimNet_TimelineResolved",
+		"SkyrimNet_SexLab_Orgasm",  // This is from SkyrimNet_Sexlab plugin
 
 		"UIWheelMenu_LoadMenu",      //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
 		"UIWheelMenu_SetOption",     //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
@@ -377,6 +378,7 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		"StageStart_CreatureSummoner",
 		"AnimationChange",
 		"AnimationChange_CreatureSummoner",
+		"AnimationChange_MatchMaker",    // This is from the debug function matchmaker
 		// "AnimationStart_BodySearch" is intentionally excluded: body search itself is about clothing, especially in the second part.
 		"StageStart_TAPPlayerFreelance",
 		"StageStart_",
