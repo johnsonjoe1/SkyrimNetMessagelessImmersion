@@ -22,6 +22,7 @@ static auto last_cum_effect_removal_thought_timestamp = std::chrono::steady_cloc
 static auto last_entered_water_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_exited_water_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_firebolt_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_swimming_effect_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Stomach Rot",
@@ -639,10 +640,16 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	{
 		if (a_event->isApplied)
 		{
+			if (!cooldown_has_passed(last_swimming_effect_thought_timestamp, 60)) {
+				logger::info("Skipping swimming thought because its 60-second cooldown has not elapsed.");
+				return;
+			}
+
 			SKSE::log::info("Event handler for Get Condition: Swimming via Get Dirty Over Time - Clean APPLICATION!");
 			std::string final_thought_string = std::format("YOU, the player character, just started a little swim, which is helping to remove some of the dirt you have been aquiring. Respond in character and mention your relief about the little swim, how good it feels and how nice it is, that this will remove even more of the dirt and filth you have been aquiring."); //  + standard_thought_instruction;
 			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Get Condition: Swimming via Get Dirty Over Time - Clean: THOUGHT: " + final_thought_string);
 			LillithOnlyBox(final_thought_string);
+			last_swimming_effect_thought_timestamp = std::chrono::steady_clock::now();
 		} 
 		else // i.e.  if (!a_event->isApplied) )
 		{
