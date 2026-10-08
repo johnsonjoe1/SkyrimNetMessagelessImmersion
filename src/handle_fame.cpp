@@ -205,8 +205,8 @@ And let us know from your response, that you speak about your fame in the given 
 				SKSE::log::info("SLSF-Handling: Skipping {} thought generation because enableSLSFthoughts is disabled. Categories: {}", change, categories);
 				return false;
 			}
-			if (last_thought_time && std::chrono::steady_clock::now() - *last_thought_time < std::chrono::seconds(300)) {
-				SKSE::log::info("SLSF-Handling: Skipping {} thought generation because the 300-second cooldown is active. Categories: {}", change, categories);
+			if (last_thought_time && std::chrono::steady_clock::now() - *last_thought_time < std::chrono::seconds(SNMI::GetSettings().SLSFthoughtCooldown)) {
+				SKSE::log::info("SLSF-Handling: Skipping {} thought generation because the {}-second cooldown is active. Categories: {}", change, SNMI::GetSettings().SLSFthoughtCooldown, categories);
 				return false;
 			}
 			return true;

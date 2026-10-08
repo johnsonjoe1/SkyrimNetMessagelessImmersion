@@ -10,6 +10,7 @@ namespace SNMI
         bool enableANDNudityThoughts{ false };
         bool enableSLSFthoughts{ true };
         int SLSFthoughtThreshold{ 5 };
+        int SLSFthoughtCooldown{ 300 };
         bool enableConstantWhining{ true };
         bool enableLicensesPlayerOppressionThoughts{ false };
         bool enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts{ false };

@@ -68,6 +68,12 @@ namespace SNMI
         }
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.SLSFthoughtThreshold.  New variable value = {}", settings.SLSFthoughtThreshold);
 
+        settings.SLSFthoughtCooldown = GetPrivateProfileIntW(L"Thoughts", L"SLSFthoughtCooldown", 300, configPath.c_str());
+        if (settings.SLSFthoughtCooldown < 0) {
+            settings.SLSFthoughtCooldown = 300;
+        }
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.SLSFthoughtCooldown.  New variable value = {}", settings.SLSFthoughtCooldown);
+
         settings.enableConstantWhining = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhining", 1, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhining.  New variable value = {}", settings.enableConstantWhining);
 
