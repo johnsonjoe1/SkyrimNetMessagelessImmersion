@@ -7,6 +7,7 @@
 #include "papyrus_interface.h"
 #include "handle_fame.h"
 #include "handle_config_ini_file.h"
+#include <chrono>
 #include <cmath>
 #include <unordered_set>
 #include <optional>
@@ -198,8 +199,20 @@ And let us know from your response, that you speak about your fame in the given 
 
 		SKSE::log::info("SLSF-Handling: Fame increases detected in the following categories: {}", fame_increases_as_string);
 		SKSE::log::info("SLSF-Handling: Fame decreases detected in the following categories: {}", fame_decreases_as_string);
+		static std::optional<std::chrono::steady_clock::time_point> last_thought_time;
+		const auto can_generate_thought = [](std::string_view change, const std::string& categories) {
+			if (!SNMI::GetSettings().enableSLSFthoughts) {
+				SKSE::log::info("SLSF-Handling: Skipping {} thought generation because enableSLSFthoughts is disabled. Categories: {}", change, categories);
+				return false;
+			}
+			if (last_thought_time && std::chrono::steady_clock::now() - *last_thought_time < std::chrono::seconds(300)) {
+				SKSE::log::info("SLSF-Handling: Skipping {} thought generation because the 300-second cooldown is active. Categories: {}", change, categories);
+				return false;
+			}
+			return true;
+		};
 		std::string fame_thought_message;
-		if (SNMI::GetSettings().enableSLSFthoughts && !fame_increases.empty()) {
+		if (!fame_increases.empty() && can_generate_thought("fame-increase", fame_increases_as_string)) {
 			LillithOnlyBox(std::format("SLSF-Handling: Fame increases detected in the following categories: {}", fame_increases_as_string));
 			fame_thought_message = std::format(
 R"SKSE(YOU, the player, just entered an area where your sexual reputation in the following categories is noticably higher, 
@@ -211,10 +224,9 @@ And let us know from your response, that you speak about your reputation as a po
 For this response, you may very well reference in detail to the specific events in your past from memories, so you can be more specific about sexual acts and their location and context from your history.
 )SKSE", fame_increases_as_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
-		} else if (!fame_increases.empty()) {
-			SKSE::log::info("SLSF-Handling: Skipping fame-increase thought generation because enableSLSFthoughts is disabled. Categories: {}", fame_increases_as_string);
+			last_thought_time = std::chrono::steady_clock::now();
 		}
-		if (SNMI::GetSettings().enableSLSFthoughts && !fame_decreases.empty()) {
+		if (!fame_decreases.empty() && can_generate_thought("fame-decrease", fame_decreases_as_string)) {
 			LillithOnlyBox(std::format("SLSF-Handling: Fame decreases detected in the following categories: {}", fame_decreases_as_string));
 			fame_thought_message = std::format(
 R"SKSE(YOU, the player, just entered an area where your sexual reputation in the following categories is noticably lower, 
@@ -226,8 +238,7 @@ And let us know from your response, that you speak about your reputation as a po
 For this response, you may very well reference in detail to the specific events in your past from memories, so you can be more specific about sexual acts and their location and context from your history.
 )SKSE", fame_decreases_as_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
-		} else if (!fame_decreases.empty()) {
-			SKSE::log::info("SLSF-Handling: Skipping fame-decrease thought generation because enableSLSFthoughts is disabled. Categories: {}", fame_decreases_as_string);
+			last_thought_time = std::chrono::steady_clock::now();
 		}
 	}
 }
