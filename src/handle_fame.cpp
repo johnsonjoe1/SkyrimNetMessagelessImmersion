@@ -6,6 +6,7 @@
 #include "misc.h"
 #include "papyrus_interface.h"
 #include "handle_fame.h"
+#include "handle_config_ini_file.h"
 #include <unordered_set>
 #include <optional>
 #include <string_view>
@@ -194,7 +195,7 @@ And let us know from your response, that you speak about your fame in the given 
 		SKSE::log::info("SLSF-Handling: Fame increases detected in the following categories: {}", fame_increases_as_string);
 		SKSE::log::info("SLSF-Handling: Fame decreases detected in the following categories: {}", fame_decreases_as_string);
 		std::string fame_thought_message;
-		if (!fame_increases.empty()) {
+		if (SNMI::GetSettings().enableSLSFthoughts && !fame_increases.empty()) {
 			LillithOnlyBox(std::format("SLSF-Handling: Fame increases detected in the following categories: {}", fame_increases_as_string));
 			fame_thought_message = std::format(
 R"SKSE(YOU, the player, just entered an area where your sexual reputation in the following categories is noticably higher, 
@@ -207,7 +208,7 @@ For this response, you may very well reference in detail to the specific events 
 )SKSE", fame_increases_as_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
 		}
-		if (!fame_decreases.empty()) {
+		if (SNMI::GetSettings().enableSLSFthoughts && !fame_decreases.empty()) {
 			LillithOnlyBox(std::format("SLSF-Handling: Fame decreases detected in the following categories: {}", fame_decreases_as_string));
 			fame_thought_message = std::format(
 R"SKSE(YOU, the player, just entered an area where your sexual reputation in the following categories is noticably lower, 
