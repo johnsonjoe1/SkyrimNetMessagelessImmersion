@@ -172,6 +172,8 @@ And let us know from your response, that you speak about your fame in the given 
 					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
 				} 
 				*/
+			} else if (fame.current_value != fame.previous_value) {
+				SKSE::log::info("SLSF-Handling: Skipping thought generation for {} because the change is below SLSFthoughtThreshold ({}). Previous value: {}; new value: {}.", fame.name, SNMI::GetSettings().SLSFthoughtThreshold, fame.previous_value, fame.current_value);
 			}
 			fame.previous_value = fame.global->value;
 		}
