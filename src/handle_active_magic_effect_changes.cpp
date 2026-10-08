@@ -935,17 +935,17 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	*/
 	if (base && ( (std::strcmp(base_name, "Orgasm Exhaustion") == 0) ) )
 	{
-		// Dummy event handler to understand when that happens
+		// The Orgasm Exhaustion can be applied multiople times in parallel and will then have applied and removed independently for each instance.
+		// Also usually when that is applied, lots of other things are going on.  And the effect is short and not very strong or important.  
+		// Best we leave that for now and don't do anything with it.
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for Orgasm Exhaustion effect application!");
 			std::string final_thought_string = std::format("You are experiencing Orgasm Exhaustion.  This effect leaves you drained and unable to engage in further sexual activity for a while.  The source of this effect is: {}.  Respond in character and describe your current state and feelings.", caster->GetName());
-			LillithOnlyBox("NOTE:  Orgasm Exhaustion applied!!");
-			LillithOnlyBox("NOTE:  Orgasm Exhaustion applied!!");
 			// DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 		} else {
-			LillithOnlyBox("NOTE:  Orgasm Exhaustion removed!!");
-			LillithOnlyBox("NOTE:  Orgasm Exhaustion removed!!");
+			// LillithOnlyBox("NOTE:  Orgasm Exhaustion removed!!");
+			// LillithOnlyBox("NOTE:  Orgasm Exhaustion removed!!");
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	

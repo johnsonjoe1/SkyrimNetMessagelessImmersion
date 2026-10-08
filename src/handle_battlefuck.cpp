@@ -112,7 +112,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 		 (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BattleFuckRape") == 0)    // We resond to AnimationStartING instead
 		) {
 		// Nothing to do in that case
-		SKSE::log::info("SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: {}  StrArg: {}  NumArg: {}", a_event->eventName.c_str(), a_event->strArg, a_event->numArg);
+		// No need for a message, like for super-irrelevant it's the same:  SKSE::log::info("SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: {}  StrArg: {}  NumArg: {}", a_event->eventName.c_str(), a_event->strArg, a_event->numArg);
 
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
