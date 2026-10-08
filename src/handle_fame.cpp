@@ -207,6 +207,8 @@ And let us know from your response, that you speak about your reputation as a po
 For this response, you may very well reference in detail to the specific events in your past from memories, so you can be more specific about sexual acts and their location and context from your history.
 )SKSE", fame_increases_as_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
+		} else if (!fame_increases.empty()) {
+			SKSE::log::info("SLSF-Handling: Skipping fame-increase thought generation because enableSLSFthoughts is disabled. Categories: {}", fame_increases_as_string);
 		}
 		if (SNMI::GetSettings().enableSLSFthoughts && !fame_decreases.empty()) {
 			LillithOnlyBox(std::format("SLSF-Handling: Fame decreases detected in the following categories: {}", fame_decreases_as_string));
@@ -220,6 +222,8 @@ And let us know from your response, that you speak about your reputation as a po
 For this response, you may very well reference in detail to the specific events in your past from memories, so you can be more specific about sexual acts and their location and context from your history.
 )SKSE", fame_decreases_as_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(fame_thought_message);
+		} else if (!fame_decreases.empty()) {
+			SKSE::log::info("SLSF-Handling: Skipping fame-decrease thought generation because enableSLSFthoughts is disabled. Categories: {}", fame_decreases_as_string);
 		}
 	}
 }
