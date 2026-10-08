@@ -7,6 +7,7 @@
 #include "papyrus_interface.h"
 #include "handle_fame.h"
 #include "handle_config_ini_file.h"
+#include <cmath>
 #include <unordered_set>
 #include <optional>
 #include <string_view>
@@ -112,7 +113,8 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 			
 			// Assign new value and message-box-report value changes for now
 			fame.current_value = fame.global->value;
-			if (fame.current_value != fame.previous_value) {
+			if (fame.current_value != fame.previous_value &&
+				std::abs(fame.current_value - fame.previous_value) >= SNMI::GetSettings().SLSFthoughtThreshold) {
 
 				if ( fame.name == "SLSF_Reloaded_NPCScanSucess" ) {
 					continue;  // This event is not so interesting
