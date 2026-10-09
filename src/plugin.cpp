@@ -271,6 +271,10 @@ public:
 		RE::BSTEventSource<RE::MenuOpenCloseEvent>*) override
 	{
 		handle_dialogue_menu_event(a_event);
+		if (a_event && a_event->menuName == RE::RaceSexMenu::MENU_NAME && !a_event->opening) {
+			logger::info("RaceMenu closed (RaceSex Menu).");
+			handle_AND_modesty::shorten_new_game_thought_cooldown_after_racemenu_close();
+		}
 		return RE::BSEventNotifyControl::kContinue;
 	}
 };

@@ -9,6 +9,7 @@ class handle_AND_modesty
 {
 public:
 	static void start_new_game_thought_cooldown();
+	static void shorten_new_game_thought_cooldown_after_racemenu_close();
 	static void handle_AND_modesty_and_nakedness_stuff();
 	static void reset_previous_rank_to_current_rank();
 };

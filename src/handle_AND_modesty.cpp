@@ -21,7 +21,7 @@ namespace
 	bool new_game_thought_cooldown_has_passed()
 	{
 		if (std::chrono::steady_clock::now() < new_game_thought_cooldown_until) {
-			logger::info("Skipping AND modesty thought during the 600-second new-game cooldown.");
+			logger::info("Skipping AND modesty thought during the new-game cooldown.");
 			return false;
 		}
 		return true;
@@ -31,6 +31,15 @@ namespace
 void handle_AND_modesty::start_new_game_thought_cooldown()
 {
 	new_game_thought_cooldown_until = std::chrono::steady_clock::now() + std::chrono::seconds(600);
+}
+
+void handle_AND_modesty::shorten_new_game_thought_cooldown_after_racemenu_close()
+{
+	const auto shortened_deadline = std::chrono::steady_clock::now() + std::chrono::seconds(20);
+	if (shortened_deadline < new_game_thought_cooldown_until) {
+		new_game_thought_cooldown_until = shortened_deadline;
+		logger::info("Shortened AND modesty new-game cooldown to 20 seconds after RaceMenu closed.");
+	}
 }
 
 std::array<int, 23> AND_previous_faction_rank_sorted = {
