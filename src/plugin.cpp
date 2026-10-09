@@ -408,6 +408,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		ResumePeriodicChecks();
 		break;
 	case SKSE::MessagingInterface::kNewGame:
+		handle_AND_modesty::start_new_game_thought_cooldown();
 		reset_devious_followers_dialogue_tracking();
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		handle_yps::reset_hair_stage_tracking();

@@ -8,10 +8,30 @@
 #include "handle_config_ini_file.h"
 #include "misc.h"
 #include <algorithm>
+#include <chrono>
 #include <string.h>
 #include <vector>
 
 namespace logger = SKSE::log;
+
+namespace
+{
+	std::chrono::steady_clock::time_point new_game_thought_cooldown_until{};
+
+	bool new_game_thought_cooldown_has_passed()
+	{
+		if (std::chrono::steady_clock::now() < new_game_thought_cooldown_until) {
+			logger::info("Skipping AND modesty thought during the 600-second new-game cooldown.");
+			return false;
+		}
+		return true;
+	}
+}
+
+void handle_AND_modesty::start_new_game_thought_cooldown()
+{
+	new_game_thought_cooldown_until = std::chrono::steady_clock::now() + std::chrono::seconds(600);
+}
 
 std::array<int, 23> AND_previous_faction_rank_sorted = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -269,7 +289,9 @@ void trigger_immediate_message_if_flashing_item_was_added(const CurrentlyWornIte
 		flash_item_message += " Tell that to the player through your response.  But the player doesn't know which item you are speaking about, so be sure to mention the name of the item in your response and also describe the item's flashing/transparency property, not the general state of nudity or non-nudity you are in. You can add that on top, but in this case, the item is what it's all about.  If the item is flashing, you can lament about how cumbersome it is to hold it in place and keep from it slipping or revealing more than intended.  If the item is transparent, you can lament about the material having too many holes or wide gaps, making it difficult to maintain modesty.  But in any case be sure to mention the name of the item.";
 		LillithOnlyBox(flash_item_message);
 		if (SNMI::GetSettings().enableANDNudityThoughts) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(flash_item_message);
+			if (new_game_thought_cooldown_has_passed()) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(flash_item_message);
+			}
 		} else {
 			logger::info("Note:  AND flashing-item thought was not delivered because EnableANDNudityThoughts is disabled.");
 		}
@@ -501,7 +523,7 @@ void handle_hard_change_in_slots_0_to_7()
 	}
 	constructed_change_description += ". Say so in your response to the player, to make him aware of your modesty situation, and tell us how that makes you feel.";
 	LillithOnlyBox(constructed_change_description.c_str());
-	if (DumpThoughts::seconds_since_game_load() >= 00.0f) {
+	if (new_game_thought_cooldown_has_passed() && DumpThoughts::seconds_since_game_load() >= 00.0f) {
 		// Actually getting naked is important enough to force-push the message
 		if (SNMI::GetSettings().enableANDNudityThoughts) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(constructed_change_description);
@@ -568,7 +590,7 @@ void handle_current_flashing_state()
 	constructed_change_description = R"SKSE(Due to wind and movement, you are currently )SKSE" + constructed_change_description;			
 	constructed_change_description += ". Say so in your response to the player, to make him aware of your modesty situation, and tell us how that makes you feel.";
 	LillithOnlyBox(constructed_change_description.c_str());
-	if (DumpThoughts::seconds_since_game_load() >= 20.0f) {
+	if (new_game_thought_cooldown_has_passed() && DumpThoughts::seconds_since_game_load() >= 20.0f) {
 		SKSE::log::info("Note:  AND-MODESTY-UPDATE-STRING CONSTRUCTED: {}.", constructed_change_description);
 		// Flashing your private parts is not so important as to always push the message.  It's something that belongs into the background channel.
 		if (SNMI::GetSettings().enableANDNudityThoughts) {
