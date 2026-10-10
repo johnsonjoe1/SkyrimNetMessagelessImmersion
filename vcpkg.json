@@ -1,7 +1,7 @@
 {
     "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
     "name": "skyrim-net-messageless-immersion",
-    "version-string": "0.7.1",
+    "version-string": "0.7.2",
     "dependencies": [
         "directxmath",
         "directxtk",
