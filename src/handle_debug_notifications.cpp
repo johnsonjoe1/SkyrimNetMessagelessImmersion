@@ -330,7 +330,7 @@ void check_for_relevant_notifications(const char* notification)
 	const std::string_view notificationText{ notification };
 	if (notificationText.ends_with(assSlapSensingSuffix)) {
 		const auto slapperName = notificationText.substr(0, notificationText.size() - assSlapSensingSuffix.size() - 1);
-		set_current_animation_status("in_a_scene", std::format("RECEIVED HUD NOTIFICATION: {}", notification));
+		
 		if (!cooldown_has_passed(last_SLAC_creature_coming_after_you_tought_timestamp, 30)) {
 			return;
 		}
@@ -351,7 +351,7 @@ void check_for_relevant_notifications(const char* notification)
 	constexpr std::string_view titslappSensingSuffix = "slaps your tits hard as you walk by";
 	if (notificationText.ends_with(titslappSensingSuffix)) {
 		const auto slapperName = notificationText.substr(0, notificationText.size() - titslappSensingSuffix.size() - 1);
-		set_current_animation_status("in_a_scene", std::format("RECEIVED HUD NOTIFICATION: {}", notification));
+		
 		if (!cooldown_has_passed(last_SLAC_creature_coming_after_you_tought_timestamp, 30)) {
 			return;
 		}
