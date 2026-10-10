@@ -414,7 +414,7 @@ bool handle_DDUD::handle_DDUD_device_events(
 	// MOD EVENT:  Name: DeviceActorOrgasm  StrArg: Lillith  NumArg: 0
 	if ((std::strcmp(a_event->eventName.c_str(), "DeviceActorOrgasm") == 0)) {
 		if (std::strcmp(a_event->strArg.c_str(), RE::PlayerCharacter::GetSingleton()->GetName()) == 0) {
-			std::string thought_message = std::format("YOU, the player, just orgasmed from the vibrating devices locked onto your body and into your sensitive parts.  You couldn't prevent it.  Gods, that was intense!  Say so and let us know what you are feeling and thinking.");
+			std::string thought_message = std::format("YOU, the player character, just orgasmed from the vibrating devices locked onto your body and into your sensitive parts.  You couldn't prevent it.  Gods, that was intense!  Say so and let us know what you are feeling and thinking, but make it clear that you speak about your orgasm or otherwise the player won't know what you are speaking about.");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		} else {
 			LillithOnlyBox(std::format("DeviceActorOrgasm: Event noticed, but it's NOT ABUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
