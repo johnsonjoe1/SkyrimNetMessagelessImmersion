@@ -4,10 +4,13 @@
 #include "handle_config_ini_file.h"
 #include "misc.h"
 
+#include <chrono>
 #include <string_view>
 
 namespace
 {
+	auto last_license_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+
 	struct LicenseThought
 	{
 		std::string_view eventName;
@@ -43,6 +46,14 @@ bool handle_licenses_player_oppression::try_handle_mod_event(const SKSE::ModCall
 
 	for (const auto& licenseThought : licenseThoughts) {
 		if (eventName == licenseThought.eventName) {
+			if ( (eventName != "BM-LPO_BountyStart") ) {
+				if (!cooldown_has_passed(last_license_thought_timestamp, 180)) {
+					SKSE::log::info("Skipping Licenses-PlayerOppression thought for {} because the shared 180-second cooldown has not elapsed.", eventName);
+					return true;
+				}
+				last_license_thought_timestamp = std::chrono::steady_clock::now();
+			}
+
 			const std::string thoughtMessage{ licenseThought.message };
 			if (SNMI::GetSettings().enableLicensesPlayerOppressionThoughts) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thoughtMessage);
