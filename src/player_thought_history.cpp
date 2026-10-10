@@ -53,6 +53,12 @@ void PlayerThoughtHistory::TryRecordSkyrimNetSpeech(std::string_view a_eventName
 
 }
 
+void PlayerThoughtHistory::Clear()
+{
+	SKSE::log::info("Clearing {} player thought history record(s) because a game was loaded or started.", records.size());
+	records.clear();
+}
+
 const std::vector<PlayerThoughtRecord>& PlayerThoughtHistory::GetRecords()
 {
 	return records;

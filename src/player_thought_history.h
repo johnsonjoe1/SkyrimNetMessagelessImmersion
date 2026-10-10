@@ -14,6 +14,7 @@ struct PlayerThoughtRecord
 namespace PlayerThoughtHistory
 {
 	void TryRecordSkyrimNetSpeech(std::string_view a_eventName, std::string_view a_payload);
+	void Clear();
 	const std::vector<PlayerThoughtRecord>& GetRecords();
 	void LogRecords();
 	std::string GetLogSince(std::chrono::system_clock::time_point a_since);

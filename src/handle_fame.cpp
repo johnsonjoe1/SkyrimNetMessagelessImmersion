@@ -17,6 +17,8 @@ namespace logger = SKSE::log;
 
 const std::string fame_log_level = "change_only";
 
+static std::optional<std::chrono::steady_clock::time_point> last_thought_time;
+
 
 // ****************************************************************************************************************
 //  We handle changes of the fame-Status here.
@@ -78,6 +80,18 @@ static std::vector<FameGlobal> fameGlobals = {
 	{ 0x0080B , "SLSF_Reloaded_NPCScanSucess" , nullptr, -99.0f, -99.0f } , 
 	{ 0x00805 , "SLSF_Reloaded_CustomLocationCount" , nullptr, -99.0f, -99.0f } 
 };
+
+void handle_fame::reset_fame_tracking()
+{
+	// Let the first check establish a baseline from the newly loaded game.
+	for (auto& fame : fameGlobals) {
+		fame.global = nullptr;
+		fame.previous_value = -99.0f;
+		fame.current_value = -99.0f;
+	}
+	last_thought_time.reset();
+	SKSE::log::info("Reset SLSF fame baselines and thought cooldown.");
+}
 
 void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 {
@@ -199,7 +213,6 @@ And let us know from your response, that you speak about your fame in the given 
 
 		SKSE::log::info("SLSF-Handling: Fame increases detected in the following categories: {}", fame_increases_as_string);
 		SKSE::log::info("SLSF-Handling: Fame decreases detected in the following categories: {}", fame_decreases_as_string);
-		static std::optional<std::chrono::steady_clock::time_point> last_thought_time;
 		const auto can_generate_thought = [](std::string_view change, const std::string& categories) {
 			if (!SNMI::GetSettings().enableSLSFthoughts) {
 				SKSE::log::info("SLSF-Handling: Skipping {} thought generation because enableSLSFthoughts is disabled. Categories: {}", change, categories);

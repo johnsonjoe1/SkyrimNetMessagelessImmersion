@@ -15,6 +15,7 @@
 #include "handle_player_dirt.h"
 #include "handle_worn_equipment_change.h"
 #include "run_constant_whining.h"
+#include "player_thought_history.h"
 #include "misc.h"
 #include "papyrus_interface.h"
 #include <algorithm>
@@ -153,6 +154,13 @@ namespace
 	{
 		periodicChecksEnabled.store(false);
 		logger::info("Suspended periodic checks for game loading.");
+	}
+
+	void ResetGameSessionState()
+	{
+		handle_fame::reset_fame_tracking();
+		PlayerThoughtHistory::Clear();
+		set_current_animation_status("not_in_a_scene", "game loaded or started");
 	}
 
 	void ResumePeriodicChecks()
@@ -392,10 +400,12 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		break;
 	case SKSE::MessagingInterface::kPreLoadGame:
 		SuspendPeriodicChecks();
+		ResetGameSessionState();
 		reset_devious_followers_dialogue_tracking();
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		break;
 	case SKSE::MessagingInterface::kPostLoadGame:
+		ResetGameSessionState();
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();
 		handle_yps::reset_hair_stage_tracking();
 		handle_yps::reset_hair_dye_tracking();
@@ -412,6 +422,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 		ResumePeriodicChecks();
 		break;
 	case SKSE::MessagingInterface::kNewGame:
+		ResetGameSessionState();
 		handle_AND_modesty::start_new_game_thought_cooldown();
 		reset_devious_followers_dialogue_tracking();
 		DumpThoughts::reset_last_game_load_or_reload_timestamp();

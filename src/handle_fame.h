@@ -11,6 +11,7 @@ class handle_fame
 public:
 
 	static void handle_SLSF_Reloaded_fame_stuff();
+	static void reset_fame_tracking();
 
 };
 
