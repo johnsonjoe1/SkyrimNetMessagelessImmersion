@@ -239,7 +239,7 @@ RE::BSEventNotifyControl handle_inventory_change::ProcessEvent(
 		// Depending on counts, we might comment on lockpicks
 		if (added && (inventory_count_before<20) && (inventory_count_after>inventory_count_before)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
-				"You just obtained another lockpick. React to finding in a positive way, because you were running low a bit on lockpicks with less than 20 in your inventory.  Mention that you were running low on lockpicks in your response.");
+				"You just obtained some lockpicks. React to finding in a positive way, because you were running low a bit on lockpicks with less than 20 in your inventory.  Mention that you were running low on lockpicks in your response.");
 		} else if (removed && (inventory_count_before>3) && (inventory_count_after==3)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
 				"You are down to your last 3 lockpicks. You have to be careful now. React to this finding and mention that you are down to your last 3 lockpicks.");
