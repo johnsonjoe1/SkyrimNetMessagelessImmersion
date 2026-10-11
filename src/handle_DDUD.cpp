@@ -249,8 +249,8 @@ bool handle_DDUD::handle_DDUD_abadon_domination_shout_effect(
 
 	if (a_event->isApplied) {
 		SKSE::log::info("Event handler for Abadon Domination Shout APPLICATION!");
-		std::string final_thought_string = std::format("You have been hit by an Abadon Domination Shout.  The impact materializes bondage gear around you and you can only helplessly watch as you are completely restrained and subdued into helplessness.  The shout came from: {}.  Respond in character and say something and be sure to mention that you have been struck by an Abadon Domination Shout from {}.", caster->GetName(), caster->GetName()); 
-		DumpThoughts::throw_out_TTS_thought_message(final_thought_string);
+		std::string final_thought_string = std::format("You have been hit by an Abadon Domination Shout.  The impact materializes bondage gear around you and you can only helplessly watch as you are completely restrained and subdued into helplessness.  The shout came from: {}.  Respond in character and say something and be sure to mention that you have been struck by an Abadon Domination Shout from {} and that you are defeated.", caster->GetName(), caster->GetName()); 
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string);
 		LillithOnlyBox("Active Effect: Abadon Domination Shout: THOUGHT: " + final_thought_string);
 	} else {
 		// Nothing to do upon removal, which happens quickly, but doesn't mean anything.
