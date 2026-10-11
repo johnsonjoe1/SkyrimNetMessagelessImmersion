@@ -49,7 +49,7 @@ void run_constant_whining_in_case_of_silence()
 			// BoS labels corruption above 60 as High, above 80 as Very High, and 100+ as Gone Too Far.
 			// suppression is only relevant, after you've become a bimbo
 			// && suppressed && suppressed->value == 0.0f
-			if (corruption && corruption->value > 60.0f && corruption->value < 99.0f ) {
+			if (corruption && corruption->value > 80.0f && corruption->value < 99.0f ) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format(
 					"Your current bimbo corruption level is {:.0f}, which is high or worse, because at 100 you will permanently become a bimbo. Speak in character, like a brainless bimbo, and let the player know how the bimbo corruption makes your mind foggy and unable to focus on anything but fashion and pleasure.  Your thoughts should make is somewhat clear, that you are speaking about very high bimbo corruption levels of your mind.",
 					corruption->value));
