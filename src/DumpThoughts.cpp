@@ -6,6 +6,7 @@
 #include "misc.h"
 #include "DumpThoughts.h"
 #include "player_thought_history.h"
+#include "handle_config_ini_file.h"
 #include <deque>
 #include <mutex>
 
@@ -64,6 +65,16 @@ namespace
 
 	std::deque<DialogueSuppressedThought> dialogueSuppressedThoughtQueue;
 	std::mutex dialogueSuppressedThoughtQueueMutex;
+
+	struct SilenceDelayedThought
+	{
+		std::string message;
+		int requiredSilenceSeconds;
+		std::chrono::steady_clock::time_point queuedAt;
+	};
+
+	std::deque<SilenceDelayedThought> silenceDelayedThoughtQueue;
+	std::mutex silenceDelayedThoughtQueueMutex;
 
 	std::string_view GetThoughtChannelName(ThoughtChannel a_channel)
 	{
@@ -225,7 +236,47 @@ void DumpThoughts::reset_last_game_load_or_reload_timestamp() {
 		dialogueSuppressedThoughtQueue.clear();
 	}
 	SKSE::log::info("Cleared {} dialogue-suppressed thought(s) because a game was loaded or started.", clearedThoughtCount);
+	{
+		std::lock_guard lock(silenceDelayedThoughtQueueMutex);
+		silenceDelayedThoughtQueue.clear();
+	}
 }
+void DumpThoughts::throw_out_TTS_thought_message_after_silence(std::string my_message, int requiredSilenceSeconds)
+{
+	std::lock_guard lock(silenceDelayedThoughtQueueMutex);
+	silenceDelayedThoughtQueue.push_back({
+		std::move(my_message), requiredSilenceSeconds, std::chrono::steady_clock::now()
+	});
+}
+
+void DumpThoughts::play_silence_delayed_thoughts_if_possible()
+{
+	auto* player = RE::PlayerCharacter::GetSingleton();
+	if (!player || IsPlayerInDialogue()) {
+		return;
+	}
+
+	std::string message;
+	{
+		std::lock_guard lock(silenceDelayedThoughtQueueMutex);
+		if (silenceDelayedThoughtQueue.empty()) {
+			return;
+		}
+		const auto& thought = silenceDelayedThoughtQueue.front();
+		const auto requiredSilence = thought.requiredSilenceSeconds < 0 ?
+			(std::string_view(player->GetName()) == "Lillith" ? 20 : SNMI::GetSettings().silenceRequiredBeforeSpontaneousStatusWhining) :
+			thought.requiredSilenceSeconds;
+		const auto silenceStarted = std::max(thought.queuedAt, GetLastSpeechTimestamp());
+		if (std::chrono::steady_clock::now() - silenceStarted < std::chrono::seconds(requiredSilence) ||
+			too_early_after_game_load()) {
+			return;
+		}
+		message = std::move(silenceDelayedThoughtQueue.front().message);
+		silenceDelayedThoughtQueue.pop_front();
+	}
+	throw_out_TTS_thought_message(std::move(message));
+}
+
 void DumpThoughts::play_dialogue_suppressed_thoughts_if_possible()
 {
 	if (DumpThoughts::IsPlayerInDialogue()) {

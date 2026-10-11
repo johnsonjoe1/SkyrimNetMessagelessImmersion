@@ -233,6 +233,7 @@ namespace
 		handle_check_for_close_conversations();
 		handle_player_dirt::handle_player_dirt_changes();
 		handle_timeout_for_stale_scenes();
+		DumpThoughts::play_silence_delayed_thoughts_if_possible();
 		run_constant_whining_in_case_of_silence();
 
 		logger::info("\n******************************************************************************\n***** RunPeriodicChecksIfDue():  FINISHED DOING PERIODIC CHECKS *****\n***** Callbacks and events, that happen driven by other mods are handled separately *****\n******************************************************************************");

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <string>   //  ChatGPT suggested this might be needed?????
 
 // ****************************************************************************************************************
@@ -16,6 +17,10 @@ public:
 
 	static void throw_out_BACKGROUND_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling = DialogueHandling::kQueue);
 	static void throw_out_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling = DialogueHandling::kQueue);
+	// Queue a normal thought until silence has lasted this many seconds after queueing and the last speech/thought.
+	// A negative duration uses the constant_whining threshold (including Lillith's override).
+	static void throw_out_TTS_thought_message_after_silence(std::string my_message, int requiredSilenceSeconds = -1);
+	static void play_silence_delayed_thoughts_if_possible();
 	static void throw_out_IMPORTANT_TTS_thought_message(std::string my_message, DialogueHandling a_dialogueHandling = DialogueHandling::kQueue);
 	static void throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(std::string my_message, DialogueHandling a_dialogueHandling = DialogueHandling::kQueue);
 	static void throw_out_AS_LITTERAL_AS_POSSIBLE_thought_message(std::string my_message, DialogueHandling a_dialogueHandling = DialogueHandling::kQueue);
