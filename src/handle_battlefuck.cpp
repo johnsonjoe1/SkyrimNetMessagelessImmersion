@@ -5,7 +5,7 @@
 #include "log.h"
 #include "misc.h"
 
-static auto last_AnimationEnd_BattleFuck_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_battlefuck_stage_start_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 {
@@ -25,11 +25,11 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 	}	
 	// MOD EVENT:  Name: StageStart_BattleFuck
 	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_BattleFuck") == 0)  ) {
-		if (!cooldown_has_passed(last_AnimationEnd_BattleFuck_thought_timestamp, 20))
+		if (!cooldown_has_passed(last_battlefuck_stage_start_thought_timestamp, 40))
 		{
 			return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}
-		last_AnimationEnd_BattleFuck_thought_timestamp = std::chrono::steady_clock::now();
+		last_battlefuck_stage_start_thought_timestamp = std::chrono::steady_clock::now();
 		std::string  thought_message = std::format("YOU, the player, are now forcefully stripped of more and more of your clothing and armour.  Also your attacker is pushing you down, to prepare you for the coming rape.  Let us know how you feel now.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("StageStart_BattleFuck:  " + thought_message);
