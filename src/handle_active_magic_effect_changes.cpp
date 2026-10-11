@@ -846,6 +846,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	{
 		if (a_event->isApplied)
 		{
+			// We use a 5-minute cooldown for entering-the-water thoughts
 			if (!cooldown_has_passed(last_entered_water_thought_timestamp, 60*5))
 			{
 				return;
@@ -856,11 +857,13 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 			last_entered_water_thought_timestamp = std::chrono::steady_clock::now();
 		} else {
+			// We use a 5-minute cooldown for exiting-the-water thoughts
 			if (!cooldown_has_passed(last_exited_water_thought_timestamp, 60*5))
 			{
 				return;
 			}
-			if (!cooldown_has_passed(last_entered_water_thought_timestamp, 60))
+			// In addition, we check if the player has only briefly entered the water to avoid triggering the exit thought immediately after a quick dip.
+			if (!cooldown_has_passed(last_entered_water_thought_timestamp, 120))
 			{
 				// If it was only a very brief dip into the water, we don't want to trigger the separate exit thought from that.
 				return;
@@ -882,7 +885,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for Nullify Magicka effect application!");
-			std::string final_thought_string = std::format("You have been cursed with a Nullify Magicka effect.  Your magicka has been nullified.  You feel powerless and unable to cast spells and unable to shout as well.  This curse is so strong, it renders you completly unable to use magic.  That is the effect of the curse, because you do not have a magic License.  Respond in character and say something and be sure to mention that you are now under the Nullify Magicka effect, because you have no license to use magic.");
+			std::string final_thought_string = std::format("You have been cursed with a Nullify Magicka effect.  Your magicka has been nullified.  You feel powerless and unable to cast spells and unable to shout as well.  This curse is so strong, it renders you completly unable to use magic.  That is the effect of the curse, because you do not have a magic License.  Respond in character and make sure you mention that you are now under the Nullify Magicka effect, all just becaues you have no license to use magic.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 		} else {
