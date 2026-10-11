@@ -25,6 +25,7 @@ static auto last_firebolt_thought_timestamp = std::chrono::steady_clock::now() -
 static auto last_swimming_effect_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_nullify_magicka_application_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_nullify_magicka_removal_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_bathing_state_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Stomach Rot",
@@ -899,6 +900,35 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		LillithOnlyBox(final_thought_string);
 		DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 	}
+
+/*
+[2026-10-10 22:15:52.498] [log] [info] [handle_active_magic_effect_changes.cpp:989] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-10 22:15:52.498] [log] [info] [handle_active_magic_effect_changes.cpp:990] Effect APPLIED on Cara Goodlooker | UID=32
+[2026-10-10 22:15:52.498] [log] [info] [handle_active_magic_effect_changes.cpp:993] Base name: Bathing State (Player) | Base ptr: 0x18d1609f3c0 | Base-FormID: FE01902C | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-10 22:15:52.498] [log] [info] [handle_active_magic_effect_changes.cpp:994] base-Effect EDID:  | Source ptr: 0x18d160b1600  |  Caster: Cara Goodlooker 
+[2026-10-10 22:15:52.498] [log] [info] [handle_active_magic_effect_changes.cpp:998] Magnitude: 0 | Duration: 0
+[2026-10-10 22:15:52.498] [log] [info] [handle_active_magic_effect_changes.cpp:1001] Source name: Bathing State | Source FormID: FE01903D | Source EDID:  
+[2026-10-10 22:15:52.498] [log] [info] [handle_active_magic_effect_changes.cpp:1007] Form LookupByID FE01902C found: Bathing State (Player)
+*/	
+	if (base && ( (std::strcmp(base_name, "Bathing State (Player)") == 0) ) )
+	{
+		if (a_event->isApplied)
+		{
+			if (!cooldown_has_passed(last_bathing_state_thought_timestamp, 180)) {
+				SKSE::log::info("Skipping Bathing State (Player) thought because its 180-second cooldown has not elapsed.");
+				return;
+			}
+			SKSE::log::info("Event handler for Bathing State (Player) effect application!");
+			std::string final_thought_string = std::format("Finally you found the time and opportunity to take a bath.  It may be simple, but that doesn't matter.  Enjoy the moment and the relaxation and peace it brings.  Respond in character and say how you feel about it.");
+			LillithOnlyBox(final_thought_string);
+			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;
+			last_bathing_state_thought_timestamp = std::chrono::steady_clock::now();
+		} else {
+			// When the bath is over, that doesn't warrant another comment or anything.
+		}
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+
 
 
 	
