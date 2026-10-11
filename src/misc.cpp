@@ -26,12 +26,13 @@ void handle_timeout_for_stale_scenes() {
 		return;  
 	}
 	
+	// If we ARE in a scene, we record the time we since last time the status was bumped to "in-a-scene".
 	auto now = std::chrono::steady_clock::now();
 	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_scene_status_refresh_timestamp);
 	SKSE::log::info("Time since last refresh or set of in_a_scene property (for filtering SL scenes): {} seconds", runtime.count());
 
+	// If we are in a scene, but the last in-a-scene bump is more than 10 minutes ago, we force the status back to "not_in_a_scene" to prevent runaway scenes.
 	const int maximum_seconds_since_scene_status_refresh = 10*60;  // in seconds 
-
 	if (runtime.count() > maximum_seconds_since_scene_status_refresh) {
 		SKSE::log::info("This scene is going on more than {} seconds.  It may have run away.  We should reset to no-scene, just to be safe.", maximum_seconds_since_scene_status_refresh);
 		LillithOnlyBox(std::format("SNMI:  This scene is going on more than {} seconds.  It may have run away.  We reset to no-scene, just to be safe.", maximum_seconds_since_scene_status_refresh));
