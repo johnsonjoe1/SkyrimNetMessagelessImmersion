@@ -9,7 +9,7 @@ namespace logger = SKSE::log;
 
 std::string final_lillith_message;
 static std::string current_animation_status = "not_in_a_scene";   // by default, we assume no SL scene is going on.
-static auto last_disablement_timestamp = std::chrono::steady_clock::now();
+static auto last_scene_status_refresh_timestamp = std::chrono::steady_clock::now();
 
 
 bool cooldown_has_passed(std::chrono::steady_clock::time_point last_timestamp, int cooldown_seconds)
@@ -21,21 +21,21 @@ bool cooldown_has_passed(std::chrono::steady_clock::time_point last_timestamp, i
 
 
 void handle_timeout_for_stale_scenes() {
-
+	// If we are not in a scene, then we don't need to check for stale scenes.
 	if (current_animation_status == "not_in_a_scene") {
-		return;  // If we are not in a scene, then we don't need to check for stale scenes.
+		return;  
 	}
 	
 	auto now = std::chrono::steady_clock::now();
-	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_disablement_timestamp);
+	auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_scene_status_refresh_timestamp);
 	SKSE::log::info("Time since last refresh or set of in_a_scene property (for filtering SL scenes): {} seconds", runtime.count());
 
-	const int maximum_time_since_last_game_load_or_reload = 10*60;  // in seconds 
+	const int maximum_seconds_since_scene_status_refresh = 10*60;  // in seconds 
 
-	if (runtime.count() > maximum_time_since_last_game_load_or_reload) {
-		SKSE::log::info("This scene is going on more than {} seconds.  It may have run away.  We should reset to no-scene, just to be safe.", maximum_time_since_last_game_load_or_reload);
-		LillithOnlyBox(std::format("SNMI:  This scene is going on more than {} seconds.  It may have run away.  We reset to no-scene, just to be safe.", maximum_time_since_last_game_load_or_reload));
-		set_current_animation_status("not_in_a_scene", std::format("timeout after {} seconds", maximum_time_since_last_game_load_or_reload));
+	if (runtime.count() > maximum_seconds_since_scene_status_refresh) {
+		SKSE::log::info("This scene is going on more than {} seconds.  It may have run away.  We should reset to no-scene, just to be safe.", maximum_seconds_since_scene_status_refresh);
+		LillithOnlyBox(std::format("SNMI:  This scene is going on more than {} seconds.  It may have run away.  We reset to no-scene, just to be safe.", maximum_seconds_since_scene_status_refresh));
+		set_current_animation_status("not_in_a_scene", std::format("timeout after {} seconds", maximum_seconds_since_scene_status_refresh));
 	}
 }
 
@@ -47,7 +47,7 @@ void set_current_animation_status(std::string_view a_status, std::string_view re
 {
 	current_animation_status = std::string(a_status);
 	if (current_animation_status == "in_a_scene") {
-		last_disablement_timestamp = std::chrono::steady_clock::now();
+		last_scene_status_refresh_timestamp = std::chrono::steady_clock::now();
 	} else if (current_animation_status == "not_in_a_scene") {
 		// do nothing here
 	} else {
