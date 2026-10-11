@@ -17,6 +17,7 @@ namespace logger = SKSE::log;
 namespace
 {
 	std::chrono::steady_clock::time_point new_game_thought_cooldown_until{};
+	auto last_hard_change_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 	bool new_game_thought_cooldown_has_passed()
 	{
@@ -535,7 +536,12 @@ void handle_hard_change_in_slots_0_to_7()
 	if (new_game_thought_cooldown_has_passed() && DumpThoughts::seconds_since_game_load() >= 30.0f) {
 		// Actually getting naked is important enough to force-push the message
 		if (SNMI::GetSettings().enableANDNudityThoughts) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(constructed_change_description);
+			if (cooldown_has_passed(last_hard_change_thought_timestamp, 40)) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(constructed_change_description);
+				last_hard_change_thought_timestamp = std::chrono::steady_clock::now();
+			} else {
+				logger::info("Note:  AND nudity-change thought was not delivered because its 40-second cooldown has not elapsed.");
+			}
 		} else {
 			logger::info("Note:  AND nudity-change thought was not delivered because EnableANDNudityThoughts is disabled.");
 		}
