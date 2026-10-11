@@ -71,7 +71,7 @@ struct FurniturePrompt
 {
 	std::string_view trigger;
 	std::string prompt;
-	std::chrono::steady_clock::time_point last_thought_timestamp = std::chrono::steady_clock::now();
+	std::chrono::steady_clock::time_point last_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 };
 
 constexpr int furniture_thought_cooldown_seconds = 120;
