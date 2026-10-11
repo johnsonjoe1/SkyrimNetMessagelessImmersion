@@ -16,6 +16,7 @@ namespace
 	auto last_device_equipped_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 	auto last_device_removed_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
+	
 /*
 [2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:864] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
 [2026-09-21 22:11:01.959] [log] [info] [handle_active_magic_effect_changes.cpp:865] Effect APPLIED on Lillith | UID=12
@@ -139,6 +140,17 @@ namespace
 	}
 }
 
+		/*
+	[2026-10-10 22:06:48.375] [log] [info] [handle_active_magic_effect_changes.cpp:989] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-10 22:06:48.375] [log] [info] [handle_active_magic_effect_changes.cpp:990] Effect APPLIED on Cara Goodlooker | UID=35
+[2026-10-10 22:06:48.375] [log] [info] [handle_active_magic_effect_changes.cpp:993] Base name: It keeps going, and going. | Base ptr: 0x18cd7025b40 | Base-FormID: 100382F4 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-10 22:06:48.375] [log] [info] [handle_active_magic_effect_changes.cpp:994] base-Effect EDID:  | Source ptr: 0x18cd6c23100  |  Caster: Cara Goodlooker 
+[2026-10-10 22:06:48.375] [log] [info] [handle_active_magic_effect_changes.cpp:998] Magnitude: 0 | Duration: 0
+[2026-10-10 22:06:48.375] [log] [info] [handle_active_magic_effect_changes.cpp:1001] Source name:  | Source FormID: 100382F5 | Source EDID:  
+[2026-10-10 22:06:48.375] [log] [info] [handle_active_magic_effect_changes.cpp:1007] Form LookupByID 100382F4 found: It keeps going, and going.
+	// This is from Devious Devices, in Devious Devices - Integration.esm.  On the magic effect zad_effChargeable, which uses the chargeable plug script zadPlugChargeableEffect.
+	*/
+
 bool handle_DDUD::handle_DDUD_struggle_exhaustion_effect(
 	const RE::TESActiveEffectApplyRemoveEvent* a_event,
 	RE::ActiveEffect* a_effect)
@@ -164,10 +176,6 @@ bool handle_DDUD::handle_DDUD_struggle_exhaustion_effect(
 			"YOU, the player, just were trying to get out of your locking bondage devices for a whole while. You may have made some progress, but in any case, that activity had made you exhausted to the point where you couldn't continue any more. But now time has passed and you're feeling better and you're good to go and maybe could continue trying. Say as much in your response.");
 	}
 
-
-
-
-    
 	return true;
 }
 
@@ -360,6 +368,9 @@ bool handle_DDUD::handle_DDUD_device_events(
 	if (!a_event) {
 		return false;
 	}
+
+
+
 
 	// MOD EVENT:  Name: DeviousEventTrip and Fall  StrArg: Beea  NumArg: 0
 	if ((std::strcmp(a_event->eventName.c_str(), "DeviousEventTrip and Fall") == 0) || (std::strcmp(a_event->eventName.c_str(), "DeviousEventLeg Cuffs Trip Over") == 0)) {
