@@ -843,9 +843,20 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 [2026-09-26 09:17:19.628] [log] [info] [handle_active_magic_effect_changes.cpp:1080] Magnitude: 0 | Duration: 0
 [2026-09-26 09:17:19.628] [log] [info] [handle_active_magic_effect_changes.cpp:1083] Source name: iNeed | Source FormID: 2B000D63 | Source EDID:  
 [2026-09-26 09:17:19.628] [log] [info] [handle_active_magic_effect_changes.cpp:1089] Form LookupByID 2B08AC45 found: Is In Water Script
-	*/	
-	if (base && ( (std::strcmp(base_name, "Is In Water Script") == 0) ) )
+
+[2026-10-10 22:08:28.822] [log] [info] [handle_active_magic_effect_changes.cpp:989] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-10 22:08:28.822] [log] [info] [handle_active_magic_effect_changes.cpp:990] Effect APPLIED on Cara Goodlooker | UID=12
+[2026-10-10 22:08:28.822] [log] [info] [handle_active_magic_effect_changes.cpp:993] Base name: Get Condition: Swimming | Base ptr: 0x18d14cf3200 | Base-FormID: FE019033 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-10 22:08:28.822] [log] [info] [handle_active_magic_effect_changes.cpp:994] base-Effect EDID:  | Source ptr: 0x18d160b1b00  |  Caster: Cara Goodlooker 
+[2026-10-10 22:08:28.822] [log] [info] [handle_active_magic_effect_changes.cpp:998] Magnitude: 0 | Duration: 0
+[2026-10-10 22:08:28.822] [log] [info] [handle_active_magic_effect_changes.cpp:1001] Source name: Get Dirty Over Time - Not Dirty | Source FormID: FE01903F | Source EDID:  
+[2026-10-10 22:08:28.822] [log] [info] [handle_active_magic_effect_changes.cpp:1007] Form LookupByID FE019033 found: Get Condition: Swimming
+*/
+
+
+	if (base && ( (std::strcmp(base_name, "Is In Water Script") == 0) || (std::strcmp(base_name, "Get Condition: Swimming") == 0) ) )
 	{
+		std::string final_thought_string = std::format("Preparing for water thought string.");
 		if (a_event->isApplied)
 		{
 			// We use a 5-minute cooldown for entering-the-water thoughts
@@ -853,10 +864,14 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			{
 				return;
 			}
-			SKSE::log::info("Event handler for Is In Water Script effect application!");
-			std::string final_thought_string = std::format("You have entered the water.  It may be quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now in the water.");
-			LillithOnlyBox(final_thought_string);
-			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+			SKSE::log::info("Event handler for Is In Water Script / Get Condition: Swimming effect application!");
+			if (std::strcmp(base_name, "Is In Water Script") == 0) {
+				SKSE::log::info("Handling 'Is In Water Script' effect application.");
+				final_thought_string = std::format("You have entered the water.  It may be quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now in the water.");
+			} else if (std::strcmp(base_name, "Get Condition: Swimming") == 0) {
+				SKSE::log::info("Handling 'Get Condition: Swimming' effect application.");
+				final_thought_string = std::format("You have started to swim in the water.  It may be quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now swimming in the water.");
+			}
 			last_entered_water_thought_timestamp = std::chrono::steady_clock::now();
 		} else {
 			// We use a 5-minute cooldown for exiting-the-water thoughts
@@ -870,15 +885,20 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 				// If it was only a very brief dip into the water, we don't want to trigger the separate exit thought from that.
 				return;
 			}
-			SKSE::log::info("Event handler for Is In Water Script effect removal!");
-			std::string final_thought_string = std::format("You have exited the water.  It may have been quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now out of the water.");
-			LillithOnlyBox(final_thought_string);
-			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;	
-			last_exited_water_thought_timestamp = std::chrono::steady_clock::now();
-		}
-		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
-	}	
 
+			SKSE::log::info("Event handler for Is In Water Script / Get Condition: Swimming effect removal!");
+			if (std::strcmp(base_name, "Is In Water Script") == 0) {
+				final_thought_string = std::format("You have exited the water.  It may have been quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now out of the water.");
+				last_exited_water_thought_timestamp = std::chrono::steady_clock::now();
+			} else if (std::strcmp(base_name, "Get Condition: Swimming") == 0) {
+				final_thought_string = std::format("You have stopped swimming in the water.  It may have been quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now out of the water.");
+				last_exited_water_thought_timestamp = std::chrono::steady_clock::now();
+			}
+			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+		}
+		LillithOnlyBox(final_thought_string);
+		DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+	}
 
 
 	
