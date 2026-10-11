@@ -54,18 +54,25 @@ namespace
 	{
 		auto* base = a_effect->GetBaseObject();
 		auto* source = a_effect->spell;
-		if (!base || !source || std::strcmp(source->GetName(), "Hood Script") != 0) {
-			return false;
-		}
+
 
 		if (std::strcmp(base->GetName(), "Blindfold Script") == 0) {
 			const std::string thought = a_event->isApplied ?
-				"YOU, the player, just got looked into a hood, and that hood doesn't even let you see anything, so that you are completely blindfolded. Say as much in your response, and be sure to make it clear, that you speak about the hood that you are wearing now." :
-				"YOU, the player, just escaped of of a locking bondage hood, and that hood was keeping you completely blindfolded, but now you can see again. Say as much in your response, and be sure to make it clear, that you speak about the hood that you were wearing just moments ago.";
+				"YOU, the player, just got looked into a hood or blindfold, and that hood doesn't even let you see anything, so that you are completely blindfolded. Say as much in your response, and be sure to make it clear, that you speak about the hood or blindfold that you are wearing now." :
+				"YOU, the player, just escaped of of a locking bondage hood or blindfold, and that hood was keeping you completely blindfolded, but now you can see again. Say as much in your response, and be sure to make it clear, that you speak about the hood or blindfold that you were wearing just moments ago.";
 			DumpThoughts::throw_out_TTS_thought_message(std::string("Active Effect:Blindfold-through-Hood: ") + (a_event->isApplied ? "APPLIED-THOUGHT: " : "RELEASE-THOUGHT: ") + thought);
 			LillithOnlyBox(thought);
 			return true;
 		}
+
+		if (!base || !source ) {
+			return false;
+		}
+
+		if (std::strcmp(source->GetName(), "Hood Script") != 0) {
+			return false;
+		}
+
 
 		if (std::strcmp(base->GetName(), "Gag Food Removal Script") == 0) {
 			const std::string thought = a_event->isApplied ?
@@ -455,6 +462,15 @@ bool handle_DDUD::handle_DDUD_muzzle_gag_ding_a_ling_effect(
 	return true;
 }
 
+bool handle_DDUD::handle_DDUD_active_magic_effects_from_various_devices(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	return true;
+}
+
+
+
 	// Maybe the player tried to access inventory or magic menu, but was prevented from doing so by Unforgiving Devices to enhance immersion and frustration.
 	// We comment accordingly to enhance player experince.
 	/*[2026-08-14 17:08:20.783] [log] [info] [handle_mod_broadcasts.cpp:547] MOD EVENT:  Name: ''DDUDNG_Event_Hotkey_captured_and_stopped''  StrArg: ''Find the hotkey in the number argument below''  NumArg: 23
@@ -495,7 +511,7 @@ bool handle_DDUD::handle_DDUD_skyrimnet_event(
 	return true;
 }
 
-bool handle_DDUD::handle_DDUD_device_events(
+bool handle_DDUD::handle_DDUD_device_mod_broadcast_events(
 	const SKSE::ModCallbackEvent* a_event)
 {
 	if (!a_event) {

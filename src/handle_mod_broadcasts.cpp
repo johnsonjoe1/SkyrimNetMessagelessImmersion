@@ -502,7 +502,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	if (handle_DDUD::handle_DDUD_device_removed_event(a_event)) {
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
-	if (handle_DDUD::handle_DDUD_device_events(a_event)) {
+	if (handle_DDUD::handle_DDUD_device_mod_broadcast_events(a_event)) {
 		return;
 	}
 	if (handle_DDUD::handle_DDUD_skyrimnet_event(a_event)) {

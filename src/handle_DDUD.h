@@ -32,13 +32,16 @@ public:
 	static bool handle_DDUD_plug_chargeable_effect(
 		const RE::TESActiveEffectApplyRemoveEvent* a_event,
 		RE::ActiveEffect* a_effect);
+	static bool handle_DDUD_active_magic_effects_from_various_devices(
+		const RE::TESActiveEffectApplyRemoveEvent* a_event,
+		RE::ActiveEffect* a_effect);
 
 	// THEN all the Mod Broadcast event handlers.
 	static bool handle_DDUD_hotkey_captured_and_stopped_event(
 		const SKSE::ModCallbackEvent* a_event);
 	static bool handle_DDUD_skyrimnet_event(
 		const SKSE::ModCallbackEvent* a_event);
-	static bool handle_DDUD_device_events(
+	static bool handle_DDUD_device_mod_broadcast_events(
 		const SKSE::ModCallbackEvent* a_event);
 	static bool handle_DDUD_device_equipped_event(
 		const SKSE::ModCallbackEvent* a_event);
