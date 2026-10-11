@@ -224,6 +224,40 @@ bool handle_DDUD::handle_DDUD_gag_magic_effect_stuff(
 	return try_handle_gag_effect(a_event, a_effect);
 }
 
+/*
+[2026-10-11 12:05:04.175] [log] [info] [handle_active_magic_effect_changes.cpp:1058] Effect APPLIED on Cara Goodlooker | UID=8
+[2026-10-11 12:05:04.175] [log] [info] [handle_active_magic_effect_changes.cpp:1061] Base name: Abadon Domination Shout | Base ptr: 0x1f62fc0ab00 | Base-FormID: 2415D5F0 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-11 12:05:04.175] [log] [info] [handle_active_magic_effect_changes.cpp:1062] base-Effect EDID:  | Source ptr: 0x1f62fb9a300  |  Caster: Draugr Overlord 
+[2026-10-11 12:05:04.175] [log] [info] [handle_active_magic_effect_changes.cpp:1066] Magnitude: 3 | Duration: 2
+[2026-10-11 12:05:04.175] [log] [info] [handle_active_magic_effect_changes.cpp:1069] Source name: Abadon Dominate Shout 3 Words | Source FormID: 2415D623 | Source EDID:  
+[2026-10-11 12:05:04.175] [log] [info] [handle_active_magic_effect_changes.cpp:1075] Form LookupByID 2415D5F0 found: Abadon Domination Shout
+*/
+bool handle_DDUD::handle_DDUD_abadon_domination_shout_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+
+	auto* base = a_effect->GetBaseObject();
+	if (!base || std::strcmp(base->GetName(), "Abadon Domination Shout") != 0 ) {
+		return false;
+	}
+	auto* source = a_effect->spell;
+	auto caster = a_effect->caster.get();
+
+	if (a_event->isApplied) {
+		SKSE::log::info("Event handler for Abadon Domination Shout APPLICATION!");
+		std::string final_thought_string = std::format("You have been hit by an Abadon Domination Shout.  The impact materializes bondage gear around you and you can only helplessly watch as you are completely restrained and subdued into helplessness.  The shout came from: {}.  Respond in character and say something and be sure to mention that you have been struck by an Abadon Domination Shout from {}.", caster->GetName(), caster->GetName()); 
+		DumpThoughts::throw_out_TTS_thought_message(final_thought_string);
+		LillithOnlyBox("Active Effect: Abadon Domination Shout: THOUGHT: " + final_thought_string);
+	} else {
+		// Nothing to do upon removal, which happens quickly, but doesn't mean anything.
+	}
+	return true;
+}
+
 
 /*[2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect APPLIED on Lillith | UID=47
 [2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:539] Base name: Stagger when shouting | Base ptr: 0x20e387bae80 | Base-FormID: 1005380A | Base-Form Type: 18   (This means: MGEF) 
@@ -489,6 +523,7 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			{"DeviceEquippedGloves", "YOU, the player, just got locked into bondage gloves.  Such gloves prevent the use of your fingers, making it impossible to perform delicate tasks. This device got locked onto you and now you cannot get of out it.   "},
 			{"DeviceEquippedBondage Mittens", "YOU, the player, just got locked into bondage gloves.  Such gloves prevent the use of your fingers, making it impossible to perform delicate tasks. This device got locked onto you and now you cannot get of out it.   "},
 			{"DeviceEquippedArm Cuffs", "YOU, the player, just got locked into arm cuffs.  The arm cuffs wrap around your wrists.  In addition, these cuffs can be connected together, e.g. behind your back, to further immobilize and restrain you, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.   "},
+			{"DeviceEquippedRope Arm Cuffs", "YOU, the player, just got locked into rope arm cuffs.  The rope arm cuffs wrap around your wrists.  In addition, these cuffs can be connected together, e.g. behind your back, to further immobilize and restrain you, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.   "},
 			{"DeviceEquippedElbowbinder", "YOU, the player, just got locked into an elbow binder.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
 			{"DeviceEquippedRare Armbinder", "YOU, the player, just got locked into an armbinder, even the rare sort.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
 			{"DeviceEquippedarmbinder", "YOU, the player, just got locked into an armbinder.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
@@ -596,6 +631,7 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			// NOTE:  These two again come with two different spellings.
 			{"DeviceRemovedArmCuffs", "YOU, the player, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.   "},
 			{"DeviceRemovedArm Cuffs", "YOU, the player, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.   "},
+			{"DeviceRemovedRope Arm Cuffs", "YOU, the player, just got your rope arm cuffs removed.  Your wrists are no longer restrained by the rope arm cuffs, so those restrictions no longer apply.   "},
 			{"DeviceRemovedWristRestraint", "YOU, the player, just got your wrist restraint removed.  Your wrists are no longer restrained, and you can move them freely now.   "},
 			{"DeviceRemovedLeg Cuffs", "YOU, the player, just got your leg cuffs removed.  Your ankles are no longer cuffed and your movement is no longer restricted by them.   "},
 			{"DeviceRemovedLegCuffs", "YOU, the player, just got your leg cuffs removed.  Your ankles are no longer cuffed and your movement is no longer restricted by them.   "},

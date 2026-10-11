@@ -536,7 +536,9 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	if (handle_DDUD::handle_DDUD_plug_chargeable_effect(a_event, effect)) {
 		return;
 	}
-
+	if (handle_DDUD::handle_DDUD_abadon_domination_shout_effect(a_event, effect)) {
+		return;
+	}
 
 	if (handle_alchemy_magic_effects::handle_magic_effect(a_event, effect)) {
 		return;

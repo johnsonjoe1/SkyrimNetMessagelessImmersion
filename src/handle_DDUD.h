@@ -8,6 +8,9 @@ class handle_DDUD
 public:
 
 	// FIRST all the active magic effects handlers.
+	static bool handle_DDUD_abadon_domination_shout_effect(
+		const RE::TESActiveEffectApplyRemoveEvent* a_event,
+		RE::ActiveEffect* a_effect);
 	static bool handle_DDUD_struggle_exhaustion_effect(
 		const RE::TESActiveEffectApplyRemoveEvent* a_event,
 		RE::ActiveEffect* a_effect);
