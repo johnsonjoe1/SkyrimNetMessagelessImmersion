@@ -247,10 +247,15 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"BF Combat Player Effect",              // This is *PROBABLY* from Battlefuck, but I'm not sure
 		"BF Stop Combat Effect",                // This is *PROBABLY* from Battlefuck, but I'm not sure
 
-		// NOW HANDLED:   ""Muzzle Gag Ding-a-Ling Sounds Slow",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
-		// NOW HANDLED:   ""Muzzle Gag Ding-a-Ling Sounds Medium",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
-		// NOW HANDLED:   ""Muzzle Gag Ding-a-Ling Sounds Fast",  // This is from UD/DD/ZAD and probably triggers very time the bell from the muzzle-gag sounds.  It is too often outright, but with a cooldown, we could add some thoughts here to, about the annoying cute sound.
-		// NOW HANDLED:   "Drool",   // This is from UD/DD/ZAD and from some gag, and COULD be used later.
+	/*
+[2026-10-10 22:15:52.691] [log] [info] [handle_active_magic_effect_changes.cpp:989] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-10 22:15:52.691] [log] [info] [handle_active_magic_effect_changes.cpp:990] Effect REMOVED on Cara Goodlooker | UID=27
+[2026-10-10 22:15:52.691] [log] [info] [handle_active_magic_effect_changes.cpp:993] Base name: Getting Dirty | Base ptr: 0x18d14dc7740 | Base-FormID: FE019025 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-10 22:15:52.691] [log] [info] [handle_active_magic_effect_changes.cpp:994] base-Effect EDID:  | Source ptr: 0x18d160b1b00  |  Caster: Cara Goodlooker 
+[2026-10-10 22:15:52.691] [log] [info] [handle_active_magic_effect_changes.cpp:998] Magnitude: 1 | Duration: 0
+[2026-10-10 22:15:52.691] [log] [info] [handle_active_magic_effect_changes.cpp:1001] Source name: Get Dirty Over Time - Not Dirty | Source FormID: FE01903F | Source EDID:  
+[2026-10-10 22:15:52.691] [log] [info] [handle_active_magic_effect_changes.cpp:1007] Form LookupByID FE019025 found: Getting Dirty	*/
+		"Getting Dirty",    // this happens constantly and the changes are handles via the comparison of dirt value changes over time and not the effect itself.
 
 
 		"Quest Start Routine",     // This is from Mod Sleep-in-Lingerie, and startup/initialization of the Mod.
