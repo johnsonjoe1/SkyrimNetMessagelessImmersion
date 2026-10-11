@@ -4,12 +4,34 @@
 #include "misc.h"
 #include <string_view>
 #include <unordered_set>
+#include <regex>
 
 namespace logger = SKSE::log;
 
 std::string final_lillith_message;
 static std::string current_animation_status = "not_in_a_scene";   // by default, we assume no SL scene is going on.
 static auto last_scene_status_refresh_timestamp = std::chrono::steady_clock::now();
+
+std::string item_name_for_thought_prompt(std::string_view a_name)
+{
+	// Repeat to remove nested bracketed annotations as well.
+	static const std::regex bracketed_parts(R"(\([^()]*\)|\[[^\[\]]*\]|\{[^{}]*\}|<[^<>]*>)");
+	static const std::regex roman_numbers(R"(\b(?:VIII|VII|VI|IV|III|II|V|I)\b)");
+	static const std::regex whitespace(R"(\s+)");
+	std::string name(a_name);
+	while (std::regex_search(name, bracketed_parts)) {
+		name = std::regex_replace(name, bracketed_parts, " ");
+	}
+	name = std::regex_replace(name, roman_numbers, " ");
+	name = std::regex_replace(name, whitespace, " ");
+	if (!name.empty() && name.front() == ' ') {
+		name.erase(0, 1);
+	}
+	if (!name.empty() && name.back() == ' ') {
+		name.pop_back();
+	}
+	return name;
+}
 
 
 bool cooldown_has_passed(std::chrono::steady_clock::time_point last_timestamp, int cooldown_seconds)

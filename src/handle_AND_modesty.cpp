@@ -120,10 +120,14 @@ std::string get_currently_worn_transparent_top_item_names()
 		if (!worn_item.transparent_top_property || !worn_item.item) {
 			continue;
 		}
+		const auto item_name = item_name_for_thought_prompt(worn_item.item->GetName());
+		if (item_name.empty()) {
+			continue;
+		}
 		if (!item_names.empty()) {
 			item_names += " and ";
 		}
-		item_names += worn_item.item->GetName();
+		item_names += item_name;
 	}
 
 	return item_names;
@@ -269,7 +273,8 @@ void trigger_immediate_message_if_flashing_item_was_added(const CurrentlyWornIte
 	{
 		// We have a flashing item.
 		bool previous_flash = false;
-		std::string flash_item_message = std::format("The equipment item {} you just put on is flashing ", my_record.item->GetName());
+		const auto item_name = item_name_for_thought_prompt(my_record.item->GetName());
+		std::string flash_item_message = std::format("The equipment item {} you just put on is flashing ", item_name);
 		if (my_record.pelvic_property) {
 			flash_item_message += " your pelvic area at least. ";
 			previous_flash = true;
@@ -293,7 +298,7 @@ void trigger_immediate_message_if_flashing_item_was_added(const CurrentlyWornIte
 		// Check for transparent top property as well.
 		if (my_record.transparent_top_property) {
 
-				flash_item_message = std::format("The equipment item {} you just put on is semi-transparent, so that every now and then your chest will be plain to see for everybody through the {}! How embarrassing!", my_record.item->GetName(), my_record.item->GetName());
+				flash_item_message = std::format("The equipment item {} you just put on is semi-transparent, so that every now and then your chest will be plain to see for everybody through the {}! How embarrassing!", item_name, item_name);
 		}
 
 		flash_item_message += " Tell that to the player through your response.  But the player doesn't know which item you are speaking about, so be sure to mention the name of the item in your response and also describe the item's flashing/transparency property, not the general state of nudity or non-nudity you are in. You can add that on top, but in this case, the item is what it's all about.  If the item is flashing, you can lament about how cumbersome it is to hold it in place and keep from it slipping or revealing more than intended.  If the item is transparent, you can lament about the material having too many holes or wide gaps, making it difficult to maintain modesty.  But in any case be sure to mention the name of the item.";

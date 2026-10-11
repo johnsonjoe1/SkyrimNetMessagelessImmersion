@@ -49,7 +49,7 @@ void handle_armor_item_activation(RE::TESBoundObject *base)
 	}
 	LillithOnlyBox(combined_string);
 
-	std::string thought_string = std::format("This {} is " , armor->GetName() );
+	std::string thought_string = std::format("This {} is " , item_name_for_thought_prompt(armor->GetName()) );
 
 	bool we_have_something_interesting_to_say = false;
 
