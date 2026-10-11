@@ -15,6 +15,8 @@ namespace
 {
 	auto last_player_involving_SLAC_scene_start = std::chrono::steady_clock::now() - std::chrono::hours(1);
 	auto last_player_involving_SLAC_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+	auto last_SLAC_npc_start_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+	auto last_SLAC_npc_end_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 }
 
 bool handle_SLAC::update_scene_status_from_mod_event(const SKSE::ModCallbackEvent* a_event)
@@ -94,15 +96,20 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 		}
 
 		// Those events take a long time, but multiple such events can trigger in parallel, so we still implement a cooldown. 
+		const bool isStarting = eventName == "SNMI_SLACNPCAnimationStart";
+		auto& last_thought_timestamp = isStarting ? last_SLAC_npc_start_thought_timestamp : last_SLAC_npc_end_thought_timestamp;
+		if (!cooldown_has_passed(last_thought_timestamp, 180)) {
+			return true;
+		}
 		std::string context = a_event->strArg.c_str();
 		const auto separator = context.find('|');
 		const std::string npc_name = separator == std::string::npos ? "a nearby NPC" : context.substr(0, separator);
 		const std::string creature_name = separator == std::string::npos ? "a creature" : context.substr(separator + 1);
-		const bool isStarting = eventName == "SNMI_SLACNPCAnimationStart";
 		std::string thought_message = isStarting
 			? std::format("You have just witnessed the very horny {} successfully engage with the poor and helpless {} and begin a sexual encounter with them nearby. Let us know your immediate response to seeing the creature and NPC begin their encounter, maybe with some empathy for the poor and helpless {}.  Be sure to explain what is happening at all in your response, because the player may not see the scene on screen and therefore might be confused if you don't give enough context and and don't explain what you are talking about here.", creature_name, npc_name, npc_name)
 			: std::format("The sexual encounter between {} and {} that you witnessed nearby has just ended and {} has finally let go of {}. Let us know your immediate response to seeing the creature and NPC finish their scene, maybe with some empathy for the poor and helpless {}.  Be sure to explain what is happening at all in your response, because the player may not see the scene on screen and therefore might be confused if you don't give enough context and and don't explain what you are talking about here.", creature_name, npc_name, creature_name, npc_name, npc_name);
 		DumpThoughts::throw_out_TTS_thought_message(thought_message);
+		last_thought_timestamp = std::chrono::steady_clock::now();
 		LillithOnlyBox(std::string(isStarting ? "SNMI_SLACNPCAnimationStart:  " : "SNMI_SLACNPCAnimationEnding:  ") + thought_message);
 		return true;	// Successfully handling and no further processing in the calling function
 
