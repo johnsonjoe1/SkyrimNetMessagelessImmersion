@@ -637,12 +637,12 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		PlayerThoughtHistory::TryRecordSkyrimNetSpeech(a_event->eventName.c_str(), a_event->strArg.c_str());
 		
 		auto now = std::chrono::steady_clock::now();
-		// auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_timestamp);
+		// auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - last_speech_or_thought_timestamp);
 		auto runtime = std::chrono::duration_cast<std::chrono::seconds>(now - DumpThoughts::GetLastSpeechTimestamp());
 
 		SKSE::log::info("=====NO-SPEECH-TIMER for the BACKGROUND CHANNEL WAS RESET BY SKYRIMNET ModEvent after {} seconds. ", runtime.count());
-		// last_speech_timestamp=std::chrono::steady_clock::now();
-		DumpThoughts::reset_last_speech_timestamp();
+		// last_speech_or_thought_timestamp=std::chrono::steady_clock::now();
+		DumpThoughts::reset_last_speech_or_thought_timestamp();
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 

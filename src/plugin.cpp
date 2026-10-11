@@ -220,7 +220,7 @@ namespace
 
 		// For the moment, we treat classic dialogue also like speech, so we reset the silence counter from here.
 		if (DumpThoughts::IsPlayerInDialogue()) {
-			DumpThoughts::reset_last_speech_timestamp();
+			DumpThoughts::reset_last_speech_or_thought_timestamp();
 		}
 		LillithOnlyHUDmessage(std::format("player_is_in_ANY_SL_scene():  {}", player_is_in_ANY_SL_scene() ? "in a scene" : "not in a scene").c_str());
 

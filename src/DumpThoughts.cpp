@@ -11,7 +11,7 @@
 
 namespace logger = SKSE::log;
 
-static auto last_speech_timestamp = std::chrono::steady_clock::now();
+static auto last_speech_or_thought_timestamp = std::chrono::steady_clock::now();
 static auto last_game_load_or_reload_timestamp = std::chrono::steady_clock::now();
 static auto last_lactacid_added_speech_timestamp = std::chrono::steady_clock::now();
 
@@ -129,7 +129,7 @@ namespace
 
 		if (a_request.cooldownPolicy == ThoughtCooldownPolicy::kBackground) {
 			const auto runtime = std::chrono::duration_cast<std::chrono::seconds>(
-				std::chrono::steady_clock::now() - last_speech_timestamp);
+				std::chrono::steady_clock::now() - last_speech_or_thought_timestamp);
 			SKSE::log::info(
 				"Time since last thought-speech on BACKGROUNDCHANNEL OR PRIORITIES CHANNELS: {} seconds",
 				runtime.count());
@@ -188,7 +188,7 @@ namespace
 			123.0f,
 			RE::PlayerCharacter::GetSingleton());
 		eventSource->SendEvent(&event);
-		last_speech_timestamp = std::chrono::steady_clock::now();
+		last_speech_or_thought_timestamp = std::chrono::steady_clock::now();
 	}
 }
 
@@ -205,13 +205,13 @@ bool DumpThoughts::IsPlayerInDialogue()
 //  Note to self:  public: private: keywords only belong in the header, not in the .cpp file.  
 
 std::chrono::steady_clock::time_point DumpThoughts::GetLastSpeechTimestamp() {
-	return last_speech_timestamp;
+	return last_speech_or_thought_timestamp;
 }
 void DumpThoughts::reset_lactacid_added_speech_timestamp() {
 	last_lactacid_added_speech_timestamp = std::chrono::steady_clock::now();
 }
-void DumpThoughts::reset_last_speech_timestamp() {
-	last_speech_timestamp = std::chrono::steady_clock::now();
+void DumpThoughts::reset_last_speech_or_thought_timestamp() {
+	last_speech_or_thought_timestamp = std::chrono::steady_clock::now();
 }
 void DumpThoughts::reset_last_game_load_or_reload_timestamp() {
 	// We reset the game-reloaded-timestamp for silence and thus avoiding messages from reload-induced changes
