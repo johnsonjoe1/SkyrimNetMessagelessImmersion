@@ -189,6 +189,7 @@ namespace
 	static auto last_reel_in_too_early_notification_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 	static auto last_not_enough_gold_notification_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 	static auto last_SLAC_creature_coming_after_you_tought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+	static auto last_slap_or_grope_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 	RE::UI_MESSAGE_RESULTS process_hud_message(RE::HUDMenu* a_menu, RE::UIMessage& a_message)
 	{
@@ -331,13 +332,13 @@ void check_for_relevant_notifications(const char* notification)
 	if (notificationText.ends_with(assSlapSensingSuffix)) {
 		const auto slapperName = notificationText.substr(0, notificationText.size() - assSlapSensingSuffix.size() - 1);
 		
-		if (!cooldown_has_passed(last_SLAC_creature_coming_after_you_tought_timestamp, 30)) {
+		if (!cooldown_has_passed(last_slap_or_grope_thought_timestamp, 30)) {
 			return;
 		}
 		LillithOnlyBox(std::format("Notification detected: {} slaps your ass hard as you walk by.", slapperName).c_str());
 		std::string  thought_message = std::format("YOU, the player, were exposing your butt and ran into {} who then slapped on your ass hard as you walked by.  That must have been quite a shock and embarrassment for you.  Make sure to express your surprise and discomfort about it, or your outrage at the way that {} is treating you publicly and how it violated your personal space.  Be sure to name the person who slapped you in your response.", slapperName, slapperName, slapperName);
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message, DumpThoughts::DialogueHandling::kProcessImmediately);
-		last_SLAC_creature_coming_after_you_tought_timestamp = std::chrono::steady_clock::now();
+		last_slap_or_grope_thought_timestamp = std::chrono::steady_clock::now();
 		
 	} else {
 		if constexpr (logFailedNotificationTests) {
@@ -352,13 +353,13 @@ void check_for_relevant_notifications(const char* notification)
 	if (notificationText.ends_with(titslappSensingSuffix)) {
 		const auto slapperName = notificationText.substr(0, notificationText.size() - titslappSensingSuffix.size() - 1);
 		
-		if (!cooldown_has_passed(last_SLAC_creature_coming_after_you_tought_timestamp, 30)) {
+		if (!cooldown_has_passed(last_slap_or_grope_thought_timestamp, 30)) {
 			return;
 		}
 		LillithOnlyBox(std::format("Notification detected: {} slaps your tits hard as you walk by.", slapperName).c_str());
 		std::string  thought_message = std::format("YOU, the player, were exposing your chest and ran into {} who then slapped your tits hard as you walked by.  That must have been quite a shock and embarrassment for you.  Make sure to express your surprise and discomfort about it, or your outrage at the way that {} is treating you publicly and how it violated your personal space.  Be sure to name the person who slapped you in your response.", slapperName, slapperName, slapperName);
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message, DumpThoughts::DialogueHandling::kProcessImmediately);
-		last_SLAC_creature_coming_after_you_tought_timestamp = std::chrono::steady_clock::now();
+		last_slap_or_grope_thought_timestamp = std::chrono::steady_clock::now();
 		
 	} else {
 		if constexpr (logFailedNotificationTests) {
@@ -372,13 +373,13 @@ void check_for_relevant_notifications(const char* notification)
 	if (notificationText.ends_with(gropeSensingSuffix)) {
 		const auto slapperName = notificationText.substr(0, notificationText.size() - gropeSensingSuffix.size() - 1);
 		set_current_animation_status("in_a_scene", std::format("RECEIVED HUD NOTIFICATION: {}", notification));
-		if (!cooldown_has_passed(last_SLAC_creature_coming_after_you_tought_timestamp, 30)) {
+		if (!cooldown_has_passed(last_slap_or_grope_thought_timestamp, 30)) {
 			return;
 		}
 		LillithOnlyBox(std::format("Notification detected: {} roughly gropes your tits as you pass by.", slapperName).c_str());
 		std::string  thought_message = std::format("YOU, the player, were exposing your chest and ran into {} who then roughly groped your tits as you passed by.  That must have been quite a shock and embarrassment for you.  Make sure to express your surprise and discomfort about it, or your outrage at the way that {} is treating you publicly and how it violated your personal space.  Be sure to name the person who groped you in your response.", slapperName, slapperName, slapperName);
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message, DumpThoughts::DialogueHandling::kProcessImmediately);
-		last_SLAC_creature_coming_after_you_tought_timestamp = std::chrono::steady_clock::now();
+		last_slap_or_grope_thought_timestamp = std::chrono::steady_clock::now();
 		
 	} else {
 		if constexpr (logFailedNotificationTests) {
