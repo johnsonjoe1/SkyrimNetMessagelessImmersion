@@ -455,6 +455,16 @@ bool handle_DDUD::handle_DDUD_device_events(
 		}
 		return true;
 	}
+	// MOD EVENT:  Name: DeviousEventPlug Moan  StrArg: Cara Goodlooker  NumArg: 0
+	if ((std::strcmp(a_event->eventName.c_str(), "DeviousEventPlug Moan") == 0)) {
+		if (std::strcmp(a_event->strArg.c_str(), RE::PlayerCharacter::GetSingleton()->GetName()) == 0) {
+			std::string thought_message = std::format("YOU, the player character, just couldn't stop yourself from moaning from the devious plugs locked into your ass or vagina.  It is so hard to keep quiet with those devices stimulating you!  Say so and let us know what you are feeling and thinking, but make it clear that you speak about the plugs inside of you and that you can't suppress your moaning, so that the player will knowwhat you are speaking about.");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		} else {
+			LillithOnlyBox(std::format("DeviousEventPlug Moan: Event noticed, but it's NOT ABUT THE PLAYER?????  DoubleCheck this next time.  Actor is: {}", a_event->strArg.c_str()));
+		}
+		return true;
+	}
 
 	return false;
 }
