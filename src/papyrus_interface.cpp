@@ -173,9 +173,8 @@ void SNMIPapyrus::set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value)
 	}
 	if (!final_thought_string.empty()) {
 		if (!player_is_in_ANY_SL_scene()) {
-			LillithOnlyBox(std::format("YPS state change detected: yps_AddictionBuff ({} -> {})", previous_yps_AddictionBuff, _yps_AddictionBuff));
-			LillithOnlyBox(final_thought_string);
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string);
+			LillithOnlyBox(std::format("YPS state change detected: yps_AddictionBuff ({} -> {}) so we generate the following thought BUT WITH A SILENCE-BASED DELAY: {}", previous_yps_AddictionBuff, _yps_AddictionBuff, final_thought_string));
+			DumpThoughts::throw_out_TTS_thought_message_after_silence(final_thought_string, 19);  // throw out this thought as soon as 19 seconds of silence have occured
 			SKSE::log::info("Note: Cause-aware YPS addiction thought was delivered.");
 		} else {
 			LillithOnlyBox(std::format("YPS state change detected while in SL scene, so the following thought was SUPPRESSED: {}", final_thought_string));
