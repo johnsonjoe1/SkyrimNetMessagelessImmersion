@@ -6,6 +6,8 @@
 class handle_DDUD
 {
 public:
+
+	// FIRST all the active magic effects handlers.
 	static bool handle_DDUD_struggle_exhaustion_effect(
 		const RE::TESActiveEffectApplyRemoveEvent* a_event,
 		RE::ActiveEffect* a_effect);
@@ -24,6 +26,11 @@ public:
 	static bool handle_DDUD_muzzle_gag_ding_a_ling_effect(
 		const RE::TESActiveEffectApplyRemoveEvent* a_event,
 		RE::ActiveEffect* a_effect);
+	static bool handle_DDUD_plug_chargeable_effect(
+		const RE::TESActiveEffectApplyRemoveEvent* a_event,
+		RE::ActiveEffect* a_effect);
+
+	// THEN all the Mod Broadcast event handlers.
 	static bool handle_DDUD_hotkey_captured_and_stopped_event(
 		const SKSE::ModCallbackEvent* a_event);
 	static bool handle_DDUD_skyrimnet_event(

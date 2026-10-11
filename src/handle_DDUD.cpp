@@ -150,6 +150,29 @@ namespace
 [2026-10-10 22:06:48.375] [log] [info] [handle_active_magic_effect_changes.cpp:1007] Form LookupByID 100382F4 found: It keeps going, and going.
 	// This is from Devious Devices, in Devious Devices - Integration.esm.  On the magic effect zad_effChargeable, which uses the chargeable plug script zadPlugChargeableEffect.
 	*/
+bool handle_DDUD::handle_DDUD_plug_chargeable_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+
+	auto* base = a_effect->GetBaseObject();
+	auto* source = a_effect->spell;
+	if (!base || !source || std::strcmp(base->GetName(), "It keeps going, and going.") != 0 ||
+		std::strcmp(source->GetName(), "") != 0) {
+		return false;
+	}
+	if (a_event->isApplied) {
+		SKSE::log::info("Event handler for DDUD PLUG CHARGEABLE vibration-activation!");
+		// No thought for activation of the vibration of a plug, since that is handled via SkyrimNet-UDNG in strong fashion, i.e. with narration and NPC reactions.
+	} else {
+		SKSE::log::info("Event handler for DDUD PLUG CHARGEABLE vibration-deactivaton!");
+		// No thought for activation of the vibration of a plug, since that is handled via SkyrimNet-UDNG in strong fashion, i.e. with narration and NPC reactions.
+	}
+	return true;  // Even if we don't create a thought or anything, still treat the event as handled.
+}
 
 bool handle_DDUD::handle_DDUD_struggle_exhaustion_effect(
 	const RE::TESActiveEffectApplyRemoveEvent* a_event,
