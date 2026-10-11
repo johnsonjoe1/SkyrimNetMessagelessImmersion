@@ -237,15 +237,15 @@ RE::BSEventNotifyControl handle_inventory_change::ProcessEvent(
 
 	if (item_name && _strnicmp(item_name, "Lockpick", 8) == 0) {
 		// Depending on counts, we might comment on lockpicks
-		if (added && (inventory_count_before<20) && (inventory_count_after>inventory_count_before)) {
+		if (added && (inventory_count_before<4) && (inventory_count_after>inventory_count_before)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
-				"You just obtained some lockpicks. React to finding in a positive way, because you were running low a bit on lockpicks with less than 20 in your inventory.  Mention that you were running low on lockpicks in your response.");
+				"You just obtained some lockpicks. React to finding in a positive way, because you were running low a bit on lockpicks in your inventory.  Mention that you were running low on lockpicks in your response.");
 		} else if (removed && (inventory_count_before>3) && (inventory_count_after==3)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
 				"You are down to your last 3 lockpicks. You have to be careful now. React to this finding and mention that you are down to your last 3 lockpicks.");
 		} else if (removed && (inventory_count_before>0) && (inventory_count_after==0)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
-				"Your lockpicks are all gone.  How are you supposed to get out of a locked situation now? React to this situation and mention that you have no lockpicks left anymore now.");
+				"Your lockpicks are all gone.  How are you supposed to get out of a locked situation now? React to this situation and mention that you have no lockpick now.");
 		}	
 	}
 
