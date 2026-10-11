@@ -3,6 +3,7 @@
 #include "log.h"
 #include "misc.h"
 #include <algorithm>
+#include <chrono>
 
 namespace logger = SKSE::log;
 
@@ -13,6 +14,7 @@ int get_transparent_top_property(const CurrentlyWornItemRecord& worn_item);
 
 std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
 std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
+static auto last_three_lockpicks_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 void refresh_currently_worn_item_records()
 {
@@ -241,8 +243,13 @@ RE::BSEventNotifyControl handle_inventory_change::ProcessEvent(
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
 				"You just obtained some lockpicks. React to finding in a positive way, because you were running low a bit on lockpicks in your inventory.  Mention that you were running low on lockpicks in your response.");
 		} else if (removed && (inventory_count_before>3) && (inventory_count_after==3)) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
-				"You are down to your last 3 lockpicks. You have to be careful now. React to this finding and mention that you are down to your last 3 lockpicks.");
+			if (cooldown_has_passed(last_three_lockpicks_thought_timestamp, 180)) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
+					"You are down to your last 3 lockpicks. You have to be careful now. React to this finding and mention that you are down to your last 3 lockpicks.");
+				last_three_lockpicks_thought_timestamp = std::chrono::steady_clock::now();
+			} else {
+				logger::info("Skipping last-three-lockpicks thought because its 180-second cooldown has not elapsed.");
+			}
 		} else if (removed && (inventory_count_before>0) && (inventory_count_after==0)) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
 				"Your lockpicks are all gone.  How are you supposed to get out of a locked situation now? React to this situation and mention that you have no lockpick now.");
