@@ -29,6 +29,7 @@ bool handle_jailrape::is_known_irrelevant_event(std::string_view a_eventName)
 		
 		"AnimationStart_JailRapePC",
 		"StageEnd_JailRapePC",
+		"AnimationEnding_JailRapePC"    // We respond to AnimationEnd_JailRapePC instead
 	};
 	return ignoredEvents.contains(a_eventName);
 }
