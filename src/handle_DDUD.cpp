@@ -231,6 +231,70 @@ bool handle_DDUD::handle_DDUD_gag_magic_effect_stuff(
 [2026-10-11 12:05:04.175] [log] [info] [handle_active_magic_effect_changes.cpp:1066] Magnitude: 3 | Duration: 2
 [2026-10-11 12:05:04.175] [log] [info] [handle_active_magic_effect_changes.cpp:1069] Source name: Abadon Dominate Shout 3 Words | Source FormID: 2415D623 | Source EDID:  
 [2026-10-11 12:05:04.175] [log] [info] [handle_active_magic_effect_changes.cpp:1075] Form LookupByID 2415D5F0 found: Abadon Domination Shout
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1059] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1060] Effect APPLIED on Cara Goodlooker | UID=23
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1063] Base name: Damage Magicka Regen | Base ptr: 0x212d1969ec0 | Base-FormID: 73F2B | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1064] base-Effect EDID:  | Source ptr: 0x210599d7d00  |  Caster: Cara Goodlooker 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1068] Magnitude: -30 | Duration: 30
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1071] Source name: Fucked | Source FormID: 2415D602 | Source EDID:  
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1077] Form LookupByID 73F2B found: Damage Magicka Regen
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1083] .
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1084] .
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1085] ABOVE IS A POTENTIALLY UNHANDLED MAGIC EFFECT??? CHECK THE BASE NAME AND SOURCE NAME TO SEE IF IT'S SOMETHING YOU WANT TO REACT TO, OR IF IT'S SOME RANDOM EFFECT THAT YOU DON'T CARE ABOUT.  IF IT'S THE LATTER, THEN YOU PROBABLY WANT TO ADD A NEW IF-STATEMENT FOR THIS EFFECT IN THIS HANDLER, SO THAT IT DOESN'T GET LOGGED IN SUCH DETAIL ANY MORE, BECAUSE THAT WOULD BE ANNOYING.  CHECK THE BASE NAME AND SOURCE NAME TO SEE WHAT EFFECT THIS IS ABOUT.  IF IT'S AN EFFECT YOU CARE ABOUT, THEN CONSIDER ADDING A CUSTOM MESSAGE FOR IT IN THIS HANDLER, SO THAT YOUR TTS CAN REACT TO IT IN A MEANINGFUL WAY! 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:395] CHECKING FOR _SLS_STUFF! Currently investigating: Damage Magicka
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1059] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1060] Effect APPLIED on Cara Goodlooker | UID=24
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1063] Base name: Damage Magicka | Base ptr: 0x212d1954f00 | Base-FormID: 3A2B6 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1064] base-Effect EDID:  | Source ptr: 0x210599d7d00  |  Caster: Cara Goodlooker 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1068] Magnitude: -89 | Duration: 0
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1071] Source name: Fucked | Source FormID: 2415D602 | Source EDID:  
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1077] Form LookupByID 3A2B6 found: Damage Magicka
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1083] .
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1084] .
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1085] ABOVE IS A POTENTIALLY UNHANDLED MAGIC EFFECT??? CHECK THE BASE NAME AND SOURCE NAME TO SEE IF IT'S SOMETHING YOU WANT TO REACT TO, OR IF IT'S SOME RANDOM EFFECT THAT YOU DON'T CARE ABOUT.  IF IT'S THE LATTER, THEN YOU PROBABLY WANT TO ADD A NEW IF-STATEMENT FOR THIS EFFECT IN THIS HANDLER, SO THAT IT DOESN'T GET LOGGED IN SUCH DETAIL ANY MORE, BECAUSE THAT WOULD BE ANNOYING.  CHECK THE BASE NAME AND SOURCE NAME TO SEE WHAT EFFECT THIS IS ABOUT.  IF IT'S AN EFFECT YOU CARE ABOUT, THEN CONSIDER ADDING A CUSTOM MESSAGE FOR IT IN THIS HANDLER, SO THAT YOUR TTS CAN REACT TO IT IN A MEANINGFUL WAY! 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:395] CHECKING FOR _SLS_STUFF! Currently investigating: Damage Magicka
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1059] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1060] Effect REMOVED on Cara Goodlooker | UID=24
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1063] Base name: Damage Magicka | Base ptr: 0x212d1954f00 | Base-FormID: 3A2B6 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1064] base-Effect EDID:  | Source ptr: 0x210599d7d00  |  Caster: Cara Goodlooker 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1068] Magnitude: -89 | Duration: 0
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1071] Source name: Fucked | Source FormID: 2415D602 | Source EDID:  
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1077] Form LookupByID 3A2B6 found: Damage Magicka
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1083] .
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1084] .
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1085] ABOVE IS A POTENTIALLY UNHANDLED MAGIC EFFECT??? CHECK THE BASE NAME AND SOURCE NAME TO SEE IF IT'S SOMETHING YOU WANT TO REACT TO, OR IF IT'S SOME RANDOM EFFECT THAT YOU DON'T CARE ABOUT.  IF IT'S THE LATTER, THEN YOU PROBABLY WANT TO ADD A NEW IF-STATEMENT FOR THIS EFFECT IN THIS HANDLER, SO THAT IT DOESN'T GET LOGGED IN SUCH DETAIL ANY MORE, BECAUSE THAT WOULD BE ANNOYING.  CHECK THE BASE NAME AND SOURCE NAME TO SEE WHAT EFFECT THIS IS ABOUT.  IF IT'S AN EFFECT YOU CARE ABOUT, THEN CONSIDER ADDING A CUSTOM MESSAGE FOR IT IN THIS HANDLER, SO THAT YOUR TTS CAN REACT TO IT IN A MEANINGFUL WAY! 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:395] CHECKING FOR _SLS_STUFF! Currently investigating: Damage Stamina Regen
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1059] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1060] Effect APPLIED on Cara Goodlooker | UID=24
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1063] Base name: Damage Stamina Regen | Base ptr: 0x212d196a080 | Base-FormID: 73F2C | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1064] base-Effect EDID:  | Source ptr: 0x210599d7d00  |  Caster: Cara Goodlooker 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1068] Magnitude: -30 | Duration: 30
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1071] Source name: Fucked | Source FormID: 2415D602 | Source EDID:  
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1077] Form LookupByID 73F2C found: Damage Stamina Regen
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1083] .
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1084] .
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1085] ABOVE IS A POTENTIALLY UNHANDLED MAGIC EFFECT??? CHECK THE BASE NAME AND SOURCE NAME TO SEE IF IT'S SOMETHING YOU WANT TO REACT TO, OR IF IT'S SOME RANDOM EFFECT THAT YOU DON'T CARE ABOUT.  IF IT'S THE LATTER, THEN YOU PROBABLY WANT TO ADD A NEW IF-STATEMENT FOR THIS EFFECT IN THIS HANDLER, SO THAT IT DOESN'T GET LOGGED IN SUCH DETAIL ANY MORE, BECAUSE THAT WOULD BE ANNOYING.  CHECK THE BASE NAME AND SOURCE NAME TO SEE WHAT EFFECT THIS IS ABOUT.  IF IT'S AN EFFECT YOU CARE ABOUT, THEN CONSIDER ADDING A CUSTOM MESSAGE FOR IT IN THIS HANDLER, SO THAT YOUR TTS CAN REACT TO IT IN A MEANINGFUL WAY! 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:395] CHECKING FOR _SLS_STUFF! Currently investigating: Damage Stamina
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1059] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1060] Effect APPLIED on Cara Goodlooker | UID=25
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1063] Base name: Damage Stamina | Base ptr: 0x212d19550c0 | Base-FormID: 3A2C6 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1064] base-Effect EDID:  | Source ptr: 0x210599d7d00  |  Caster: Cara Goodlooker 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1068] Magnitude: -89 | Duration: 0
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1071] Source name: Fucked | Source FormID: 2415D602 | Source EDID:  
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1077] Form LookupByID 3A2C6 found: Damage Stamina
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1083] .
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1084] .
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1085] ABOVE IS A POTENTIALLY UNHANDLED MAGIC EFFECT??? CHECK THE BASE NAME AND SOURCE NAME TO SEE IF IT'S SOMETHING YOU WANT TO REACT TO, OR IF IT'S SOME RANDOM EFFECT THAT YOU DON'T CARE ABOUT.  IF IT'S THE LATTER, THEN YOU PROBABLY WANT TO ADD A NEW IF-STATEMENT FOR THIS EFFECT IN THIS HANDLER, SO THAT IT DOESN'T GET LOGGED IN SUCH DETAIL ANY MORE, BECAUSE THAT WOULD BE ANNOYING.  CHECK THE BASE NAME AND SOURCE NAME TO SEE WHAT EFFECT THIS IS ABOUT.  IF IT'S AN EFFECT YOU CARE ABOUT, THEN CONSIDER ADDING A CUSTOM MESSAGE FOR IT IN THIS HANDLER, SO THAT YOUR TTS CAN REACT TO IT IN A MEANINGFUL WAY! 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:395] CHECKING FOR _SLS_STUFF! Currently investigating: Damage Stamina
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1059] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1060] Effect REMOVED on Cara Goodlooker | UID=25
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1063] Base name: Damage Stamina | Base ptr: 0x212d19550c0 | Base-FormID: 3A2C6 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1064] base-Effect EDID:  | Source ptr: 0x210599d7d00  |  Caster: Cara Goodlooker 
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1068] Magnitude: -89 | Duration: 0
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1071] Source name: Fucked | Source FormID: 2415D602 | Source EDID:  
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1077] Form LookupByID 3A2C6 found: Damage Stamina
+[2026-10-11 12:29:31.222] [log] [info] [handle_active_magic_effect_changes.cpp:1083] .
+
 */
 bool handle_DDUD::handle_DDUD_abadon_domination_shout_effect(
 	const RE::TESActiveEffectApplyRemoveEvent* a_event,
@@ -239,13 +303,25 @@ bool handle_DDUD::handle_DDUD_abadon_domination_shout_effect(
 	if (!a_event || !a_effect) {
 		return false;
 	}
-
 	auto* base = a_effect->GetBaseObject();
-	if (!base || std::strcmp(base->GetName(), "Abadon Domination Shout") != 0 ) {
+	if (!base) {
 		return false;
 	}
 	auto* source = a_effect->spell;
 	auto caster = a_effect->caster.get();
+
+	// In the follow-up of abadon shout some fucked-effects are applied, which actually might mean whipped effects.  
+	// They are not very relevant, and we basically do nothing based on those.  But that detailed handling will have to come later.
+
+	if (std::strcmp(source->GetName(), "Fucked") == 0 ) {
+		SKSE::log::info("Event handler for Abadon Domination Shout SIDE EFFECT FUCKED APPLICATION i.e. STAMINA and MAGICKA DESTRUCTION EFFECT:  UNHANDLED BECAUSE WE ARE NOT SURE YET!");
+		return false;
+	}
+	
+	// The rest from here on is pure Abadon Domination Shout handling.
+	if (std::strcmp(base->GetName(), "Abadon Domination Shout") != 0 ) {
+		return false;
+	}
 
 	if (a_event->isApplied) {
 		SKSE::log::info("Event handler for Abadon Domination Shout APPLICATION!");
