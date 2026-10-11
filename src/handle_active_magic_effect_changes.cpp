@@ -23,6 +23,8 @@ static auto last_entered_water_thought_timestamp = std::chrono::steady_clock::no
 static auto last_exited_water_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_firebolt_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_swimming_effect_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_nullify_magicka_application_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static auto last_nullify_magicka_removal_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 std::array<std::string, 2> list_of_food_contracted_sicknesses = {
     "Stomach Rot",
@@ -884,15 +886,23 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	{
 		if (a_event->isApplied)
 		{
+			if (!cooldown_has_passed(last_nullify_magicka_application_thought_timestamp, 120)) {
+				return;
+			}
 			SKSE::log::info("Event handler for Nullify Magicka effect application!");
 			std::string final_thought_string = std::format("You have been cursed with a Nullify Magicka effect.  Your magicka has been nullified.  You feel powerless and unable to cast spells and unable to shout as well.  This curse is so strong, it renders you completly unable to use magic.  That is the effect of the curse, because you do not have a magic License.  Respond in character and make sure you mention that you are now under the Nullify Magicka effect, all just becaues you have no license to use magic.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+			last_nullify_magicka_application_thought_timestamp = std::chrono::steady_clock::now();
 		} else {
+			if (!cooldown_has_passed(last_nullify_magicka_removal_thought_timestamp, 120)) {
+				return;
+			}
 			SKSE::log::info("Event handler for Nullify Magicka effect removal!");
 			std::string final_thought_string = std::format("The Nullify Magicka effect is now removed.  Your magicka is no longer nullified and you can cast spells and shout again.  Respond in character and say something and be sure to mention that you are now free from the suppression of your magical abilities.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;	
+			last_nullify_magicka_removal_thought_timestamp = std::chrono::steady_clock::now();
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
