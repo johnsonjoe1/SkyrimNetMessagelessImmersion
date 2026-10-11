@@ -14,6 +14,7 @@ int get_transparent_top_property(const CurrentlyWornItemRecord& worn_item);
 
 std::vector<CurrentlyWornItemRecord> currently_worn_item_records;
 std::vector<CurrentlyWornItemRecord> historic_worn_item_records;
+static auto last_low_lockpicks_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static auto last_three_lockpicks_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
 void refresh_currently_worn_item_records()
@@ -240,8 +241,13 @@ RE::BSEventNotifyControl handle_inventory_change::ProcessEvent(
 	if (item_name && _strnicmp(item_name, "Lockpick", 8) == 0) {
 		// Depending on counts, we might comment on lockpicks
 		if (added && (inventory_count_before<4) && (inventory_count_after>inventory_count_before)) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
-				"You just obtained some lockpicks. React to finding in a positive way, because you were running low a bit on lockpicks in your inventory.  Mention that you were running low on lockpicks in your response.");
+			if (cooldown_has_passed(last_low_lockpicks_thought_timestamp, 180)) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
+					"You just obtained some lockpicks. React to finding in a positive way, because you were running low a bit on lockpicks in your inventory.  Mention that you were running low on lockpicks in your response.");
+				last_low_lockpicks_thought_timestamp = std::chrono::steady_clock::now();
+			} else {
+				logger::info("Skipping low-lockpicks thought because its 180-second cooldown has not elapsed.");
+			}
 		} else if (removed && (inventory_count_before>3) && (inventory_count_after==3)) {
 			if (cooldown_has_passed(last_three_lockpicks_thought_timestamp, 180)) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(
