@@ -538,7 +538,7 @@ void handle_hard_change_in_slots_0_to_7()
 	}
 	constructed_change_description += ". Say so in your response to the player, to make him aware of your modesty situation, and tell us how that makes you feel.";
 	LillithOnlyBox(constructed_change_description.c_str());
-	if (new_game_thought_cooldown_has_passed() && DumpThoughts::seconds_since_game_load() >= 30.0f) {
+	if (new_game_thought_cooldown_has_passed() && DumpThoughts::seconds_since_game_load() >= 5.0f) {
 		// Actually getting naked is important enough to force-push the message
 		if (SNMI::GetSettings().enableANDNudityThoughts) {
 			if (cooldown_has_passed(last_hard_change_thought_timestamp, 40)) {
