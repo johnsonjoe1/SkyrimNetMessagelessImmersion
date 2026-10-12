@@ -13,6 +13,7 @@ namespace
 {
 	auto last_chain_sound_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 	auto last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+	auto last_rubber_dress_squeaking_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 	auto last_device_equipped_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 	auto last_device_removed_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 
@@ -266,6 +267,28 @@ bool handle_DDUD::handle_DDUD_chastity_bra_effect(
 		DumpThoughts::throw_out_TTS_thought_message_after_silence(
 			"YOU, the player character, are now wearing a chastity bra.  But that is not the point.  The point is, that you cannot even touch your own breasts now, due to the restriction.  Say so in your response, and make it clear that the chastity bra is causing this restriction and that you cannot touch your own breasts any more.",
 			22);
+	}
+	return true;
+}
+
+bool handle_DDUD::handle_DDUD_rubber_dress_squeaking_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+
+	auto* base = a_effect->GetBaseObject();
+	if (!base || std::strcmp(base->GetName(), "Rubber Dress Squeaking Sounds Idle") != 0) {
+		return false;
+	}
+
+	if (a_event->isApplied && cooldown_has_passed(last_rubber_dress_squeaking_thought_timestamp, 600)) {
+		DumpThoughts::throw_out_TTS_thought_message_after_silence(
+			"YOU, the player character, are wearing a rubber dress that is making squeaking sounds all the time, and you cannot prevent it. Say so in your response, and make it clear that the rubber dress is causing the constant squeaking sounds and that you cannot stop them.",
+			23);
+		last_rubber_dress_squeaking_thought_timestamp = std::chrono::steady_clock::now();
 	}
 	return true;
 }

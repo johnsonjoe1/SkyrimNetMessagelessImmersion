@@ -44,6 +44,9 @@ public:
 	static bool handle_DDUD_chastity_bra_effect(
 		const RE::TESActiveEffectApplyRemoveEvent* a_event,
 		RE::ActiveEffect* a_effect);
+	static bool handle_DDUD_rubber_dress_squeaking_effect(
+		const RE::TESActiveEffectApplyRemoveEvent* a_event,
+		RE::ActiveEffect* a_effect);
 	static bool handle_DDUD_active_magic_effects_from_various_devices(
 		const RE::TESActiveEffectApplyRemoveEvent* a_event,
 		RE::ActiveEffect* a_effect);
