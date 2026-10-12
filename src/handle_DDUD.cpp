@@ -249,6 +249,27 @@ bool handle_DDUD::handle_DDUD_lockpick_removal_effect(
 	return true;
 }
 
+bool handle_DDUD::handle_DDUD_chastity_bra_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+
+	auto* base = a_effect->GetBaseObject();
+	if (!base || std::strcmp(base->GetName(), "Bra Script") != 0) {
+		return false;
+	}
+
+	if (a_event->isApplied) {
+		DumpThoughts::throw_out_TTS_thought_message_after_silence(
+			"YOU, the player character, are now wearing a chastity bra.  But that is not the point.  The point is, that you cannot even touch your own breasts now, due to the restriction.  Say so in your response, and make it clear that the chastity bra is causing this restriction and that you cannot touch your own breasts any more.",
+			22);
+	}
+	return true;
+}
+
 bool handle_DDUD::handle_DDUD_struggle_exhaustion_effect(
 	const RE::TESActiveEffectApplyRemoveEvent* a_event,
 	RE::ActiveEffect* a_effect)
