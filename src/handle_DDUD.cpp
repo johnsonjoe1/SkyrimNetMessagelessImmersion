@@ -181,6 +181,32 @@ bool handle_DDUD::handle_DDUD_plug_chargeable_effect(
 	return true;  // Even if we don't create a thought or anything, still treat the event as handled.
 }
 
+bool handle_DDUD::handle_DDUD_inflatable_plug_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+
+	auto* base = a_effect->GetBaseObject();
+	if (!base) {
+		return false;
+	}
+
+	const std::string_view base_name = base->GetName();
+	if (base_name != "Inflatable Anal Plug" && base_name != "Inflatable Vaginal Plug") {
+		return false;
+	}
+
+	if (a_event->isApplied) {
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format(
+			"YOU, the player, just had an {} fitted. This newly applied plug is inflatable and could inflate at any time. Say so in your response, and make it clear which plug you are now wearing and that it could inflate at any time.",
+			base_name));
+	}
+	return true;
+}
+
 bool handle_DDUD::handle_DDUD_struggle_exhaustion_effect(
 	const RE::TESActiveEffectApplyRemoveEvent* a_event,
 	RE::ActiveEffect* a_effect)
