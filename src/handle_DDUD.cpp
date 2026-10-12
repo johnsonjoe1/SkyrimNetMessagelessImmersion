@@ -229,6 +229,27 @@ bool handle_DDUD::handle_DDUD_hobble_skirt_forced_walk_effect(
 	return true;
 }
 
+bool handle_DDUD::handle_DDUD_lockpick_removal_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+
+	auto* base = a_effect->GetBaseObject();
+	if (!base || std::strcmp(base->GetName(), "Lockpick Removal Script") != 0) {
+		return false;
+	}
+
+	if (a_event->isApplied) {
+		DumpThoughts::throw_out_TTS_thought_message_after_silence(
+			"YOU, the player, are now in such heavy bondage that lockpicking and thieving will be impossible. Say so in your response, and make it clear that your heavy bondage prevents these activities.",
+			21);
+	}
+	return true;
+}
+
 bool handle_DDUD::handle_DDUD_struggle_exhaustion_effect(
 	const RE::TESActiveEffectApplyRemoveEvent* a_event,
 	RE::ActiveEffect* a_effect)

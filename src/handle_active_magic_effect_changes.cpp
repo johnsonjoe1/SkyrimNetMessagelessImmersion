@@ -542,6 +542,9 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	if (handle_DDUD::handle_DDUD_hobble_skirt_forced_walk_effect(a_event, effect)) {
 		return;
 	}
+	if (handle_DDUD::handle_DDUD_lockpick_removal_effect(a_event, effect)) {
+		return;
+	}
 	if (handle_DDUD::handle_DDUD_abadon_domination_shout_effect(a_event, effect)) {
 		return;
 	}
