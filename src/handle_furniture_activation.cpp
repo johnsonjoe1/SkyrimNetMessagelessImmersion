@@ -22,7 +22,7 @@ Now your task is this:  Comment on this, with thoughts of YOU as the player. How
 )SKSE";
 
 std::string milk_pump_prompt_1 = R"SKSE(
-Now the situation is this: YOU, the player, are lowering yourself into a so-called milk pump as a subject for extraction of milk from your breasts. 
+Now the situation is this: YOU, the player character, are lowering yourself into a so-called milk pump as a subject for extraction of milk from your breasts. 
 Milk pumps in Skyrim are milking stalls, much like for a milk cow, only that this device is designed for human women.
 The position is the same as a cow though, on all fours, and milk pumps attach from below and suck the milk from the woman's breasts.
 Moreover, you will be fittet with a so-called Milking Cuirass, which is like a piece of armor, that is designed to be suck milk from your breasts and also features humiliating cow design
@@ -30,7 +30,7 @@ and leaves your body almost completely naked otherwise.
 )SKSE" + general_word_on_milk_pumps + standard_thought_instruction;
 
 std::string milk_pump_prompt_2 = R"SKSE(
-Now the situation is this: YOU, the player, just finished subjecting yourself into a so-called milk pump, as a subject for extraction of milk from your breasts. 
+Now the situation is this: YOU, the player character, just finished subjecting yourself into a so-called milk pump, as a subject for extraction of milk from your breasts. 
 Your mana and stamina have probably been completely drained. And there is probably no more milk left in your breasts, so you are probably feeling empty and exhausted. 
 Also, there might be residual pain in your nipples, and of course the humiliation of being treated like a cow and milked in this contraption might be overwhelming.
 The Milking Cuirass you were fitted with, which is like a piece of armor, that is designed to be suck milk from your breasts and also features humiliating cow design 
@@ -38,31 +38,31 @@ is removed and you get back into your outfit from before.
 )SKSE" + general_word_on_milk_pumps + standard_thought_instruction;
 
 std::string blacksmith_forge_prompt_1 = R"SKSE(
-Now the situation is this: YOU, the player, are about to use a Blacksmith Forge. 
+Now the situation is this: YOU, the player character, are about to use a Blacksmith Forge. 
 Blacksmith Forges allow you to craft entire new weapons and armor or also other small useful items for everyday use, but you must have the right materials 
 and the nescessary smithing skill to do so.
 )SKSE" + standard_thought_instruction;
 
 std::string grindstone_prompt_1 = R"SKSE(
-Now the situation is this: YOU, the player, are about to use a Grindstone. 
+Now the situation is this: YOU, the player character, are about to use a Grindstone. 
 Grindstones allow you to sharpen and improve your weapons.  You must have the right materials 
 and the necessary smithing skill to do so.  It is not possible to create new items here. The Grindstone is only for improvements.
 )SKSE" + standard_thought_instruction;
 
 std::string workbench_prompt_1 = R"SKSE(
-Now the situation is this: YOU, the player, are about to use a Workbench. 
+Now the situation is this: YOU, the player character, are about to use a Workbench. 
 Workbenches allow you to improve your armour items.  You must have the right materials 
 and the necessary smithing skill to do so.  It is not possible to create new items here. The Workbench is only for improvements.
 )SKSE" + standard_thought_instruction;
 
 std::string tanning_rack_prompt_1 = R"SKSE(
-Now the situation is this: YOU, the player, are about to use a Tanning Rack. 
+Now the situation is this: YOU, the player character, are about to use a Tanning Rack. 
 Tanning Racks allow you to break down items from your inventory into basic leather or leather stripes or simple components like that.
 If you have raw hides or old leather items, you can make basic leather components from them. You may also be able to craft clothing items.
 )SKSE" + standard_thought_instruction;
 
 std::string smelter_prompt_1 = R"SKSE(
-Now the situation is this: YOU, the player, are about to use a Smelter. 
+Now the situation is this: YOU, the player character, are about to use a Smelter. 
 Here you can turn in your raw ores, weapons or armor to smelt and disassemble them into fresh raw materials to be used later as a source for new items or improvements at the Blacksmith forge, the Workbench or the Grindstone.
 You must have the right materials to do so.
 )SKSE" + standard_thought_instruction;
@@ -83,40 +83,40 @@ std::array<FurniturePrompt, 36> furniture_prompts = {{
 	{ "Tanning Rack", tanning_rack_prompt_1 },
 	{ "Smelter", smelter_prompt_1 },   // Arcane Enchanter  // Alchemist's Retort  // Alchemy Lab  // Staff Enchanter // Bench
 
-	{ "Arcane Enchanter", R"SKSE(Now the situation is this: YOU, the player, are about to use an Arcane Enchanter. )SKSE" + standard_thought_instruction },
-	{ "Alchemist's Retort", R"SKSE(Now the situation is this: YOU, the player, are about to use an Alchemist's Retort. )SKSE" + standard_thought_instruction },
-	{ "Alchemy Lab", R"SKSE(Now the situation is this: YOU, the player, are about to use an Alchemy Lab. )SKSE" + standard_thought_instruction },
-	{ "Staff Enchanter", R"SKSE(Now the situation is this: YOU, the player, are about to use a Staff Enchanter. )SKSE" + standard_thought_instruction },
-	{ "Bench", R"SKSE(Now the situation is this: YOU, the player, are about to use a Bench. )SKSE" + standard_thought_instruction },
-	{ "Wood Chopping Block", R"SKSE(Now the situation is this: YOU, the player, are about to use a Wood Chopping Block. )SKSE" + standard_thought_instruction },
-	{ "Altar", R"SKSE(Now the situation is this: YOU, the player, are about to use an Altar, that is in the style of the Altars of Molag Bal. )SKSE" + standard_thought_instruction },
-	{ "Altar of Dibella", R"SKSE(Now the situation is this: YOU, the player, are about to use an Altar of Dibella. )SKSE" + standard_thought_instruction },
-	{ "Anvil", R"SKSE(Now the situation is this: YOU, the player, are about to use an Anvil. )SKSE" + standard_thought_instruction },
-	{ "Bed", R"SKSE(Now the situation is this: YOU, the player, are about to use a Bed. )SKSE" + standard_thought_instruction },
-	{ "Chair", R"SKSE(Now the situation is this: YOU, the player, are about to use a Chair. )SKSE" + standard_thought_instruction },
-	{ "Cooking Pot", R"SKSE(Now the situation is this: YOU, the player, are about to use a Cooking Pot. )SKSE" + standard_thought_instruction },
-	{ "Cooking Spit", R"SKSE(Now the situation is this: YOU, the player, are about to use a Cooking Spit. )SKSE" + standard_thought_instruction },
-	{ "Cot", R"SKSE(Now the situation is this: YOU, the player, are about to use a Cot. )SKSE" + standard_thought_instruction },
-	{ "Grain Mill", R"SKSE(Now the situation is this: YOU, the player, are about to use a Grain Mill. )SKSE" + standard_thought_instruction },
-	{ "Hay Pile", R"SKSE(Now the situation is this: YOU, the player, are about to use a Hay Pile (for sleeping on that). )SKSE" + standard_thought_instruction },
-	{ "Healing Altar", R"SKSE(Now the situation is this: YOU, the player, are about to use a Healing Altar. )SKSE" + standard_thought_instruction },
-	{ "Lumber Pile", R"SKSE(Now the situation is this: YOU, the player, are about to use a Lumber Pile. )SKSE" + standard_thought_instruction },
-	{ "Table", R"SKSE(Now the situation is this: YOU, the player, are about to use a Table. )SKSE" + standard_thought_instruction },
-	{ "Carriage", R"SKSE(Now the situation is this: YOU, the player, are about to use a Carriage. )SKSE" + standard_thought_instruction },
+	{ "Arcane Enchanter", R"SKSE(Now the situation is this: YOU, the player character, are about to use an Arcane Enchanter. )SKSE" + standard_thought_instruction },
+	{ "Alchemist's Retort", R"SKSE(Now the situation is this: YOU, the player character, are about to use an Alchemist's Retort. )SKSE" + standard_thought_instruction },
+	{ "Alchemy Lab", R"SKSE(Now the situation is this: YOU, the player character, are about to use an Alchemy Lab. )SKSE" + standard_thought_instruction },
+	{ "Staff Enchanter", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Staff Enchanter. )SKSE" + standard_thought_instruction },
+	{ "Bench", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Bench. )SKSE" + standard_thought_instruction },
+	{ "Wood Chopping Block", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Wood Chopping Block. )SKSE" + standard_thought_instruction },
+	{ "Altar", R"SKSE(Now the situation is this: YOU, the player character, are about to use an Altar, that is in the style of the Altars of Molag Bal. )SKSE" + standard_thought_instruction },
+	{ "Altar of Dibella", R"SKSE(Now the situation is this: YOU, the player character, are about to use an Altar of Dibella. )SKSE" + standard_thought_instruction },
+	{ "Anvil", R"SKSE(Now the situation is this: YOU, the player character, are about to use an Anvil. )SKSE" + standard_thought_instruction },
+	{ "Bed", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Bed. )SKSE" + standard_thought_instruction },
+	{ "Chair", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Chair. )SKSE" + standard_thought_instruction },
+	{ "Cooking Pot", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Cooking Pot. )SKSE" + standard_thought_instruction },
+	{ "Cooking Spit", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Cooking Spit. )SKSE" + standard_thought_instruction },
+	{ "Cot", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Cot. )SKSE" + standard_thought_instruction },
+	{ "Grain Mill", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Grain Mill. )SKSE" + standard_thought_instruction },
+	{ "Hay Pile", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Hay Pile (for sleeping on that). )SKSE" + standard_thought_instruction },
+	{ "Healing Altar", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Healing Altar. )SKSE" + standard_thought_instruction },
+	{ "Lumber Pile", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Lumber Pile. )SKSE" + standard_thought_instruction },
+	{ "Table", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Table. )SKSE" + standard_thought_instruction },
+	{ "Carriage", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Carriage. )SKSE" + standard_thought_instruction },
 	// Note:  Pull Chain may be in the list, but will be captured and suppressed before it is used.  Don't make philosophical comments on levers and pullchains.
-	{ "Pull Chain", R"SKSE(Now the situation is this: YOU, the player, are about to use a Pull Chain. )SKSE" + standard_thought_instruction },
+	{ "Pull Chain", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Pull Chain. )SKSE" + standard_thought_instruction },
 	// Note:  Lever may be in the list, but will be captured and suppressed before it is used.  Don't make philosophical comments on levers and pullchains.
-	{ "Lever", R"SKSE(Now the situation is this: YOU, the player, are about to use a Lever. )SKSE" + standard_thought_instruction },
-	{ "This should not be visible", R"SKSE(Now the situation is this: YOU, the player, are about to use a mining spot, where you can mine ores. You can try and get what you can.  Maybe the deposit isn't depleted yet." )SKSE" + standard_thought_instruction },
-	{ "The Mournful Throne", R"SKSE(Now the situation is this: YOU, the player, are about to use the throne in Markath, which is also called The Mournful Throne. )SKSE" + standard_thought_instruction },
-	{ "Shor’s Throne", R"SKSE(Now the situation is this: YOU, the player, are about to use Shor’s Throne. )SKSE" + standard_thought_instruction },
-	{ "Skyforge", R"SKSE(Now the situation is this: YOU, the player, are about to use Skyforge. )SKSE" + standard_thought_instruction },
-	{ "Sarcophagus", R"SKSE(Now the situation is this: YOU, the player, are about to use a Sarcophagus. )SKSE" + standard_thought_instruction },
+	{ "Lever", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Lever. )SKSE" + standard_thought_instruction },
+	{ "This should not be visible", R"SKSE(Now the situation is this: YOU, the player character, are about to use a mining spot, where you can mine ores. You can try and get what you can.  Maybe the deposit isn't depleted yet." )SKSE" + standard_thought_instruction },
+	{ "The Mournful Throne", R"SKSE(Now the situation is this: YOU, the player character, are about to use the throne in Markath, which is also called The Mournful Throne. )SKSE" + standard_thought_instruction },
+	{ "Shor’s Throne", R"SKSE(Now the situation is this: YOU, the player character, are about to use Shor’s Throne. )SKSE" + standard_thought_instruction },
+	{ "Skyforge", R"SKSE(Now the situation is this: YOU, the player character, are about to use Skyforge. )SKSE" + standard_thought_instruction },
+	{ "Sarcophagus", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Sarcophagus. )SKSE" + standard_thought_instruction },
 	// Note:  Throne may be in the list here, but each throne in the holds has a special ID, so maybe we can differentiate from the ID in a special handling.  But that would be done later.
-	{ "Throne", R"SKSE(Now the situation is this: YOU, the player, are about to use a Throne. )SKSE" + standard_thought_instruction },
-	{ "Stone Bed", R"SKSE(Now the situation is this: YOU, the player, are about to use a Stone Bed. )SKSE" + standard_thought_instruction },
-	{ "Stone Bench", R"SKSE(Now the situation is this: YOU, the player, are about to use a Stone Bench. )SKSE" + standard_thought_instruction },
-	{ "Stone Chair", R"SKSE(Now the situation is this: YOU, the player, are about to use a Stone Chair. )SKSE" + standard_thought_instruction },
+	{ "Throne", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Throne. )SKSE" + standard_thought_instruction },
+	{ "Stone Bed", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Stone Bed. )SKSE" + standard_thought_instruction },
+	{ "Stone Bench", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Stone Bench. )SKSE" + standard_thought_instruction },
+	{ "Stone Chair", R"SKSE(Now the situation is this: YOU, the player character, are about to use a Stone Chair. )SKSE" + standard_thought_instruction },
 }};	
 
 	/*
@@ -375,7 +375,7 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 				return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 			}	else {
 
-				std::string generic_furniture_prompt_1 = R"SKSE(Now the situation is this: YOU, the player, are about to use a )SKSE";
+				std::string generic_furniture_prompt_1 = R"SKSE(Now the situation is this: YOU, the player character, are about to use a )SKSE";
 				generic_furniture_prompt_1 = generic_furniture_prompt_1 + furniture_name;
 				generic_furniture_prompt_1 = generic_furniture_prompt_1 + R"SKSE(. )SKSE" + standard_thought_instruction;
 

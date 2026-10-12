@@ -179,7 +179,7 @@ void handle_fame::handle_SLSF_Reloaded_fame_stuff()
 				if ((fame.current_value > 50) && (fame.previous_value <= 50)) {
 					LillithOnlyBox(std::format("SLSF-Handling: CROSSING the 50 THRESHOLD:   TRIGGERING A THOUGHT VALUE FOR: {}.", fame.name));
 					std::string fame_thought_message = std::format(
-R"SKSE(YOU, the player, noticed people starting to talk about you behind your back and whispering.  
+R"SKSE(YOU, the player character, noticed people starting to talk about you behind your back and whispering.  
 Because of your actions, you are now famed in the following category:  {}. 
 What are you thinking now based on this? How do you feel about it?  
 And let us know from your response, that you speak about your fame in the given category.
@@ -228,7 +228,7 @@ And let us know from your response, that you speak about your fame in the given 
 		if (!fame_increases.empty() && can_generate_thought("fame-increase", fame_increases_as_string)) {
 			LillithOnlyBox(std::format("SLSF-Handling: Fame increases detected in the following categories: {}", fame_increases_as_string));
 			fame_thought_message = std::format(
-R"SKSE(YOU, the player, just entered an area where your sexual reputation in the following categories is noticably higher, 
+R"SKSE(YOU, the player character, just entered an area where your sexual reputation in the following categories is noticably higher, 
 meaning pleople might be talking about your sexual actions and behaviour.  
 But maybe they have forgotten about you and what you did there already. 
 The detailed categories where you have increased fame here are: {}.   
@@ -242,7 +242,7 @@ For this response, you may very well reference in detail to the specific events 
 		if (!fame_decreases.empty() && can_generate_thought("fame-decrease", fame_decreases_as_string)) {
 			LillithOnlyBox(std::format("SLSF-Handling: Fame decreases detected in the following categories: {}", fame_decreases_as_string));
 			fame_thought_message = std::format(
-R"SKSE(YOU, the player, just entered an area where your sexual reputation in the following categories is noticably lower, 
+R"SKSE(YOU, the player character, just entered an area where your sexual reputation in the following categories is noticably lower, 
 maybe because there are no people there to even talk about you, and maybe because nobody knows you here or remembers your actions.  
 In any case, people are less likely to speak about your sexual actions and behaviour.  
 The detailed categories where you have decreased fame here are: {}.   

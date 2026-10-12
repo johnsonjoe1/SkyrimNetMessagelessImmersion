@@ -233,7 +233,7 @@ void check_for_relevant_notifications(const char* notification)
 			return;
 		}
 		// LillithOnlyBox("Notification detected: You can't eat or drink while wearing this gag.!");
-		std::string  thought_message = std::format("YOU, the player, just tried to eat or drink something, but the gag you are wearing prevented it.  This is not only about thirst or hunger, but also about drinking potions for magic effect, so don't assume you know which item the attempt to consume was about.  The fact is, that you just tried hard, but you couldn't manage to get anything into your mouth or throat with that gag still locked onto you.  Say so in your response.");
+		std::string  thought_message = std::format("YOU, the player character, just tried to eat or drink something, but the gag you are wearing prevented it.  This is not only about thirst or hunger, but also about drinking potions for magic effect, so don't assume you know which item the attempt to consume was about.  The fact is, that you just tried hard, but you couldn't manage to get anything into your mouth or throat with that gag still locked onto you.  Say so in your response.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		last_gag_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
@@ -247,7 +247,7 @@ void check_for_relevant_notifications(const char* notification)
 			return;
 		}
 		// RE::DebugMessageBox("Notification detected: You are surrendering!");
-		std::string  thought_message = std::format("YOU, the player, don't want to die and chose to just surrender to your enemies.  Say so in your response and let us know how you feel about it.");
+		std::string  thought_message = std::format("YOU, the player character, don't want to die and chose to just surrender to your enemies.  Say so in your response and let us know how you feel about it.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		last_surrender_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
@@ -261,7 +261,7 @@ void check_for_relevant_notifications(const char* notification)
 			return;
 		}
 		LillithOnlyBox("Notification detected: You need a pickaxe to use this.");
-		std::string  thought_message = std::format("YOU, the player, were trying to use a mining spot for mining ores, but you just found out, you don't have a pickaxe on you.  Without a pickaxe you can't mine anything, it's as simple as that.  Say so in your response and let us know how you feel about it.");
+		std::string  thought_message = std::format("YOU, the player character, were trying to use a mining spot for mining ores, but you just found out, you don't have a pickaxe on you.  Without a pickaxe you can't mine anything, it's as simple as that.  Say so in your response and let us know how you feel about it.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		last_pickaxe_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
@@ -275,7 +275,7 @@ void check_for_relevant_notifications(const char* notification)
 			return;
 		}
 		LillithOnlyBox("Notification detected: You reeled in your line too early.");
-		std::string  thought_message = std::format("YOU, the player, reeled in your fishing line just a tiny bit too early.  So the fish was close to biting, but then it got away.  Say so in your response and let us know how you feel about it.");
+		std::string  thought_message = std::format("YOU, the player character, reeled in your fishing line just a tiny bit too early.  So the fish was close to biting, but then it got away.  Say so in your response and let us know how you feel about it.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		last_reel_in_too_early_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
@@ -289,7 +289,7 @@ void check_for_relevant_notifications(const char* notification)
 			return;
 		}
 		LillithOnlyBox("Notification detected: You must have a fishing rod equipped to use this.");
-		std::string  thought_message = std::format("YOU, the player, tried to fish without having a fishing rod equipped.  Say so in your response and let us know how you feel about it.");
+		std::string  thought_message = std::format("YOU, the player character, tried to fish without having a fishing rod equipped.  Say so in your response and let us know how you feel about it.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		last_fishing_rod_equipped_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
@@ -303,7 +303,7 @@ void check_for_relevant_notifications(const char* notification)
 			return;
 		}
 		LillithOnlyBox("Notification detected: There was nothing on your line.");
-		std::string  thought_message = std::format("YOU, the player, reeled in your fishing line much too early.  So the fish wasn't even close to biting.  Say so in your response and let us know how you feel about it.");
+		std::string  thought_message = std::format("YOU, the player character, reeled in your fishing line much too early.  So the fish wasn't even close to biting.  Say so in your response and let us know how you feel about it.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		last_nothing_on_line_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
@@ -317,7 +317,7 @@ void check_for_relevant_notifications(const char* notification)
 			return;
 		}
 		LillithOnlyBox("Notification detected: You don't have enough gold.");
-		std::string  thought_message = std::format("YOU, the player, tried to make a purchase but didn't have enough gold.  Say so in your response and let us know how you feel about it.");
+		std::string  thought_message = std::format("YOU, the player character, tried to make a purchase but didn't have enough gold.  Say so in your response and let us know how you feel about it.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message, DumpThoughts::DialogueHandling::kProcessImmediately);
 		last_not_enough_gold_notification_thought_timestamp = std::chrono::steady_clock::now();
 	} else {
@@ -336,7 +336,7 @@ void check_for_relevant_notifications(const char* notification)
 			return;
 		}
 		LillithOnlyBox(std::format("Notification detected: {} slaps your ass hard as you walk by.", slapperName).c_str());
-		std::string  thought_message = std::format("YOU, the player, were exposing your butt and ran into {} who then slapped on your ass hard as you walked by.  That must have been quite a shock and embarrassment for you.  Make sure to express your surprise and discomfort about it, or your outrage at the way that {} is treating you publicly and how it violated your personal space.  Be sure to name the person who slapped you in your response.", slapperName, slapperName, slapperName);
+		std::string  thought_message = std::format("YOU, the player character, were exposing your butt and ran into {} who then slapped on your ass hard as you walked by.  That must have been quite a shock and embarrassment for you.  Make sure to express your surprise and discomfort about it, or your outrage at the way that {} is treating you publicly and how it violated your personal space.  Be sure to name the person who slapped you in your response.", slapperName, slapperName, slapperName);
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message, DumpThoughts::DialogueHandling::kProcessImmediately);
 		last_slap_or_grope_thought_timestamp = std::chrono::steady_clock::now();
 		
@@ -357,7 +357,7 @@ void check_for_relevant_notifications(const char* notification)
 			return;
 		}
 		LillithOnlyBox(std::format("Notification detected: {} slaps your tits hard as you walk by.", slapperName).c_str());
-		std::string  thought_message = std::format("YOU, the player, were exposing your chest and ran into {} who then slapped your tits hard as you walked by.  That must have been quite a shock and embarrassment for you.  Make sure to express your surprise and discomfort about it, or your outrage at the way that {} is treating you publicly and how it violated your personal space.  Be sure to name the person who slapped you in your response.", slapperName, slapperName, slapperName);
+		std::string  thought_message = std::format("YOU, the player character, were exposing your chest and ran into {} who then slapped your tits hard as you walked by.  That must have been quite a shock and embarrassment for you.  Make sure to express your surprise and discomfort about it, or your outrage at the way that {} is treating you publicly and how it violated your personal space.  Be sure to name the person who slapped you in your response.", slapperName, slapperName, slapperName);
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message, DumpThoughts::DialogueHandling::kProcessImmediately);
 		last_slap_or_grope_thought_timestamp = std::chrono::steady_clock::now();
 		
@@ -377,7 +377,7 @@ void check_for_relevant_notifications(const char* notification)
 			return;
 		}
 		LillithOnlyBox(std::format("Notification detected: {} roughly gropes your tits as you pass by.", slapperName).c_str());
-		std::string  thought_message = std::format("YOU, the player, were exposing your chest and ran into {} who then roughly groped your tits as you passed by.  That must have been quite a shock and embarrassment for you.  Make sure to express your surprise and discomfort about it, or your outrage at the way that {} is treating you publicly and how it violated your personal space.  Be sure to name the person who groped you in your response.", slapperName, slapperName, slapperName);
+		std::string  thought_message = std::format("YOU, the player character, were exposing your chest and ran into {} who then roughly groped your tits as you passed by.  That must have been quite a shock and embarrassment for you.  Make sure to express your surprise and discomfort about it, or your outrage at the way that {} is treating you publicly and how it violated your personal space.  Be sure to name the person who groped you in your response.", slapperName, slapperName, slapperName);
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message, DumpThoughts::DialogueHandling::kProcessImmediately);
 		last_slap_or_grope_thought_timestamp = std::chrono::steady_clock::now();
 		
@@ -397,7 +397,7 @@ void check_for_relevant_notifications(const char* notification)
 			return;
 		}
 		LillithOnlyBox(std::format("Notification detected: {} senses your arousal.", creatureName).c_str());
-		std::string  thought_message = std::format("YOU, the player, have attracted the attention of a VERY HORNY {} due to your arousal.  And now the {} is coming after you because it wants to use you for sex.  And you have just noticed, that it is coming right after you!  Say in a single alerting sentence, that the HORNY {} wants to have sex with you.  Be sure to name the creature in your response.", creatureName, creatureName, creatureName);
+		std::string  thought_message = std::format("YOU, the player character, have attracted the attention of a VERY HORNY {} due to your arousal.  And now the {} is coming after you because it wants to use you for sex.  And you have just noticed, that it is coming right after you!  Say in a single alerting sentence, that the HORNY {} wants to have sex with you.  Be sure to name the creature in your response.", creatureName, creatureName, creatureName);
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message, DumpThoughts::DialogueHandling::kProcessImmediately);
 		last_SLAC_creature_coming_after_you_tought_timestamp = std::chrono::steady_clock::now();
 		

@@ -527,7 +527,7 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 	// [2026-05-21 21:45:00.613] [log] [info] [plugin.cpp:634] MOD EVENT:  Name: PlayerOrgasmEnd  StrArg:   NumArg: 0
 	if ( (std::strcmp(a_event->eventName.c_str() , "PlayerOrgasmStart") == 0)  ) {
 		// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
-		std::string  thought_message = std::format("Regardless whether you like it or not, from all the stimulation, you, the player, are now suddenly having an orgasm! Let us know this via your response. ");
+		std::string  thought_message = std::format("Regardless whether you like it or not, from all the stimulation, YOU, the player character, are now suddenly having an orgasm! Let us know this via your response. ");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}

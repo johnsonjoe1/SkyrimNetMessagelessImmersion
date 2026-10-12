@@ -55,13 +55,12 @@ namespace
 		auto* base = a_effect->GetBaseObject();
 		auto* source = a_effect->spell;
 
-
 		if (std::strcmp(base->GetName(), "Blindfold Script") == 0) {
 			const std::string thought = a_event->isApplied ?
-				"YOU, the player, just got looked into a hood or blindfold, and that hood doesn't even let you see anything, so that you are completely blindfolded. Say as much in your response, and be sure to make it clear, that you speak about the hood or blindfold that you are wearing now." :
-				"YOU, the player, just escaped of of a locking bondage hood or blindfold, and that hood was keeping you completely blindfolded, but now you can see again. Say as much in your response, and be sure to make it clear, that you speak about the hood or blindfold that you were wearing just moments ago.";
-			DumpThoughts::throw_out_TTS_thought_message(std::string("Active Effect:Blindfold-through-Hood: ") + (a_event->isApplied ? "APPLIED-THOUGHT: " : "RELEASE-THOUGHT: ") + thought);
-			LillithOnlyBox(thought);
+				"YOU, the player character, just got looked into a hood or blindfold, and that hood doesn't even let you see anything, so that you are completely blindfolded. Say as much in your response, and be sure to make it clear, that you speak about the hood or blindfold that you are wearing now." :
+				"YOU, the player character, just escaped of of a locking bondage hood or blindfold, and that hood was keeping you completely blindfolded, but now you can see again. Say as much in your response, and be sure to make it clear, that you speak about the hood or blindfold that you were wearing just moments ago.";
+			DumpThoughts::throw_out_TTS_thought_message(thought);
+			LillithOnlyBox(std::string("Active Effect:Blindfold-through-Hood: ") + (a_event->isApplied ? "APPLIED-THOUGHT: " : "RELEASE-THOUGHT: ") + thought);
 			return true;
 		}
 
@@ -69,15 +68,15 @@ namespace
 			return false;
 		}
 
-		if (std::strcmp(source->GetName(), "Hood Script") != 0) {
+		if (!std::string_view(source->GetName()).starts_with("Hood Script")) {
 			return false;
 		}
 
 
 		if (std::strcmp(base->GetName(), "Gag Food Removal Script") == 0) {
 			const std::string thought = a_event->isApplied ?
-				"YOU, the player, just got looked into a hood, and that hood doesn't even let you eat or drink anything. Say as much in your response, and be sure to make it clear, that you speak about the hood that you are wearing now." :
-				"YOU, the player, just escaped of of a locking bondage hood, and that hood was keeping you from eating or drinking anything, but now you can eat and drink again. Say as much in your response, and be sure to make it clear, that you speak about the hood that you were wearing just moments ago.";
+				"YOU, the player character, just got looked into a hood, and that hood doesn't even let you eat or drink anything. Say as much in your response, and be sure to make it clear, that you speak about the hood that you are wearing now." :
+				"YOU, the player character, just escaped of of a locking bondage hood, and that hood was keeping you from eating or drinking anything, but now you can eat and drink again. Say as much in your response, and be sure to make it clear, that you speak about the hood that you were wearing just moments ago.";
 			DumpThoughts::throw_out_TTS_thought_message(std::string("Active Effect:Gag-Food-Removal-through-Hood: ") + (a_event->isApplied ? "APPLIED-THOUGHT: " : "RELEASE-THOUGHT: ") + thought);
 			LillithOnlyBox(thought);
 			return true;
@@ -85,8 +84,8 @@ namespace
 
 		if (std::strcmp(base->GetName(), "Gag Script") == 0) {
 			const std::string thought = a_event->isApplied ?
-				"YOU, the player, just got looked into a hood, and that hood gags you completely so that you cannot utter a single word. Say as much in your response, and be sure to make it clear, that you speak about the hood that you are wearing now." :
-				"YOU, the player, just escaped of of a locking bondage gag, and that gag was keeping you completely gagged, but now you can speak again. Say as much in your response, and be sure to make it clear, that you speak about the gag that you were wearing just moments ago.";
+				"YOU, the player character, just got looked into a hood, and that hood gags you completely so that you cannot utter a single word. Say as much in your response, and be sure to make it clear, that you speak about the hood that you are wearing now." :
+				"YOU, the player character, just escaped of of a locking bondage gag, and that gag was keeping you completely gagged, but now you can speak again. Say as much in your response, and be sure to make it clear, that you speak about the gag that you were wearing just moments ago.";
 			DumpThoughts::throw_out_TTS_thought_message(std::string("Active Effect:Gag-through-Hood: ") + (a_event->isApplied ? "APPLIED-THOUGHT: " : "RELEASE-THOUGHT: ") + thought);
 			LillithOnlyBox(thought);
 			return true;
@@ -127,8 +126,8 @@ namespace
 
 		if (std::strcmp(base->GetName(), "Gag Food Removal Script") == 0) {
 			const std::string thought = a_event->isApplied ?
-				"YOU, the player, just got looked into a gag, and that gag doesn't even let you eat or drink anything. Say as much in your response, and be sure to make it clear, that you speak about the gag that you are wearing now." :
-				"YOU, the player, just escaped of of a locking bondage gag, and that gag was keeping you from eating or drinking anything, but now you can eat and drink again. Say as much in your response, and be sure to make it clear, that you speak about the gag that you were wearing just moments ago.";
+				"YOU, the player character, just got looked into a gag, and that gag doesn't even let you eat or drink anything. Say as much in your response, and be sure to make it clear, that you speak about the gag that you are wearing now." :
+				"YOU, the player character, just escaped of of a locking bondage gag, and that gag was keeping you from eating or drinking anything, but now you can eat and drink again. Say as much in your response, and be sure to make it clear, that you speak about the gag that you were wearing just moments ago.";
 			DumpThoughts::throw_out_TTS_thought_message(std::string("Active Effect:Gag-Food-Removal-through-gag: ") + (a_event->isApplied ? "APPLIED-THOUGHT: " : "RELEASE-THOUGHT: ") + thought);
 			LillithOnlyBox(thought);
 			return true;
@@ -136,8 +135,8 @@ namespace
 
 		if (std::strcmp(base->GetName(), "Gag Script") == 0) {
 			const std::string thought = a_event->isApplied ?
-				"YOU, the player, just got looked into a gag, and that gag gags you completely so that you cannot utter a single word. Say as much in your response, and be sure to make it clear, that you speak about the gag that you are wearing now." :
-				"YOU, the player, just escaped of of a locking bondage gag, and that gag was keeping you completely gagged, but now you can speak again. Say as much in your response, and be sure to make it clear, that you speak about the gag that you were wearing just moments ago.";
+				"YOU, the player character, just got looked into a gag, and that gag gags you completely so that you cannot utter a single word. Say as much in your response, and be sure to make it clear, that you speak about the gag that you are wearing now." :
+				"YOU, the player character, just escaped of of a locking bondage gag, and that gag was keeping you completely gagged, but now you can speak again. Say as much in your response, and be sure to make it clear, that you speak about the gag that you were wearing just moments ago.";
 			DumpThoughts::throw_out_TTS_thought_message(std::string("Active Effect:Gag-through-gag: ") + (a_event->isApplied ? "APPLIED-THOUGHT: " : "RELEASE-THOUGHT: ") + thought);
 			LillithOnlyBox(thought);
 			return true;
@@ -202,7 +201,7 @@ bool handle_DDUD::handle_DDUD_inflatable_plug_effect(
 	// This message can be broadcast after 19 seconds of silence, since it's not the most urgent one in a setting of many bondage items.
 	if (a_event->isApplied) {
 		DumpThoughts::throw_out_TTS_thought_message_after_silence(std::format(
-			"YOU, the player, just had an {} fitted. This newly applied plug is inflatable and could inflate at any time. Say so in your response, and make it clear which plug you are now wearing and that it could inflate at any time.",
+			"YOU, the player character, just had an {} fitted. This newly applied plug is inflatable and could inflate at any time. Say so in your response, and make it clear which plug you are now wearing and that it could inflate at any time.",
 			base_name), 19);
 	}
 	return true;
@@ -223,8 +222,8 @@ bool handle_DDUD::handle_DDUD_hobble_skirt_forced_walk_effect(
 	}
 
 	const std::string thought = a_event->isApplied ?
-		"YOU, the player, are now forced to take only mini-steps or bunny-hops because your tight leg bondage restricts your stride and prevents you from walking normally. Say so in your response, and make it clear that the tight leg bondage, is causing this restriction. If it is absolutely clear, that it was a hobble-skirt you are wearing, you can mention that as well." :
-		"YOU, the player, are no longer forced to walk in mini-steps or bunny-hops by the hobble skirt. Its forced walking restriction has just ended. Say so in your response, and mention the heavy leg bondage. If it is absolutely clear, that it was a hobble-skirt you were wearing, you can mention that as well.";
+		"YOU, the player character, are now forced to take only mini-steps or bunny-hops because your tight leg bondage restricts your stride and prevents you from walking normally. Say so in your response, and make it clear that the tight leg bondage, is causing this restriction. If it is absolutely clear, that it was a hobble-skirt you are wearing, you can mention that as well." :
+		"YOU, the player character, are no longer forced to walk in mini-steps or bunny-hops by the hobble skirt. Its forced walking restriction has just ended. Say so in your response, and mention the heavy leg bondage. If it is absolutely clear, that it was a hobble-skirt you were wearing, you can mention that as well.";
 	DumpThoughts::throw_out_TTS_thought_message_after_silence(thought, 18);
 	return true;
 }
@@ -244,7 +243,7 @@ bool handle_DDUD::handle_DDUD_lockpick_removal_effect(
 
 	if (a_event->isApplied) {
 		DumpThoughts::throw_out_TTS_thought_message_after_silence(
-			"YOU, the player, are now in such heavy bondage that lockpicking and thieving will be impossible. Say so in your response, and make it clear that your heavy bondage prevents these activities.",
+			"YOU, the player character, are now in such heavy bondage that lockpicking and thieving will be impossible. Say so in your response, and make it clear that your heavy bondage prevents these activities.",
 			21);
 	}
 	return true;
@@ -268,11 +267,11 @@ bool handle_DDUD::handle_DDUD_struggle_exhaustion_effect(
 	if (a_event->isApplied) {
 		SKSE::log::info("Event handler for UD STRUGGLE EXHAUSTION APPLICATION!");
 		DumpThoughts::throw_out_TTS_thought_message(
-			"YOU, the player, just tried getting out of your locking bondage devices for a whole while. You may have made some progress, but nevertheless now you are too exhausted to continue. Say as much in your response.");
+			"YOU, the player character, just tried getting out of your locking bondage devices for a whole while. You may have made some progress, but nevertheless now you are too exhausted to continue. Say as much in your response.");
 	} else {
 		SKSE::log::info("Event handler for UD STRUGGLE EXHAUSTION REMOVAL!");
 		DumpThoughts::throw_out_TTS_thought_message(
-			"YOU, the player, just were trying to get out of your locking bondage devices for a whole while. You may have made some progress, but in any case, that activity had made you exhausted to the point where you couldn't continue any more. But now time has passed and you're feeling better and you're good to go and maybe could continue trying. Say as much in your response.");
+			"YOU, the player character, just were trying to get out of your locking bondage devices for a whole while. You may have made some progress, but in any case, that activity had made you exhausted to the point where you couldn't continue any more. But now time has passed and you're feeling better and you're good to go and maybe could continue trying. Say as much in your response.");
 	}
 
 	return true;
@@ -467,7 +466,7 @@ bool handle_DDUD::handle_DDUD_chain_sound_effect(
 	if (a_event->isApplied) {
 		if (cooldown_has_passed(last_chain_sound_thought_timestamp, 180)) {
 			SKSE::log::info("Event handler for ChainSoundEffect APPLICATION!");
-			const std::string thought = "YOU, the player, are wearing ankle shackles with a chain, that is making sounds with every movement, so that it's impossible to move silently and sneak away in these things.  Say as much in your response, and be sure to make it clear, that you speak about the sounds from the ankle chains that you are wearing.";
+			const std::string thought = "YOU, the player character, are wearing ankle shackles with a chain, that is making sounds with every movement, so that it's impossible to move silently and sneak away in these things.  Say as much in your response, and be sure to make it clear, that you speak about the sounds from the ankle chains that you are wearing.";
 			DumpThoughts::throw_out_TTS_thought_message("Active Effect: ChainSoundEffect: THOUGHT: " + thought);
 			LillithOnlyBox(thought);
 			last_chain_sound_thought_timestamp = std::chrono::steady_clock::now();
@@ -519,9 +518,9 @@ bool handle_DDUD::handle_DDUD_muzzle_gag_ding_a_ling_effect(
 		SKSE::log::info("Event handler for Muzzle Gag Ding-a-Ling Sounds effect application or general bell!");
 		if (cooldown_has_passed(last_muzzle_gag_ding_a_ling_sound_timestamp, 60 * 5)) {
 			if (std::strcmp(base_name, "BellSoundEffect") == 0) {
-				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player, are dangling a cow bell, that is attached to one of your genital plugs and keeps dingling cow bell sounds whenever you move.  This is so humiliating.  In your response, you should cry out in desperation, that you are feeling so humiliated with that cow bell, that you are unable to remove or muffle due to your bondage.  This event is so important, that you can elaborate in many words about your desperation here.");
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player character, are dangling a cow bell, that is attached to one of your genital plugs and keeps dingling cow bell sounds whenever you move.  This is so humiliating.  In your response, you should cry out in desperation, that you are feeling so humiliated with that cow bell, that you are unable to remove or muffle due to your bondage.  This event is so important, that you can elaborate in many words about your desperation here.");
 			} else {
-				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player, are now dangling a little bell, that is attached to your muzzle gag and keeps dingling little bell sounds whenever you move.  This is so humiliating.  It's all just because of the gag you are wearing.  In your response, you should cry out in desperation, that you are feeling so humiliated with that little bell, that you are unable to remove or muffle due to your bondage.  This event is so important, that you can elaborate in many words about your desperation here.");
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player character, are now dangling a little bell, that is attached to your muzzle gag and keeps dingling little bell sounds whenever you move.  This is so humiliating.  It's all just because of the gag you are wearing.  In your response, you should cry out in desperation, that you are feeling so humiliated with that little bell, that you are unable to remove or muffle due to your bondage.  This event is so important, that you can elaborate in many words about your desperation here.");
 			}
 			last_muzzle_gag_ding_a_ling_sound_timestamp = std::chrono::steady_clock::now();
 		} else {
@@ -553,11 +552,11 @@ bool handle_DDUD::handle_DDUD_hotkey_captured_and_stopped_event(
 
 	std::string thought_message;
 	if (a_event->numArg == 23) {
-		thought_message = std::format("The player just tried to use a hotkey to access your inventory, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the PC should describe to the player in first person, how your hands and fingers are unable to reach the items in your inventory like this.");
+		thought_message = std::format("The player just tried to use a hotkey to access your inventory, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the player character should describe to the player in first person, that you cannot reach the items in your inventory like this due to the heavy bondage.");
 	} else if (a_event->numArg == 15) {
-		thought_message = std::format("The player just tried to use a hotkey to access your magic menu, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the PC should describe to the player in first person, how your hands are bound and you can't do magic like this.");
+		thought_message = std::format("The player just tried to use a hotkey to access your magic menu, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the player character should describe to the player in first person, that you cannot do magic like this, due to the heavy bondage.");
 	} else if (a_event->numArg == 16) {
-		thought_message = std::format("The player just tried to use a hotkey to access your quick access menu, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the PC should explain to the player in first person, how your hands are bound and you can't reach your weapons or gear like this.");
+		thought_message = std::format("The player just tried to use a hotkey to access your quick access menu, but it was captured and stopped by Unforgiving Devices, because the PC is bound in heavy bondage devices.  This should enhances immersion and frustration.  So YOU as the player character should explain to the player in first person, that you cannot reach your weapons or gear like this, due to the heavy bondage.");
 	}
 
 	DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
@@ -669,60 +668,60 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 		static const std::unordered_map<std::string_view, std::string_view> equipped_device_thoughts = {
 
 			//  Head things here:
-			{"DeviceEquippedGag", "YOU, the player, just got a gag placed in your mouth.  This gag prevents you from speaking or making any significant noise.  It is securely fastened so that you cannot simply spit it out.   "},
-			{"DeviceEquippedHeavy Gag", "YOU, the player, just got a heavy gag placed in your mouth.  This gag prevents you from speaking or making any significant noise.  It is securely fastened so that you cannot simply spit it out.   "},
-			{"DeviceEquippedTape", "YOU, the player, just got a tape gag placed on your mouth.  This gag prevents you from speaking or making any significant noise.  It is securely fastened so that you cannot simply spit it out.   "},
-			{"DeviceEquippedMask", "YOU, the player, just got a locking face-mask or hood placed on your face.  This mask may prevent you from seeing or speaking clearly.  It is securely fastened so that you cannot simply remove it.   "},
-			{"DeviceEquippedblindfold", "YOU, the player, just got a blindfold placed over your eyes.  This blindfold prevents you from seeing anything.  It is securely fastened so that you cannot simply remove it.   "},
-			{"DeviceEquippedHeavy Blindfold", "YOU, the player, just got a heavy blindfold placed over your eyes.  This blindfold prevents you from seeing anything.  It is securely fastened so that you cannot simply remove it.   "},
+			{"DeviceEquippedGag", "YOU, the player character, just got a gag placed in your mouth.  This gag prevents you from speaking or making any significant noise.  It is securely fastened so that you cannot simply spit it out.   "},
+			{"DeviceEquippedHeavy Gag", "YOU, the player character, just got a heavy gag placed in your mouth.  This gag prevents you from speaking or making any significant noise.  It is securely fastened so that you cannot simply spit it out.   "},
+			{"DeviceEquippedTape", "YOU, the player character, just got a tape gag placed on your mouth.  This gag prevents you from speaking or making any significant noise.  It is securely fastened so that you cannot simply spit it out.   "},
+			{"DeviceEquippedMask", "YOU, the player character, just got a locking face-mask or hood placed on your face.  This mask may prevent you from seeing or speaking clearly.  It is securely fastened so that you cannot simply remove it.   "},
+			{"DeviceEquippedblindfold", "YOU, the player character, just got a blindfold placed over your eyes.  This blindfold prevents you from seeing anything.  It is securely fastened so that you cannot simply remove it.   "},
+			{"DeviceEquippedHeavy Blindfold", "YOU, the player character, just got a heavy blindfold placed over your eyes.  This blindfold prevents you from seeing anything.  It is securely fastened so that you cannot simply remove it.   "},
 
 			// Collar-and-Yoke-things here:
-			{"DeviceEquippedCollar", "YOU, the player, just got a collar locked onto your neck.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedyoke", "YOU, the player, just got locked into an iron bondage yoke. Such a yoke is an iron bondage device, that locks around your neck and wrists, trapping your wrists in a position next to your shoulders, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedCollar", "YOU, the player character, just got a collar locked onto your neck.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedyoke", "YOU, the player character, just got locked into an iron bondage yoke. Such a yoke is an iron bondage device, that locks around your neck and wrists, trapping your wrists in a position next to your shoulders, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
 			
 			// Hand things here:
-			{"DeviceEquippedGloves", "YOU, the player, just got locked into bondage gloves.  Such gloves prevent the use of your fingers, making it impossible to perform delicate tasks. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedBondage Mittens", "YOU, the player, just got locked into bondage gloves.  Such gloves prevent the use of your fingers, making it impossible to perform delicate tasks. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedArm Cuffs", "YOU, the player, just got locked into arm cuffs.  The arm cuffs wrap around your wrists.  In addition, these cuffs can be connected together, e.g. behind your back, to further immobilize and restrain you, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.   "},
-			{"DeviceEquippedRope Arm Cuffs", "YOU, the player, just got locked into rope arm cuffs.  The rope arm cuffs wrap around your wrists.  In addition, these cuffs can be connected together, e.g. behind your back, to further immobilize and restrain you, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.   "},
-			{"DeviceEquippedElbowbinder", "YOU, the player, just got locked into an elbow binder.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedRare Armbinder", "YOU, the player, just got locked into an armbinder, even the rare sort.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedarmbinder", "YOU, the player, just got locked into an armbinder.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedRogueBinder", "YOU, the player, just got locked into a rogue armbinder.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedGloves", "YOU, the player character, just got locked into bondage gloves.  Such gloves prevent the use of your fingers, making it impossible to perform delicate tasks. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedBondage Mittens", "YOU, the player character, just got locked into bondage gloves.  Such gloves prevent the use of your fingers, making it impossible to perform delicate tasks. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedArm Cuffs", "YOU, the player character, just got locked into arm cuffs.  The arm cuffs wrap around your wrists.  In addition, these cuffs can be connected together, e.g. behind your back, to further immobilize and restrain you, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.   "},
+			{"DeviceEquippedRope Arm Cuffs", "YOU, the player character, just got locked into rope arm cuffs.  The rope arm cuffs wrap around your wrists.  In addition, these cuffs can be connected together, e.g. behind your back, to further immobilize and restrain you, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.   "},
+			{"DeviceEquippedElbowbinder", "YOU, the player character, just got locked into an elbow binder.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedRare Armbinder", "YOU, the player character, just got locked into an armbinder, even the rare sort.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedarmbinder", "YOU, the player character, just got locked into an armbinder.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedRogueBinder", "YOU, the player character, just got locked into a rogue armbinder.  The binder holds your arms and hands in tight sleeves behind your back, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
 			
 			// Torso things here:
-			{"DeviceEquippedChastity Bra", "YOU, the player, just got a chastity bra locked onto your body.  This device is like a normal bra, but it is sturdy and prevents stimulation including self-stimulation and all access to your breasts.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedStraitJacket", "YOU, the player, just got locked into a strait jacket.  The jacket holds your arms and hands in tight sleeves bound around your torso, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedRope Harness", "YOU, the player, just got locked into a rope harness.  The rope harness wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedSuit", "YOU, the player, just got locked into a catsuit of sorts.  The suit wraps around your torso and limbs. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedHarness", "YOU, the player, just got locked into a harness.  The harness wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedChain Harness Wrist Shackles", "YOU, the player, just got a chain harness wrist shackles locked onto your wrists.  These shackles prevent you from moving your arms freely.  They are securely fastened so that you cannot simply remove them.   "},
-			{"DeviceEquippedBoxbinder", "YOU, the player, just got locked into a box binder.  The box binder holds your arms and hands in a bag behind your torso, so that you are helpless and completely at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedcorset", "YOU, the player, just got locked into a corsett.  The corsett wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedChastity Bra", "YOU, the player character, just got a chastity bra locked onto your body.  This device is like a normal bra, but it is sturdy and prevents stimulation including self-stimulation and all access to your breasts.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedStraitJacket", "YOU, the player character, just got locked into a strait jacket.  The jacket holds your arms and hands in tight sleeves bound around your torso, so that you are helpless and at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedRope Harness", "YOU, the player character, just got locked into a rope harness.  The rope harness wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedSuit", "YOU, the player character, just got locked into a catsuit of sorts.  The suit wraps around your torso and limbs. This device got locked onto you and now you cannot get of out it."},
+			{"DeviceEquippedHarness", "YOU, the player character, just got locked into a harness.  The harness wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedChain Harness Wrist Shackles", "YOU, the player character, just got a chain harness wrist shackles locked onto your wrists.  These shackles prevent you from moving your arms freely.  They are securely fastened so that you cannot simply remove them.   "},
+			{"DeviceEquippedBoxbinder", "YOU, the player character, just got locked into a box binder.  The box binder holds your arms and hands in a bag behind your torso, so that you are helpless and completely at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedcorset", "YOU, the player character, just got locked into a corsett.  The corsett wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},
 			
 
 
 			// Crotch things here:
-			{"DeviceEquippedClitoris Piercing", "YOU, the player, just got a clitoris piercing locked onto your clitoris.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedClitoral Piercing", "YOU, the player, just got a clitoris piercing locked onto your clitoris.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedNipple Piercings", "YOU, the player, just got a nipple piercing locked onto your nipples.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedPiercing", "YOU, the player, just got a nipple piercing locked onto your nipples.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedVaginal Plug", "YOU, the player, just got a vaginal plug locked into your vagina.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedVaginal Pear Plug", "YOU, the player, just got a vaginal pear plug locked into your vagina.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedAnal Plug", "YOU, the player, just got a anal plug locked into your anus.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedPlug", "YOU, the player, just got a anal plug locked into your anus.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedAnal Pear Plug", "YOU, the player, just got an Anal Pear Plug plugged into your ass.  This plug is plugged into the anus, and then it expands inside, so that you cannot remove it any more.  And it is locked in this state, locked onto your body and now you cannot get if out without somehow opening the lock first.   "},
-			{"DeviceEquippedChastity Belt", "YOU, the player, just got a chastity belt locked onto your body.  This device is like a normal panties, but it is absolutely sturdy and prevents stimulation including self-stimulation and masturbation all access to your pussy.  On the one hand it keeps you from having intercourse with a man and thus also might prevent rape unless the attacker has the key, on the other hand you can't access your own sex this way, which might be very frustrating when you are very horny.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedBelt", "YOU, the player, just got a chastity belt locked onto your body.  This device is like a normal panties, but it is absolutely sturdy and prevents stimulation including self-stimulation and masturbation all access to your pussy.  On the one hand it keeps you from having intercourse with a man and thus also might prevent rape unless the attacker has the key, on the other hand you can't access your own sex this way, which might be very frustrating when you are very horny.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedClitoris Piercing", "YOU, the player character, just got a clitoris piercing locked onto your clitoris.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedClitoral Piercing", "YOU, the player character, just got a clitoris piercing locked onto your clitoris.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedNipple Piercings", "YOU, the player character, just got a nipple piercing locked onto your nipples.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedPiercing", "YOU, the player character, just got a nipple piercing locked onto your nipples.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedVaginal Plug", "YOU, the player character, just got a vaginal plug locked into your vagina.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedVaginal Pear Plug", "YOU, the player character, just got a vaginal pear plug locked into your vagina.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedAnal Plug", "YOU, the player character, just got a anal plug locked into your anus.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedPlug", "YOU, the player character, just got a anal plug locked into your anus.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedAnal Pear Plug", "YOU, the player character, just got an Anal Pear Plug plugged into your ass.  This plug is plugged into the anus, and then it expands inside, so that you cannot remove it any more.  And it is locked in this state, locked onto your body and now you cannot get if out without somehow opening the lock first.   "},
+			{"DeviceEquippedChastity Belt", "YOU, the player character, just got a chastity belt locked onto your body.  This device is like a normal panties, but it is absolutely sturdy and prevents stimulation including self-stimulation and masturbation all access to your pussy.  On the one hand it keeps you from having intercourse with a man and thus also might prevent rape unless the attacker has the key, on the other hand you can't access your own sex this way, which might be very frustrating when you are very horny.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedBelt", "YOU, the player character, just got a chastity belt locked onto your body.  This device is like a normal panties, but it is absolutely sturdy and prevents stimulation including self-stimulation and masturbation all access to your pussy.  On the one hand it keeps you from having intercourse with a man and thus also might prevent rape unless the attacker has the key, on the other hand you can't access your own sex this way, which might be very frustrating when you are very horny.  This device got locked onto you and now you cannot get if off.   "},
 
 			// Feet things here:
-			{"DeviceEquippedBoots", "YOU, the player, just got locked into bondage boots and you cannot take them off any more because they got locked onto your feet.  They may have high heels and they may be severely restricting the speed at which you can move.   "},
-			{"DeviceEquippedPumps", "YOU, the player, just got locked into bondage pumps and you cannot take them off any more because they got locked onto your feet.  They may have high heels and they may be severely restricting the speed at which you can move.   "},
-			{"DeviceEquippedBallet Boots", "YOU, the player, just got locked into bondage boots and you cannot take them off any more because they got locked onto your feet.  They may have high heels and they may be severely restricting the speed at which you can move.   "},
-			{"DeviceEquippedIron Ballet Boots", "YOU, the player, just got locked into bondage boots and you cannot take them off any more because they got locked onto your feet.  They may have high heels and they may be severely restricting the speed at which you can move.   "},
-			{"DeviceEquippedPony Boots", "YOU, the player, just got locked into pony boots.  These pony boots wrap around your legs shape them like a horse leg, with hooves and horseshoe and all. In addition to that and to further de-humanize the wearer, the pony boots are making a sound like a walking pony whereever you go. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedLeg Cuffs", "YOU, the player, just got locked into leg cuffs.  The leg cuffs wrap around your ankles.  In addition, these cuffs can be connected together, to further immobilize and restrain you and force you to make only tiny hobble steps, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.   "},
-			{"DeviceEquippedRubber Socks", "YOU, the player, just got locked into locking rubber socks.  The rubber socks wrap around your feet.  These devices got locked onto you and now you cannot get of out them.   "},			
+			{"DeviceEquippedBoots", "YOU, the player character, just got locked into bondage boots and you cannot take them off any more because they got locked onto your feet.  They may have high heels and they may be severely restricting the speed at which you can move.   "},
+			{"DeviceEquippedPumps", "YOU, the player character, just got locked into bondage pumps and you cannot take them off any more because they got locked onto your feet.  They may have high heels and they may be severely restricting the speed at which you can move.   "},
+			{"DeviceEquippedBallet Boots", "YOU, the player character, just got locked into bondage boots and you cannot take them off any more because they got locked onto your feet.  They may have high heels and they may be severely restricting the speed at which you can move.   "},
+			{"DeviceEquippedIron Ballet Boots", "YOU, the player character, just got locked into bondage boots and you cannot take them off any more because they got locked onto your feet.  They may have high heels and they may be severely restricting the speed at which you can move.   "},
+			{"DeviceEquippedPony Boots", "YOU, the player character, just got locked into pony boots.  These pony boots wrap around your legs shape them like a horse leg, with hooves and horseshoe and all. In addition to that and to further de-humanize the wearer, the pony boots are making a sound like a walking pony whereever you go. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedLeg Cuffs", "YOU, the player character, just got locked into leg cuffs.  The leg cuffs wrap around your ankles.  In addition, these cuffs can be connected together, to further immobilize and restrain you and force you to make only tiny hobble steps, but this hasn't happened yet.  These devices got locked onto you and now you cannot get of out them.   "},
+			{"DeviceEquippedRubber Socks", "YOU, the player character, just got locked into locking rubber socks.  The rubber socks wrap around your feet.  These devices got locked onto you and now you cannot get of out them.   "},			
 
 		};
 
@@ -759,49 +758,49 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 	{
 		static const std::unordered_map<std::string_view, std::string_view> removed_device_thoughts = {
 			//  Feet things here:
-			{"DeviceRemovedBoots", "YOU, the player, just got released from your bondage boots and you feet are finally free from them.  They may have had high heels and they may have been severely restricting the speed at which you could move, but now you are rid of them.   "},
-			{"DeviceRemovedBallet Boots", "YOU, the player, just got released from your bondage boots and you feet are finally free from them.  They may have had high heels and they may have been severely restricting the speed at which you could move, but now you are rid of them.   "},
-			{"DeviceRemovedIron Ballet Boots", "YOU, the player, just got released from your bondage boots and you feet are finally free from them.  They may have had high heels and they may have been severely restricting the speed at which you could move, but now you are rid of them.   "},
-			{"DeviceRemovedPony Boots", "YOU, the player, just got released from your pony boots.  Those boots had shaped your legs like horse legs and added hoof-like movement sounds, but these effects no longer apply now that they are removed.   "},
+			{"DeviceRemovedBoots", "YOU, the player character, just got released from your bondage boots and you feet are finally free from them.  They may have had high heels and they may have been severely restricting the speed at which you could move, but now you are rid of them.   "},
+			{"DeviceRemovedBallet Boots", "YOU, the player character, just got released from your bondage boots and you feet are finally free from them.  They may have had high heels and they may have been severely restricting the speed at which you could move, but now you are rid of them.   "},
+			{"DeviceRemovedIron Ballet Boots", "YOU, the player character, just got released from your bondage boots and you feet are finally free from them.  They may have had high heels and they may have been severely restricting the speed at which you could move, but now you are rid of them.   "},
+			{"DeviceRemovedPony Boots", "YOU, the player character, just got released from your pony boots.  Those boots had shaped your legs like horse legs and added hoof-like movement sounds, but these effects no longer apply now that they are removed.   "},
 			
 			
-			{"DeviceRemovedyoke", "YOU, the player, just got released from your iron bondage yoke.  Your neck and wrists are no longer locked in that restrictive yoke posture, so those restraints no longer apply.   "},
-			{"DeviceRemovedGloves", "YOU, the player, just got unlocked from gloves.  The gloves wrap around your hands like boxing gloves but with no thumb, so that you were unable to use your fingers for anything.  These devices got unlocked from your hands and now you can use your fingers again.   "},
-			{"DeviceRemovedBondage Mittens", "YOU, the player, just got released from your bondage mittens.  Your fingers are no longer restrained by those mittens, so those restrictions no longer apply.   "},
-			{"DeviceRemovedClitoris Piercing", "YOU, the player, just got your clitoris piercing removed.  That piercing can cause intense stimulation and inconvenient vibration, but those effects no longer apply now that it is gone.   "},
-			{"DeviceRemovedNipple Piercings", "YOU, the player, just got your nipple piercings removed.  Those piercings can cause intense stimulation and inconvenient vibration, but those effects no longer apply now that they are gone.   "},
+			{"DeviceRemovedyoke", "YOU, the player character, just got released from your iron bondage yoke.  Your neck and wrists are no longer locked in that restrictive yoke posture, so those restraints no longer apply.   "},
+			{"DeviceRemovedGloves", "YOU, the player character, just got unlocked from gloves.  The gloves wrap around your hands like boxing gloves but with no thumb, so that you were unable to use your fingers for anything.  These devices got unlocked from your hands and now you can use your fingers again.   "},
+			{"DeviceRemovedBondage Mittens", "YOU, the player character, just got released from your bondage mittens.  Your fingers are no longer restrained by those mittens, so those restrictions no longer apply.   "},
+			{"DeviceRemovedClitoris Piercing", "YOU, the player character, just got your clitoris piercing removed.  That piercing can cause intense stimulation and inconvenient vibration, but those effects no longer apply now that it is gone.   "},
+			{"DeviceRemovedNipple Piercings", "YOU, the player character, just got your nipple piercings removed.  Those piercings can cause intense stimulation and inconvenient vibration, but those effects no longer apply now that they are gone.   "},
 			// NOTE:  These two again come with two different spellings.
-			{"DeviceRemovedVaginal Plug", "YOU, the player, just got your vaginal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
-			{"DeviceRemovedPlugVaginal", "YOU, the player, just got your vaginal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
+			{"DeviceRemovedVaginal Plug", "YOU, the player character, just got your vaginal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
+			{"DeviceRemovedPlugVaginal", "YOU, the player character, just got your vaginal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
 			// Two different spellings again:
-			{"DeviceRemovedAnal Plug", "YOU, the player, just got your anal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
-			{"DeviceRemovedPlugAnal", "YOU, the player, just got your anal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
+			{"DeviceRemovedAnal Plug", "YOU, the player character, just got your anal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
+			{"DeviceRemovedPlugAnal", "YOU, the player character, just got your anal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
 			
 			
 			
-			{"DeviceRemovedCollar", "YOU, the player, just got your collar removed.  The feeling of being locked and restrained by that collar no longer applies now that it is gone.   "},
-			{"DeviceRemovedChastity Bra", "YOU, the player, just got your chastity bra removed.  Access and stimulation restrictions on your breasts no longer apply now that the device is gone.   "},
-			{"DeviceRemovedChastity Belt", "YOU, the player, just got your chastity belt removed.  The access and stimulation restrictions from that belt no longer apply now that it is gone.   "},
-			{"DeviceRemovedBelt", "YOU, the player, just got your chastity belt removed.  The access and stimulation restrictions from that belt no longer apply now that it is gone.   "},
+			{"DeviceRemovedCollar", "YOU, the player character, just got your collar removed.  The feeling of being locked and restrained by that collar no longer applies now that it is gone.   "},
+			{"DeviceRemovedChastity Bra", "YOU, the player character, just got your chastity bra removed.  Access and stimulation restrictions on your breasts no longer apply now that the device is gone.   "},
+			{"DeviceRemovedChastity Belt", "YOU, the player character, just got your chastity belt removed.  The access and stimulation restrictions from that belt no longer apply now that it is gone.   "},
+			{"DeviceRemovedBelt", "YOU, the player character, just got your chastity belt removed.  The access and stimulation restrictions from that belt no longer apply now that it is gone.   "},
 			
 			
-			{"DeviceRemovedStraitJacket", "YOU, the player, just got released from your strait jacket.  Your arms and hands are no longer bound against your torso, so those restraints no longer apply.   "},
-			{"DeviceRemovedElbowbinder", "YOU, the player, just got released from your elbow binder.  Your arms are no longer forced behind your back in that restrictive position, so those restraints no longer apply.   "},
-			{"DeviceRemovedRope Harness", "YOU, the player, just got released from your rope harness.  The constricting pressure around your torso no longer applies now that it is removed.   "},
-			{"DeviceRemovedHarness", "YOU, the player, just got released from your harness.  The constricting and restrictive pressure from that harness no longer applies now that it is removed.   "},
+			{"DeviceRemovedStraitJacket", "YOU, the player character, just got released from your strait jacket.  Your arms and hands are no longer bound against your torso, so those restraints no longer apply.   "},
+			{"DeviceRemovedElbowbinder", "YOU, the player character, just got released from your elbow binder.  Your arms are no longer forced behind your back in that restrictive position, so those restraints no longer apply.   "},
+			{"DeviceRemovedRope Harness", "YOU, the player character, just got released from your rope harness.  The constricting pressure around your torso no longer applies now that it is removed.   "},
+			{"DeviceRemovedHarness", "YOU, the player character, just got released from your harness.  The constricting and restrictive pressure from that harness no longer applies now that it is removed.   "},
 			// NOTE:  These two again come with two different spellings.
-			{"DeviceRemovedArmCuffs", "YOU, the player, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.   "},
-			{"DeviceRemovedArm Cuffs", "YOU, the player, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.   "},
-			{"DeviceRemovedRope Arm Cuffs", "YOU, the player, just got your rope arm cuffs removed.  Your wrists are no longer restrained by the rope arm cuffs, so those restrictions no longer apply.   "},
-			{"DeviceRemovedWristRestraint", "YOU, the player, just got your wrist restraint removed.  Your wrists are no longer restrained, and you can move them freely now.   "},
-			{"DeviceRemovedLeg Cuffs", "YOU, the player, just got your leg cuffs removed.  Your ankles are no longer cuffed and your movement is no longer restricted by them.   "},
-			{"DeviceRemovedLegCuffs", "YOU, the player, just got your leg cuffs removed.  Your ankles are no longer cuffed and your movement is no longer restricted by them.   "},
+			{"DeviceRemovedArmCuffs", "YOU, the player character, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.   "},
+			{"DeviceRemovedArm Cuffs", "YOU, the player character, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.   "},
+			{"DeviceRemovedRope Arm Cuffs", "YOU, the player character, just got your rope arm cuffs removed.  Your wrists are no longer restrained by the rope arm cuffs, so those restrictions no longer apply.   "},
+			{"DeviceRemovedWristRestraint", "YOU, the player character, just got your wrist restraint removed.  Your wrists are no longer restrained, and you can move them freely now.   "},
+			{"DeviceRemovedLeg Cuffs", "YOU, the player character, just got your leg cuffs removed.  Your ankles are no longer cuffed and your movement is no longer restricted by them.   "},
+			{"DeviceRemovedLegCuffs", "YOU, the player character, just got your leg cuffs removed.  Your ankles are no longer cuffed and your movement is no longer restricted by them.   "},
 			
-			{"DeviceRemovedAnal Pear Plug", "YOU, the player, just got your anal pear plug removed.  The internal pressure and restrictive lock-in effects no longer apply now that it is gone.   "},
-			{"DeviceRemovedGag", "YOU, the player, just got your gag removed.  Your mouth is no longer restrained, and you can speak and breathe freely again.   "},
-			{"DeviceRemovedblindfold", "YOU, the player, just got your blindfold removed.  Your vision is no longer obstructed, so that sensory restriction no longer applies.   "},
-			{"DeviceRemovedChain Harness Wrist Shackles", "YOU, the player, just got your chain harness wrist shackles removed.  Your wrists are no longer locked by those shackles, so those restraints no longer apply.   "},
-			{"DeviceRemovedHood", "YOU, the player, just got your hood removed.  Your head and face are no longer covered, so that sensory restriction no longer applies.   "},
+			{"DeviceRemovedAnal Pear Plug", "YOU, the player character, just got your anal pear plug removed.  The internal pressure and restrictive lock-in effects no longer apply now that it is gone.   "},
+			{"DeviceRemovedGag", "YOU, the player character, just got your gag removed.  Your mouth is no longer restrained, and you can speak and breathe freely again.   "},
+			{"DeviceRemovedblindfold", "YOU, the player character, just got your blindfold removed.  Your vision is no longer obstructed, so that sensory restriction no longer applies.   "},
+			{"DeviceRemovedChain Harness Wrist Shackles", "YOU, the player character, just got your chain harness wrist shackles removed.  Your wrists are no longer locked by those shackles, so those restraints no longer apply.   "},
+			{"DeviceRemovedHood", "YOU, the player character, just got your hood removed.  Your head and face are no longer covered, so that sensory restriction no longer applies.   "},
 		};
 
 		const std::string_view event_name = a_event->eventName.c_str();
@@ -834,7 +833,7 @@ bool handle_DDUD::handle_DDUD_sentient_dialogue_event(const SKSE::ModCallbackEve
 	}
 
 	// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
-	std::string thought_message = std::format("YOU, the player, suddenly have a feeling like your {} is speaking to you, even though it is just an item and not a living creature.  Is it maybe time to question your sanity?  What is going on?  You have no clue, but you suspect it's some sentient device speaking to you.  Say so in your response. ", a_event->strArg.c_str());
+	std::string thought_message = std::format("YOU, the player character, suddenly have a feeling like your {} is speaking to you, even though it is just an item and not a living creature.  Is it maybe time to question your sanity?  What is going on?  You have no clue, but you suspect it's some sentient device speaking to you.  Say so in your response. ", a_event->strArg.c_str());
 	DumpThoughts::throw_out_TTS_thought_message(thought_message);
 	return true;
 }

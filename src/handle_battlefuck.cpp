@@ -18,7 +18,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 	// MOD EVENT:  Name: AnimationStarting_BattleFuck :  this is the start of a BattleFuck scene.  We absolutely should comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_BattleFuck") == 0)  ) {
 		// This event is always about the player, nobody else.
-		std::string  thought_message = std::format("YOU, the player, are now getting ambushed in a sexual assault.  Someone gips you from behind.  He probably wants to strip away your clothing and armour, so he can then rape you right in front of everybody later.  Say so and let us know what you are feeling and thinking in that moment, given that you are about to be stripped forefully of all your clothes and make it clear from your response, that you are going to be stripped of all your clothing if you cannot manage to break free from his grip.");
+		std::string  thought_message = std::format("YOU, the player character, are now getting ambushed in a sexual assault.  Someone gips you from behind.  He probably wants to strip away your clothing and armour, so he can then rape you right in front of everybody later.  Say so and let us know what you are feeling and thinking in that moment, given that you are about to be stripped forefully of all your clothes and make it clear from your response, that you are going to be stripped of all your clothing if you cannot manage to break free from his grip.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("AnimationStarting_BattleFuck:  " + thought_message);
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -30,7 +30,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 			return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}
 		last_battlefuck_stage_start_thought_timestamp = std::chrono::steady_clock::now();
-		std::string  thought_message = std::format("YOU, the player, are now forcefully stripped of more and more of your clothing and armour.  Also your attacker is pushing you down, to prepare you for the coming rape.  Let us know how you feel now.");
+		std::string  thought_message = std::format("YOU, the player character, are now forcefully stripped of more and more of your clothing and armour.  Also your attacker is pushing you down, to prepare you for the coming rape.  Let us know how you feel now.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("StageStart_BattleFuck:  " + thought_message);
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -38,7 +38,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 	// BattleFuck includes the new spectator's display name in this event's string argument.
 	if ( (std::strcmp(a_event->eventName.c_str() , "_BF_Onlookers_AddNotification") == 0)  ) {
 		std::string thought_message = std::format(
-			"YOU, the player, realize that another onlooker has arrived, but instead of helping you, that person has stopped to watch you get molested and used, and they are enjoying that greatly.  Express what you feel and think about that additional detail and make sure you mention that this onlooker has arrived and doesn't help you at all.  BattleFuck described the new spectator as follows: '{}'.  If that description contains the spectator's name, use the name, but do not invent one.",
+			"YOU, the player character, realize that another onlooker has arrived, but instead of helping you, that person has stopped to watch you get molested and used, and they are enjoying that greatly.  Express what you feel and think about that additional detail and make sure you mention that this onlooker has arrived and doesn't help you at all.  BattleFuck described the new spectator as follows: '{}'.  If that description contains the spectator's name, use the name, but do not invent one.",
 			a_event->strArg.c_str());
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		LillithOnlyBox("_BF_Onlookers_AddNotification:  " + thought_message);
@@ -47,7 +47,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 	// MOD EVENT:  Name:  "AnimationEnding_BattleFuck" :  this is the end of a BattleFuck scene.  We absolutely should comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BattleFuck") == 0)  ) {
 		// This event is always about the player, nobody else.
-		std::string  thought_message = std::format("YOU, the player, survived a sexual assault.  Maybe you got completely undressed by the attacker and maybe he even fucked you and came inside of you, while everybody else stood by and watched, but regardless of that, the assault is over now and you can get dressed again.  Say so and let us know what you are feeling and thinking in that moment.");
+		std::string  thought_message = std::format("YOU, the player character, survived a sexual assault.  Maybe you got completely undressed by the attacker and maybe he even fucked you and came inside of you, while everybody else stood by and watched, but regardless of that, the assault is over now and you can get dressed again.  Say so and let us know what you are feeling and thinking in that moment.");
 		// DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		// LillithOnlyBox("AnimationEnding_BattleFuck:  " + thought_message);
 		// NO MESSAGE FOR NOW, AS WE DON'T KNOW WHAT THAT REALLY MEANS
@@ -58,7 +58,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 
 	// MOD EVENT:  Name: AnimationStarting_BattleFuckRape :  this is the end of a BattleFuck rape animation.  We may want to comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_BattleFuckRape") == 0)  ) {
-		std::string  thought_message = std::format("YOU, the player, couldn't fend of your attacker. He stripped you of all your clothes and armor, pushed you down and inserted himself into you.  And he is now raping you. Reflect on the ongoing experience and express your feelings about it in character.");
+		std::string  thought_message = std::format("YOU, the player character, couldn't fend of your attacker. He stripped you of all your clothes and armor, pushed you down and inserted himself into you.  And he is now raping you. Reflect on the ongoing experience and express your feelings about it in character.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("AnimationStarting_BattleFuckRape:  " + thought_message);
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -66,14 +66,14 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 	// MOD EVENT:  Name:StageStart_BattleFuckRape :  this is the start of a BattleFuck rape sub-stage.  We absolutely should comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_BattleFuckRape") == 0)  ) {
 		// This event is always about the player, nobody else.
-		std::string  thought_message = std::format("YOU, the player, are currently getting raped.  Let us know what you are feeling and thinking in that moment.");
+		std::string  thought_message = std::format("YOU, the player character, are currently getting raped.  Let us know what you are feeling and thinking in that moment.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("StageStart_BattleFuckRape:  " + thought_message);
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 	// MOD EVENT:  Name:AnimationEnd_BattleFuckRape :  this is the end of a BattleFuck rape animation.  We may want to comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnd_BattleFuckRape") == 0)  ) {
-		std::string  thought_message = std::format("YOU, the player, have just got raped and now finally the rape is over.  Reflect on the experience and express your feelings about it in character.");
+		std::string  thought_message = std::format("YOU, the player character, have just got raped and now finally the rape is over.  Reflect on the experience and express your feelings about it in character.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("AnimationEnd_BattleFuckRape:  " + thought_message);
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;

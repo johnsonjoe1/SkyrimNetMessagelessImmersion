@@ -151,25 +151,25 @@ void SNMIPapyrus::set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value)
 	std::string final_thought_string;
 	if ( (previous_yps_AddictionBuff < _yps_AddictionBuff) ) {
 		if (yps_AddictionLevelChangeSinceLastBuff < 0) {
-			final_thought_string = "YOU, the player, have become a little less dependent on fashion than before, so your current styling feels more satisfying again. Reflect on this easing of your fashion addiction and how it changes the way you feel about your appearance. Be sure to mention your fashion addiction explicitly so the reason for the thought is clear.";
+			final_thought_string = "YOU, the player character, have become a little less dependent on fashion than before, so your current styling feels more satisfying again. Reflect on this easing of your fashion addiction and how it changes the way you feel about your appearance. Be sure to mention your fashion addiction explicitly so the reason for the thought is clear.";
 		} else {
-			final_thought_string = "YOU, the player, feel better styled and more fashionable than before. Notice the renewed satisfaction and confidence your current appearance gives you, and describe how it makes you feel. Be sure to mention your improved styling explicitly so the reason for the thought is clear.";
+			final_thought_string = "YOU, the player character, feel better styled and more fashionable than before. Notice the renewed satisfaction and confidence your current appearance gives you, and describe how it makes you feel. Be sure to mention your improved styling explicitly so the reason for the thought is clear.";
 		}
 	}
 	if ( (previous_yps_AddictionBuff > _yps_AddictionBuff) ) {
 		if (yps_AddictionLevelChangeSinceLastBuff > 0) {
-			final_thought_string = "YOU, the player, are getting so used to being styled well that it no longer gives you quite the same thrill as before. Your fashion addiction and expectations have increased even though your current styling has not necessarily become worse. Reflect on this growing tolerance and whether you need to take your fashion further to feel that good again. Be sure to mention your increasing fashion addiction explicitly so the reason for the thought is clear.";
+			final_thought_string = "YOU, the player character, are getting so used to being styled well that it no longer gives you quite the same thrill as before. Your fashion addiction and expectations have increased even though your current styling has not necessarily become worse. Reflect on this growing tolerance and whether you need to take your fashion further to feel that good again. Be sure to mention your increasing fashion addiction explicitly so the reason for the thought is clear.";
 		} else if (_yps_AddictionBuff <= 0) {
-			final_thought_string = "YOU, the player, are not styled nearly as well as you have become accustomed to. Feeling this underdressed is horrible, and you urgently want to get yourself back into style. Describe what feels missing from your appearance and how strongly you want to correct it. Be sure to mention feeling underdressed explicitly so the reason for the thought is clear.";
+			final_thought_string = "YOU, the player character, are not styled nearly as well as you have become accustomed to. Feeling this underdressed is horrible, and you urgently want to get yourself back into style. Describe what feels missing from your appearance and how strongly you want to correct it. Be sure to mention feeling underdressed explicitly so the reason for the thought is clear.";
 		} else {
-			final_thought_string = "YOU, the player, do not feel quite as stylish as you did before. Something about your appearance is now less satisfying, even though you are still reasonably well put together. Reflect on what may be missing and how you might restore your previous sense of style. Be sure to mention your reduced satisfaction with your styling explicitly so the reason for the thought is clear.";
+			final_thought_string = "YOU, the player character, do not feel quite as stylish as you did before. Something about your appearance is now less satisfying, even though you are still reasonably well put together. Reflect on what may be missing and how you might restore your previous sense of style. Be sure to mention your reduced satisfaction with your styling explicitly so the reason for the thought is clear.";
 		}
 	}
 	if (previous_yps_AddictionBuff == _yps_AddictionBuff && yps_AddictionLevelChangeSinceLastBuff > 0) {
-		final_thought_string = "YOU, the player, have become more accustomed to being fashionable, and your expectations about your appearance have risen. Reflect on your growing fashion addiction and whether maintaining or improving your styling is becoming more important to you. Be sure to mention your increasing fashion addiction explicitly so the reason for the thought is clear.";
+		final_thought_string = "YOU, the player character, have become more accustomed to being fashionable, and your expectations about your appearance have risen. Reflect on your growing fashion addiction and whether maintaining or improving your styling is becoming more important to you. Be sure to mention your increasing fashion addiction explicitly so the reason for the thought is clear.";
 	}
 	if (previous_yps_AddictionBuff == _yps_AddictionBuff && yps_AddictionLevelChangeSinceLastBuff < 0) {
-		final_thought_string = "YOU, the player, have become a little less dependent on fashion than before. Reflect on this easing of your fashion addiction and how it changes the importance you place on being perfectly styled. Be sure to mention your decreasing fashion addiction explicitly so the reason for the thought is clear.";
+		final_thought_string = "YOU, the player character, have become a little less dependent on fashion than before. Reflect on this easing of your fashion addiction and how it changes the importance you place on being perfectly styled. Be sure to mention your decreasing fashion addiction explicitly so the reason for the thought is clear.";
 	}
 	if (!final_thought_string.empty()) {
 		if (!player_is_in_ANY_SL_scene()) {

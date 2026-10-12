@@ -428,7 +428,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	// so we might as well say so.
 	if ( (std::strcmp(base_name, "Drunk Stumble Script") == 0) && (a_event->isApplied) ){  	// Drunk Stumble Script
 		// Here you can add your custom logic for when the stumble-and-fall animation is playing.
-		DumpThoughts::throw_out_TTS_thought_message("YOU, the player, are so drunk, that you just lost balance and just stumbled and fell over you own feet from all the alcohol.  How does that make you feel?  What are you thinking now? ");
+		DumpThoughts::throw_out_TTS_thought_message("YOU, the player character, are so drunk, that you just lost balance and just stumbled and fell over you own feet from all the alcohol.  How does that make you feel?  What are you thinking now? ");
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	} else {
 		// logger::info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx NOT THE DRUNK STUMBLE SCRIPT!");
@@ -440,7 +440,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for FOOD-BASED-DISEASE! ", base_name);
 		LillithOnlyBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
 		SKSE::log::info("Event handler for FOOD-BASED-DISEASE!");
-		DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate something!  As a total surprise, you now notice, that you may have just contracted the so-called disease '{}' from it!  You need to announce the potential infection in your response, so that the actual player is informed.  You may do that implicitly, in the form of regret, surprise anger or shock.  It is a potentially dangerous condition. Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
+		DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, just ate something!  As a total surprise, you now notice, that you may have just contracted the so-called disease '{}' from it!  You need to announce the potential infection in your response, so that the actual player is informed.  You may do that implicitly, in the form of regret, surprise anger or shock.  It is a potentially dangerous condition. Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
@@ -458,7 +458,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		std::string stomach_rot_status = std::format("CURE OF {} DISEASE DETECTED! ", base_name);
 		LillithOnlyBox(stomach_rot_status.c_str());	// This is so rare, it can afford to have a message box.
 		SKSE::log::info("Event handler for ALL DISEASED BEING REMOVED, i.e CURED!");
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, just got cured of your {} Disease!  What a relief.  Your body has recoverd so quickly from the cure!  You need to announce great relief and successful cure!  You may do that implicitly, in the form of relief and gratitude.  Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player character, just got cured of your {} Disease!  What a relief.  Your body has recoverd so quickly from the cure!  You need to announce great relief and successful cure!  You may do that implicitly, in the form of relief and gratitude.  Be sure to mention the name of the disease '{}' in your response.  ", base_name, base_name)); //  + standard_thought_instruction;
 		last_disease_cure_thought_timestamp = std::chrono::steady_clock::now();
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
@@ -486,14 +486,14 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 
 		if (std::string_view(base->GetFormEditorID()).find("Stage2") != std::string_view::npos)
 		{
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, have now reached the most severe stage of '{}' disease!  The effects are overwhelming, and you are feeling extremely sick.  You already feel the heaviest symptoms.  This could maybe end your life, if you don't manage to get treated in time.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player character, have now reached the most severe stage of '{}' disease!  The effects are overwhelming, and you are feeling extremely sick.  You already feel the heaviest symptoms.  This could maybe end your life, if you don't manage to get treated in time.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
 			RE::DebugMessageBox("DISEASE HANDLER STAGE 2!!");
 			if (std::strcmp(base_name, "Ataxia") == 0) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("The disease has reached the worst state. That means from now on, you cannot move so fast and it also means you do less damage to enemies.  Say so in your response and make sure you mention both effects of the disease."));
 			}	
 		} else if (std::string_view(base->GetFormEditorID()).find("Stage1") != std::string_view::npos)
 		{
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, have now been infected with '{}' disease for quite a while.  And the effects of the disease are now suddenly getting worse!  You are now feeling much worse from the sickening effect.  You already feel heavy symptoms.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player character, have now been infected with '{}' disease for quite a while.  And the effects of the disease are now suddenly getting worse!  You are now feeling much worse from the sickening effect.  You already feel heavy symptoms.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
 			RE::DebugMessageBox("DISEASE HANDLER STAGE 1!!");	
 			if (std::strcmp(base_name, "Ataxia") == 0) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("The disease is making it not only harder for you to do lockpicking and  pickpocketing, but at this stage of the disease, it also becomes harder to sneak and to carry so much weight.  Say so in your response."));
@@ -501,7 +501,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		} else 
 		{
 			// This must be the "mild" stage.  This ISNT MODIFIED BY THE ADD-ONS and sometimes just base vanilla, so it seems there can be cases where the expected 'stage0' doesn't even appear in the effect description.  Therefore we handle this via the "else" clause.				
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, just got infected with '{}' disease!  This must be something you contracted during combat with an infected creature.  You are already starting to feel the sickening effect.  You already feel the symptoms.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player character, just got infected with '{}' disease!  This must be something you contracted during combat with an infected creature.  You are already starting to feel the sickening effect.  You already feel the symptoms.  Say so in your response, and make sure you mention the name of the disease '{}' as well as make clear fact that this *is* a disease!  You need to announce the potential infection in your response, so that the actual player is informed.  This is so important, that you can use more words than usual for that.", base_name, base_name));
 			RE::DebugMessageBox("DISEASE HANDLER STAGE 0!!");   
 			if (std::strcmp(base_name, "Ataxia") == 0) {
 				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("The disease is making it harder for you to do lockpicking and pickpocketing.  Say so in your response."));
@@ -569,7 +569,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for Whipped APPLICATION!");
-			std::string final_thought_string = std::format("YOU, the player, are getting whipped while bound and helpless from the captive player mod.  Express the horrible pain of being whipped while helplessly tied up and unable to escape.  Since this is a major source of suffering, you can elaborate in more words about this."); //  + standard_thought_instruction;
+			std::string final_thought_string = std::format("YOU, the player character, are getting whipped while bound and helpless from the captive player mod.  Express the horrible pain of being whipped while helplessly tied up and unable to escape.  Since this is a major source of suffering, you can elaborate in more words about this."); //  + standard_thought_instruction;
 			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Whipped: THOUGHT: " + final_thought_string);
 			LillithOnlyBox(final_thought_string);
 		} 
@@ -686,7 +686,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	if (!creature_name.empty() && a_event->isApplied)
 	{
 		SKSE::log::info("Event handler for CREATURE {} EFFECT APPLICATION!", creature_name);
-		DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just summoned a {}.  And the {} is a male {} and it seems to be horny too, looking for mates, and that includes you too!  Say as much in your response and make it clear that you speak about your freshly summoned {} in your response.", creature_name, creature_name, creature_name, creature_name)); //  + standard_thought_instruction;
+		DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, just summoned a {}.  And the {} is a male {} and it seems to be horny too, looking for mates, and that includes you too!  Say as much in your response and make it clear that you speak about your freshly summoned {} in your response.", creature_name, creature_name, creature_name, creature_name)); //  + standard_thought_instruction;
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	
@@ -695,7 +695,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for IRRESISTIBLE ATTRACTION EFFECT APPLICATION!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just became irresistibly attractive from some magic you used.  Others may be drawn to you and fuck you, or if not, you will just do it for yourself, because you are just to irresistile also to yourself!  Say as much in your response.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, just became irresistibly attractive from some magic you used.  Others may be drawn to you and fuck you, or if not, you will just do it for yourself, because you are just to irresistile also to yourself!  Say as much in your response.")); //  + standard_thought_instruction;
 		} 
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
@@ -705,7 +705,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for AAA WC TELEPORT SPELL effect application!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just used a teleport spell.  This one should get you right to the display hall, where all your Waifu Cards are collected.  Say as much in your response.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, just used a teleport spell.  This one should get you right to the display hall, where all your Waifu Cards are collected.  Say as much in your response.")); //  + standard_thought_instruction;
 		} 
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
@@ -737,7 +737,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for RESTRAINT TRAP effect application!");
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, were just hit by a bondage trap.  This is a major catastrophe.  The Trap has hit you and now you will be bound into restrictive bondage gear by the magic of the restraints trap!  In your response, you should cry out in desperation, that you have been hit by a bondage trap and will now suffer heavy bondage.  This event is so important, that you can elaborate in many words about your desperation here.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player character, were just hit by a bondage trap.  This is a major catastrophe.  The Trap has hit you and now you will be bound into restrictive bondage gear by the magic of the restraints trap!  In your response, you should cry out in desperation, that you have been hit by a bondage trap and will now suffer heavy bondage.  This event is so important, that you can elaborate in many words about your desperation here.")); //  + standard_thought_instruction;
 		} 
 		//  The REMOVAL happens immediately afterwards and doesn't need to be mentioned again.
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -759,7 +759,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			// We implement a cooldown here, just to be safe.
 			if (cooldown_has_passed(last_drool_thought_timestamp, 180))  // 180 seconds = 3 minutes cooldown
 			{
-				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, are now drooling.  It's probably because of the gag you are wearing or something similar.  In your response, you should mention, that you are drooling uncontrollably.  This event is so important, that you can elaborate in many words about your situation here.  Your response should match your overall character and can be positive or negative.")); //  + standard_thought_instruction;				
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player character, are now drooling.  It's probably because of the gag you are wearing or something similar.  In your response, you should mention, that you are drooling uncontrollably.  This event is so important, that you can elaborate in many words about your situation here.  Your response should match your overall character and can be positive or negative.")); //  + standard_thought_instruction;				
 				last_drool_thought_timestamp = std::chrono::steady_clock::now();
 			} else {
 				SKSE::log::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> But the cooldown in Event handler for Drool effect application hasn't passed yet!");
@@ -808,7 +808,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 				return;
 			}
 			SKSE::log::info("Event handler for Covered In Cum/SexLabCumVaginalEffect effect application!");
-			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, now have fresh cum dripping from your body.  Say as much in your response and be sure to mention that his sperm is now oozing from your body.  This event is so important, that you can elaborate in many words about your situation here.  Your response should match your overall character and can be positive or negative.");
+			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player character, now have fresh cum dripping from your body.  Say as much in your response and be sure to mention that his sperm is now oozing from your body.  This event is so important, that you can elaborate in many words about your situation here.  Your response should match your overall character and can be positive or negative.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 			last_cum_effect_thought_timestamp = std::chrono::steady_clock::now();
@@ -818,7 +818,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 				return;
 			}
 			SKSE::log::info("Event handler for Covered In Cum/SexLabCumVaginalEffect effect removal!");
-			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player, had fresh cum dripping from your body, up until now.  But now the cum dripping has stopped.  It probably all oozed out now.  Say as much in your response and be sure to mention that his sperm stopped oozing from your body now.  This event is so important, that you can elaborate in many words about your situation here.  Your response should match your overall character and can be positive or negative.");
+			std::string final_thought_string = std::format("Due to your sexual encounter, YOU, the player character, had fresh cum dripping from your body, up until now.  But now the cum dripping has stopped.  It probably all oozed out now.  Say as much in your response and be sure to mention that his sperm stopped oozing from your body now.  This event is so important, that you can elaborate in many words about your situation here.  Your response should match your overall character and can be positive or negative.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 			last_cum_effect_removal_thought_timestamp = std::chrono::steady_clock::now();

@@ -10,7 +10,7 @@ eventCriteria:
 
 response:
   type: "player_thought"
-  content: "Now the situation is this: YOU, the player, just are using a  {{ event_json.str_arg }}  .  Comment on this, with thoughts of YOU as the player. How does the situation make you feel?  What are you thinking?  Does this help you or make you feel better in any way?"
+  content: "Now the situation is this: YOU, the player character, just are using a  {{ event_json.str_arg }}  .  Comment on this, with thoughts of YOU as the player. How does the situation make you feel?  What are you thinking?  Does this help you or make you feel better in any way?"
 
 audience: "player"
 

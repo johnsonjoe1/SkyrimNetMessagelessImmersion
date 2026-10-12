@@ -81,12 +81,12 @@ void handle_SL_Survival::handle_sl_survival_magic_effect_stuff(const RE::TESActi
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for SL Survival Barefoot effect APPLICATION!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, are suddenly barefoot and the ground is full of little stones and sharp edges.  You can't run so quickly like that, in fact you can walk only slowly while being barefoot and it's painful for your sensible feet.  Say as much in your response.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, are suddenly barefoot and the ground is full of little stones and sharp edges.  You can't run so quickly like that, in fact you can walk only slowly while being barefoot and it's painful for your sensible feet.  Say as much in your response.")); //  + standard_thought_instruction;
 		} 
 		else // i.e.  if (!a_event->isApplied) )
 		{
 			SKSE::log::info("Event handler for SL Survival Barefoot effect REMOVAL!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, were barefoot the whole time and had to walk slowly over the sharp and uncomfortable ground. But now you have shoes on again. This means you can finally move much faster again!  What a relief!  Say as much in your response.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, were barefoot the whole time and had to walk slowly over the sharp and uncomfortable ground. But now you have shoes on again. This means you can finally move much faster again!  What a relief!  Say as much in your response.")); //  + standard_thought_instruction;
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
@@ -97,12 +97,12 @@ void handle_SL_Survival::handle_sl_survival_magic_effect_stuff(const RE::TESActi
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for SL Bikini Curse effect APPLICATION!");
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, are suddenly being drained of all your stamina and have to stop and catch your breath all the time, because you are affected by the Bikini Curse.  The Bikini curse means, that whenever you wear anything that isn't bikini armour or regular clothes, you will be drained of all your stamina and will be out of breath all the time.  Say as much in your response.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player character, are suddenly being drained of all your stamina and have to stop and catch your breath all the time, because you are affected by the Bikini Curse.  The Bikini curse means, that whenever you wear anything that isn't bikini armour or regular clothes, you will be drained of all your stamina and will be out of breath all the time.  Say as much in your response.")); //  + standard_thought_instruction;
 		} 
 		else // i.e.  if (!a_event->isApplied) )
 		{
 			SKSE::log::info("Event handler for SL Bikini Curse effect REMOVAL!");
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, were affected by the Bikini Curse the whole time and had to stop and catch your breath all the time. But now you are no longer affected by the curse. This means you can finally move and act normally again!  What a relief!  Say as much in your response.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player character, were affected by the Bikini Curse the whole time and had to stop and catch your breath all the time. But now you are no longer affected by the curse. This means you can finally move and act normally again!  What a relief!  Say as much in your response.")); //  + standard_thought_instruction;
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
@@ -112,15 +112,15 @@ void handle_SL_Survival::handle_sl_survival_magic_effect_stuff(const RE::TESActi
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for SL Bikini Curse out-of-breath-sequence APPLICATION!");
-			// DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, are suddenly out of breath and have to stop.  All because you are affected by the Bikini curse that you are wearing something that isn't a bikini or heels that aren't high enough.  Say as much in your response.")); //  + standard_thought_instruction;
+			// DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, are suddenly out of breath and have to stop.  All because you are affected by the Bikini curse that you are wearing something that isn't a bikini or heels that aren't high enough.  Say as much in your response.")); //  + standard_thought_instruction;
 			// std::string sentence_with_non_bikini_items = get_bikini_curse_offending_sentence();
 			check_armor_for_bikini_property();
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player, are suddenly out of breath and have to stop.  All because you are affected by the Bikini curse.  The bikini curse makes it so that you are out of breath, whenever you are either wearing something that isn't a bikini or you are wearing heels that aren't high enough.  Say as much in your response and mention the 'bikini curse'.")); //  + standard_thought_instruction;
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format("YOU, the player character, are suddenly out of breath and have to stop.  All because you are affected by the Bikini curse.  The bikini curse makes it so that you are out of breath, whenever you are either wearing something that isn't a bikini or you are wearing heels that aren't high enough.  Say as much in your response and mention the 'bikini curse'.")); //  + standard_thought_instruction;
 		} 
 		else // i.e.  if (!a_event->isApplied) )
 		{
 			SKSE::log::info("Event handler for SL Bikini Curse out-of-breath-sequence REMOVAL!");  // the removal doesn't get it's own thought-statement, because that would be too much too quickly
-			// DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, were affected by the Bikini Curse the whole time and had to stop and catch your breath all the time. But now you are no longer affected by the curse. This means you can finally move and act normally again!  What a relief!  Say as much in your response.")); //  + standard_thought_instruction;
+			// DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, were affected by the Bikini Curse the whole time and had to stop and catch your breath all the time. But now you are no longer affected by the curse. This means you can finally move and act normally again!  What a relief!  Say as much in your response.")); //  + standard_thought_instruction;
 		}
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}

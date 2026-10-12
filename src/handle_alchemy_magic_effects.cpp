@@ -92,7 +92,7 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 	if (std::strcmp(base_name, "Fatigue") == 0 && std::strcmp(source_name, "Thistle Branch") == 0) {
 		if (a_event->isApplied) {
 			SKSE::log::info("Event handler for FATIGUE effect application from Thistle Branch!");
-			DumpThoughts::throw_out_TTS_thought_message("YOU, the player, just ate a piece of Thistle Branch and received a fatigue effect from it.  Say as much in your response, and make sure you make it clear that Thistle Branch simply causes fatigue.");
+			DumpThoughts::throw_out_TTS_thought_message("YOU, the player character, just ate a piece of Thistle Branch and received a fatigue effect from it.  Say as much in your response, and make sure you make it clear that Thistle Branch simply causes fatigue.");
 		}
 		return true;
 	}
@@ -101,7 +101,7 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 		(std::strcmp(source_name, "Red Mountain Flower") == 0 || std::strcmp(source_name, "Ayleid Moon Moth") == 0)) {
 		if (a_event->isApplied) {
 			SKSE::log::info("Event handler for DRAIN INTELLIGENCE effect application from Red Mountain Flower or Ayleid Moon Moth!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate a piece of {} and received a drain intelligence effect from it.    Say as much in your response, and make sure you make it clear that {} simply causes drain intelligence effect.", source_name, source_name));
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, just ate a piece of {} and received a drain intelligence effect from it.    Say as much in your response, and make sure you make it clear that {} simply causes drain intelligence effect.", source_name, source_name));
 		}
 		return true;
 	}
@@ -109,7 +109,7 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 	if (std::strcmp(base_name, "Damage Health") == 0 && std::strcmp(source_name, "Nirnroot") == 0) {
 		if (a_event->isApplied) {
 			SKSE::log::info("Event handler for DAMAGE HEALTH effect application from Nirnroot or Ayleid Moon Moth!");
-			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player, just ate a piece of {} and received a damage health effect from it.    Say as much in your response, and make sure you make it clear that {} simply causes damage health effect.", source_name, source_name));
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, just ate a piece of {} and received a damage health effect from it.    Say as much in your response, and make sure you make it clear that {} simply causes damage health effect.", source_name, source_name));
 		}
 		return true;
 	}
@@ -117,7 +117,7 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 	if (std::strcmp(base_name, "Damage Stamina Regen") == 0 && std::strcmp(source_name, "Skeever Tail") == 0) {
 		if (a_event->isApplied) {
 			SKSE::log::info("Event handler for DAMAGE STAMINA REGEN effect application from Skeever Tail!");
-			DumpThoughts::throw_out_TTS_thought_message("YOU, the player, just ate a piece of Skeever Tail and received a damage stamina regen effect from it.    Say as much in your response, and make sure you make it clear that Skeever Tail simply causes damage stamina regeneration effect.");
+			DumpThoughts::throw_out_TTS_thought_message("YOU, the player character, just ate a piece of Skeever Tail and received a damage stamina regen effect from it.    Say as much in your response, and make sure you make it clear that Skeever Tail simply causes damage stamina regeneration effect.");
 		}
 		return true;
 	}
@@ -125,7 +125,7 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 	if (std::strcmp(base_name, "Damage Stamina Regen") == 0 && std::strcmp(source_name, "Spider Silk") == 0) {
 		if (a_event->isApplied) {
 			SKSE::log::info("Event handler for DAMAGE STAMINA REGEN effect application from Spider Silk!");
-			DumpThoughts::throw_out_TTS_thought_message("YOU, the player, just consumed Spider Silk and received a damage stamina regen effect from it.    Say as much in your response, and make sure you make it clear that Spider Silk simply causes damage stamina regeneration effect.");
+			DumpThoughts::throw_out_TTS_thought_message("YOU, the player character, just consumed Spider Silk and received a damage stamina regen effect from it.    Say as much in your response, and make sure you make it clear that Spider Silk simply causes damage stamina regeneration effect.");
 		}
 		return true;
 	}
@@ -133,7 +133,7 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 	if (std::strcmp(base_name, "Reduce Orgasm Resistance") == 0 && std::strcmp(source_name, "Spider Silk") == 0) {
 		if (a_event->isApplied) {
 			SKSE::log::info("Event handler for REDUCE ORGASM RESISTANCE effect application from Ancient Seed!");
-			DumpThoughts::throw_out_TTS_thought_message("YOU, the player, just consumed Ancient Seed and received a reduce orgasm resistance effect from it.    Say as much in your response, and make sure you make it clear that Ancient Seed simply causes reduce orgasm resistance effect.");
+			DumpThoughts::throw_out_TTS_thought_message("YOU, the player character, just consumed Ancient Seed and received a reduce orgasm resistance effect from it.    Say as much in your response, and make sure you make it clear that Ancient Seed simply causes reduce orgasm resistance effect.");
 		}
 		return true;
 	}

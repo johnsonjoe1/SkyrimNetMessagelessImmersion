@@ -63,25 +63,25 @@ namespace
 		switch (stage) {
 		case 0:
 			if (previous_stage == -10) {
-				return "YOU, the player, have just noticed that your damaged fingernails have finally recovered. They can safely be polished or manicured again. Be sure to mention your recovered fingernails explicitly and describe how you feel about being able to care for them normally again.";
+				return "YOU, the player character, have just noticed that your damaged fingernails have finally recovered. They can safely be polished or manicured again. Be sure to mention your recovered fingernails explicitly and describe how you feel about being able to care for them normally again.";
 			}
-			return std::format("YOU, the player, have just noticed that no polish remains on your {} now, whether it was removed or finally chipped away. Notice how bare they look and describe what you think and feel about no longer wearing nail polish there. Be sure to mention your {} explicitly so the reason for the thought is clear.", nails, nails);
+			return std::format("YOU, the player character, have just noticed that no polish remains on your {} now, whether it was removed or finally chipped away. Notice how bare they look and describe what you think and feel about no longer wearing nail polish there. Be sure to mention your {} explicitly so the reason for the thought is clear.", nails, nails);
 		case 20:
-			return std::format("YOU, the player, have just finished applying {} to your {}. The fresh polish is still wet and can easily smudge, so you should avoid moving around until it dries. Notice how it looks and let us know how you feel about it.", colour_description, nails);
+			return std::format("YOU, the player character, have just finished applying {} to your {}. The fresh polish is still wet and can easily smudge, so you should avoid moving around until it dries. Notice how it looks and let us know how you feel about it.", colour_description, nails);
 		case 30:
-			return std::format("YOU, the player, have just noticed that the fresh {} on your {} has become visibly smudged, probably because you moved before it dried. React to the spoiled finish and be sure to mention your {} explicitly.", colour_description, nails, nails);
+			return std::format("YOU, the player character, have just noticed that the fresh {} on your {} has become visibly smudged, probably because you moved before it dried. React to the spoiled finish and be sure to mention your {} explicitly.", colour_description, nails, nails);
 		case 40:
-			return std::format("YOU, the player, have just noticed that the {} on your {} has completely dried. You can move normally again without worrying about smudging it. Admire the finished result and mention your {} explicitly.", colour_description, nails, nails);
+			return std::format("YOU, the player character, have just noticed that the {} on your {} has completely dried. You can move normally again without worrying about smudging it. Admire the finished result and mention your {} explicitly.", colour_description, nails, nails);
 		case 50:
-			return std::format("YOU, the player, now have a finished professional {} on your {} with {}. Notice the durable, carefully finished result and describe how it makes you feel. Be sure to mention your {} explicitly.", professional_service, nails, colour_description, nails);
+			return std::format("YOU, the player character, now have a finished professional {} on your {} with {}. Notice the durable, carefully finished result and describe how it makes you feel. Be sure to mention your {} explicitly.", professional_service, nails, colour_description, nails);
 		case 54:
-			return "YOU, the player, have just noticed that the artificial tips of your professionally manicured fingernails are cracked or broken. You now need a refill at a nail salon before the damage becomes worse. Be sure to mention your broken fingernail tips explicitly and react to the spoiled manicure.";
+			return "YOU, the player character, have just noticed that the artificial tips of your professionally manicured fingernails are cracked or broken. You now need a refill at a nail salon before the damage becomes worse. Be sure to mention your broken fingernail tips explicitly and react to the spoiled manicure.";
 		case 60:
-			return std::format("YOU, the player, have just noticed that the {} on your {} is beginning to chip. It is still present, but the finish no longer looks fresh. React to the deterioration and mention your {} explicitly.", colour_description, nails, nails);
+			return std::format("YOU, the player character, have just noticed that the {} on your {} is beginning to chip. It is still present, but the finish no longer looks fresh. React to the deterioration and mention your {} explicitly.", colour_description, nails, nails);
 		case 70:
-			return std::format("YOU, the player, have just noticed that only untidy remnants of {} remain on your {}. They will not disappear cleanly on their own, so you should use nail-polish remover. Mention your {} explicitly and let us know how the neglected finish makes you feel.", colour_description, nails, nails);
+			return std::format("YOU, the player character, have just noticed that only untidy remnants of {} remain on your {}. They will not disappear cleanly on their own, so you should use nail-polish remover. Mention your {} explicitly and let us know how the neglected finish makes you feel.", colour_description, nails, nails);
 		case -10:
-			return "YOU, the player, have just noticed that your fingernails are scratched and damaged after losing their artificial nail tips. They need time to recover, and you cannot safely polish them again yet. Be sure to mention your damaged fingernails explicitly and consider visiting a nail salon.";
+			return "YOU, the player character, have just noticed that your fingernails are scratched and damaged after losing their artificial nail tips. They need time to recover, and you cannot safely polish them again yet. Be sure to mention your damaged fingernails explicitly and consider visiting a nail salon.";
 		default:
 			return {};
 		}
@@ -268,7 +268,7 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		}
 
 		const auto final_thought_string = std::format(
-			"YOU, the player, have just had your hair dyed {}. Notice how the new colour changes your appearance and describe what you think and feel about it. Be sure to mention both your hair and its new {} colour explicitly so the reason for the thought is clear.",
+			"YOU, the player character, have just had your hair dyed {}. Notice how the new colour changes your appearance and describe what you think and feel about it. Be sure to mention both your hair and its new {} colour explicitly so the reason for the thought is clear.",
 			a_event->strArg.c_str(), a_event->strArg.c_str());
 		SKSE::log::info("YPS reports that the player's hair was dyed {} (colour value {}).", a_event->strArg.c_str(), a_event->numArg);
 		LillithOnlyBox(final_thought_string);
@@ -286,7 +286,7 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		const bool should_redye_hair = a_event->numArg == 1.0f;
 		if (should_redye_hair && !yps_hair_redye_reminder_active) {
 			const std::string final_thought_string =
-				"YOU, the player, have just noticed that your dyed hair no longer looks freshly coloured. Either your natural-coloured roots are visibly growing out or your semi-permanent hair colour is beginning to fade. Think about how the change looks and whether you should visit a hairdresser to refresh the dye. Be sure to mention your fading or grown-out hair dye explicitly so the reason for the thought is clear.";
+				"YOU, the player character, have just noticed that your dyed hair no longer looks freshly coloured. Either your natural-coloured roots are visibly growing out or your semi-permanent hair colour is beginning to fade. Think about how the change looks and whether you should visit a hairdresser to refresh the dye. Be sure to mention your fading or grown-out hair dye explicitly so the reason for the thought is clear.";
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string);
 		}
@@ -335,15 +335,15 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		std::string final_thought_string;
 		if (smudged) {
 			final_thought_string = std::format(
-				"YOU, the player, have just noticed that your{} {} is visibly smudged. React to the spoiled makeup and consider whether you need to fix it. Be sure to mention your {} explicitly so the reason for the thought is clear.",
+				"YOU, the player character, have just noticed that your{} {} is visibly smudged. React to the spoiled makeup and consider whether you need to fix it. Be sure to mention your {} explicitly so the reason for the thought is clear.",
 				colour, cosmetic, cosmetic);
 		} else if (!worn) {
 			final_thought_string = std::format(
-				"YOU, the player, have just removed or worn away your {}. Notice how bare your {} look without it and describe what you think and feel about no longer wearing it. Be sure to mention your {} explicitly so the reason for the thought is clear.",
+				"YOU, the player character, have just removed or worn away your {}. Notice how bare your {} look without it and describe what you think and feel about no longer wearing it. Be sure to mention your {} explicitly so the reason for the thought is clear.",
 				cosmetic, location, cosmetic);
 		} else {
 			final_thought_string = std::format(
-				"YOU, the player, have just applied or refreshed your{} {}. Notice how the colour changes the appearance of your {} and describe what you think and feel about the result. Be sure to mention your {} explicitly so the reason for the thought is clear.",
+				"YOU, the player character, have just applied or refreshed your{} {}. Notice how the colour changes the appearance of your {} and describe what you think and feel about the result. Be sure to mention your {} explicitly so the reason for the thought is clear.",
 				colour, cosmetic, location, cosmetic);
 		}
 
@@ -408,8 +408,8 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		}
 
 		const auto final_thought_string = state == 1 ?
-			std::format("YOU, the player, have just put on {}. Notice how the stockings look and feel on your legs and describe what you think about wearing them. Be sure to mention the stockings explicitly so the reason for the thought is clear.", current_state.colour_or_item.empty() ? "a pair of stockings" : current_state.colour_or_item) :
-			std::string("YOU, the player, have just taken off your stockings. Notice how different your bare legs look and feel now and describe what you think about removing them. Be sure to mention the stockings explicitly so the reason for the thought is clear.");
+			std::format("YOU, the player character, have just put on {}. Notice how the stockings look and feel on your legs and describe what you think about wearing them. Be sure to mention the stockings explicitly so the reason for the thought is clear.", current_state.colour_or_item.empty() ? "a pair of stockings" : current_state.colour_or_item) :
+			std::string("YOU, the player character, have just taken off your stockings. Notice how different your bare legs look and feel now and describe what you think about removing them. Be sure to mention the stockings explicitly so the reason for the thought is clear.");
 		throw_out_yps_fashion_thought(final_thought_string);
 		return true;
 	}
@@ -441,8 +441,8 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		}
 
 		const auto final_thought_string = equipped ?
-			std::format("YOU, the player, have just put jewellery into the piercing at your {}. Notice the jewellery and how it feels there, and describe what you think about wearing it. Be sure to mention the {} piercing explicitly so the reason for the thought is clear.", piercing_slot_names[slot], piercing_slot_names[slot]) :
-			std::format("YOU, the player, have just removed the jewellery from the piercing at your {}. Notice how the empty piercing feels and describe what you think about no longer wearing jewellery there. Be sure to mention the {} piercing explicitly so the reason for the thought is clear.", piercing_slot_names[slot], piercing_slot_names[slot]);
+			std::format("YOU, the player character, have just put jewellery into the piercing at your {}. Notice the jewellery and how it feels there, and describe what you think about wearing it. Be sure to mention the {} piercing explicitly so the reason for the thought is clear.", piercing_slot_names[slot], piercing_slot_names[slot]) :
+			std::format("YOU, the player character, have just removed the jewellery from the piercing at your {}. Notice how the empty piercing feels and describe what you think about no longer wearing jewellery there. Be sure to mention the {} piercing explicitly so the reason for the thought is clear.", piercing_slot_names[slot], piercing_slot_names[slot]);
 		throw_out_yps_fashion_thought(final_thought_string);
 		return true;
 	}
@@ -479,35 +479,35 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		switch (product_index) {
 		case 0:
 			if (applied) {
-				final_thought_string = "YOU, the player, have just gently spread lip balm over your lips. Notice their softer, smoother feeling and subtle sheen, and describe how this small act of care makes you feel. Be sure to mention the lip balm explicitly so the reason for the thought is clear.";
+				final_thought_string = "YOU, the player character, have just gently spread lip balm over your lips. Notice their softer, smoother feeling and subtle sheen, and describe how this small act of care makes you feel. Be sure to mention the lip balm explicitly so the reason for the thought is clear.";
 			} else if (previous_yps_lipstick_state && previous_yps_lipstick_state->state > 0) {
-				final_thought_string = "YOU, the player, are no longer wearing lip balm because it has been replaced by lipstick. Notice the change from simple lip care to visible colour and describe how the more decorative look makes you feel. Be sure to mention both the lip balm and lipstick explicitly so the reason for the thought is clear.";
+				final_thought_string = "YOU, the player character, are no longer wearing lip balm because it has been replaced by lipstick. Notice the change from simple lip care to visible colour and describe how the more decorative look makes you feel. Be sure to mention both the lip balm and lipstick explicitly so the reason for the thought is clear.";
 			} else {
-				final_thought_string = "YOU, the player, have just noticed that your lip balm has faded away. Your lips no longer feel as freshly softened or protected, so consider whether you want to apply it again. Be sure to mention the faded lip balm explicitly so the reason for the thought is clear.";
+				final_thought_string = "YOU, the player character, have just noticed that your lip balm has faded away. Your lips no longer feel as freshly softened or protected, so consider whether you want to apply it again. Be sure to mention the faded lip balm explicitly so the reason for the thought is clear.";
 			}
 			break;
 		case 1:
 			if (applied) {
-				final_thought_string = "YOU, the player, have just gently applied anti-aging cream around your eyes. Notice the cared-for feeling of the skin there and describe how tending to your appearance makes you feel. Be sure to mention the anti-aging cream explicitly so the reason for the thought is clear.";
+				final_thought_string = "YOU, the player character, have just gently applied anti-aging cream around your eyes. Notice the cared-for feeling of the skin there and describe how tending to your appearance makes you feel. Be sure to mention the anti-aging cream explicitly so the reason for the thought is clear.";
 			} else if (previous_yps_eyeshadow_state && previous_yps_eyeshadow_state->state > 0) {
-				final_thought_string = "YOU, the player, are no longer wearing anti-aging cream because it has been replaced by eyeshadow. Notice the change from understated skin care to visible eye makeup and describe how the more decorative look makes you feel. Be sure to mention both the cream and eyeshadow explicitly so the reason for the thought is clear.";
+				final_thought_string = "YOU, the player character, are no longer wearing anti-aging cream because it has been replaced by eyeshadow. Notice the change from understated skin care to visible eye makeup and describe how the more decorative look makes you feel. Be sure to mention both the cream and eyeshadow explicitly so the reason for the thought is clear.";
 			} else {
-				final_thought_string = "YOU, the player, have just noticed that the anti-aging cream around your eyes has faded away. The cared-for effect no longer feels fresh, so consider whether you want to apply it again. Be sure to mention the faded anti-aging cream explicitly so the reason for the thought is clear.";
+				final_thought_string = "YOU, the player character, have just noticed that the anti-aging cream around your eyes has faded away. The cared-for effect no longer feels fresh, so consider whether you want to apply it again. Be sure to mention the faded anti-aging cream explicitly so the reason for the thought is clear.";
 			}
 			break;
 		case 2:
 			if (applied) {
-				final_thought_string = "YOU, the player, have just gently spread nail oil over your fingernails. Notice their freshly cared-for sheen and smooth feeling, and describe how this simple manicure care makes you feel. Be sure to mention the fingernail oil explicitly so the reason for the thought is clear.";
+				final_thought_string = "YOU, the player character, have just gently spread nail oil over your fingernails. Notice their freshly cared-for sheen and smooth feeling, and describe how this simple manicure care makes you feel. Be sure to mention the fingernail oil explicitly so the reason for the thought is clear.";
 			} else if (previous_yps_fingernail_state && previous_yps_fingernail_state->state > 0) {
-				final_thought_string = "YOU, the player, are no longer wearing fingernail oil because it has been replaced by nail polish. Notice the change from a natural cared-for sheen to a visibly polished manicure and describe how it makes you feel. Be sure to mention both the nail oil and nail polish explicitly so the reason for the thought is clear.";
+				final_thought_string = "YOU, the player character, are no longer wearing fingernail oil because it has been replaced by nail polish. Notice the change from a natural cared-for sheen to a visibly polished manicure and describe how it makes you feel. Be sure to mention both the nail oil and nail polish explicitly so the reason for the thought is clear.";
 			} else {
-				final_thought_string = "YOU, the player, have just noticed that the oil on your fingernails has faded away. They no longer have that freshly cared-for sheen, so consider whether you want to oil them again. Be sure to mention the faded fingernail oil explicitly so the reason for the thought is clear.";
+				final_thought_string = "YOU, the player character, have just noticed that the oil on your fingernails has faded away. They no longer have that freshly cared-for sheen, so consider whether you want to oil them again. Be sure to mention the faded fingernail oil explicitly so the reason for the thought is clear.";
 			}
 			break;
 		case 3:
 			final_thought_string = applied ?
-				"YOU, the player, have just applied perfume to your body. Notice the fragrance surrounding you and describe how wearing this scent affects your mood and sense of style. Be sure to mention the perfume explicitly so the reason for the thought is clear." :
-				"YOU, the player, have just noticed that your perfume has faded away. The fragrance that accompanied you is gone now, so consider whether you miss it or want to apply another scent. Be sure to mention the faded perfume explicitly so the reason for the thought is clear.";
+				"YOU, the player character, have just applied perfume to your body. Notice the fragrance surrounding you and describe how wearing this scent affects your mood and sense of style. Be sure to mention the perfume explicitly so the reason for the thought is clear." :
+				"YOU, the player character, have just noticed that your perfume has faded away. The fragrance that accompanied you is gone now, so consider whether you miss it or want to apply another scent. Be sure to mention the faded perfume explicitly so the reason for the thought is clear.";
 			break;
 		default:
 			return true;
@@ -541,11 +541,11 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		std::string final_thought_string;
 		if (hair_stage > previous_stage) {
 			final_thought_string = std::format(
-				"YOU, the player, have just noticed that your hair has grown from {} to {}. Describe how the new length looks and feels, and let us know what you think about your visibly longer hair. Be sure to mention your hair explicitly so the reason for the thought is clear.",
+				"YOU, the player character, have just noticed that your hair has grown from {} to {}. Describe how the new length looks and feels, and let us know what you think about your visibly longer hair. Be sure to mention your hair explicitly so the reason for the thought is clear.",
 				yps_hair_stage_names[previous_stage - 1], yps_hair_stage_names[hair_stage - 1]);
 		} else {
 			final_thought_string = std::format(
-				"YOU, the player, have just noticed that your hair length has changed from {} to {}, probably because it was cut. Describe how the shorter style looks and feels, and let us know what you think about it. Be sure to mention your hair explicitly so the reason for the thought is clear.",
+				"YOU, the player character, have just noticed that your hair length has changed from {} to {}, probably because it was cut. Describe how the shorter style looks and feels, and let us know what you think about it. Be sure to mention your hair explicitly so the reason for the thought is clear.",
 				yps_hair_stage_names[previous_stage - 1], yps_hair_stage_names[hair_stage - 1]);
 		}
 
@@ -558,11 +558,11 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 	if (std::strcmp(a_event->eventName.c_str() , "yps_ArmpitHairStageChange") == 0) {			
 		SKSE::log::info("YPS-ArmpitHairStageChange event detected.");
 		if (a_event->numArg == 0) {
-			std::string final_thought_string = std::format("YOU, the player, just noticed, that your armpit hair is completely gone, probably because you shaved it, which is MUCH more fashionable for a woman than having armpit hair.  Be sure to mention your armpit hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the armpit hair situation makes you feel.");
+			std::string final_thought_string = std::format("YOU, the player character, just noticed, that your armpit hair is completely gone, probably because you shaved it, which is MUCH more fashionable for a woman than having armpit hair.  Be sure to mention your armpit hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the armpit hair situation makes you feel.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;
 		} else {
-			std::string final_thought_string = std::format("YOU, the player, just noticed, that your armpit hair has grown even more.  Out of the 5 stages from 0 = shaved to 5 = fully grown, you have now reached stage {}.  Describe the new state of your armpit hair in your response.  Be sure to mention armpit hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the armpit hair situation makes you feel.", a_event->numArg);
+			std::string final_thought_string = std::format("YOU, the player character, just noticed, that your armpit hair has grown even more.  Out of the 5 stages from 0 = shaved to 5 = fully grown, you have now reached stage {}.  Describe the new state of your armpit hair in your response.  Be sure to mention armpit hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the armpit hair situation makes you feel.", a_event->numArg);
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 		}
@@ -572,11 +572,11 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 	if (std::strcmp(a_event->eventName.c_str() , "yps_PubicHairStageChange") == 0) {			
 		SKSE::log::info("YPS-PubicHairStageChange event detected.");
 		if (a_event->numArg == 0) {
-			std::string final_thought_string = std::format("YOU, the player, just noticed, that your pubic hair is completely gone, probably because you shaved it, which is MUCH more fashionable for a woman than having pubic hair.  Be sure to mention your pubic hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the pubic hair situation makes you feel.");
+			std::string final_thought_string = std::format("YOU, the player character, just noticed, that your pubic hair is completely gone, probably because you shaved it, which is MUCH more fashionable for a woman than having pubic hair.  Be sure to mention your pubic hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the pubic hair situation makes you feel.");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;
 		} else {
-			std::string final_thought_string = std::format("YOU, the player, just noticed, that your pubic hair has grown even more.  Out of the 5 stages from 0 = shaved to 5 = fully grown, you have now reached stage {}.  Describe the new state of your pubic hair in your response.  Be sure to mention pubic hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the pubic hair situation makes you feel.", a_event->numArg);
+			std::string final_thought_string = std::format("YOU, the player character, just noticed, that your pubic hair has grown even more.  Out of the 5 stages from 0 = shaved to 5 = fully grown, you have now reached stage {}.  Describe the new state of your pubic hair in your response.  Be sure to mention pubic hair explicitly in your response, because the player wouldn't otherwise know what you are talking about, and let us know how the pubic hair situation makes you feel.", a_event->numArg);
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;
 		}
@@ -623,7 +623,7 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 			// Due to what seems like a bug to me, there will be slowdown effect even when not wearing heels.  In that case of course we don't complain about the heels.  So we have to catch that here.
 			if ( (effect->magnitude < 0) && actually_wearing_heels_according_to_yps_thoughts) {
 				SKSE::log::info("xxxxxxxxxxx High Heels Novice MAGIC EFFECT PROPERLY DETECTED");
-				DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You already have some experience with them, but you are still a High Heels Novice, so they still slow you down a bit. It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+				DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player character, are currently wearing high heels. You already have some experience with them, but you are still a High Heels Novice, so they still slow you down a bit. It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
 			}
 			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		} else {  //  i.e. if (!a_event->isApplied) {
@@ -638,7 +638,7 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 		{
 			SKSE::log::info("xxxxxxxxxxx YPS 'Untrained Feet' (high heels) MAGIC EFFECT PROPERLY DETECTED");
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS UNTRAINED FEET! ", base_name);
-			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now.  It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player character, are currently wearing high heels. You are totally untrained with high heels. You are not even a High Heels Novice yet. So they slow you down massively now.  It will take maybe another day or two until you get the hang of them and can move a bit faster in them.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
 			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		}
 		if ( (!a_event->isApplied) ) {
@@ -653,7 +653,7 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 		{
 			SKSE::log::info("xxxxxxxxxxx YPS 'Flexible Feet' (high heels) MAGIC EFFECT PROPERLY DETECTED");
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS FLEXIBLE FEET! ", base_name);
-			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, have been wearing high heels quite a while now. Your feet are now bent to the shape of the heels.  That means you are just as clumsy without the heels now than you are with the heels.  This means you might just as well continue your high heels training, so that you will be able to move faster again once your feet permanently reach even more permanently arched state.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player character, have been wearing high heels quite a while now. Your feet are now bent to the shape of the heels.  That means you are just as clumsy without the heels now than you are with the heels.  This means you might just as well continue your high heels training, so that you will be able to move faster again once your feet permanently reach even more permanently arched state.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
 			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		}
 		if ( (!a_event->isApplied) ) {
@@ -668,7 +668,7 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 		{
 			SKSE::log::info("xxxxxxxxxxx YPS 'High Heel Walker' (high heels) MAGIC EFFECT PROPERLY DETECTED");
 			std::string stomach_rot_status = std::format("{} Magic Event Effect Handler for YPS HIGH HEEL WALKER! ", base_name);
-			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player, have been wearing high heels quite a while now. Your feet are now bent to the shape of the heels, more than they are adapted to flat shoes.  That means you are now more clumsy without the heels than you are with the heels.  This means you need to continue walking in high heels, because this is a bit faster now, and going without high heels will just slow you down.  And when you train your feet even more with high heels, you will be faster still.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
+			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(std::format("YOU, the player character, have been wearing high heels quite a while now. Your feet are now bent to the shape of the heels, more than they are adapted to flat shoes.  That means you are now more clumsy without the heels than you are with the heels.  This means you need to continue walking in high heels, because this is a bit faster now, and going without high heels will just slow you down.  And when you train your feet even more with high heels, you will be faster still.  Say as much in your response.")); //  + standard_thought_instruction;);   // this shouldn't be overdone, but hte background code makes sure of that.
 			// NOTE:  Return-Control from Effect Handler will be done outside in the calling function!!!!   return RE::BSEventNotifyControl::kContinue;
 		}
 	}
@@ -678,7 +678,7 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 		if ((a_event->isApplied) && (effect->magnitude < 0) )
 		{
 			SKSE::log::info("xxxxxxxxxxx YPS 'Arched Feet' MAGIC EFFECT PROPERLY DETECTED");
-			const std::string final_thought_string = "YOU, the player, have trained in high heels so extensively that your feet have become permanently arched. Walking without heels now feels awkward and difficult because your feet are more comfortable in a raised position. Describe how this physical change and dependence on high heels makes you feel. Be sure to mention your arched feet explicitly so the reason for the thought is clear.";
+			const std::string final_thought_string = "YOU, the player character, have trained in high heels so extensively that your feet have become permanently arched. Walking without heels now feels awkward and difficult because your feet are more comfortable in a raised position. Describe how this physical change and dependence on high heels makes you feel. Be sure to mention your arched feet explicitly so the reason for the thought is clear.";
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(final_thought_string);
 		}
@@ -692,7 +692,7 @@ void handle_yps::handle_yps_magic_effect_stuff(const RE::TESActiveEffectApplyRem
 		if ((a_event->isApplied) && (effect->magnitude < 0) )
 		{
 			SKSE::log::info("xxxxxxxxxxx YPS 'Bondage Feet' MAGIC EFFECT PROPERLY DETECTED");
-			const std::string final_thought_string = "YOU, the player, have completed your high heel training and your feet have become extremely and permanently arched. Walking barefoot or in ordinary high heels is now difficult; only very steep bondage boots properly support the shape of your feet. Describe how this severe physical change and dependence on bondage boots makes you feel. Be sure to mention your bondage feet explicitly so the reason for the thought is clear.";
+			const std::string final_thought_string = "YOU, the player character, have completed your high heel training and your feet have become extremely and permanently arched. Walking barefoot or in ordinary high heels is now difficult; only very steep bondage boots properly support the shape of your feet. Describe how this severe physical change and dependence on bondage boots makes you feel. Be sure to mention your bondage feet explicitly so the reason for the thought is clear.";
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_BACKGROUND_TTS_thought_message(final_thought_string);
 		}
