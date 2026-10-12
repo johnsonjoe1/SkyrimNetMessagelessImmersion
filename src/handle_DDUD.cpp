@@ -199,10 +199,11 @@ bool handle_DDUD::handle_DDUD_inflatable_plug_effect(
 		return false;
 	}
 
+	// This message can be broadcast after 19 seconds of silence, since it's not the most urgent one in a setting of many bondage items.
 	if (a_event->isApplied) {
-		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format(
+		DumpThoughts::throw_out_TTS_thought_message_after_silence(std::format(
 			"YOU, the player, just had an {} fitted. This newly applied plug is inflatable and could inflate at any time. Say so in your response, and make it clear which plug you are now wearing and that it could inflate at any time.",
-			base_name));
+			base_name), 19);
 	}
 	return true;
 }
