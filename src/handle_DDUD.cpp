@@ -218,14 +218,13 @@ bool handle_DDUD::handle_DDUD_hobble_skirt_forced_walk_effect(
 
 	auto* base = a_effect->GetBaseObject();
 	auto* source = a_effect->spell;
-	if (!base || !source || std::strcmp(base->GetName(), "Forced Walk Mode") != 0 ||
-		std::strcmp(source->GetName(), "Hobble Skirt") != 0) {
+	if (!base || !source || std::strcmp(base->GetName(), "Forced Walk Mode") != 0 ) {
 		return false;
 	}
 
 	const std::string thought = a_event->isApplied ?
-		"YOU, the player, are now forced to take only mini-steps or bunny-hops because your hobble skirt restricts your stride and prevents you from walking normally. Say so in your response, and make it clear that the hobble skirt is causing this restriction." :
-		"YOU, the player, are no longer forced to walk in mini-steps or bunny-hops by the hobble skirt. Its forced walking restriction has just ended. Say so in your response, and mention the hobble skirt.";
+		"YOU, the player, are now forced to take only mini-steps or bunny-hops because your tight leg bondage restricts your stride and prevents you from walking normally. Say so in your response, and make it clear that the tight leg bondage, is causing this restriction. If it is absolutely clear, that it was a hobble-skirt you are wearing, you can mention that as well." :
+		"YOU, the player, are no longer forced to walk in mini-steps or bunny-hops by the hobble skirt. Its forced walking restriction has just ended. Say so in your response, and mention the heavy leg bondage. If it is absolutely clear, that it was a hobble-skirt you were wearing, you can mention that as well.";
 	DumpThoughts::throw_out_TTS_thought_message_after_silence(thought, 18);
 	return true;
 }
