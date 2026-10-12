@@ -56,6 +56,15 @@ namespace
 		auto* base = a_effect->GetBaseObject();
 		auto* source = a_effect->spell;
 
+		if (base && std::strcmp(base->GetName(), "Muffling Script") == 0) {
+			if (a_event->isApplied) {
+				DumpThoughts::throw_out_TTS_thought_message_after_silence(
+					"YOU, the player character, cannot hear anything clearly due to the hood you are wearing. Everything seems muffled. Say so in your response, and make it clear that the hood is muffling your hearing.",
+					24);
+			}
+			return true;
+		}
+
 		if (std::strcmp(base->GetName(), "Blindfold Script") == 0) {
 			const std::string thought = a_event->isApplied ?
 				"YOU, the player character, just got looked into a hood or blindfold, and that hood doesn't even let you see anything, so that you are completely blindfolded. Say as much in your response, and be sure to make it clear, that you speak about the hood or blindfold that you are wearing now." :
@@ -92,7 +101,7 @@ namespace
 			return true;
 		}
 
-		return std::strcmp(base->GetName(), "Muffling Script") == 0;
+		return false;
 	}
 
 	/*
