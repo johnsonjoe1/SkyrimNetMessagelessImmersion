@@ -1,5 +1,7 @@
 Scriptname SNMI_Native Hidden
 
+Bool Function IsDebugLoggingEnabled() Global Native
+
 Function SetMilkLevel(float a_value) Global Native
 Function SetMilkMax(float a_value) Global Native
 function SetLactacidLevel(float a_value) Global Native

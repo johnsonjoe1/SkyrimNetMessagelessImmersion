@@ -129,8 +129,14 @@ Event OnSexLabAnimationStart(int threadId, bool hasPlayer)
 
 EndEvent
 
+function TraceDebug(string log_message) Global
+	if SNMI_Native.IsDebugLoggingEnabled()
+		Debug.Trace(log_message)
+	endif
+EndFunction
+
 function lillith_notification(string notification_string) Global
-	Debug.Trace("[SNMI] " + notification_string)
+	TraceDebug("[SNMI] " + notification_string)
 	if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
 		Debug.Notification(notification_string)
 	endif
@@ -146,7 +152,7 @@ ReferenceAlias Function GetAproposAlias(Actor akTarget, Quest apropos2Quest ) Gl
 	ReferenceAlias AliasSelect
 	Int aliasesInt = apropos2Quest.GetNumAliases() 
 	;slw_log.WriteLog("Apropos2 actor count" + aliasesInt)
-	Debug.Trace("[SNMI] Apropos2 actor count: " + aliasesInt)
+	TraceDebug("[SNMI] Apropos2 actor count: " + aliasesInt)
 	While i < aliasesInt 
 		AliasSelect = apropos2Quest.GetNthAlias(i) as ReferenceAlias
 
@@ -161,7 +167,7 @@ ReferenceAlias Function GetAproposAlias(Actor akTarget, Quest apropos2Quest ) Gl
 
 		If aliasActor == akTarget
 			;slw_log.WriteLog("Apropos2 player found")
-			Debug.Trace("[SNMI] Apropos2 player found")
+			TraceDebug("[SNMI] Apropos2 player found")
 			aproposTwoAlias = AliasSelect
 			Return aproposTwoAlias
 		else
@@ -234,16 +240,16 @@ Function TestApropos()
 	Quest aproposQuest = Game.GetFormFromFile(0x02902C, "Apropos2.esp") as Quest
 
 	if aproposQuest == None
-		Debug.Trace("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Apropos quest not found")
+		TraceDebug("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Apropos quest not found")
 		return
 	endif
 
-	Debug.Trace("SNMI:  Apropos2Quest is running = " + aproposQuest.IsRunning())
+	TraceDebug("SNMI:  Apropos2Quest is running = " + aproposQuest.IsRunning())
 
 	ReferenceAlias my_alias = GetAproposAlias(Game.GetPlayer(), aproposQuest)
     if my_alias == None
         ; Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  No Apropos my_alias found")
-        Debug.Trace("[SNMI]  SNMI_Papyrus_Brige_Script.psc:  No Apropos my_alias found.  -->  This can mean that there simply wasn't any wear-and-tear yet, so the player is not yet registered in Apropos2.  This is normal and expected.")
+        TraceDebug("[SNMI]  SNMI_Papyrus_Brige_Script.psc:  No Apropos my_alias found.  -->  This can mean that there simply wasn't any wear-and-tear yet, so the player is not yet registered in Apropos2.  This is normal and expected.")
 		; String akActorName = Game.GetPlayer().GetLeveledActorBase().GetName()
 		; Debug.Notification("Actor "+ akActorName + " is not yet registered in Apropos2")
 
@@ -267,9 +273,9 @@ Function TestApropos()
         return
     endif
     ; Debug.Notification("SNMI:  SNMI_Papyrus_Brige_Script.psc:  Cast OK")
-    Debug.Trace("[SNMI] Vaginal  = " + ap.VaginalWearTearState)
-    Debug.Trace("[SNMI] Anal     = " + ap.AnalWearTearState)
-    Debug.Trace("[SNMI] Oral     = " + ap.OralWearTearState)
+    TraceDebug("[SNMI] Vaginal  = " + ap.VaginalWearTearState)
+    TraceDebug("[SNMI] Anal     = " + ap.AnalWearTearState)
+    TraceDebug("[SNMI] Oral     = " + ap.OralWearTearState)
 	; Final status can be printed as a notification for now.
 
 	if sparcity_counter == 0
@@ -332,7 +338,7 @@ function push_all_MME_variables_to_the_plugin()
     if False ;  Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
         lillith_notification("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", mme_maid_level: " + mme_maid_level )
 	Else
-        Debug.Trace("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", mme_maid_level: " + mme_maid_level )
+        TraceDebug("[SNMI] 10-sec-update: cur_milk: " + current_milk_value + ", max_milk: " + MilkMax + ", cur_lactacid: " + current_lactacid + ", mme_maid_level: " + mme_maid_level )
     endif 
 
 endfunction
@@ -347,7 +353,7 @@ function push_all_YPS_variables_to_the_plugin()
 	int i = 0
 	while i < count
 		string condition = StorageUtil.StringListGet(None, "ypsActiveConditionsList", i)
-		Debug.Trace("YPS Condition[" + i + "] = " + condition)
+		TraceDebug("YPS Condition[" + i + "] = " + condition)
 		; For testing:
 		; lillith_notification(condition)
 		if i > 0
@@ -357,7 +363,7 @@ function push_all_YPS_variables_to_the_plugin()
 		i += 1
 	endWhile	
 	; lillith_notification("Final YPS condition list: " + allConditions )
-	Debug.Trace("[SNMI]  Final YPS condition list: " + allConditions )
+	TraceDebug("[SNMI]  Final YPS condition list: " + allConditions )
     SNMI_Native.SetYpsConditionString(allConditions)
 
 	float yps_AddictionLevel = StorageUtil.GetIntValue(None, "yps_AddictionLevel") ; current Fashion Addiction level (0-16)
@@ -393,9 +399,9 @@ function push_lovesick_variables_to_the_plugin()
     ; Only the DEBUG-Player will receive these extra notifications, so as to make them invisible for players in the release.
     if Game.GetPlayer().GetLeveledActorBase().GetName() == "Lillith"
          ; Debug.Notification("[SNMI] 10-sec-update: Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
-		 Debug.Trace("[SNMI] 10-sec-update: Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
+		 TraceDebug("[SNMI] 10-sec-update: Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
 	Else
-        Debug.Trace("[SNMI] 10-sec-update: Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
+        TraceDebug("[SNMI] 10-sec-update: Counter: " + Math.Floor(keepalive_value) + ", Lovesick: " + LVSK_IsLovesick + ", Euphoria: " + LVSK_Euphoria)
     endif 
 	SNMI_Native.set_lovesickness_flag(LVSK_IsLovesick)
 	SNMI_Native.set_lovesickness_euphoria(LVSK_Euphoria)
@@ -422,9 +428,9 @@ function get_slavetats_state() global
     Actor player = Game.GetPlayer()
     int applied = JFormDB.getObj(player, ".SlaveTats.applied")
 
-    Debug.Trace("SNMI:  SlaveTatsState: Applied tattoos for " + player.GetLeveledActorBase().GetName() + ":")
+    TraceDebug("SNMI:  SlaveTatsState: Applied tattoos for " + player.GetLeveledActorBase().GetName() + ":")
     if applied == 0
-        Debug.Trace("SNMI:  SlaveTatsState: []")
+        TraceDebug("SNMI:  SlaveTatsState: []")
     else
         _log_jcontainer(applied, "")
     endif
@@ -432,7 +438,7 @@ endfunction
 
 function _log_jcontainer(int value, string indent) global
     if value == 0
-        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "null")
+        TraceDebug("SNMI:  SlaveTatsState: " + indent + "null")
         return
     endif
 
@@ -442,56 +448,56 @@ function _log_jcontainer(int value, string indent) global
 	string map_key = ""
 
     if JValue.isMap(value)
-        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "{")
+        TraceDebug("SNMI:  SlaveTatsState: " + indent + "{")
         int keys = JValue.addToPool(JMap.allKeys(value), "SlaveTatsState-log")
         count = JArray.count(keys)
         while index < count
 			map_key = JArray.getStr(keys, index)
 			type = JMap.valueType(value, map_key)
             if type == 1
-				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": none")
+				TraceDebug("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": none")
             elseif type == 2
-				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": " + JMap.getInt(value, map_key))
+				TraceDebug("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": " + JMap.getInt(value, map_key))
             elseif type == 3
-				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": " + JMap.getFlt(value, map_key))
+				TraceDebug("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": " + JMap.getFlt(value, map_key))
             elseif type == 4
-				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": Form " + JMap.getForm(value, map_key).GetName())
+				TraceDebug("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": Form " + JMap.getForm(value, map_key).GetName())
             elseif type == 5
-				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\":")
+				TraceDebug("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\":")
 				_log_jcontainer(JMap.getObj(value, map_key), indent + "  ")
             elseif type == 6
-				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": \"" + JMap.getStr(value, map_key) + "\"")
+				TraceDebug("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": \"" + JMap.getStr(value, map_key) + "\"")
             else
-				Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": Unknown type")
+				TraceDebug("SNMI:  SlaveTatsState: " + indent + "  \"" + map_key + "\": Unknown type")
             endif
             index += 1
         endwhile
-        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "}")
+        TraceDebug("SNMI:  SlaveTatsState: " + indent + "}")
     elseif JValue.isArray(value)
-        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "[")
+        TraceDebug("SNMI:  SlaveTatsState: " + indent + "[")
         count = JArray.count(value)
         while index < count
             type = JArray.valueType(value, index)
             if type == 1
-                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  none")
+                TraceDebug("SNMI:  SlaveTatsState: " + indent + "  none")
             elseif type == 2
-                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  " + JArray.getInt(value, index))
+                TraceDebug("SNMI:  SlaveTatsState: " + indent + "  " + JArray.getInt(value, index))
             elseif type == 3
-                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  " + JArray.getFlt(value, index))
+                TraceDebug("SNMI:  SlaveTatsState: " + indent + "  " + JArray.getFlt(value, index))
             elseif type == 4
-                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  Form " + JArray.getForm(value, index).GetName())
+                TraceDebug("SNMI:  SlaveTatsState: " + indent + "  Form " + JArray.getForm(value, index).GetName())
             elseif type == 5
                 _log_jcontainer(JArray.getObj(value, index), indent + "  ")
             elseif type == 6
-                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  \"" + JArray.getStr(value, index) + "\"")
+                TraceDebug("SNMI:  SlaveTatsState: " + indent + "  \"" + JArray.getStr(value, index) + "\"")
             else
-                Debug.Trace("SNMI:  SlaveTatsState: " + indent + "  Unknown type")
+                TraceDebug("SNMI:  SlaveTatsState: " + indent + "  Unknown type")
             endif
             index += 1
         endwhile
-        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "]")
+        TraceDebug("SNMI:  SlaveTatsState: " + indent + "]")
     else
-        Debug.Trace("SNMI:  SlaveTatsState: " + indent + "Not a map or an array.")
+        TraceDebug("SNMI:  SlaveTatsState: " + indent + "Not a map or an array.")
     endif
 
     JValue.cleanPool("SlaveTatsState-log")
@@ -522,7 +528,7 @@ Event OnUpdate()
 	if IsJContainersAvailable()
 		get_slavetats_state()
 	else
-		Debug.Trace("[SNMI] SlaveTats-query:  JContainers is not available, so we cannot query the SlaveTats state.")
+		TraceDebug("[SNMI] SlaveTats-query:  JContainers is not available, so we cannot query the SlaveTats state.")
 	endif
 
     RegisterForSingleUpdate(10.0)  ; Restart the same function in 10 seconds
@@ -534,7 +540,7 @@ float function getMilkCurrent(actor akActor) global
 	; Debug.Trace("MME_Storage: Triggered getMilkCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
 	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkCount")
 		
-	Debug.Trace("[SNMI] SNMI-MME_Storage-Version:::: Triggered getMilkCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
+	TraceDebug("[SNMI] SNMI-MME_Storage-Version:::: Triggered getMilkCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
 
 endfunction
 

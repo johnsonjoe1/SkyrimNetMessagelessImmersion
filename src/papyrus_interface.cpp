@@ -365,8 +365,14 @@ void SNMIPapyrus::SetKeepaliveLevel(RE::StaticFunctionTag*, float a_value)
 }
 float SNMIPapyrus::GetKeepaliveLevel()     //  Here we must NOT use static.  That keyword belongs into the class definition only.
 {    return _keepaliveLevel;   }
+bool SNMIPapyrus::IsDebugLoggingEnabled(RE::StaticFunctionTag*)
+{
+    return SNMI::GetSettings().debugLogging;
+}
+
 bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 {
+    a_vm->RegisterFunction("IsDebugLoggingEnabled", "SNMI_Native", IsDebugLoggingEnabled);
     a_vm->RegisterFunction("SetMilkLevel", "SNMI_Native", SetMilkLevel);
 	a_vm->RegisterFunction("SetMilkMax", "SNMI_Native", SetMilkMax);
     a_vm->RegisterFunction("SetLactacidLevel", "SNMI_Native", SetLactacidLevel);	

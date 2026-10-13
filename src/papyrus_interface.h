@@ -8,6 +8,7 @@ class SNMIPapyrus
 {
 public:
     static bool Register(RE::BSScript::IVirtualMachine*);
+    static bool IsDebugLoggingEnabled(RE::StaticFunctionTag*);
     static void SetMilkLevel(RE::StaticFunctionTag*, float a_value);
 	static void SetMilkMax(RE::StaticFunctionTag*, float a_value);
 	static void SetLactacidLevel(RE::StaticFunctionTag*, float a_value);
