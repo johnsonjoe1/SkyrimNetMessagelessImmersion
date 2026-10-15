@@ -227,7 +227,16 @@ bool handle_DDUD::handle_DDUD_hobble_skirt_forced_walk_effect(
 
 	auto* base = a_effect->GetBaseObject();
 	auto* source = a_effect->spell;
-	if (!base || !source || std::strcmp(base->GetName(), "Forced Walk Mode") != 0 ) {
+	if (!base || !source) {
+		return true;
+	}
+	// Some effects are hard to interpret. We mark them as handled.
+	if (std::strcmp(base->GetName(), "Hobble Skirt Script") == 0 ) {
+		SKSE::log::info("NOTHING TO DO FOR Event handler for: Hobble Skirt Script!");
+		return true;  // treat this one as handled
+	}
+
+	if (std::strcmp(base->GetName(), "Forced Walk Mode") != 0 ) {
 		return false;
 	}
 
