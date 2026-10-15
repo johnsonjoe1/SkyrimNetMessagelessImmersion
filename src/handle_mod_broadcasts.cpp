@@ -216,6 +216,8 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SkyrimNet_MoodChanged",  // No need to respond to this, as it's native to SkyrimNet anyway and probably already handled by SkyrimNet itself.
 		"SkyrimNet_DiaryCreated",  // This is internal.  No player thoughts.
 		"SkyrimNet_TimelineResolved",  // This is internal.  No player thoughts.
+		"SkyrimNet_OnPackageAdded",    // unknown but e.g. talktoplayer
+		"SkyrimNet_OnPackageRemoved",  // unknown but e.g. talktoplayer
 		"SkyrimNet_SexLab_Orgasm",  // This is from SkyrimNet_Sexlab plugin and will probably we commented on from that plugin anyway.
 
 		"UIWheelMenu_LoadMenu",      //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
