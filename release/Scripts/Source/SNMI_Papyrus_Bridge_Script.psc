@@ -18,6 +18,7 @@ int sparcity_threshold = 6
 bool yps_fashion_event_registered = false
 bool slac_events_registered = false
 bool slac_npc_events_registered = false
+bool slac_stage_events_registered = false
 
 function ensure_yps_fashion_event_registration()
 	if !yps_fashion_event_registered
@@ -32,6 +33,14 @@ function ensure_slac_npc_event_registration()
 		RegisterForModEvent("HookAnimationStart_slacEngagement", "OnSLACAnimationStart")
 		slac_npc_events_registered = true
 		lillith_notification("[SNMI] Registered non-player SLAC animation relay.")
+	endif
+endfunction
+
+function ensure_slac_stage_event_registration()
+	if !slac_stage_events_registered
+		RegisterForModEvent("HookStageStart_slacEngagement", "OnSLACStageStart")
+		slac_stage_events_registered = true
+		lillith_notification("[SNMI] Registered SLAC stage-start relay.")
 	endif
 endfunction
 
@@ -54,26 +63,39 @@ Event OnInit()
 	ensure_yps_fashion_event_registration()
 	ensure_slac_event_registration()
 	ensure_slac_npc_event_registration()
+	ensure_slac_stage_event_registration()
 
 EndEvent
 
 Event OnSLACAnimationStart(int threadId, bool hasPlayer)
 	if !hasPlayer
-		SendModEvent("SNMI_SLACNPCAnimationStart", threadId)
+		SendModEvent("SNMI_SLAC_AnimationStart_NPC", threadId)
+	else
+		SendModEvent("SNMI_SLAC_AnimationStart_Player", threadId)
+	endif
+EndEvent
+
+Event OnSLACStageStart(int threadId, bool hasPlayer)
+	if hasPlayer
+		SendModEvent("SNMI_SLAC_StageStart_Player", threadId)
+	else
+		SendModEvent("SNMI_SLAC_StageStart_NPC", threadId)
 	endif
 EndEvent
 
 Event OnSLACAnimationStarting(int threadId, bool hasPlayer)
 	if hasPlayer
-		SendModEvent("SNMI_SLACAnimationStarting", threadId)
+		SendModEvent("SNMI_SLAC_AnimationStarting_Player", threadId)
+	else
+		SendModEvent("SNMI_SLAC_AnimationStarting_NPC", threadId)
 	endif
 EndEvent
 
 Event OnSLACAnimationEnding(int threadId, bool hasPlayer)
 	if hasPlayer
-		SendModEvent("SNMI_SLACAnimationEnding", threadId)
+		SendModEvent("SNMI_SLAC_AnimationEnding_Player", threadId)
 	else
-		SendModEvent("SNMI_SLACNPCAnimationEnding", threadId)
+		SendModEvent("SNMI_SLAC_AnimationEnding_NPC", threadId)
 	endif
 EndEvent
 
@@ -508,6 +530,7 @@ Event OnUpdate()
 	ensure_yps_fashion_event_registration()
 	ensure_slac_event_registration()
 	ensure_slac_npc_event_registration()
+	ensure_slac_stage_event_registration()
 
     keepalive_value += 1.0    ; This is just an internal counter, that will count the number of times this has run so far
     SNMI_Native.SetKeepaliveLevel(keepalive_value)
