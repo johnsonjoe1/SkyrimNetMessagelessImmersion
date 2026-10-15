@@ -70,6 +70,14 @@
 [2026-09-06 15:17:37.685] [log] [info] [handle_active_magic_effect_changes.cpp:765] Magnitude: 2.5 | Duration: 0.35
 [2026-09-06 15:17:37.685] [log] [info] [handle_active_magic_effect_changes.cpp:768] Source name: Ancient Seed | Source FormID: 241553DB | Source EDID: UD_AncientSeed 
 [2026-09-06 15:17:37.685] [log] [info] [handle_active_magic_effect_changes.cpp:774] Form LookupByID 241553D6 found: Reduce Orgasm Resistance
+
+[2026-10-15 21:05:33.368] [log] [info] [handle_active_magic_effect_changes.cpp:1074] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-15 21:05:33.368] [log] [info] [handle_active_magic_effect_changes.cpp:1075] Effect REMOVED on Cara Goodlooker | UID=17
+[2026-10-15 21:05:33.368] [log] [info] [handle_active_magic_effect_changes.cpp:1078] Base name: Reduce Orgasm Resistance | Base ptr: 0x1996d737ac0 | Base-FormID: 231553D6 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-15 21:05:33.368] [log] [info] [handle_active_magic_effect_changes.cpp:1079] base-Effect EDID:  | Source ptr: 0x196c6152c00  |  Caster: Cara Goodlooker 
+[2026-10-15 21:05:33.368] [log] [info] [handle_active_magic_effect_changes.cpp:1083] Magnitude: 10 | Duration: 305
+[2026-10-15 21:05:33.368] [log] [info] [handle_active_magic_effect_changes.cpp:1086] Source name: Dragon Nuts | Source FormID: 23156EF2 | Source EDID:  
+[2026-10-15 21:05:33.368] [log] [info] [handle_active_magic_effect_changes.cpp:1092] Form LookupByID 231553D6 found: Reduce Orgasm Resistance
 */
 
 
@@ -130,10 +138,10 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 		return true;
 	}
 
-	if (std::strcmp(base_name, "Reduce Orgasm Resistance") == 0 && std::strcmp(source_name, "Spider Silk") == 0) {
+	if (std::strcmp(base_name, "Reduce Orgasm Resistance") == 0 && ( std::strcmp(source_name, "Ancient Seed") == 0 || std::strcmp(source_name, "Dragon Nuts") == 0) ) {
 		if (a_event->isApplied) {
-			SKSE::log::info("Event handler for REDUCE ORGASM RESISTANCE effect application from Ancient Seed!");
-			DumpThoughts::throw_out_TTS_thought_message("YOU, the player character, just consumed Ancient Seed and received a reduce orgasm resistance effect from it.    Say as much in your response, and make sure you make it clear that Ancient Seed simply causes reduce orgasm resistance effect.");
+			SKSE::log::info("Event handler for REDUCE ORGASM RESISTANCE effect application from Ancient Seed or Dragon Nuts!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, just consumed {} and received a reduce orgasm resistance effect from it.    Say as much in your response, and make sure you make it clear that {} simply causes reduce orgasm resistance effect.", source_name, source_name));
 		}
 		return true;
 	}
