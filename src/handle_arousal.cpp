@@ -3,6 +3,7 @@
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 #include "RE/S/SendHUDMessage.h"
+#include "misc.h"
 #include <Windows.h>
 #include <algorithm>
 #include <array>
@@ -14,6 +15,7 @@
 #include <mutex>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -43,6 +45,47 @@ namespace
 		return separator == std::string::npos ? a_name : a_name.substr(separator + 1);
 	}
 
+	std::vector<std::pair<std::string, float>> ranked_arousal_contributors()
+	{
+		std::vector<std::pair<std::string, float>> ranked;
+		{
+			std::scoped_lock lock(contributorMutex);
+			for (const auto& [name, value] : latestContributions) {
+				if (std::isfinite(value) && value > 0.0f) {
+					ranked.emplace_back(name, value);
+				}
+			}
+		}
+		std::sort(ranked.begin(), ranked.end(), [](const auto& a_left, const auto& a_right) {
+			return a_left.second != a_right.second ? a_left.second > a_right.second : a_left.first < a_right.first;
+		});
+		return ranked;
+	}
+
+	std::string contributor_reason(const std::string& a_name)
+	{
+		using Translation = std::pair<std::string_view, std::string_view>;
+		static constexpr std::array translations{
+			Translation{ "timed arousal", "that you have gone for quite some time without sexual relief" },
+			Translation{ "Devious Devices", "that I have been freshly bound into submission with these bondage devices" },
+			Translation{ "DeviousDevices", "that I have been freshly bound into submission with these bondage devices" },
+			Translation{ "Unforgiving Devices", "that I have been freshly bound into submission with these bondage devices" },
+			Translation{ "Devices", "that I'm still wearing bondage gear" },
+			Translation{ "nudity exposure", "that you have been exposed to nudity" },
+			Translation{ "exhibitionism", "that being seen exposed is arousing you" },
+			Translation{ "SexLab sexual activity", "that sexual activity has been arousing you" },
+			Translation{ "OStim sexual activity", "that sexual activity has been arousing you" }
+		};
+		// The static Devices effect is displayed as "devious devices" by the name-only helper.
+		const std::string name = a_name == "Static:Devices" ? "Devices" : contributor_name(a_name);
+		for (const auto& [key, reason] : translations) {
+			if (name == key) {
+				return std::string(reason);
+			}
+		}
+		return "the arousing effect of " + name;
+	}
+
 	void handle_arousal_sample(float a_arousal, std::uint64_t a_session, std::uint64_t a_sample)
 	{
 		if (a_session != arousalSession || a_sample <= lastArousalSample || !std::isfinite(a_arousal)) {
@@ -53,12 +96,13 @@ namespace
 			a_arousal >= 70.0f && a_arousal < 90.0f;
 		previousArousal = a_arousal;
 		if (enteredArousedRange && !DumpThoughts::too_early_after_game_load()) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
-				"Your general arousal and horniness have just noticeably increased. You are feeling strongly aroused now, "
+			std::string thought_text = "Your general arousal and horniness have just noticeably increased. You are feeling strongly aroused now, "
 				"and your growing desire is becoming harder to ignore and more distracting. Express this increase in a brief "
 				"first-person thought in character. Make clear that you are talking about feeling hornier than before, "
-				"without mentioning numerical values or game mechanics.");
+				"without mentioning numerical values or game mechanics.";
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_text);
 			SKSE::log::info("[Arousal] Player crossed from below 70 into 70-89; submitted an arousal thought.");
+			LillithOnlyBox(std::format("Arousal crossed over 70 into 70-89: {}", thought_text));
 		}
 	}
 
@@ -342,6 +386,41 @@ void handle_arousal::reset_arousal_tracking()
 }
 
 std::string handle_arousal::get_top_arousal_contributors(std::size_t a_count)
+{
+	const auto ranked = ranked_arousal_contributors();
+	const auto count = std::min(a_count, ranked.size());
+	std::string result;
+	for (std::size_t i = 0; i < count; ++i) {
+		if (i != 0) {
+			result += i + 1 == count ? " and " : ", ";
+		}
+		result += contributor_name(ranked[i].first);
+	}
+	return result;
+}
+
+std::string handle_arousal::get_top_arousal_contribution_string(std::size_t a_count)
+{
+	const auto ranked = ranked_arousal_contributors();
+	constexpr std::array prefixes{
+		"The reasons for your arousal are first and foremost ",
+		" and then to a lesser extent ",
+		" and then to an even lesser extent "
+	};
+	const auto count = std::min({ a_count, ranked.size(), prefixes.size() });
+	std::string result;
+	for (std::size_t i = 0; i < count; ++i) {
+		result += prefixes[i];
+		result += contributor_reason(ranked[i].first);
+	}
+	if (!result.empty()) {
+		result += '.';
+	}
+	return result;
+}
+
+
+std::string handle_arousal::legacy_get_top_arousal_contributors(std::size_t a_count)
 {
 	std::vector<std::pair<std::string, float>> ranked;
 	{
