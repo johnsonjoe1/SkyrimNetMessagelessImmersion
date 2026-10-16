@@ -4,6 +4,7 @@
 #include "SKSE/SKSE.h"
 #include "RE/S/SendHUDMessage.h"
 #include <Windows.h>
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <format>
@@ -14,6 +15,7 @@
 #include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace
 {
@@ -22,6 +24,24 @@ namespace
 	std::uint64_t arousalSession = 0;
 	std::uint64_t nextArousalSample = 0;
 	std::uint64_t lastArousalSample = 0;
+	std::mutex contributorMutex;
+	std::map<std::string, float> latestContributions;
+	std::uint64_t lastContributionSample = 0;
+
+	std::string contributor_name(const std::string& a_name)
+	{
+		if (a_name == "Static:Timed") return "timed arousal";
+		if (a_name == "Static:Naked") return "nudity exposure";
+		if (a_name == "Static:Exhibitionist") return "exhibitionism";
+		if (a_name == "Static:Sex") return "SexLab sexual activity";
+		if (a_name == "Static:OSex") return "OStim sexual activity";
+		if (a_name == "Static:Devices") return "devious devices";
+		if (a_name == "Static:Sleep") return "sleep";
+		if (a_name == "Static:Legacy") return "legacy exposure";
+		if (a_name == "Dynamic:UnforgivingDevices") return "Unforgiving Devices";
+		const auto separator = a_name.find(':');
+		return separator == std::string::npos ? a_name : a_name.substr(separator + 1);
+	}
 
 	void handle_arousal_sample(float a_arousal, std::uint64_t a_session, std::uint64_t a_sample)
 	{
@@ -44,6 +64,8 @@ namespace
 
 	struct ArousalHUDReport
 	{
+		const std::uint64_t session = arousalSession;
+		const std::uint64_t sample = ++nextArousalSample;
 		std::mutex mutex;
 		std::size_t pending = 1;  // Keep the report open while the initial requests are queued.
 		std::optional<float> total;
@@ -83,7 +105,15 @@ namespace
 			}
 			// Papyrus callbacks can run off the main thread; send the notification on the game thread.
 			if (auto* tasks = SKSE::GetTaskInterface()) {
-				tasks->AddTask([message = std::move(message)] {
+				tasks->AddTask([message = std::move(message), values = contributions, session = session, sample = sample] {
+					if (session != arousalSession || sample <= lastContributionSample) {
+						return;
+					}
+					lastContributionSample = sample;
+					{
+						std::scoped_lock lock(contributorMutex);
+						latestContributions = values;
+					}
 					RE::SendHUDMessage::ShowHUDMessage(message.c_str());
 				});
 			}
@@ -153,13 +183,15 @@ namespace
 		}
 	}
 
-	ResultHandler log_contribution(std::string a_name, bool a_active, HUDReport a_hud)
+	ResultHandler log_contribution(std::string a_name, HUDReport a_hud)
 	{
-		return [name = std::move(a_name), a_active, a_hud](RE::BSScript::Variable a_result) {
+		return [name = std::move(a_name), a_hud](RE::BSScript::Variable a_result) {
 			log_value(name + " contribution")(a_result);
 			std::scoped_lock lock(a_hud->mutex);
 			if (a_result.IsFloat()) {
-				if (a_active) {
+				// Timed includes the full Timed/TimedCycle group value. Count that group once.
+				// The activity flag only describes timed updates, not whether a value contributes.
+				if (name != "Static:TimedCycle") {
 					a_hud->contributions[name] = a_result.GetFloat();
 				}
 			} else {
@@ -200,7 +232,7 @@ namespace
 						if (actor) {
 							query("slaInternalModules", "GetStaticEffectValue",
 								RE::MakeFunctionArguments(static_cast<RE::Actor*>(actor), std::int32_t(id)),
-								log_contribution(std::format("Static:{}", a_name), a_active.GetBool(), a_hud), a_hud);
+								log_contribution(std::format("Static:{}", a_name), a_hud), a_hud);
 						}
 					}, a_hud);
 			}, a_hud);
@@ -234,7 +266,7 @@ namespace
 								// Read by name so removal/reordering cannot pair a name with another effect's value.
 								query("SloangNative", "GetDynamicEffectValue",
 								RE::MakeFunctionArguments(static_cast<RE::Actor*>(actor), RE::BSFixedString(name)),
-									log_contribution(std::format("Dynamic:{}", name), true, a_hud), a_hud);
+									log_contribution(std::format("Dynamic:{}", name), a_hud), a_hud);
 							}
 						}, a_hud);
 				}
@@ -260,7 +292,7 @@ void handle_arousal::log_player_arousal_state()
 	// Collect one HUD report per periodic check after the asynchronous contribution reads finish.
 	auto hud = std::make_shared<ArousalHUDReport>();
 	query("SloangNative", "GetArousal", RE::MakeFunctionArguments(static_cast<RE::Actor*>(player)),
-		[hud, session = arousalSession, sample = ++nextArousalSample](RE::BSScript::Variable a_result) {
+		[hud, session = hud->session, sample = hud->sample](RE::BSScript::Variable a_result) {
 			log_value("GetArousal")(a_result);
 			if (a_result.IsFloat()) {
 				const float arousal = a_result.GetFloat();
@@ -304,4 +336,32 @@ void handle_arousal::reset_arousal_tracking()
 	previousArousal.reset();
 	nextArousalSample = 0;
 	lastArousalSample = 0;
+	lastContributionSample = 0;
+	std::scoped_lock lock(contributorMutex);
+	latestContributions.clear();
+}
+
+std::string handle_arousal::get_top_arousal_contributors(std::size_t a_count)
+{
+	std::vector<std::pair<std::string, float>> ranked;
+	{
+		std::scoped_lock lock(contributorMutex);
+		for (const auto& [name, value] : latestContributions) {
+			if (std::isfinite(value) && value > 0.0f) {
+				ranked.emplace_back(name, value);
+			}
+		}
+	}
+	std::sort(ranked.begin(), ranked.end(), [](const auto& a_left, const auto& a_right) {
+		return a_left.second != a_right.second ? a_left.second > a_right.second : a_left.first < a_right.first;
+	});
+	const auto count = std::min(a_count, ranked.size());
+	std::string result;
+	for (std::size_t i = 0; i < count; ++i) {
+		if (i != 0) {
+			result += i + 1 == count ? " and " : ", ";
+		}
+		result += contributor_name(ranked[i].first);
+	}
+	return result;
 }
