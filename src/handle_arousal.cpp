@@ -86,6 +86,15 @@ namespace
 		return "the arousing effect of " + name;
 	}
 
+	void submit_arousal_thought(std::string& a_text)
+	{
+		const auto attribution = handle_arousal::get_top_arousal_contribution_string();
+		if (!attribution.empty()) {
+			a_text += " " + attribution;
+		}
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(a_text);
+	}
+
 	void handle_arousal_sample(float a_arousal, std::uint64_t a_session, std::uint64_t a_sample)
 	{
 		if (a_session != arousalSession || a_sample <= lastArousalSample || !std::isfinite(a_arousal)) {
@@ -105,7 +114,7 @@ namespace
 				"and your growing desire is becoming harder to ignore and more distracting. Express this increase in a brief "
 				"first-person thought in character. Make clear that you are talking about feeling hornier than before, "
 				"without mentioning numerical values or game mechanics.";
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_text);
+			submit_arousal_thought(thought_text);
 			SKSE::log::info("[Arousal] Player crossed from below 70 into 70-89; submitted an arousal thought.");
 			LillithOnlyBox(std::format("Arousal crossed over 70 into 70-89: {}", thought_text));
 		} else if (enteredDistractedRange && !DumpThoughts::too_early_after_game_load()) {
@@ -113,7 +122,7 @@ namespace
 				"and thoughts of pleasure are beginning to distract you. Express this growing desire in a brief "
 				"first-person thought in character. Make clear that you are feeling hornier than before, "
 				"without mentioning numerical values or game mechanics.";
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_text);
+			submit_arousal_thought(thought_text);
 			SKSE::log::info("[Arousal] Player crossed from below 50 into 50-69; submitted an arousal thought.");
 			LillithOnlyBox(std::format("Arousal crossed over 50 into 50-69: {}", thought_text));
 		} else if (enteredNeedSexRange && !DumpThoughts::too_early_after_game_load()) {
@@ -121,7 +130,7 @@ namespace
 				"Your need for sexual relief is now very strong, and thoughts of pleasure are making it difficult to concentrate. "
 				"Express this heightened desire in a brief first-person thought in character. Make clear that you are "
 				"feeling much hornier and urgently craving sexual relief, without mentioning numerical values or game mechanics.";
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_text);
+			submit_arousal_thought(thought_text);
 			SKSE::log::info("[Arousal] Player crossed from below 90 into 90+; submitted an arousal thought.");
 			LillithOnlyBox(std::format("Arousal crossed over 90 into 90+: {}", thought_text));
 		} else if (enteredFocusedRange && !DumpThoughts::too_early_after_game_load()) {
@@ -129,7 +138,7 @@ namespace
 				"Your desire is less distracting, and you feel calmer and able to focus more clearly again. "
 				"Express this easing of arousal in a brief first-person thought in character, without inventing a cause "
 				"for the change or mentioning numerical values or game mechanics.";
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_text);
+			submit_arousal_thought(thought_text);
 			SKSE::log::info("[Arousal] Player crossed from above 20 into 0-20; submitted an arousal thought.");
 			LillithOnlyBox(std::format("Arousal dropped from above 20 into 0-20: {}", thought_text));
 		}
@@ -178,7 +187,7 @@ namespace
 			}
 			// Papyrus callbacks can run off the main thread; send the notification on the game thread.
 			if (auto* tasks = SKSE::GetTaskInterface()) {
-				tasks->AddTask([message = std::move(message), values = contributions, session = session, sample = sample] {
+				tasks->AddTask([message = std::move(message), values = contributions, arousal = *total, session = session, sample = sample] {
 					if (session != arousalSession || sample <= lastContributionSample) {
 						return;
 					}
@@ -187,6 +196,8 @@ namespace
 						std::scoped_lock lock(contributorMutex);
 						latestContributions = values;
 					}
+					// Generate the thought after publishing attribution from this same completed sample.
+					handle_arousal_sample(arousal, session, sample);
 					RE::SendHUDMessage::ShowHUDMessage(message.c_str());
 				});
 			}
@@ -365,19 +376,11 @@ void handle_arousal::log_player_arousal_state()
 	// Collect one HUD report per periodic check after the asynchronous contribution reads finish.
 	auto hud = std::make_shared<ArousalHUDReport>();
 	query("SloangNative", "GetArousal", RE::MakeFunctionArguments(static_cast<RE::Actor*>(player)),
-		[hud, session = hud->session, sample = hud->sample](RE::BSScript::Variable a_result) {
+		[hud](RE::BSScript::Variable a_result) {
 			log_value("GetArousal")(a_result);
 			if (a_result.IsFloat()) {
-				const float arousal = a_result.GetFloat();
-				{
-					std::scoped_lock lock(hud->mutex);
-					hud->total = arousal;
-				}
-				if (auto* tasks = SKSE::GetTaskInterface()) {
-					tasks->AddTask([arousal, session, sample] {
-						handle_arousal_sample(arousal, session, sample);
-					});
-				}
+				std::scoped_lock lock(hud->mutex);
+				hud->total = a_result.GetFloat();
 			}
 		}, hud);
 	// SLO's getters only read state; no arousal values are changed.
