@@ -94,6 +94,11 @@ namespace
 		lastArousalSample = a_sample;
 		const bool enteredArousedRange = previousArousal && *previousArousal < 70.0f &&
 			a_arousal >= 70.0f && a_arousal < 90.0f;
+		const bool enteredDistractedRange = previousArousal && *previousArousal < 50.0f &&
+			a_arousal >= 50.0f && a_arousal < 70.0f;
+		const bool enteredNeedSexRange = previousArousal && *previousArousal < 90.0f && a_arousal >= 90.0f;
+		const bool enteredFocusedRange = previousArousal && *previousArousal > 20.0f &&
+			a_arousal >= 0.0f && a_arousal <= 20.0f;
 		previousArousal = a_arousal;
 		if (enteredArousedRange && !DumpThoughts::too_early_after_game_load()) {
 			std::string thought_text = "Your general arousal and horniness have just noticeably increased. You are feeling strongly aroused now, "
@@ -103,6 +108,30 @@ namespace
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_text);
 			SKSE::log::info("[Arousal] Player crossed from below 70 into 70-89; submitted an arousal thought.");
 			LillithOnlyBox(std::format("Arousal crossed over 70 into 70-89: {}", thought_text));
+		} else if (enteredDistractedRange && !DumpThoughts::too_early_after_game_load()) {
+			std::string thought_text = "Your general arousal and horniness have just increased. You are starting to feel noticeably turned on, "
+				"and thoughts of pleasure are beginning to distract you. Express this growing desire in a brief "
+				"first-person thought in character. Make clear that you are feeling hornier than before, "
+				"without mentioning numerical values or game mechanics.";
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_text);
+			SKSE::log::info("[Arousal] Player crossed from below 50 into 50-69; submitted an arousal thought.");
+			LillithOnlyBox(std::format("Arousal crossed over 50 into 50-69: {}", thought_text));
+		} else if (enteredNeedSexRange && !DumpThoughts::too_early_after_game_load()) {
+			std::string thought_text = "Your general arousal and horniness have just increased to an intense level. "
+				"Your need for sexual relief is now very strong, and thoughts of pleasure are making it difficult to concentrate. "
+				"Express this heightened desire in a brief first-person thought in character. Make clear that you are "
+				"feeling much hornier and urgently craving sexual relief, without mentioning numerical values or game mechanics.";
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_text);
+			SKSE::log::info("[Arousal] Player crossed from below 90 into 90+; submitted an arousal thought.");
+			LillithOnlyBox(std::format("Arousal crossed over 90 into 90+: {}", thought_text));
+		} else if (enteredFocusedRange && !DumpThoughts::too_early_after_game_load()) {
+			std::string thought_text = "Your general arousal and horniness have now subsided to a low level. "
+				"Your desire is less distracting, and you feel calmer and able to focus more clearly again. "
+				"Express this easing of arousal in a brief first-person thought in character, without inventing a cause "
+				"for the change or mentioning numerical values or game mechanics.";
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_text);
+			SKSE::log::info("[Arousal] Player crossed from above 20 into 0-20; submitted an arousal thought.");
+			LillithOnlyBox(std::format("Arousal dropped from above 20 into 0-20: {}", thought_text));
 		}
 	}
 
