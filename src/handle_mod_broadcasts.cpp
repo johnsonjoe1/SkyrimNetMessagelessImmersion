@@ -393,6 +393,9 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		"AnimationStarting_JailRapePC",
 		"StageStart_JailRapePC",
 		"AnimationChange_JailRapePC",
+
+		"SNMI_SLAC_AnimationStarting_Player",
+		"SNMI_SLAC_StageStart_Player",
 	};
 
 	static const std::unordered_set<std::string_view> scene_end_events = {
@@ -411,6 +414,7 @@ void toggle_in_a_scene_or_not_based_on_mod_events(const SKSE::ModCallbackEvent* 
 		"AnimationEnd_Helpless",    // This is from Devious Helplessness.
 		"AnimationEnding_JailRapePC",
 		"AnimationEnd_JailRapePC",
+		"SNMI_SLAC_AnimationEnding_Player",
 
 	};
 

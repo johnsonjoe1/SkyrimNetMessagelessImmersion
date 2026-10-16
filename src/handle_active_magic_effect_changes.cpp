@@ -247,6 +247,8 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"BF Combat Player Effect",              // This is *PROBABLY* from Battlefuck, but I'm not sure
 		"BF Stop Combat Effect",                // This is *PROBABLY* from Battlefuck, but I'm not sure
 
+		"SUM Auto Hum Night Eye",    // This is the Skyrim-Utility-Mod doing some internal stuff.
+		
 	/*
 [2026-10-10 22:15:52.691] [log] [info] [handle_active_magic_effect_changes.cpp:989] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
 [2026-10-10 22:15:52.691] [log] [info] [handle_active_magic_effect_changes.cpp:990] Effect REMOVED on Cara Goodlooker | UID=27

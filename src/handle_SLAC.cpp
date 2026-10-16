@@ -22,12 +22,12 @@ namespace
 bool handle_SLAC::update_scene_status_from_mod_event(const SKSE::ModCallbackEvent* a_event)
 {
 	const std::string_view eventName = a_event->eventName.c_str();
-	if (eventName == "SNMI_SLACAnimationStarting") {
+	if ((eventName == "SNMI_SLAC_AnimationStarting_Player") || (eventName == "SNMI_SLAC_StageStart_Player")) {
 		logger::info("Mod-Event-Based DISABLING OF CLOTHING-CHANGE-COMMENTS: {}  StrArg: {} ", a_event->eventName.c_str(), a_event->strArg.c_str());
 		set_current_animation_status("in_a_scene", eventName);
 		return true;
 	}
-	if (eventName == "SNMI_SLACAnimationEnding") {
+	if (eventName == "SNMI_SLAC_AnimationEnding_Player") {
 		logger::info("Mod-Event-Based RE-ENABLING OF CLOTHING-CHANGE-COMMENTS: {}\n{}\n.", a_event->eventName.c_str(), a_event->strArg.c_str());
 		set_current_animation_status("not_in_a_scene", eventName);
 		return true;
@@ -92,7 +92,7 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 	}
 
 	// NPC SLAC events can also be commented.
-	if (eventName == "SNMI_SLAC_AnimationStart_NPC" || eventName == "SNMI_SLAC_AnimationEnding_NPC") {
+	if (eventName == "SNMI_SLAC_AnimationStarting_NPC" || eventName == "SNMI_SLAC_AnimationEnding_NPC") {
 		// We only comment, if the player isn't in a scene OF ANY KIND herself.
 		if (player_is_in_ANY_SL_scene()) {		
 			logger::info("Player is in an SL scene herself, so comment on other NPCs in SLAC events will be skipped for now.");			
@@ -100,7 +100,7 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 		}
 
 		// Those events take a long time, but multiple such events can trigger in parallel, so we still implement a cooldown. 
-		const bool isStarting = eventName == "SNMI_SLAC_AnimationStart_NPC";
+		const bool isStarting = eventName == "SNMI_SLAC_AnimationStarting_NPC";
 		auto& last_thought_timestamp = isStarting ? last_SLAC_npc_start_thought_timestamp : last_SLAC_npc_end_thought_timestamp;
 		// if (!cooldown_has_passed(last_thought_timestamp, 30)) {
 		//	return true;
@@ -114,7 +114,7 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 			: std::format("The sexual encounter between {} and {} that you witnessed nearby has just ended and {} has finally let go of {}. Let us know your immediate response to seeing the creature and NPC finish their scene, maybe with some empathy for the poor and helpless {}.  Be sure to explain what is happening at all in your response, because the player may not see the scene on screen and therefore might be confused if you don't give enough context and and don't explain what you are talking about here.", creature_name, npc_name, creature_name, npc_name, npc_name);
 		DumpThoughts::throw_out_TTS_thought_message(thought_message);
 		last_thought_timestamp = std::chrono::steady_clock::now();
-		LillithOnlyBox(std::string(isStarting ? "SNMI_SLAC_AnimationStart_NPC:  " : "SNMI_SLAC_AnimationEnding_NPC:  ") + thought_message);
+		LillithOnlyBox(std::string(isStarting ? "SNMI_SLAC_AnimationStarting_NPC:  " : "SNMI_SLAC_AnimationEnding_NPC:  ") + thought_message);
 		return true;	// Successfully handling and no further processing in the calling function
 	}
 
@@ -143,11 +143,6 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 		LillithOnlyBox(std::string(isStarting ? "SNMI_SLAC_StageStart_NPC:  " : "SNMI_SLAC_StageStart_NPC:  ") + thought_message);
 		return true;	// Successfully handling and no further processing in the calling function
 	}
-
-
-
-
-
 
 	return false;
 }

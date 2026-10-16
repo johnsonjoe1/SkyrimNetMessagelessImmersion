@@ -372,7 +372,7 @@ void check_for_relevant_notifications(const char* notification)
 	constexpr std::string_view gropeSensingSuffix = "roughly gropes your tits as you pass by";
 	if (notificationText.ends_with(gropeSensingSuffix)) {
 		const auto slapperName = notificationText.substr(0, notificationText.size() - gropeSensingSuffix.size() - 1);
-		set_current_animation_status("in_a_scene", std::format("RECEIVED HUD NOTIFICATION: {}", notification));
+		// set_current_animation_status("in_a_scene", std::format("RECEIVED HUD NOTIFICATION: {}", notification));
 		if (!cooldown_has_passed(last_slap_or_grope_thought_timestamp, 30)) {
 			return;
 		}
@@ -392,7 +392,7 @@ void check_for_relevant_notifications(const char* notification)
 	constexpr std::string_view arousalSensingSuffix = "senses your arousal";
 	if (notificationText.ends_with(arousalSensingSuffix)) {
 		const auto creatureName = notificationText.substr(0, notificationText.size() - arousalSensingSuffix.size() - 1);
-		set_current_animation_status("in_a_scene", std::format("RECEIVED HUD NOTIFICATION: {}", notification));
+		// set_current_animation_status("in_a_scene", std::format("RECEIVED HUD NOTIFICATION: {}", notification));
 		if (!cooldown_has_passed(last_SLAC_creature_coming_after_you_tought_timestamp, 30)) {
 			return;
 		}
