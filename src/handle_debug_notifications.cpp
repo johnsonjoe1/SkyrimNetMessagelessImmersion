@@ -3,6 +3,7 @@
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 #include "DumpThoughts.h"
+#include "handle_arousal.h"
 #include "misc.h"
 
 #include <array>
@@ -220,6 +221,9 @@ void install_debug_notification_hook()
 void check_for_relevant_notifications(const char* notification)
 {
 	SKSE::log::info("Checking for relevant notification: {}", notification);
+	if (notification && std::string_view(notification).starts_with("[Arousal]")) {
+		SKSE::log::info("[Arousal] Top 3 arousal contributors: {}", handle_arousal::get_top_arousal_contributors());
+	}
 	if (handle_devious_followers_notification(notification)) {
 		return;  // It was a devious followers notification.
 	} else {
