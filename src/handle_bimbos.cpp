@@ -31,6 +31,7 @@ bool handle_bimbos::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 
 			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  That is, beause she is wearing the bimbo jewelry, usually some piercings with jewelry to be precise, that add to the bimbo corruption of the PC.  Speak in character and let us know, that the pretty jewellery is getting to your mind and enhancing the bimbo corruption, turning you a bit more into a bimbo, or that you may end up a total bimbo, if you keep wearing it too long.");
 		} else {
+			slutty_item_worn = item_name_for_thought_prompt(slutty_item_worn);
 			thought_message = std::format("The player character is slowly turned into a bimbo via a special bimbofication mod.  That is, beause she is wearing the a very slutty item, the {} , and that adds to the bimbo corruption of the player.  Speak in character and let us know, that the extremely slutty item, is getting to your mind and enhancing the bimbo corruption, turning you a bit more into a bimbo, or that you may end up a total bimbo, if you keep wearing it too long.  And be sure to name the item {} in your response.", slutty_item_worn, slutty_item_worn);
 		}
 		debug_message = std::format("CC_ModBimboCorruption:  STR-ARG: {}  NUM-ARG: {}  ThoughtMessage: {}", a_event->strArg.c_str(), a_event->numArg, thought_message);
