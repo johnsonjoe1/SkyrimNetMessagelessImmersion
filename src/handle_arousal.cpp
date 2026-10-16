@@ -1,9 +1,11 @@
 #include "handle_arousal.h"
+#include "DumpThoughts.h"
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 #include "RE/S/SendHUDMessage.h"
 #include <Windows.h>
 #include <array>
+#include <cmath>
 #include <format>
 #include <functional>
 #include <map>
@@ -15,6 +17,31 @@
 
 namespace
 {
+	// Accessed only on the game thread, including results delivered by Papyrus callbacks.
+	std::optional<float> previousArousal;
+	std::uint64_t arousalSession = 0;
+	std::uint64_t nextArousalSample = 0;
+	std::uint64_t lastArousalSample = 0;
+
+	void handle_arousal_sample(float a_arousal, std::uint64_t a_session, std::uint64_t a_sample)
+	{
+		if (a_session != arousalSession || a_sample <= lastArousalSample || !std::isfinite(a_arousal)) {
+			return;
+		}
+		lastArousalSample = a_sample;
+		const bool enteredArousedRange = previousArousal && *previousArousal < 70.0f &&
+			a_arousal >= 70.0f && a_arousal < 90.0f;
+		previousArousal = a_arousal;
+		if (enteredArousedRange && !DumpThoughts::too_early_after_game_load()) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
+				"Your general arousal and horniness have just noticeably increased. You are feeling strongly aroused now, "
+				"and your growing desire is becoming harder to ignore and more distracting. Express this increase in a brief "
+				"first-person thought in character. Make clear that you are talking about feeling hornier than before, "
+				"without mentioning numerical values or game mechanics.");
+			SKSE::log::info("[Arousal] Player crossed from below 70 into 70-89; submitted an arousal thought.");
+		}
+	}
+
 	struct ArousalHUDReport
 	{
 		std::mutex mutex;
@@ -233,14 +260,22 @@ void handle_arousal::log_player_arousal_state()
 	// Collect one HUD report per periodic check after the asynchronous contribution reads finish.
 	auto hud = std::make_shared<ArousalHUDReport>();
 	query("SloangNative", "GetArousal", RE::MakeFunctionArguments(static_cast<RE::Actor*>(player)),
-		[hud](RE::BSScript::Variable a_result) {
+		[hud, session = arousalSession, sample = ++nextArousalSample](RE::BSScript::Variable a_result) {
 			log_value("GetArousal")(a_result);
 			if (a_result.IsFloat()) {
-				std::scoped_lock lock(hud->mutex);
-				hud->total = a_result.GetFloat();
+				const float arousal = a_result.GetFloat();
+				{
+					std::scoped_lock lock(hud->mutex);
+					hud->total = arousal;
+				}
+				if (auto* tasks = SKSE::GetTaskInterface()) {
+					tasks->AddTask([arousal, session, sample] {
+						handle_arousal_sample(arousal, session, sample);
+					});
+				}
 			}
 		}, hud);
-	// SLO's getters only read state. No thoughts or state writes.
+	// SLO's getters only read state; no arousal values are changed.
 	query("SloangNative", "GetVersion", RE::MakeFunctionArguments(), log_value("SLO version"));
 	constexpr std::array getters{
 		"GetArousalInt", "GetExposure", "GetDaysSinceLastOrgasm",
@@ -261,4 +296,12 @@ void handle_arousal::log_player_arousal_state()
 	}
 	log_dynamic_effects(player, hud);
 	hud->finish_request();
+}
+
+void handle_arousal::reset_arousal_tracking()
+{
+	++arousalSession;  // Discard callbacks still pending from the previous game session.
+	previousArousal.reset();
+	nextArousalSample = 0;
+	lastArousalSample = 0;
 }

@@ -159,6 +159,7 @@ namespace
 
 	void ResetGameSessionState()
 	{
+		handle_arousal::reset_arousal_tracking();
 		handle_fame::reset_fame_tracking();
 		PlayerThoughtHistory::Clear();
 		set_current_animation_status("not_in_a_scene", "game loaded or started");
