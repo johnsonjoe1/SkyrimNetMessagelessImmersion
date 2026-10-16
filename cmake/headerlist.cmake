@@ -8,6 +8,7 @@ set(headers ${headers}
     src/misc.h
     src/papyrus_interface.h
     src/handle_iNeed.h
+    src/handle_arousal.h
     src/handle_yps.h
     src/handle_fame.h
     src/handle_armor_activation.h

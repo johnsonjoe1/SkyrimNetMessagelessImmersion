@@ -9,6 +9,7 @@
 #include "handle_active_magic_effect_changes.h"
 #include "handle_debug_notifications.h"
 #include "handle_iNeed.h"
+#include "handle_arousal.h"
 #include "handle_yps.h"
 #include "handle_fame.h"
 #include "handle_config_ini_file.h"
@@ -228,6 +229,7 @@ namespace
 		logger::info("Starting periodic checks (interval: {} seconds).", interval.count());
 		handle_AND_modesty::handle_AND_modesty_and_nakedness_stuff();
 		handle_iNeed::handle_iNeed_hunger_thirst_and_fatigue_stuff();
+		handle_arousal::log_player_arousal_state();
 		handle_yps::handle_yps_fashion_detection_stuff();
 		handle_fame::handle_SLSF_Reloaded_fame_stuff();
 		handle_check_for_close_conversations();
