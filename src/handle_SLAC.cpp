@@ -47,6 +47,8 @@ bool handle_SLAC::is_known_irrelevant_event(std::string_view a_eventName)
 		"AnimationEnding_slacEngagement",   // We disable all native SLAC events here, since we get our own version which tells us:  Player is involved or not in the scene
 		"AnimationEnd_slacEngagement",      // We disable all native SLAC events here, since we get our own version which tells us:  Player is involved or not in the scene
 		"ActorChangeStart_slacEngagement",  // We disable all native SLAC events here, since we get our own version which tells us:  Player is involved or not in the scene
+
+		"SNMI_SLAC_AnimationStart_NPC",     // We respond to startING events not to start events.
 	};
 	return ignoredEvents.contains(a_eventName);
 }
@@ -78,7 +80,7 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 		}
 		last_player_involving_SLAC_thought_timestamp = std::chrono::steady_clock::now();
 
-		std::string thought_message = std::format("The creature, animal or monster, that came after you to have sex with you got you and it still isn't satisfied and wants to have even more sex with you and you were also too horny to really stop yourself.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having sex with a creature.");
+		std::string thought_message = std::format("The creature, animal or monster, that came after you to have sex with you got you and it still isn't satisfied and wants to have even more sex with you.  The creature is now forcing you into a new sex position to continue fucking you.  Let us know your response to that, and make sure you mention or implicitly point out, that you are having even more sex with a creature now.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
 		LillithOnlyBox("StageStart_slacEngagement:  " + thought_message);
 		return true;	// Successfully handling and no further processing in the calling function
@@ -136,7 +138,7 @@ bool handle_SLAC::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 		const auto separator = context.find('|');
 		const std::string npc_name = separator == std::string::npos ? "a nearby NPC" : context.substr(0, separator);
 		const std::string creature_name = separator == std::string::npos ? "a creature" : context.substr(separator + 1);
-		std::string thought_message = std::format("You have just witnessed the very horny {} successfully engage with the poor and helpless {} and mounting her like animals do with their mates.  Now {} has been fucked by the animal.  But the horny creature still isn't satisfied and wants to fuck in even more and even differnt ways now.  Let us know your immediate response to seeing the creature and NPC begin their encounter, maybe with some empathy for the poor and helpless {}.  Be sure to explain what is happening at all in your response, because the player may not see the scene on screen and therefore might be confused if you don't give enough context and and don't explain what you are talking about here.", creature_name, npc_name, npc_name, npc_name);
+		std::string thought_message = std::format("You have just witnessed the very horny {} successfully engage with the poor and helpless {} and mounting her like animals do with their mates.  Now {} has been fucked by the animal.  But the horny creature still isn't satisfied and is moving {} into even different sex positions now to fuck her even more.  Let us know your response to that, maybe with some empathy for the poor and helpless {}.  Be sure to explain what is happening at all in your response, because the player may not see the scene on screen and therefore might be confused if you don't give enough context and and don't explain what you are talking about here.", creature_name, npc_name, npc_name, npc_name, npc_name);
 
 		DumpThoughts::throw_out_TTS_thought_message(thought_message);
 		last_thought_timestamp = std::chrono::steady_clock::now();
