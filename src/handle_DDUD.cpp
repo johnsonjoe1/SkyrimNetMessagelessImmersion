@@ -875,6 +875,9 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			
 			{"DeviceRemovedCollar", "YOU, the player character, just got your collar removed.  The feeling of being locked and restrained by that collar no longer applies now that it is gone.   "},
 			{"DeviceRemovedChastity Bra", "YOU, the player character, just got your chastity bra removed.  Access and stimulation restrictions on your breasts no longer apply now that the device is gone.   "},
+
+			{"DeviceRemovedBra", "YOU, the player character, just got your chastity bra removed.  The access and stimulation restrictions from that bra no longer apply now that it is gone.   "},
+			
 			{"DeviceRemovedChastity Belt", "YOU, the player character, just got your chastity belt removed.  The access and stimulation restrictions from that belt no longer apply now that it is gone.   "},
 			{"DeviceRemovedBelt", "YOU, the player character, just got your chastity belt removed.  The access and stimulation restrictions from that belt no longer apply now that it is gone.   "},
 			
