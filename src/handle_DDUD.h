@@ -41,6 +41,9 @@ public:
 	static bool handle_DDUD_lockpick_removal_effect(
 		const RE::TESActiveEffectApplyRemoveEvent* a_event,
 		RE::ActiveEffect* a_effect);
+	static bool handle_DDUD_thieving_removal_effect(
+		const RE::TESActiveEffectApplyRemoveEvent* a_event,
+		RE::ActiveEffect* a_effect);
 	static bool handle_DDUD_chastity_bra_effect(
 		const RE::TESActiveEffectApplyRemoveEvent* a_event,
 		RE::ActiveEffect* a_effect);

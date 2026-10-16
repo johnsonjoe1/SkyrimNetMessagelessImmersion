@@ -262,11 +262,44 @@ bool handle_DDUD::handle_DDUD_lockpick_removal_effect(
 
 	if (a_event->isApplied) {
 		DumpThoughts::throw_out_TTS_thought_message_after_silence(
-			"YOU, the player character, are now in such heavy bondage that lockpicking and thieving will be impossible. Say so in your response, and make it clear that your heavy bondage prevents these activities.",
+			"YOU, the player character, are now in such heavy bondage that lockpicking will be impossible. Say so in your response, and make it clear that your heavy bondage prevents these activities.",
 			21);
 	}
 	return true;
 }
+
+/*
+[2026-10-16 12:58:52.981] [log] [info] [handle_active_magic_effect_changes.cpp:1076] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-16 12:58:52.981] [log] [info] [handle_active_magic_effect_changes.cpp:1077] Effect APPLIED on Lillith | UID=17
+[2026-10-16 12:58:52.981] [log] [info] [handle_active_magic_effect_changes.cpp:1080] Base name: Heavy Bondage Script | Base ptr: 0x1eefa780b80 | Base-FormID: 1007BFBB | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-16 12:58:52.981] [log] [info] [handle_active_magic_effect_changes.cpp:1081] base-Effect EDID:  | Source ptr: 0x1eefa416a40  |  Caster: Lillith 
+[2026-10-16 12:58:52.981] [log] [info] [handle_active_magic_effect_changes.cpp:1085] Magnitude: 0 | Duration: 0
+[2026-10-16 12:58:52.981] [log] [info] [handle_active_magic_effect_changes.cpp:1088] Source name: Bound Wrists No Thieving | Source FormID: 10068BDB | Source EDID:  
+[2026-10-16 12:58:52.981] [log] [info] [handle_active_magic_effect_changes.cpp:1094] Form LookupByID 1007BFBB found: Heavy Bondage Script
+*/
+bool handle_DDUD::handle_DDUD_thieving_removal_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+
+	auto* base = a_effect->GetBaseObject();
+	auto* source = a_effect->spell;
+
+	if (!base || !source || std::strcmp(source->GetName(), "Bound Wrists No Thieving") != 0) {
+		return false;
+	}
+
+	if (a_event->isApplied) {
+		DumpThoughts::throw_out_TTS_thought_message_after_silence(
+			"YOU, the player character, are now in such heavy bondage that thieving will be impossible. Say so in your response, and make it clear that your heavy bondage prevents these activities.",
+			21);
+	}
+	return true;
+}
+
 
 bool handle_DDUD::handle_DDUD_chastity_bra_effect(
 	const RE::TESActiveEffectApplyRemoveEvent* a_event,

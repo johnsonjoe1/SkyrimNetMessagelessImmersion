@@ -2,10 +2,17 @@
 
 #include "DumpThoughts.h"
 #include "log.h"
+#include "misc.h"
 
+#include <chrono>
 #include <cstring>
 #include <format>
 
+namespace
+{
+	std::chrono::steady_clock::time_point last_spider_spit_thought_timestamp =
+		std::chrono::steady_clock::now() - std::chrono::hours(1);
+}
 
 
 
@@ -113,6 +120,25 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 		}
 		return true;
 	}
+
+	/*
+[2026-10-16 13:00:13.881] [log] [info] [handle_active_magic_effect_changes.cpp:1076] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-10-16 13:00:13.881] [log] [info] [handle_active_magic_effect_changes.cpp:1077] Effect APPLIED on Lillith | UID=21
+[2026-10-16 13:00:13.881] [log] [info] [handle_active_magic_effect_changes.cpp:1080] Base name: Spider Spit | Base ptr: 0x1eee1618100 | Base-FormID: 46005 | Base-Form Type: 18   (This means: MGEF) 
+[2026-10-16 13:00:13.881] [log] [info] [handle_active_magic_effect_changes.cpp:1081] base-Effect EDID:  | Source ptr: 0x1eee1581800  |  Caster: Frostbite Spider 
+[2026-10-16 13:00:13.881] [log] [info] [handle_active_magic_effect_changes.cpp:1085] Magnitude: -3 | Duration: 3
+[2026-10-16 13:00:13.881] [log] [info] [handle_active_magic_effect_changes.cpp:1088] Source name: Frostbite Venom | Source FormID: 434DD | Source EDID:  
+[2026-10-16 13:00:13.881] [log] [info] [handle_active_magic_effect_changes.cpp:1094] Form LookupByID 46005 found: Spider Spit
+	*/
+	if (std::strcmp(base_name, "Spider Spit") == 0 && (std::strcmp(source_name, "Frostbite Venom") == 0)) {
+		if (a_event->isApplied && cooldown_has_passed(last_spider_spit_thought_timestamp, 600)) {
+			SKSE::log::info("Event handler for SPIDER SPIT/FROSTBITE VENOM effect application from Spider Spit or Frostbite Venom!");
+			DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, just were poisoned by {}.  The frostbite venom drains your stamina, but you are confident that you can recover quickly. Say as much in your response, and make sure you make it clear that you were poisoned by {}.", source_name, source_name));
+			last_spider_spit_thought_timestamp = std::chrono::steady_clock::now();
+		}
+		return true;
+	}
+
 
 	if (std::strcmp(base_name, "Damage Health") == 0 && std::strcmp(source_name, "Nirnroot") == 0) {
 		if (a_event->isApplied) {
