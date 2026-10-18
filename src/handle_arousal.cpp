@@ -7,6 +7,7 @@
 #include <Windows.h>
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <cmath>
 #include <format>
 #include <functional>
@@ -26,6 +27,15 @@ namespace
 	std::uint64_t arousalSession = 0;
 	std::uint64_t nextArousalSample = 0;
 	std::uint64_t lastArousalSample = 0;
+	constexpr int arousalThoughtCooldownSeconds = 180;
+	std::chrono::steady_clock::time_point lastArousedThoughtTimestamp =
+		std::chrono::steady_clock::now() - std::chrono::seconds(arousalThoughtCooldownSeconds);
+	std::chrono::steady_clock::time_point lastDistractedThoughtTimestamp =
+		std::chrono::steady_clock::now() - std::chrono::seconds(arousalThoughtCooldownSeconds);
+	std::chrono::steady_clock::time_point lastNeedSexThoughtTimestamp =
+		std::chrono::steady_clock::now() - std::chrono::seconds(arousalThoughtCooldownSeconds);
+	std::chrono::steady_clock::time_point lastFocusedThoughtTimestamp =
+		std::chrono::steady_clock::now() - std::chrono::seconds(arousalThoughtCooldownSeconds);
 	std::mutex contributorMutex;
 	std::map<std::string, float> latestContributions;
 	std::uint64_t lastContributionSample = 0;
@@ -109,36 +119,44 @@ namespace
 		const bool enteredFocusedRange = previousArousal && *previousArousal > 20.0f &&
 			a_arousal >= 0.0f && a_arousal <= 20.0f;
 		previousArousal = a_arousal;
-		if (enteredArousedRange && !DumpThoughts::too_early_after_game_load()) {
+		if (enteredArousedRange && !DumpThoughts::too_early_after_game_load() &&
+			cooldown_has_passed(lastArousedThoughtTimestamp, arousalThoughtCooldownSeconds)) {
 			std::string thought_text = "Your general arousal and horniness have just noticeably increased. You are feeling strongly aroused now, "
 				"and your growing desire is becoming harder to ignore and more distracting. Express this increase in a brief "
 				"first-person thought in character. Make clear that you are talking about feeling hornier than before, "
 				"without mentioning numerical values or game mechanics.";
 			submit_arousal_thought(thought_text);
+			lastArousedThoughtTimestamp = std::chrono::steady_clock::now();
 			SKSE::log::info("[Arousal] Player crossed from below 70 into 70-89; submitted an arousal thought.");
 			LillithOnlyBox(std::format("Arousal crossed over 70 into 70-89: {}", thought_text));
-		} else if (enteredDistractedRange && !DumpThoughts::too_early_after_game_load()) {
+		} else if (enteredDistractedRange && !DumpThoughts::too_early_after_game_load() &&
+			cooldown_has_passed(lastDistractedThoughtTimestamp, arousalThoughtCooldownSeconds)) {
 			std::string thought_text = "Your general arousal and horniness have just increased. You are starting to feel noticeably turned on, "
 				"and thoughts of pleasure are beginning to distract you. Express this growing desire in a brief "
 				"first-person thought in character. Make clear that you are feeling hornier than before, "
 				"without mentioning numerical values or game mechanics.";
 			submit_arousal_thought(thought_text);
+			lastDistractedThoughtTimestamp = std::chrono::steady_clock::now();
 			SKSE::log::info("[Arousal] Player crossed from below 50 into 50-69; submitted an arousal thought.");
 			LillithOnlyBox(std::format("Arousal crossed over 50 into 50-69: {}", thought_text));
-		} else if (enteredNeedSexRange && !DumpThoughts::too_early_after_game_load()) {
+		} else if (enteredNeedSexRange && !DumpThoughts::too_early_after_game_load() &&
+			cooldown_has_passed(lastNeedSexThoughtTimestamp, arousalThoughtCooldownSeconds)) {
 			std::string thought_text = "Your general arousal and horniness have just increased to an intense level. "
 				"Your need for sexual relief is now very strong, and thoughts of pleasure are making it difficult to concentrate. "
 				"Express this heightened desire in a brief first-person thought in character. Make clear that you are "
 				"feeling much hornier and urgently craving sexual relief, without mentioning numerical values or game mechanics.";
 			submit_arousal_thought(thought_text);
+			lastNeedSexThoughtTimestamp = std::chrono::steady_clock::now();
 			SKSE::log::info("[Arousal] Player crossed from below 90 into 90+; submitted an arousal thought.");
 			LillithOnlyBox(std::format("Arousal crossed over 90 into 90+: {}", thought_text));
-		} else if (enteredFocusedRange && !DumpThoughts::too_early_after_game_load()) {
+		} else if (enteredFocusedRange && !DumpThoughts::too_early_after_game_load() &&
+			cooldown_has_passed(lastFocusedThoughtTimestamp, arousalThoughtCooldownSeconds)) {
 			std::string thought_text = "Your general arousal and horniness have now subsided to a low level. "
 				"Your desire is less distracting, and you feel calmer and able to focus more clearly again. "
 				"Express this easing of arousal in a brief first-person thought in character, without inventing a cause "
 				"for the change or mentioning numerical values or game mechanics.";
 			submit_arousal_thought(thought_text);
+			lastFocusedThoughtTimestamp = std::chrono::steady_clock::now();
 			SKSE::log::info("[Arousal] Player crossed from above 20 into 0-20; submitted an arousal thought.");
 			LillithOnlyBox(std::format("Arousal dropped from above 20 into 0-20: {}", thought_text));
 		}
@@ -413,6 +431,12 @@ void handle_arousal::reset_arousal_tracking()
 	nextArousalSample = 0;
 	lastArousalSample = 0;
 	lastContributionSample = 0;
+	const auto initialCooldownTimestamp =
+		std::chrono::steady_clock::now() - std::chrono::seconds(arousalThoughtCooldownSeconds);
+	lastArousedThoughtTimestamp = initialCooldownTimestamp;
+	lastDistractedThoughtTimestamp = initialCooldownTimestamp;
+	lastNeedSexThoughtTimestamp = initialCooldownTimestamp;
+	lastFocusedThoughtTimestamp = initialCooldownTimestamp;
 	std::scoped_lock lock(contributorMutex);
 	latestContributions.clear();
 }
