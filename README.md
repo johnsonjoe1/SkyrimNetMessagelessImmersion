@@ -12,7 +12,7 @@ So everything should play the same, just with an potentially messageless and wid
 
 # Compatibility
 
-The current build uses CommonLibSSE-NG 9.1.0 and has been tested successfully on the Steam version of Skyrim 1.6.1170 with SKSE 2.2.6. It is built as an Address Library-compatible, version-independent SKSE plugin and is expected to support Skyrim 1.7.104 when used with SKSE 2.3.1 and Address Library v13, but that runtime has not yet been tested. GOG and Skyrim VR are also currently untested.
+The current build uses CommonLibSSE-NG 9.1.0 and has been tested successfully on the Steam version of Skyrim 1.6.1170 with SKSE 2.2.6. It is built as an Address Library-compatible, version-independent SKSE plugin. Skyrim 1.7.104, GOG, and Skyrim VR remain untested; the CommonLib upgrade alone does not confirm compatibility with those runtimes.
 
 NOTE:  All testing is done for Sexlab P+.  This one is not a hard requirement or anything, but it's API and responses might be slightly different from the older Sexlab 1.66b, so maybe some deterioration of quality or some missing features might happen on systems still running the old 1.66b version.  Sorry for any inconvenience this may cause.
 
@@ -34,8 +34,10 @@ Version 0.6.12 and later supports both the legacy SkyrimNet trigger layout used 
 
 # Recent changes
 
+Changes since 0.7.3 are tracked in the [unreleased notes](docs/release-notes/unreleased.md). They include null-caster crash fixes, SLO Aroused NG thoughts with contributor attribution, additional Devious Devices effects, and thoughts delayed until a period of silence. See the [0.7.3 notes](docs/release-notes/0.7.3.md) for the previous release.
+
 * Migrated from the obsolete CommonLib vcpkg port to upstream CommonLibSSE-NG 9.1.0, pinned as a Git submodule for reproducible builds and future Skyrim 1.7.x support.
-* Thoughts that occur during player dialogue are queued and played afterwards. Individual call sites may instead discard a thought or process it immediately, and the queue is cleared when a game is loaded or started.
+* Important and normal thoughts that occur during player dialogue are queued and played afterwards. Queued literal and background thoughts are discarded. Individual call sites may instead discard a thought or process it immediately, and the queues are cleared when a game is loaded or started.
 * Recent player thoughts from the preceding five minutes are included as context to improve continuity between successive SkyrimNet responses.
 * Added HUD-notification handling for events that do not expose a more useful native event, including gag restrictions, surrender, missing pickaxes, fishing failures, insufficient gold, and supported arousal notifications.
 * Added player worn-equipment tracking, including immediate AND transparency/flashing observations and better identification of relevant worn items.
@@ -57,6 +59,7 @@ Support is intentionally selective rather than complete. SNMI does not modify th
 
 * [YPS Fashion](https://www.loverslab.com/files/file/2583-immersive-hair-growth-and-styling-yps-devious-immersive-fashion-2025-06-08/): relays YPS's own thoughts, and comments on hair length and dye changes, makeup, nail polish, stockings, piercings, fashion addiction, foot conditions, heel training, and YPS movement penalties. YPS thoughts are suppressed during SexLab scenes. To avoid duplicate voice lines, set YPS's built-in thought volume to zero and reduce its thought frequency.
 * [Milk Mod Economy (MME)](https://www.loverslab.com/files/file/6103-milk-mod-economy-se/): reports milk fullness changes, Lactacid changes, milk-pump use, and Maid-level progress.
+* SLO Aroused NG: reports selected increases in arousal and a return to low arousal, with available contributor information and separate 180-second cooldowns for each thought type. The current implementation also displays an arousal breakdown on the HUD after each completed periodic sample, including when debug logging is disabled. Other arousal implementations are not supported by this polling integration.
 * [Advanced Nudity Detection (AND)](https://www.nexusmods.com/skyrimspecialedition/mods/165289): reports changes to nudity, partial nudity, modesty, and flashing-risk states; worn equipment is also scanned to identify relevant transparent and flash-risk items.
 * [SexLab Sexual Fame Reloaded (SLSF)](https://www.loverslab.com/files/file/35874-sexlab-sexual-fame-reloaded/): monitors significant increases and decreases in the tracked fame categories and produces a combined response when appropriate.
 * [Battle Fuck](https://www.loverslab.com/files/file/18241-battle-fuck/): comments on player struggle events.
@@ -70,7 +73,7 @@ Support is intentionally selective rather than complete. SNMI does not modify th
 * [Devious Followers](https://www.loverslab.com/files/file/44435-devious-followers-203-2025/): comments when the player's resistance is reduced.
 * [Licenses - Player Oppression](https://www.nexusmods.com/skyrimspecialedition/mods/110418?tab=description): reacts to guard bounty pursuit and resolution, license or permit acquisition, and the application or removal of the magic-suppression effect. License thoughts can be disabled in the SNMI INI.
 * iNeed: monitors hunger, thirst, and fatigue level changes; reacts to refilling waterskins and entering or leaving water.
-* Bathing in Skyrim: comments when the player becomes very dirty, is partially cleaned by swimming, or becomes fully clean after bathing. These thoughts can be disabled in the SNMI INI.
+* Bathing in Skyrim: comments when the player becomes very dirty, is partially cleaned by swimming, or becomes fully clean after bathing. Dirt-status thoughts can be disabled in the SNMI INI. The separate bathing-start thought has no dedicated configuration switch.
 * Creature Summoner: comments when the player summons a supported creature.
 * Some basic support for the SE Version of the Apropos 2 mod (from the LL forum:  https://www.loverslab.com/topic/136768-apropos-2-for-sse/),
 * SexLab P+: tracks player-involved scene boundaries to avoid out-of-place clothing and fashion thoughts, and recognizes supported cum-effect application and removal.
@@ -82,16 +85,32 @@ Note, that as said, there are only minimal gentle changes, nothing big or invasi
 
 # Usage/Configuration
 
-The mod includes a limited configuration file at `SKSE/Plugins/SkyrimNetMessagelessImmersion.ini`.
-The following switches in its `[Thoughts]` section are live and accept `1` or `0`:
+The mod includes a configuration file at `SKSE/Plugins/SkyrimNetMessagelessImmersion.ini`. Settings are read when the plugin loads; restart the game after editing them. Section and key names are case-insensitive. There is no MCM.
 
-* `EnableMilkThoughts`
-* `EnableLicensesPlayerOppressionThoughts`
-* `EnablePlayerDirtThoughts`
-* `EnableANDNudityThoughts`
-* `EnableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts`
+The following switches in `[Thoughts]` work and accept `1` (enabled) or `0` (disabled). All are enabled in the supplied INI:
 
-The `EnablePlugin`, `DebugLogging`, and `EnableAproposThoughts` entries are placeholders and currently have no effect. `UpdateInterval` controls how often periodic status checks run, in whole seconds. Most other behavior remains hard-coded, and there is no MCM.
+| Setting | Controls |
+| --- | --- |
+| `EnableMilkThoughts` | Milk Mod Economy thoughts. |
+| `EnableLicensesPlayerOppressionThoughts` | Supported Licenses - Player Oppression event thoughts. |
+| `EnablePlayerDirtThoughts` | Dirt-status changes and spontaneous dirt complaints; does not disable the separate bathing-start thought. |
+| `EnableANDNudityThoughts` | AND nudity and modesty thoughts. |
+| `EnableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts` | Relaying YPS's own `YPS_ThoughtEvent` text; does not disable all SNMI fashion observations. |
+| `enableSLSFthoughts` | SLSF Reloaded fame thoughts. |
+| `EnableConstantWhining` | Spontaneous status complaints after silence; does not disable event-driven thoughts or the separate queue of delayed thoughts. |
+
+Additional working settings:
+
+| Section | Setting | Supplied value and behavior |
+| --- | --- | --- |
+| `[General]` | `DebugLogging` | `1` enables verbose native logging and the bridge's guarded Papyrus traces. `0` limits native logging to warnings/errors after startup configuration and disables those traces. If omitted, defaults to `0`. It does not disable HUD reports or character-name-dependent debug popups. |
+| `[Thoughts]` | `SLSFthoughtThreshold` | `5`: minimum absolute fame change per category since the previous check. `0` allows any change; negative values fall back to `5`. |
+| `[Thoughts]` | `SLSFthoughtCooldown` | `300`: shared cooldown between fame thoughts, in seconds. `0` disables it; negative values fall back to `300`. |
+| `[Timing]` | `UpdateInterval` | `5`: periodic check interval in whole seconds. Values below `1` are treated as `1`. |
+| `[Timing]` | `SilenceRequiredBeforeSpontaneousStatusWhining` | `90`: seconds since the last SNMI thought submission or periodic dialogue check before spontaneous complaints are eligible. Accepts non-negative whole numbers; invalid values fall back to `90`. The character name `Lillith` currently overrides this to `20`. |
+
+`EnablePlugin` and `EnableAproposThoughts` are placeholders and currently have no effect. Most other behavior remains hard-coded, including character-name-dependent debug behavior for `Lillith`. The silence setting does not change fixed delays such as the 19-second delay for YPS style-change thoughts.
+
 If you want, you can disable e.g. the background thought channel. On SkyrimNet beta25 RC7 or later, disable or edit it through the `johnsonjoe1.snmi` external plugin in SkyrimNet's dashboard. On RC6 or earlier, delete or edit `SKSE/Plugins/SkyrimNet/config/triggers/SNMI_Pump_BACKGROUNDCHANNEL_PlayerThought.yaml`.
 
 # Contributing guidelines

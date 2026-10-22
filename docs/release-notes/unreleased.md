@@ -1,0 +1,26 @@
+# SkyrimNet Messageless Immersion — Unreleased
+
+Changes since 0.7.3. These describe the current source; the next release version has not been assigned.
+
+## Stability
+
+- Guarded missing casters when handling Firebolt and Orgasm Exhaustion effects, preventing null-pointer access. Orgasm Exhaustion thought output remains disabled.
+
+## Thoughts and timing
+
+- Added SLO Aroused NG polling and thoughts for entering arousal ranges 50–69, 70–89, and 90+, and for returning from above 20 to 0–20. Each thought type has its own 180-second cooldown. The first sample establishes a baseline; tracking resets when a game is loaded or started.
+- Arousal thoughts can include the strongest available positive contributors. Completed samples also display an arousal breakdown on the HUD; this currently remains active with debug logging disabled.
+- Added a queue for thoughts that wait for a period of silence. YPS style-change thoughts wait for 19 seconds of silence, and selected device thoughts use their own delays. This queue is cleared when a game is loaded or started.
+- Expanded Devious Devices handling for inflatable plugs, forced walking, lockpicking and thieving restrictions, chastity bra application/removal, rubber-dress squeaking, muffling, and Abadon domination-shout effects.
+- Added frostbite-spider venom thoughts with a 600-second cooldown and corrected Ancient Seed/Dragon Nuts effect handling.
+- Separated SLAC player and NPC event handling, added NPC stage comments, and corrected scene-status updates. NPC start/end thoughts no longer use the previous native 180-second cooldown; NPC stage thoughts have a 40-second gate shared with NPC start timing.
+- Reduced the post-load guard for AND nudity-change thoughts from 30 seconds to 5 seconds. The separate new-game guard and 40-second nudity-change cooldown remain.
+- Applied item-name cleanup to additional prompts to reduce bracketed annotations in spoken labels, and clarified prompts to refer to the player character.
+
+## Configuration and documentation
+
+- The existing `DebugLogging` switch now also controls the bridge's guarded Papyrus traces.
+- Updated the configuration reference to cover working fame and spontaneous-complaint settings, timing rules, and placeholder switches. No new INI settings were added since 0.7.3.
+- Corrected the packaged CommonLibSSE-NG version to 9.1.0 and distinguished the tested Steam Skyrim 1.6.1170 / SKSE 2.2.6 configuration from untested runtimes.
+
+Existing limitations remain: `EnablePlugin` and `EnableAproposThoughts` have no effect; bathing-start thoughts have no dedicated switch; character-name-dependent debugging for `Lillith` and arousal HUD reports are independent of `DebugLogging`.
