@@ -1028,7 +1028,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 		if (a_event->isApplied)
 		{
 			SKSE::log::info("Event handler for Orgasm Exhaustion effect application!");
-			std::string final_thought_string = std::format("You, the player character, are experiencing Orgasm Exhaustion.  This effect leaves you drained and unable to engage in further sexual activity for a while.  The source of this effect is: {}.  Respond in character and describe your current state and feelings, and make it clear that you speak about the orgasm you just had, or otherwise the player won't know what you are speakign about.", caster->GetName());
+			std::string final_thought_string = std::format("You, the player character, are experiencing Orgasm Exhaustion.  This effect leaves you drained and unable to engage in further sexual activity for a while.  The source of this effect is: {}.  Respond in character and describe your current state and feelings, and make it clear that you speak about the orgasm you just had, or otherwise the player won't know what you are speakign about.", caster ? caster->GetName() : "unknown, so try to guess it from preceding context");
 			// DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 		} else {
 			// LillithOnlyBox("NOTE:  Orgasm Exhaustion removed!!");
