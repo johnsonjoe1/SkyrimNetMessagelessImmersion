@@ -248,7 +248,7 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"BF Stop Combat Effect",                // This is *PROBABLY* from Battlefuck, but I'm not sure
 
 		"SUM Auto Hum Night Eye",    // This is the Skyrim-Utility-Mod doing some internal stuff.
-		
+
 	/*
 [2026-10-10 22:15:52.691] [log] [info] [handle_active_magic_effect_changes.cpp:989] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
 [2026-10-10 22:15:52.691] [log] [info] [handle_active_magic_effect_changes.cpp:990] Effect REMOVED on Cara Goodlooker | UID=27
@@ -1001,7 +1001,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			}
 
 			SKSE::log::info("Event handler for Firebolt effect application!");
-			std::string final_thought_string = std::format("You have been hit by a Firebolt spell.  The impact sears your skin and you feel the intense heat and magical energy coursing through you.  The firebolt came from: {}.  Respond in character and say something and be sure to mention that you have been struck by a Firebolt.", caster->GetName());
+			std::string final_thought_string = std::format("You have been hit by a Firebolt spell.  The impact sears your skin and you feel the intense heat and magical energy coursing through you.  The firebolt came from: {}.  Respond in character and say something and be sure to mention that you have been struck by a Firebolt.", caster ? caster->GetName() : "not a person but instead maybe a trap or environmental source");
 			LillithOnlyBox(final_thought_string);
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
 			last_firebolt_thought_timestamp = std::chrono::steady_clock::now();
