@@ -34,7 +34,7 @@ Version 0.6.12 and later supports both the legacy SkyrimNet trigger layout used 
 
 # Recent changes
 
-Changes since 0.7.3 are tracked in the [unreleased notes](docs/release-notes/unreleased.md). They include null-caster crash fixes, SLO Aroused NG thoughts with contributor attribution, additional Devious Devices effects, and thoughts delayed until a period of silence. See the [0.7.3 notes](docs/release-notes/0.7.3.md) for the previous release.
+Version 0.7.4 includes null-caster crash fixes, SLO Aroused NG thoughts with contributor attribution, additional Devious Devices effects, and thoughts delayed until a period of silence. See the [0.7.4 release notes](docs/release-notes/0.7.4.md) for changes since 0.7.3.
 
 * Migrated from the obsolete CommonLib vcpkg port to upstream CommonLibSSE-NG 9.1.0, pinned as a Git submodule for reproducible builds and future Skyrim 1.7.x support.
 * Important and normal thoughts that occur during player dialogue are queued and played afterwards. Queued literal and background thoughts are discarded. Individual call sites may instead discard a thought or process it immediately, and the queues are cleared when a game is loaded or started.
