@@ -793,8 +793,8 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			{"DeviceEquippedChain Harness Wrist Shackles", "YOU, the player character, just got a chain harness wrist shackles locked onto your wrists.  These shackles prevent you from moving your arms freely.  They are securely fastened so that you cannot simply remove them.   "},
 			{"DeviceEquippedBoxbinder", "YOU, the player character, just got locked into a box binder.  The box binder holds your arms and hands in a bag behind your torso, so that you are helpless and completely at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
 			{"DeviceEquippedcorset", "YOU, the player character, just got locked into a corsett.  The corsett wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},
+			{"DeviceEquippedCatsuit", "YOU, the player character, just got locked into a catsuit.  The catsuit wraps around your whole body and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},			
 			
-
 
 			// Crotch things here:
 			{"DeviceEquippedClitoris Piercing", "YOU, the player character, just got a clitoris piercing locked onto your clitoris.  Such a piercing may start to vibrate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
@@ -880,7 +880,7 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			
 			{"DeviceRemovedChastity Belt", "YOU, the player character, just got your chastity belt removed.  The access and stimulation restrictions from that belt no longer apply now that it is gone.   "},
 			{"DeviceRemovedBelt", "YOU, the player character, just got your chastity belt removed.  The access and stimulation restrictions from that belt no longer apply now that it is gone.   "},
-			
+			{"DeviceRemovedCatsuit", "YOU, the player character, just got released from your catsuit.  The catsuit wrapped around your whole body and constricts it a bit. This device got removed and now you are free from it.   "},
 			
 			{"DeviceRemovedStraitJacket", "YOU, the player character, just got released from your strait jacket.  Your arms and hands are no longer bound against your torso, so those restraints no longer apply.   "},
 			{"DeviceRemovedElbowbinder", "YOU, the player character, just got released from your elbow binder.  Your arms are no longer forced behind your back in that restrictive position, so those restraints no longer apply.   "},
