@@ -9,6 +9,7 @@ class SNMIPapyrus
 public:
     static bool Register(RE::BSScript::IVirtualMachine*);
     static bool IsDebugLoggingEnabled(RE::StaticFunctionTag*);
+	static void reset_game_session_state();
     static void SetMilkLevel(RE::StaticFunctionTag*, float a_value);
 	static void SetMilkMax(RE::StaticFunctionTag*, float a_value);
 	static void SetLactacidLevel(RE::StaticFunctionTag*, float a_value);
@@ -58,6 +59,10 @@ public:
 	inline static float previous_Apropos2Ostate = 0;
 
 	private:
+	static inline bool _suppress_next_milk_level_update = true;
+	static inline bool _suppress_next_lactacid_level_update = true;
+	static inline bool _suppress_next_milk_string_update = true;
+	static inline bool _suppress_next_lovesickness_flag_update = true;
     static inline float _milkLevel = 124356.0f;
 	static inline float _milkMax = 123456.0f;
 	static inline float _lactacidLevel = 0.0f;

@@ -12,6 +12,35 @@ namespace logger = SKSE::log;
 
 std::string previous_milk_string = "No milk string HISTORY defined yet!";
 
+void SNMIPapyrus::reset_game_session_state()
+{
+	_milkLevel = previous_milk_level = 0.0f;
+	_milkMax = previous_milk_max_level = 0.0f;
+	_lactacidLevel = previous_lactacid_level = 0.0f;
+	_lactacidMax = previous_lactacid_max_level = 0.0f;
+	_maidLevel = 0.0f;
+	previous_maid_level = -1.0f;
+	_milkString.clear();
+	previous_milk_string.clear();
+	_keepaliveLevel = 0.0f;
+	_yps_AddictionLevel = _yps_AddictionBuff = _yps_HeelsWorn = 0.0f;
+	previous_yps_AddictionLevel = previous_yps_AddictionBuff = -99.0f;
+	previous_yps_HeelsWorn = -1.0f;
+	yps_AddictionLevelChangeSinceLastBuff = 0;
+	_yps_condition_string.clear();
+	_Apropos2Vstate = previous_Apropos2Vstate = 0.0f;
+	_Apropos2Astate = previous_Apropos2Astate = 0.0f;
+	_Apropos2Ostate = previous_Apropos2Ostate = 0.0f;
+	suppress_next_Apropos2_state_updates();
+	_lovesickness_flag = previous_lovesickness_flag = 0.0f;
+	_lovesickness_euphoria = 0.0f;
+	_suppress_next_milk_level_update = true;
+	_suppress_next_lactacid_level_update = true;
+	_suppress_next_milk_string_update = true;
+	_suppress_next_lovesickness_flag_update = true;
+	SKSE::log::info("Reset Papyrus bridge state; first updates will establish baselines without change thoughts.");
+}
+
 /*
 float SNMIPapyrus::previous_milk_level = 0;
 float SNMIPapyrus::previous_lactacid_level = 1000000;  // simply don't speak of an increase at game start (given no saved values from previous save)
@@ -25,6 +54,11 @@ float SNMIPapyrus::previous_maid_level = -1.0f;
 void SNMIPapyrus::set_lovesickness_flag(RE::StaticFunctionTag*, float a_value)
 {
     _lovesickness_flag = a_value;
+	if (_suppress_next_lovesickness_flag_update) {
+		_suppress_next_lovesickness_flag_update = false;
+		previous_lovesickness_flag = a_value;
+		return;
+	}
 	SKSE::log::info("Note:  Lovesickness_flag:  {}  previous_lovesickness_flag: {}", _lovesickness_flag, previous_lovesickness_flag);	
 	if ( (_lovesickness_flag > previous_lovesickness_flag ) ) {
 		SKSE::log::info("Note: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> LOVESICKNESS-STATEMENT TRIGGERED !!!!!!!!!!!!!!!!!!!!");	
@@ -44,6 +78,11 @@ void SNMIPapyrus::set_lovesickness_euphoria(RE::StaticFunctionTag*, float a_valu
 void SNMIPapyrus::SetMilkLevel(RE::StaticFunctionTag*, float a_value)
 {
     _milkLevel = a_value;
+	if (_suppress_next_milk_level_update) {
+		_suppress_next_milk_level_update = false;
+		previous_milk_level = a_value;
+		return;
+	}
 	// float milk_max = 4.0;
 	float milk_max = SNMIPapyrus::GetMilkMax();
 	if (milk_max == 0) {
@@ -286,6 +325,11 @@ void SNMIPapyrus::SetMilkMax(RE::StaticFunctionTag*, float a_value)
 void SNMIPapyrus::SetLactacidLevel(RE::StaticFunctionTag*, float a_value)
 {
     _lactacidLevel = a_value;
+	if (_suppress_next_lactacid_level_update) {
+		_suppress_next_lactacid_level_update = false;
+		previous_lactacid_level = a_value;
+		return;
+	}
 	// float lactacid_max = 4.0;
     SKSE::log::info("Note:  Lactacid level updated VIA PUSH FROM PAPYRUS: {}", a_value);
 	// So let's do some additional checks here:  If the level just went above 50% of max, this is worthy of a special thought.
@@ -335,6 +379,10 @@ void SNMIPapyrus::SetLactacidMax(RE::StaticFunctionTag*, float a_value)
 void SNMIPapyrus::SetMilkString(RE::StaticFunctionTag*, std::string s_value)
 {
     _milkString = s_value;
+	if (_suppress_next_milk_string_update) {
+		_suppress_next_milk_string_update = false;
+		previous_milk_string = s_value;
+	}
     SKSE::log::info("Note:  Milk string updated VIA PUSH FROM PAPYRUS: {}", s_value);
 }
 
@@ -404,6 +452,9 @@ std::string SNMIPapyrus::GetYpsConditionString()     //  Here we must NOT use st
 
 void SNMIPapyrus::handle_mme_milk_value_changes_and_produce_thoughts_from_them()
 {
+	if (_suppress_next_milk_string_update) {
+		return;
+	}
     SKSE::log::info("Note:  handle_mme_milk_value_changes_and_produce_thoughts_from_them WAS CALLED!!!");
 
 	// Now, PERIODICALLY, we take care of changes in the values of other mods.  We put this here, because this gets

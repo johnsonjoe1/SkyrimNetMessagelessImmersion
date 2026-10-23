@@ -11,6 +11,9 @@ namespace logger = SKSE::log;
 
 void handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start()
 {
+	previous_iNeed_fatigue_level = 1000000;
+	previous_iNeed_thirst_level = 1000000;
+	previous_iNeed_hunger_level = 1000000;
 	logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start: TRYING to reset iNeed hunger/thirst/fatigue after game load or start.");
 	if (!RE::TESDataHandler::GetSingleton()) {
 		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>handle_iNeed::try_to_reset_iNeed_stuff_after_game_load_or_start: TESDataHandler::GetSingleton() is NULL.  TOO EARLY!  ABORTING TO PREVENT CRASH.");

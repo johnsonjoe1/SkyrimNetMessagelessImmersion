@@ -27,6 +27,7 @@ bool handle_player_dirt::is_player_almost_at_filthy_dirt_stage()
 
 void handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start()
 {
+	previous_dirt_value = 100000;
 	logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start: TRYING to reset player dirt after game load or start.");
 	if (!RE::TESDataHandler::GetSingleton()) {
 		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>handle_player_dirt::try_to_reset_player_dirt_after_game_load_or_start: TESDataHandler::GetSingleton() is NULL.  TOO EARLY!  ABORTING TO PREVENT CRASH.");
@@ -56,6 +57,10 @@ void handle_player_dirt::handle_player_dirt_changes()
 	auto* playerDirt = RE::TESDataHandler::GetSingleton() ->LookupForm<RE::TESGlobal>(0x000DA8, "Bathing in Skyrim.esp");
 	if (playerDirt) {
 		float dirtValue = playerDirt->value;
+		if (previous_dirt_value == 100000) {
+			previous_dirt_value = dirtValue;
+			return;
+		}
 		logger::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Player dirtiness: {} (previous value: {} )", dirtValue, previous_dirt_value);
 		
 		if ((previous_dirt_value < 0.6f) && (dirtValue >= 0.6f)) {

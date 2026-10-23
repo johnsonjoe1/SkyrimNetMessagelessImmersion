@@ -163,6 +163,7 @@ void handle_yps::reset_hair_dye_tracking()
 
 void handle_yps::reset_fashion_tracking()
 {
+	actually_wearing_heels_according_to_yps_thoughts = false;
 	previous_yps_lipstick_state.reset();
 	previous_yps_eyeshadow_state.reset();
 	previous_yps_fingernail_state.reset();
