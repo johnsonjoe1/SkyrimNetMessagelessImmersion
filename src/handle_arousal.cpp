@@ -131,40 +131,36 @@ namespace
 			a_arousal >= 0.0f && a_arousal <= 20.0f;
 		previousArousal = a_arousal;
 		if (enteredArousedRange && !DumpThoughts::too_early_after_game_load()) {
-			std::string thought_text = "Your general arousal and horniness have just noticeably increased. You are feeling strongly aroused now, "
+			std::string thought_text = "Your general arousal and horniness have just noticeably increased. You are feeling horny now, "
 				"and your growing desire is becoming harder to ignore and more distracting. Express this increase in a brief "
-				"first-person thought in character. Make clear that you are talking about feeling hornier than before, "
-				"without mentioning numerical values or game mechanics.";
+				"first-person thought in character.  Make it clear that you are talking about horniness.  Don't mention numerical values or game mechanics.  Mention the reason why you are feeling this way.";
 			if (submit_arousal_thought_if_off_cooldown(thought_text, lastArousedThoughtTimestamp)) {
 				SKSE::log::info("[Arousal] Player crossed from below 70 into 70-89; submitted an arousal thought.");
-				LillithOnlyBox(std::format("Arousal crossed over 70 into 70-89: {}", thought_text));
+				LillithOnlyBox(std::format("Arousal crossed over 70 into 70-89: THE THOUGHT TEXT PROMPT IS: {}", thought_text));
 			}
 		} else if (enteredDistractedRange && !DumpThoughts::too_early_after_game_load()) {
 			std::string thought_text = "Your general arousal and horniness have just increased. You are starting to feel noticeably turned on, "
 				"and thoughts of pleasure are beginning to distract you. Express this growing desire in a brief "
-				"first-person thought in character. Make clear that you are feeling hornier than before, "
-				"without mentioning numerical values or game mechanics.";
+				"first-person thought in character. Make it clear that you are talking about horniness.  Make it clear that you are feeling horny.  Don't mention numerical values or game mechanics.  Mention the reason why you are feeling this way.";
 			if (submit_arousal_thought_if_off_cooldown(thought_text, lastDistractedThoughtTimestamp)) {
 				SKSE::log::info("[Arousal] Player crossed from below 50 into 50-69; submitted an arousal thought.");
-				LillithOnlyBox(std::format("Arousal crossed over 50 into 50-69: {}", thought_text));
+				LillithOnlyBox(std::format("Arousal crossed over 50 into 50-69: THE THOUGHT TEXT PROMPT IS: {}", thought_text));
 			}
 		} else if (enteredNeedSexRange && !DumpThoughts::too_early_after_game_load()) {
 			std::string thought_text = "Your general arousal and horniness have just increased to an intense level. "
 				"Your need for sexual relief is now very strong, and thoughts of pleasure are making it difficult to concentrate. "
-				"Express this heightened desire in a brief first-person thought in character. Make clear that you are "
-				"feeling much hornier and urgently craving sexual relief, without mentioning numerical values or game mechanics.";
+				"Express this heightened desire in a brief first-person thought in character. Make it clear that you are talking about horniness.  Don't mention numerical values or game mechanics.  Make it clear that you are feeling very horny and urgently craving sexual relief, without mentioning numerical values or game mechanics.  Mention the reason why you are feeling this way.";
 			if (submit_arousal_thought_if_off_cooldown(thought_text, lastNeedSexThoughtTimestamp)) {
 				SKSE::log::info("[Arousal] Player crossed from below 90 into 90+; submitted an arousal thought.");
-				LillithOnlyBox(std::format("Arousal crossed over 90 into 90+: {}", thought_text));
+				LillithOnlyBox(std::format("Arousal crossed over 90 into 90+: THE THOUGHT TEXT PROMPT IS: {}", thought_text));
 			}
 		} else if (enteredFocusedRange && !DumpThoughts::too_early_after_game_load()) {
 			std::string thought_text = "Your general arousal and horniness have now subsided to a low level. "
 				"Your desire is less distracting, and you feel calmer and able to focus more clearly again. "
-				"Express this easing of arousal in a brief first-person thought in character, without inventing a cause "
-				"for the change or mentioning numerical values or game mechanics.";
+				"Express this easing of arousal in a brief first-person thought in character.  Make it clear that you are talking about horniness.  Don't mention numerical values or game mechanics.  Make it clear that you are feeling less horny.  Mention the reason why you are feeling this way.";
 			if (submit_arousal_thought_if_off_cooldown(thought_text, lastFocusedThoughtTimestamp)) {
 				SKSE::log::info("[Arousal] Player crossed from above 20 into 0-20; submitted an arousal thought.");
-				LillithOnlyBox(std::format("Arousal dropped from above 20 into 0-20: {}", thought_text));
+				LillithOnlyBox(std::format("Arousal dropped from above 20 into 0-20: THE THOUGHT TEXT PROMPT IS: {}", thought_text));
 			}
 		}
 	}
@@ -223,7 +219,12 @@ namespace
 					}
 					// Generate the thought after publishing attribution from this same completed sample.
 					handle_arousal_sample(arousal, session, sample);
-					RE::SendHUDMessage::ShowHUDMessage(message.c_str());
+
+					const auto* player = RE::PlayerCharacter::GetSingleton();
+					const auto* playerName = player ? player->GetName() : nullptr;
+					if (playerName && std::string_view(playerName) == "Lillith") {
+						RE::SendHUDMessage::ShowHUDMessage(message.c_str());
+					}
 				});
 			}
 		}
