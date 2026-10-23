@@ -7,6 +7,7 @@
 #include "DumpThoughts.h"
 #include "player_thought_history.h"
 #include "handle_config_ini_file.h"
+#include <algorithm>
 #include <deque>
 #include <mutex>
 
@@ -112,6 +113,16 @@ namespace
 		std::size_t queueSize;
 		{
 			std::lock_guard lock(dialogueSuppressedThoughtQueueMutex);
+			// We drop thoughts, if they are duplicates of thoughts already in the dialogue-suppressed queue. Dupliate means identical channel and message content.
+			if (std::ranges::any_of(dialogueSuppressedThoughtQueue, [&](const auto& thought) {
+				return thought.channel == a_channel && thought.message == a_thought;
+			})) {
+				SKSE::log::info(
+					"Dropped duplicate {} thought already in the dialogue-suppressed queue; keeping the original entry and timestamp. Dropped thought:\n{}",
+					GetThoughtChannelName(a_channel),
+					a_thought);
+				return true;
+			}
 			dialogueSuppressedThoughtQueue.push_back({
 				std::string(a_thought),
 				a_channel,
@@ -244,6 +255,15 @@ void DumpThoughts::reset_last_game_load_or_reload_timestamp() {
 void DumpThoughts::throw_out_TTS_thought_message_after_silence(std::string my_message, int requiredSilenceSeconds)
 {
 	std::lock_guard lock(silenceDelayedThoughtQueueMutex);
+	// We drop thoughts from the queue, if they are duplicates of the current thought. Dupliate means identical channel and message content.
+	if (std::ranges::any_of(silenceDelayedThoughtQueue, [&](const auto& thought) {
+		return thought.message == my_message;
+	})) {
+		SKSE::log::info(
+			"Dropped duplicate NORMAL thought already in the silence-delayed queue; keeping the original entry, silence requirement, and timestamp. Dropped thought:\n{}",
+			my_message);
+		return;
+	}
 	silenceDelayedThoughtQueue.push_back({
 		std::move(my_message), requiredSilenceSeconds, std::chrono::steady_clock::now()
 	});
