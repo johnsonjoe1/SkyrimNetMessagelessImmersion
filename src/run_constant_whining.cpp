@@ -1,5 +1,6 @@
 #include "DumpThoughts.h"
 #include "handle_active_magic_effect_changes.h"
+#include "handle_arousal.h"
 #include "handle_config_ini_file.h"
 #include "handle_iNeed.h"
 #include "handle_player_dirt.h"
@@ -41,6 +42,9 @@ void run_constant_whining_in_case_of_silence()
 		if (get_current_ataxia_stage() == AtaxiaStage::stage2) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 				"You are suffering from the most severe stage of Ataxia. The disease is making you move more slowly and deal less damage to enemies. Say so in your response and make clear that these symptoms are caused by your severe Ataxia.");
+		}
+		if (const auto arousalThought = handle_arousal::get_current_high_arousal_thought(); !arousalThought.empty()) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(arousalThought);
 		}
 		if (auto* dataHandler = RE::TESDataHandler::GetSingleton()) {
 			// BoS's CC_SexEventsScript.CC_PlayerBimboLevel property is bound to CC_PlayerBimboScore.

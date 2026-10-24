@@ -449,6 +449,28 @@ void handle_arousal::reset_arousal_tracking()
 	latestContributions.clear();
 }
 
+std::string handle_arousal::get_current_high_arousal_thought()
+{
+	if (!previousArousal || *previousArousal < 50.0f) {
+		return {};
+	}
+
+	std::string thought;
+	if (*previousArousal >= 90.0f) {
+		thought = "Your general arousal and horniness remain at an intense level. Your need for sexual relief is very strong, and thoughts of pleasure are making it difficult to concentrate.";
+	} else if (*previousArousal >= 70.0f) {
+		thought = "You are still feeling horny. Your desire remains hard to ignore and is distracting you.";
+	} else {
+		thought = "You are still feeling noticeably turned on, and thoughts of pleasure are distracting you.";
+	}
+	thought += " Express this ongoing desire in a brief first-person thought in character. Make it clear that you are talking about horniness. Don't mention numerical values or game mechanics.";
+	const auto attribution = get_top_arousal_contribution_string();
+	if (!attribution.empty()) {
+		thought += " Mention why you are feeling this way. " + attribution;
+	}
+	return thought;
+}
+
 std::string handle_arousal::get_top_arousal_contributors(std::size_t a_count)
 {
 	const auto ranked = ranked_arousal_contributors();
