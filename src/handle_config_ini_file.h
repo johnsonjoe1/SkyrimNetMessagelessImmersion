@@ -4,16 +4,16 @@ namespace SNMI
 {
     struct Settings
     {
-        bool debugLogging{ false };
-		bool enablePlayerDirtThoughts{ false };
-		bool enableMilkThoughts{ false };
-        bool enableANDNudityThoughts{ false };
+        bool debugLogging{ true };
+		bool enablePlayerDirtThoughts{ true };
+		bool enableMilkThoughts{ true };
+        bool enableANDNudityThoughts{ true };
         bool enableSLSFthoughts{ true };
         int SLSFthoughtThreshold{ 5 };
         int SLSFthoughtCooldown{ 300 };
         bool enableConstantWhining{ true };
-        bool enableLicensesPlayerOppressionThoughts{ false };
-        bool enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts{ false };
+        bool enableLicensesPlayerOppressionThoughts{ true };
+        bool enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts{ true };
 		int updateInterval{ 5 };
 		int silenceRequiredBeforeSpontaneousStatusWhining{ 90 };
     };

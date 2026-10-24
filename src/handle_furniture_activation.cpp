@@ -3,6 +3,7 @@
 #include "SKSE/SKSE.h"
 #include "misc.h"
 #include "DumpThoughts.h"
+#include "handle_config_ini_file.h"
 #include <array>
 #include <string_view>  
 #include <unordered_set>
@@ -325,6 +326,10 @@ void handle_furniture_item_activation(RE::TESBoundObject *base)
 		// NOTE:  Milk pump gets a special treatment, because it gets a comment on ENTERING the furniture, and also on
 		//        leaving the furniture again.
 		if (std::strcmp(furniture_name , "Milk Pump") == 0) {
+			if (!SNMI::GetSettings().enableMilkThoughts) {
+				SKSE::log::info("Milk Pump furniture thought was not delivered because EnableMilkThoughts is disabled.");
+				return;
+			}
 			SKSE::log::info("[SkyrimNetMessagelessImmersion] Player just activated the Milk Pump!  THIS GETS A SPECIAL TREATMENT VIA A DIFFERENT TRIGGER!!!!");
 			auto* player = RE::PlayerCharacter::GetSingleton();
 			auto furniture = player->GetOccupiedFurniture().get();

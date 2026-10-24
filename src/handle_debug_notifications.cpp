@@ -4,6 +4,7 @@
 #include "SKSE/SKSE.h"
 #include "DumpThoughts.h"
 #include "handle_arousal.h"
+#include "handle_config_ini_file.h"
 #include "misc.h"
 
 #include <array>
@@ -172,6 +173,10 @@ namespace
 
 		for (const auto& entry : deviousFollowersNotificationThoughts) {
 			if (a_notification == entry.notification) {
+				if (a_notification.starts_with("$DF_MILKING_") && !SNMI::GetSettings().enableMilkThoughts) {
+					SKSE::log::info("Devious Followers milking thought for {} was not delivered because EnableMilkThoughts is disabled.", a_notification);
+					return true;
+				}
 				emit_devious_followers_thought(entry.notification, std::string(entry.thought), entry.important);
 				return true;
 			}
