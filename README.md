@@ -63,6 +63,7 @@ Support is intentionally selective rather than complete. SNMI does not modify th
 * [Advanced Nudity Detection (AND)](https://www.nexusmods.com/skyrimspecialedition/mods/165289): reports changes to nudity, partial nudity, modesty, and flashing-risk states; worn equipment is also scanned to identify relevant transparent and flash-risk items.
 * [SexLab Sexual Fame Reloaded (SLSF)](https://www.loverslab.com/files/file/35874-sexlab-sexual-fame-reloaded/): monitors significant increases and decreases in the tracked fame categories and produces a combined response when appropriate.
 * [Battle Fuck](https://www.loverslab.com/files/file/18241-battle-fuck/): comments on player struggle events.
+  - Compatibility has been tested only with SexLab P+ and [this patch](https://www.loverslab.com/topic/171298-battle-fuck/page/33/#findComment-7427069).
 * [SexLab Body Search](https://www.loverslab.com/files/file/9318-sexlab-body-search/): comments when a player body-search scene begins.
 * Devious Devices, Unforgiving Devices, and Unforgiving Skyrim: reacts to supported device equip/remove events, sentient-device dialogue, device struggles and falls, and blocked inventory, magic, or quick-access hotkeys. Selected restraint, gag, drool, tear, and similar magic effects are also recognized.
 * [SexLab Aroused Creatures (SLAC)](https://www.loverslab.com/files/file/6022-sexlab-aroused-creatures-se-2026-02-20/): handles player-involved scene starts, stage changes, scene endings, and approaching-creature events, with player filtering and cooldowns to limit repeated thoughts.
