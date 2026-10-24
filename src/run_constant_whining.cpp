@@ -32,7 +32,7 @@ void run_constant_whining_in_case_of_silence()
 		}
 		if (handle_iNeed::previous_iNeed_thirst_level == 3) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
-				"You are extremely thirsty. You need to drink a substantial amount of water to stay hydrated. Your base Stamina and Magicka regeneration are reduced by about 70%. And sleeping is less effective by about 20%. And also you need 70% more time in between shouts from your dry throat. Say so in your response and make clear that you are speaking about your thirst.");
+				"You are extremely thirsty. You need to drink a substantial amount of water to stay hydrated. Your base Stamina and Magicka regeneration are reduced by about 70%. And sleeping is less effective by about 20%. And also you need 70% more time in between shouts from your dry throat. Say so in your response and make clear that you are speaking about your thirst.  But don't mention any exact numbers in your response.");
 		}
 		if (SNMI::GetSettings().enablePlayerDirtThoughts && handle_player_dirt::is_player_almost_at_filthy_dirt_stage()) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
