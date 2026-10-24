@@ -24,11 +24,11 @@ void run_constant_whining_in_case_of_silence()
 
 		if (handle_iNeed::previous_iNeed_fatigue_level == 3) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
-				"You are extremely tired. You need a good long night of sleep. Your base Stamina and Magicka are reduced by about 55%. Your movement speed is reduced by 15%. And you can learn new skills 70% slower. Say so in your response and make clear that you are speaking about your fatigue from sleep deprivation.");
+				"You are extremely tired. You need a good long night of sleep. Your base Stamina and Magicka are reduced by about 55%. Your movement speed is reduced by 15%. And you can learn new skills 70% slower. Say so in your response and make clear that you are speaking about your fatigue from sleep deprivation.  But don't mention any exact numbers in your response.");
 		}
 		if (handle_iNeed::previous_iNeed_hunger_level == 3) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
-				"You are extremely hungry. You need to eat a substantial meal to regain your strength. Your base Health regeneration and damage output are reduced by 70%. And sleeping is less effective by about 20%. Say so in your response and make clear that you are speaking about your hunger.");
+				"You are extremely hungry. You need to eat a substantial meal to regain your strength. Your base Health regeneration and damage output are reduced by 70%. And sleeping is less effective by about 20%. Say so in your response and make clear that you are speaking about your hunger.  But don't mention any exact numbers in your response.");
 		}
 		if (handle_iNeed::previous_iNeed_thirst_level == 3) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
@@ -36,7 +36,7 @@ void run_constant_whining_in_case_of_silence()
 		}
 		if (SNMI::GetSettings().enablePlayerDirtThoughts && handle_player_dirt::is_player_almost_at_filthy_dirt_stage()) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
-				"You are very dirty. You need a proper bath with soap to get clean again. Your speechcraft effectiveness is reduced by 50%, because other people find you disgusting. And also your sneak ability is reduced by 25, because adversaries can smell you. And also your disease resistance is reduced by 100%, because you are more susceptible to infections. Say so in your response and make clear that you are speaking about your dirtiness.");
+				"You are very dirty. You need a proper bath with soap to get clean again. Your speechcraft effectiveness is reduced by 50%, because other people find you disgusting. And also your sneak ability is reduced by 25, because adversaries can smell you. And also your disease resistance is reduced by 100%, because you are more susceptible to infections. Say so in your response and make clear that you are speaking about your dirtiness.  But don't mention any exact numbers in your response.");
 		}
 		if (get_current_ataxia_stage() == AtaxiaStage::stage2) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(

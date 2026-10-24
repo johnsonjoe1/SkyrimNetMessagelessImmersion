@@ -9,12 +9,23 @@
 
 #include <array>
 #include <charconv>
+#include <chrono>
+#include <deque>
+#include <mutex>
 #include <string_view>
 #include <unordered_map>
 
 namespace
 {
 	constexpr bool logFailedNotificationTests = false;
+
+	struct RecentHUDNotification
+	{
+		std::chrono::steady_clock::time_point timestamp;
+		std::string text;
+	};
+	std::mutex recentHUDNotificationsMutex;
+	std::deque<RecentHUDNotification> recentHUDNotifications;
 
 	struct DeviousFollowersNotificationThought
 	{
@@ -204,6 +215,13 @@ namespace
 				hud_data && hud_data->type == RE::HUD_MESSAGE_TYPE::kNotification) {
 				const char* notification = hud_data->text.c_str();
 				if (notification && notification[0] != '\0') {
+					{
+						std::scoped_lock lock(recentHUDNotificationsMutex);
+						recentHUDNotifications.push_back({ std::chrono::steady_clock::now(), notification });
+						if (recentHUDNotifications.size() > 25) {
+							recentHUDNotifications.pop_front();
+						}
+					}
 					SKSE::log::info("HUD notification: {}", notification);
 					check_for_relevant_notifications(notification);
 				}
@@ -219,6 +237,20 @@ void install_debug_notification_hook()
 	REL::Relocation<std::uintptr_t> hud_menu_vtable{ RE::VTABLE_HUDMenu[0] };
 	original_process_message = hud_menu_vtable.write_vfunc(0x04, process_hud_message);
 	SKSE::log::info("Installed HUD notification logging hook");
+}
+
+std::string get_recent_hud_notification_context()
+{
+	const auto now = std::chrono::steady_clock::now();
+	std::string context;
+	std::scoped_lock lock(recentHUDNotificationsMutex);
+	for (const auto& notification : recentHUDNotifications) {
+		const auto age = std::chrono::duration_cast<std::chrono::seconds>(now - notification.timestamp);
+		if (age <= std::chrono::seconds(180)) {
+			context += std::format("[{} seconds ago] {}\n", age.count(), notification.text);
+		}
+	}
+	return context;
 }
 
 
