@@ -21,4 +21,5 @@ set(headers ${headers}
     src/handle_player_dirt.h
     src/handle_worn_equipment_change.h
     src/handle_battlefuck.h
+    src/handle_dev_curses.h
 )

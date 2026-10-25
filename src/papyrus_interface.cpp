@@ -7,6 +7,7 @@
 #include "misc.h"
 #include <unordered_set>
 #include "papyrus_interface.h"
+#include "handle_dev_curses.h"
 
 namespace logger = SKSE::log;
 
@@ -420,6 +421,7 @@ bool SNMIPapyrus::IsDebugLoggingEnabled(RE::StaticFunctionTag*)
 
 bool SNMIPapyrus::Register(RE::BSScript::IVirtualMachine* a_vm)
 {
+    a_vm->RegisterFunction("OnDCursesEventTriggered", "SNMI_Native", handle_dev_curses::on_event_triggered);
     a_vm->RegisterFunction("IsDebugLoggingEnabled", "SNMI_Native", IsDebugLoggingEnabled);
     a_vm->RegisterFunction("SetMilkLevel", "SNMI_Native", SetMilkLevel);
 	a_vm->RegisterFunction("SetMilkMax", "SNMI_Native", SetMilkMax);

@@ -19,6 +19,19 @@ bool yps_fashion_event_registered = false
 bool slac_events_registered = false
 bool slac_npc_events_registered = false
 bool slac_stage_events_registered = false
+bool dev_curses_event_registered = false
+
+function ensure_dev_curses_event_registration()
+	if !dev_curses_event_registered
+		RegisterForModEvent("DCurses_EventTriggered", "OnDCursesEventTriggered")
+		dev_curses_event_registered = true
+		lillith_notification("[SNMI] Registered Devious Curses event listener.")
+	endif
+endfunction
+
+Event OnDCursesEventTriggered(String eventName, String eventSource, Form akActor, String otherEventData)
+	SNMI_Native.OnDCursesEventTriggered(eventName, eventSource, akActor, otherEventData)
+EndEvent
 
 function ensure_yps_fashion_event_registration()
 	if !yps_fashion_event_registered
@@ -64,6 +77,7 @@ Event OnInit()
 	ensure_slac_event_registration()
 	ensure_slac_npc_event_registration()
 	ensure_slac_stage_event_registration()
+	ensure_dev_curses_event_registration()
 
 EndEvent
 
@@ -527,6 +541,7 @@ endfunction
 
 
 Event OnUpdate()
+	ensure_dev_curses_event_registration()
 	ensure_yps_fashion_event_registration()
 	ensure_slac_event_registration()
 	ensure_slac_npc_event_registration()

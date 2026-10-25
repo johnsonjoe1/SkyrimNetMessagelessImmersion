@@ -22,6 +22,7 @@ set(sources ${sources}
 	src/handle_bodysearch.cpp
     src/handle_battlefuck.cpp
     src/handle_bimbos.cpp
+    src/handle_dev_curses.cpp
 	src/handle_licenses_player_oppression.cpp
 	src/player_thought_history.cpp
     src/handle_active_magic_effect_changes.cpp
