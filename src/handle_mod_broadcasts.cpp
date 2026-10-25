@@ -166,6 +166,8 @@ bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
 		"RSM_HairColorChange",
 		"RSM_ShadersInvalidated",
 
+		"DT_PlayerChangeCell",  // This is Dynamic Traps cell change event
+
 		"FW_OMEARefresh",  // No clue what this is, but it doesn't sound very useful for our purposes.
 	};		
 	if (ignored_mod_events.contains(event_name)) {

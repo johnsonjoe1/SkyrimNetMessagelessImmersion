@@ -218,6 +218,8 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 
 		"DS Cell Tracker",			   // This is Devious Strike cell tracker and has no implications for us.
 
+		"_DT_ChangeCellEff",           // This is Dynamic Traps change cell effect, can be ignored.
+
 		"BM_ME_PeriodicCheck",         // The mod Licenses-Player Oppression periodically doing something I presume.
 		"BM_ME_DetectLocChange",       // The mod Licenses-Player Oppression checking for location changes, can be ignored.
 		"BM_ME_DetectLocCity",         // The mod Licenses-Player Oppression checking for location changes, can be ignored.
