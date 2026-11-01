@@ -131,43 +131,25 @@ bool shortcircuit_Sever_events(std::string_view event_name)
 {
 	return event_name.starts_with("Sever");
 }
+bool shortcircuit_SkyUI_events(std::string_view event_name)
+{
+	return event_name.starts_with("SKICP_");
+}
+bool shortcircuit_racemenu_events(std::string_view event_name)
+{
+	return event_name.starts_with("RSM_");
+}
+bool shortcircuit_widget_events(std::string_view event_name)
+{
+	return event_name.starts_with("SKIWF_");
+}
 
 bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
 		static const std::unordered_set<std::string> ignored_mod_events = {
-		"SKIWF_widgetLoaded",
+		
 		"CBPCPlayerCollisionWithFemaleEvent",   // This event can be triggered by a fall as well as just the idle animation while in an armbinder, so:  NO CHANCE TO MAKE ANYTHING USEFUL FROM THAT, unfortunately.  And it can be super-frequent as well.
 		"Obody_ApplyMorph",
-		"SKICP_configManagerReady",
-		"SKICP_modSelected",         // this is broadcast when the player selects a mod in the SKI Configuration Menu.
-		"SKICP_pageSelected",        // this is broadcast when the player selects a page of a mod configuration in the SKI Configuration Menu.
-		"SKICP_optionHighlighted",   // this is broadcast when the player highlights a configuration option for a mod in the SKI Configuration Menu.
-		"SKICP_optionSelected",      // this is broadcast when the player selects a configuration option for a mod in the SKI Configuration Menu.
-		"SKICP_messageDialogClosed", // this is broadcast when the player closes a message dialog in the SKI Configuration Menu.
-		"SKICP_menuSelected",
-		"SKICP_menuAccepted",
-		"SKICP_inputSelected",
-		"SKICP_inputAccepted",
-		"SKICP_keymapChanged",          // this is broadcast when the player changes a keymap in the SKI Configuration Menu.
-		"SKICP_sliderSelected",         // more mod events that happen when changing something in the MCM.
-		"SKICP_sliderAccepted",         // more mod events that happen when changing something in the MCM.
-		"SKICP_dialogCanceled",         // more mod events that happen when changing something in the MCM.		
-		"SKIWF_widgetError",            // this is broadcast when a widget error occurs.
-		"SKIWF_hudModeChanged", 
-		"SKIWF_widgetLoaded", 
-		"SKIWF_widgetManagerReady", 
-		"SKIWF_iWantWidgetsReset", 
-		"SKIWF_iWantStatusBarsReady", 			
-		"RSM_CategoriesInitialized",   // this is some technical event from RaceMenu that we don't care about.
-		"RSM_Initialized",             // this is some technical event from RaceMenu that we don't care about.
-		"RSM_SliderChange",
-		"RSM_Reinitialized",
-		"RSM_RequestTintSave",
-		"RSM_RequestTintLoad",
-		"RSM_HairColorChange",
-		"RSM_ShadersInvalidated",
-
 		"DT_PlayerChangeCell",  // This is Dynamic Traps cell change event
-
 		"FW_OMEARefresh",  // No clue what this is, but it doesn't sound very useful for our purposes.
 	};		
 	if (ignored_mod_events.contains(event_name)) {
@@ -465,7 +447,10 @@ void handle_mod_event_broadcasts(const SKSE::ModCallbackEvent* a_event)
 		handle_devious_followers_scene_end();
 	}
 
-	if (shortcircuit_Sever_events(a_event->eventName.c_str())) {
+	if (shortcircuit_Sever_events(a_event->eventName.c_str()) ||
+		shortcircuit_SkyUI_events(a_event->eventName.c_str()) ||
+		shortcircuit_racemenu_events(a_event->eventName.c_str()) ||
+		shortcircuit_widget_events(a_event->eventName.c_str())) {
 		return;
 	}
 
