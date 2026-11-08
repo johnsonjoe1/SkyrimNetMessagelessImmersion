@@ -887,6 +887,7 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			{"DeviceRemovedElbowbinder", "YOU, the player character, just got released from your elbow binder.  Your arms are no longer forced behind your back in that restrictive position, so those restraints no longer apply.   "},
 			{"DeviceRemovedRope Harness", "YOU, the player character, just got released from your rope harness.  The constricting pressure around your torso no longer applies now that it is removed.   "},
 			{"DeviceRemovedHarness", "YOU, the player character, just got released from your harness.  The constricting and restrictive pressure from that harness no longer applies now that it is removed.   "},
+			{"DeviceRemovedSuit", "YOU, the player character, just got your locking bodysuit removed.  The suit wrapped around your whole body and constricted it a bit. This device got removed and now you are free from it.   "},
 			// NOTE:  These two again come with two different spellings.
 			{"DeviceRemovedArmCuffs", "YOU, the player character, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.   "},
 			{"DeviceRemovedArm Cuffs", "YOU, the player character, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.   "},

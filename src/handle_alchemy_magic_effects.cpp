@@ -148,6 +148,8 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 		return true;
 	}
 
+
+
 	if (std::strcmp(base_name, "Damage Stamina Regen") == 0 && std::strcmp(source_name, "Skeever Tail") == 0) {
 		if (a_event->isApplied) {
 			SKSE::log::info("Event handler for DAMAGE STAMINA REGEN effect application from Skeever Tail!");
@@ -155,6 +157,16 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 		}
 		return true;
 	}
+	if (std::strcmp(base_name, "Damage Stamina Regen") == 0 && std::strcmp(source_name, "Giant's Toe") == 0) {
+		if (a_event->isApplied) {
+			SKSE::log::info("Event handler for DAMAGE STAMINA REGEN effect application from Giant's Toe!");
+			DumpThoughts::throw_out_TTS_thought_message("YOU, the player character, just ate a piece of Giant's Toe and received a damage stamina regen effect from it.    Say as much in your response, and make sure you make it clear that Giant's Toe simply causes damage stamina regeneration effect.");
+		}
+		return true;
+	}
+
+	
+
 
 	if (std::strcmp(base_name, "Damage Stamina Regen") == 0 && std::strcmp(source_name, "Spider Silk") == 0) {
 		if (a_event->isApplied) {

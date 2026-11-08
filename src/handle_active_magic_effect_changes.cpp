@@ -217,6 +217,7 @@ bool is_known_irrelevant_magic_effect(std::string base_name)
 		"_SLS_CombatEndMgef",
 
 		"DS Cell Tracker",			   // This is Devious Strike cell tracker and has no implications for us.
+		"ITF Player Cell Tracking",    // from some Interactive BDSM mod.  Irrelevant for us.
 
 		"_DT_ChangeCellEff",           // This is Dynamic Traps change cell effect, can be ignored.
 
@@ -729,7 +730,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 [2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:854] Magnitude: 0 | Duration: 1440
 [2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:857] Source name: Not Tired | Source FormID: 695D21AA | Source EDID:  
 [2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:863] Form LookupByID 695D2184 found: Not Tired  */
-	if (base && ( (std::strcmp(base_name, "Not Tired") == 0) || std::strcmp(base_name, "Slept 8 hours") == 0 )  || std::strcmp(base_name, "Rested") == 0 ))
+	if (base && ( (std::strcmp(base_name, "Not Tired") == 0) || std::strcmp(base_name, "Slept 8 hours") == 0 )  || (std::strcmp(base_name, "Rested") == 0) )
 	{
 		if (a_event->isApplied) 
 		{
@@ -921,10 +922,10 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 				final_thought_string = std::format("You have stopped swimming in the water.  It may have been quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now out of the water.");
 				last_exited_water_thought_timestamp = std::chrono::steady_clock::now();
 			}
-			return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}
 		LillithOnlyBox(final_thought_string);
-		DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;		
+		DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;	
+		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;	
 	}
 
 /*

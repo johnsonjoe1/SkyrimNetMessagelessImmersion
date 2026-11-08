@@ -151,6 +151,12 @@ bool is_known_SUPERIRRELEVANT_mod_event(std::string event_name) {
 		"Obody_ApplyMorph",
 		"DT_PlayerChangeCell",  // This is Dynamic Traps cell change event
 		"FW_OMEARefresh",  // No clue what this is, but it doesn't sound very useful for our purposes.
+		"iDDeListAllWornDDs",    // from mod DD Equip.  This is rather technical.  We won't respond to their menus in the MCM and changes from there.
+		"iDDeEquipIdx",          // from mod DD Equip.  This is rather technical.  We won't respond to their menus in the MCM and changes from there.
+		"iDDeDone",              // from mod DD Equip.  This is rather technical.  We won't respond to their menus in the MCM and changes from there.
+		"iDDeOutWorn",           // from mod DD Equip.  This is rather technical.  We won't respond to their menus in the MCM and changes from there.
+		"iDDeOnListAllWornDDs",  // from mod DD Equip.  This is rather technical.  We won't respond to their menus in the MCM and changes from there.
+		"iDDeOnEquipIdx",        // from mod DD Equip.  This is rather technical.  We won't respond to their menus in the MCM and changes from there.
 	};		
 	if (ignored_mod_events.contains(event_name)) {
 		return true;
