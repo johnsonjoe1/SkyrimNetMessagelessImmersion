@@ -864,6 +864,7 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			{"DeviceRemovedBondage Mittens", "YOU, the player character, just got released from your bondage mittens.  Your fingers are no longer restrained by those mittens, so those restrictions no longer apply.   "},
 			{"DeviceRemovedClitoris Piercing", "YOU, the player character, just got your clitoris piercing removed.  That piercing can cause intense stimulation and inconvenient vibration, but those effects no longer apply now that it is gone.   "},
 			{"DeviceRemovedNipple Piercings", "YOU, the player character, just got your nipple piercings removed.  Those piercings can cause intense stimulation and inconvenient vibration, but those effects no longer apply now that they are gone.   "},
+			{"DeviceRemovedPiercingsVaginal", "YOU, the player character, just got your vaginal piercings removed.  Those piercings can cause intense stimulation and inconvenient vibration, but those effects no longer apply now that they are gone.   "},
 			// NOTE:  These two again come with two different spellings.
 			{"DeviceRemovedVaginal Plug", "YOU, the player character, just got your vaginal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
 			{"DeviceRemovedPlugVaginal", "YOU, the player character, just got your vaginal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
