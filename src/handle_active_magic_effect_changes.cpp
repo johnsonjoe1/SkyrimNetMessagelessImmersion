@@ -729,7 +729,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 [2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:854] Magnitude: 0 | Duration: 1440
 [2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:857] Source name: Not Tired | Source FormID: 695D21AA | Source EDID:  
 [2026-09-14 21:52:01.405] [log] [info] [handle_active_magic_effect_changes.cpp:863] Form LookupByID 695D2184 found: Not Tired  */
-	if (base && ( (std::strcmp(base_name, "Not Tired") == 0) || std::strcmp(base_name, "Slept 8 hours") == 0 )  )
+	if (base && ( (std::strcmp(base_name, "Not Tired") == 0) || std::strcmp(base_name, "Slept 8 hours") == 0 )  || std::strcmp(base_name, "Rested") == 0 ))
 	{
 		if (a_event->isApplied) 
 		{

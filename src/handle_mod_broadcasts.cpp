@@ -203,11 +203,14 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 		"SkyrimNet_OnPackageAdded",    // unknown but e.g. talktoplayer
 		"SkyrimNet_OnPackageRemoved",  // unknown but e.g. talktoplayer
 		"SkyrimNet_SexLab_Orgasm",  // This is from SkyrimNet_Sexlab plugin and will probably we commented on from that plugin anyway.
-
 		"UIWheelMenu_LoadMenu",      //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
 		"UIWheelMenu_SetOption",     //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
 		"UIWheelMenu_CloseMenu",     //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
 		"UIWheelMenu_ChooseOption",  //  This is the wheel menu from SkyrimNet.  We won't do anything with that.
+
+		"VRTE_DDZaZ_DeviceMenuOff",  // comes from SkyrimNet Devious Awareness Base
+		"VRTE_DDZaZ_DeviceMenuOn",   // comes from SkyrimNet Devious Awareness Base
+
 		"UD_AfterUIReload", 			
 		"UD_QuestKeywordUpdate", 
 		"UD_GenericKeyUpdate", 
