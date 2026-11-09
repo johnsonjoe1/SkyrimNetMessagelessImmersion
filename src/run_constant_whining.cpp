@@ -19,6 +19,12 @@ void run_constant_whining_in_case_of_silence()
 	}
 	const auto requiredSilence = std::string_view(player->GetName()) == "Lillith" ? 20 : SNMI::GetSettings().silenceRequiredBeforeSpontaneousStatusWhining;
 	const auto silenceDuration = std::chrono::steady_clock::now() - DumpThoughts::GetLastSpeechTimestamp();
+
+	if (player_is_in_ANY_SL_scene()) {
+		// In the middle of a SL scene, we don't want to run any background constant whining, because that would be out of place.
+		return;
+	}
+
 	if (silenceDuration >= std::chrono::seconds(requiredSilence)) {
 		// LillithOnlyBox(std::format("run_constant_whining_in_case_of_silence() ran after at least {} seconds without a thought.", requiredSilence));
 		// LillithOnlyHUDmessage(std::format("run_constant_whining_...() ran ({} sec no thought).", requiredSilence));

@@ -10,7 +10,9 @@ namespace logger = SKSE::log;
 
 std::string final_lillith_message;
 static std::string current_animation_status = "not_in_a_scene";   // by default, we assume no SL scene is going on.
+static std::string current_battlefuck_status = "not_in_a_scene";   // by default, we assume no BATTLEFUCK scene is going on.
 static auto last_scene_status_refresh_timestamp = std::chrono::steady_clock::now();
+static auto last_battlefuck_status_refresh_timestamp = std::chrono::steady_clock::now();
 
 std::string item_name_for_thought_prompt(std::string_view a_name)
 {
@@ -66,6 +68,11 @@ bool player_is_in_ANY_SL_scene() {
 	return current_animation_status == "in_a_scene";
 }
 
+bool player_is_in_BATTLEFUCK_scene() {
+	return current_battlefuck_status == "in_a_scene";
+}
+
+
 void set_current_animation_status(std::string_view a_status, std::string_view reason_for_set_current_animation_status)
 {
 	current_animation_status = std::string(a_status);
@@ -80,6 +87,22 @@ void set_current_animation_status(std::string_view a_status, std::string_view re
 		RE::DebugMessageBox(("SNMI: Unexpected animation status: " + current_animation_status).c_str());  // Show the message in a message box if the player's name is Lillith.
 	}
 	SKSE::log::info("Current animation status updated to: {}.  Reason: {}", current_animation_status, reason_for_set_current_animation_status);
+}
+
+void set_current_battlefuck_status(std::string_view a_status, std::string_view reason_for_set_current_battlefuck_status)
+{
+	current_battlefuck_status = std::string(a_status);
+	if (current_battlefuck_status == "in_a_scene") {
+		last_battlefuck_status_refresh_timestamp = std::chrono::steady_clock::now();
+	} else if (current_battlefuck_status == "not_in_a_scene") {
+		// do nothing here
+	} else {
+		// This is a bug and needs to be addressed
+		SKSE::log::error("Unexpected battlefuck status: {}", current_battlefuck_status);
+
+		RE::DebugMessageBox(("SNMI: Unexpected battlefuck status: " + current_battlefuck_status).c_str());  // Show the message in a message box if the player's name is Lillith.
+	}
+	SKSE::log::info("Current battlefuck status updated to: {}.  Reason: {}", current_battlefuck_status, reason_for_set_current_battlefuck_status);
 }
 
 void LillithOnlyHUDmessage(std::string_view a_message)

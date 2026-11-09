@@ -9,7 +9,9 @@ std::string item_name_for_thought_prompt(std::string_view a_name);
 void LillithOnlyBox(std::string_view a_message);
 void LillithOnlyHUDmessage(std::string_view a_message);
 void set_current_animation_status(std::string_view a_status, std::string_view reason_for_set_current_animation_status);
+void set_current_battlefuck_status(std::string_view a_status, std::string_view reason_for_set_current_battlefuck_status);
 bool player_is_in_ANY_SL_scene();
+bool player_is_in_BATTLEFUCK_scene();
 void handle_timeout_for_stale_scenes();
 
 void PrintSlots(std::uint32_t mask);
