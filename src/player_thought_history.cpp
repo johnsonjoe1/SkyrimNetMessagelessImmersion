@@ -29,7 +29,14 @@ void PlayerThoughtHistory::TryRecordSkyrimNetSpeech(std::string_view a_eventName
 		return;
 	}
 
-	if (payload.value("speakerName", "") != "Player Thoughts" || payload.value("targetName", "") != "Player") {
+	if (payload.value("speakerName", "") != "Player Thoughts") {
+		return;
+	}
+
+	const auto targetName = payload.value("targetName", "");
+	const auto* player = RE::PlayerCharacter::GetSingleton();
+	const auto* playerName = player ? player->GetName() : nullptr;
+	if (targetName != "Player" && (!playerName || targetName != playerName)) {
 		return;
 	}
 
