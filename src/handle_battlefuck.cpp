@@ -6,6 +6,12 @@
 #include "misc.h"
 
 static auto last_battlefuck_stage_start_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
+static bool insertion_occurred = false;
+
+bool handle_battlefuck::has_insertion_occurred()
+{
+	return insertion_occurred;
+}
 
 bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 {
@@ -15,8 +21,25 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 
 	const std::string_view event_name = a_event->eventName.c_str();
 
+	if (event_name == "_BF_InsertionStarted") {
+		insertion_occurred = true;
+		LillithOnlyBox("BattleFuck insertion detected!!! (3x message)");
+		LillithOnlyBox("BattleFuck insertion detected!!! (3x message)");
+		LillithOnlyBox("BattleFuck insertion detected!!! (3x message)");
+		set_current_battlefuck_status("in_a_scene", "BattleFuck insertion started");
+		auto* aggressor = a_event->sender ? a_event->sender->As<RE::Actor>() : nullptr;
+		const char* name = aggressor ? aggressor->GetDisplayFullName() : nullptr;
+		std::string thought_message = "During the ongoing assault, the attacker has just crossed another boundary. Express your immediate emotional reaction in character, without describing the act.";
+		if (name && *name) {
+			thought_message += std::format(" The attacker is {}.", name);
+		}
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		return true;
+	}
+
 	// MOD EVENT:  Name: AnimationStarting_BattleFuck :  this is the start of a BattleFuck scene.  We absolutely should comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_BattleFuck") == 0)  ) {
+		insertion_occurred = false;
 		// This event is always about the player, nobody else.
 		set_current_battlefuck_status("in_a_scene", std::format("Mod Event detected: {}", a_event->eventName.c_str()));
 		std::string  thought_message = std::format("YOU, the player character, are now getting ambushed in a sexual assault.  Someone gips you from behind.  He probably wants to strip away your clothing and armour, so he can then rape you right in front of everybody later.  Say so and let us know what you are feeling and thinking in that moment, given that you are about to be stripped forefully of all your clothes and make it clear from your response, that you are going to be stripped of all your clothing if you cannot manage to break free from his grip.");
@@ -32,7 +55,13 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 			return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 		}
 		last_battlefuck_stage_start_thought_timestamp = std::chrono::steady_clock::now();
+
 		std::string  thought_message = std::format("YOU, the player character, are now forcefully stripped of more and more of your clothing and armour.  Also your attacker is pushing you down, to prepare you for the coming rape.  Let us know how you feel now.");
+		if (has_insertion_occurred())
+		{
+			thought_message = std::format("YOU, the player character, have now been stripped of all your protecting clothes and armour.  And your attacker has successfully penetrated you with his penis. Now he is fucking you now and he is enjoying it greatly.  He has also tied your hands together, so he can continue to fuck you until he can cum inside of you.  Let us know how you feel now.");
+		}
+
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("StageStart_BattleFuck:  " + thought_message);
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -49,6 +78,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 	}
 	// MOD EVENT:  Name:  "AnimationEnding_BattleFuck" :  this is the end of a BattleFuck scene.  We absolutely should comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BattleFuck") == 0)  ) {
+		insertion_occurred = false;
 		set_current_battlefuck_status("not_in_a_scene", std::format("Mod Event detected: {}", a_event->eventName.c_str()));
 		// This event is always about the player, nobody else.
 		std::string  thought_message = std::format("YOU, the player character, survived a sexual assault.  Maybe you got completely undressed by the attacker and maybe he even fucked you and came inside of you, while everybody else stood by and watched, but regardless of that, the assault is over now and you can get dressed again.  Say so and let us know what you are feeling and thinking in that moment.");
