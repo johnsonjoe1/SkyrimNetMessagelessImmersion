@@ -556,6 +556,9 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 	if (handle_DDUD::handle_DDUD_thieving_removal_effect(a_event, effect)) {
 		return;
 	}
+	if (handle_DDUD::handle_DDUD_speedmult_penalty_effect(a_event, effect)) {
+		return;
+	}
 	if (handle_DDUD::handle_DDUD_heavy_bondage_effect(a_event, effect)) {
 		return;
 	}	
