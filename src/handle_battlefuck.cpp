@@ -105,6 +105,25 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 		LillithOnlyBox("StageStart_BattleFuckRape:  " + thought_message);
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationChange_BattleFuckRape") == 0)  ) {
+		// This event is always about the player, nobody else.
+		// NOTHING TO DO HERE, since we don't respond to sub-stage ends for sex scenes in general and also not here.
+		LillithOnlyBox("AnimationChange_BattleFuckRape:  WE JUST RECEIVED AN ANIMATION-CHANGE-EVENT.  WHAT DOES THAT IMPLY?  (3x message)");
+		LillithOnlyBox("AnimationChange_BattleFuckRape:  WE JUST RECEIVED AN ANIMATION-CHANGE-EVENT.  WHAT DOES THAT IMPLY?  (3x message)");
+		LillithOnlyBox("AnimationChange_BattleFuckRape:  WE JUST RECEIVED AN ANIMATION-CHANGE-EVENT.  WHAT DOES THAT IMPLY?  (3x message)");
+		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}	
+
+	if ( (std::strcmp(a_event->eventName.c_str() , "ActorChangeStart_BattleFuckRape") == 0)  ) {
+		// This event is always about the player, nobody else.
+		// NOTHING TO DO HERE, since we don't respond to actor-change-start for sex scenes in general and also not here.
+		LillithOnlyBox("ActorChangeStart_BattleFuckRape:  WE JUST RECEIVED AN ACTOR-CHANGE-START-EVENT.  WHAT DOES THAT IMPLY?  (3x message)");
+		LillithOnlyBox("ActorChangeStart_BattleFuckRape:  WE JUST RECEIVED AN ACTOR-CHANGE-START-EVENT.  WHAT DOES THAT IMPLY?  (3x message)");
+		LillithOnlyBox("ActorChangeStart_BattleFuckRape:  WE JUST RECEIVED AN ACTOR-CHANGE-START-EVENT.  WHAT DOES THAT IMPLY?  (3x message)");
+		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
+	}
+
+
 	// MOD EVENT:  Name:AnimationEnd_BattleFuckRape :  this is the end of a BattleFuck rape animation.  We may want to comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnd_BattleFuckRape") == 0)  ) {
 		std::string  thought_message = std::format("YOU, the player character, just got raped at least two times now and now finally the rape is over.  After the first guy, you stopped resisting and the other guys took your body as they pleased. Reflect on the experience and express your feelings about it in character.");
@@ -113,14 +132,13 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 
-
-
 	// Now down here we handle any events that we do not need but also do not need to flag as unhandled
 	if ( (std::strcmp(a_event->eventName.c_str() , "StageEnd_BattleFuck") == 0)  ||   // Small sub-stage-ends don't get a comment
-		 (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BattleFuck") == 0) ||  // We respond to AnimationStarting_BattleFuck instead
-		 (std::strcmp(a_event->eventName.c_str() , "AnimationEnd_BattleFuck") == 0) ||      // We respond to AnimationEnding_BattleFuck instead
-		 (std::strcmp(a_event->eventName.c_str() , "StageStart_BattleFuckRape") == 0) ||
-		 (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BattleFuckRape") == 0)    // We resond to AnimationStartING instead
+	     (std::strcmp(a_event->eventName.c_str() , "StageEnd_BattleFuckRape") == 0) ||      // We respont to stage-start only, otherwise the thought channel gets spammed.
+		 (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BattleFuck") == 0) ||       // We respond to AnimationStarting_BattleFuck instead
+		 (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BattleFuckRape") == 0) ||   // We respond to AnimationStartING instead
+		 (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BattleFuck") == 0) ||      // We respond to AnimationEnd_BattleFuck instead
+		 (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BattleFuckRape") == 0)     // We respond to AnimationEnd_BattleFuckRape instead
 		) {
 		// Nothing to do in that case
 		// No need for a message, like for super-irrelevant it's the same:  SKSE::log::info("SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: {}  StrArg: {}  NumArg: {}", a_event->eventName.c_str(), a_event->strArg, a_event->numArg);
