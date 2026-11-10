@@ -300,6 +300,60 @@ bool handle_DDUD::handle_DDUD_thieving_removal_effect(
 	return true;
 }
 
+/*[2026-11-09 22:14:08.065] [log] [info] [handle_active_magic_effect_changes.cpp:1079] ========== Found A SO-FAR UNHANDLED effect
+[2026-11-09 22:14:08.065] [log] [info] [handle_active_magic_effect_changes.cpp:1080] Effect APPLIED on Lillith | UID=31
+[2026-11-09 22:14:08.065] [log] [info] [handle_active_magic_effect_changes.cpp:1083] Base name: SpeedMult Penalty | Base ptr: 0x258f626eb00 | Base-FormID: 1001332D | Base-Form Type: 18   (This means: MGEF) 
+[2026-11-09 22:14:08.065] [log] [info] [handle_active_magic_effect_changes.cpp:1084] base-Effect EDID:  | Source ptr: 0x258f6282380  |  Caster: Lillith 
+[2026-11-09 22:14:08.065] [log] [info] [handle_active_magic_effect_changes.cpp:1088] Magnitude: -20 | Duration: 0
+[2026-11-09 22:14:08.065] [log] [info] [handle_active_magic_effect_changes.cpp:1091] Source name: BootSlow-Enchant | Source FormID: 1001332E | Source EDID:  
+[2026-11-09 22:14:08.065] [log] [info] [handle_active_magic_effect_changes.cpp:1097] Form LookupByID 1001332D found: SpeedMult Penalty    
+
+[2026-11-09 22:14:24.152] [log] [info] [handle_active_magic_effect_changes.cpp:1079] ========== Found A SO-FAR UNHANDLED effect
+[2026-11-09 22:14:24.152] [log] [info] [handle_active_magic_effect_changes.cpp:1080] Effect APPLIED on Lillith | UID=35
+[2026-11-09 22:14:24.152] [log] [info] [handle_active_magic_effect_changes.cpp:1083] Base name: SpeedMult Penalty | Base ptr: 0x258f626eb00 | Base-FormID: 1001332D | Base-Form Type: 18   (This means: MGEF) 
+[2026-11-09 22:14:24.152] [log] [info] [handle_active_magic_effect_changes.cpp:1084] base-Effect EDID:  | Source ptr: 0x258f6281d80  |  Caster: Lillith 
+[2026-11-09 22:14:24.152] [log] [info] [handle_active_magic_effect_changes.cpp:1088] Magnitude: -0 | Duration: 0
+[2026-11-09 22:14:24.152] [log] [info] [handle_active_magic_effect_changes.cpp:1091] Source name: Hobble Skirt | Source FormID: 10020736 | Source EDID:  
+[2026-11-09 22:14:24.152] [log] [info] [handle_active_magic_effect_changes.cpp:1097] Form LookupByID 1001332D found: SpeedMult Penalty
+*/
+bool handle_DDUD::handle_DDUD_speedmult_penalty_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+	auto* base = a_effect->GetBaseObject();
+	auto* source = a_effect->spell;
+	if (!base || !source) {
+		return false;
+	}
+
+	if (std::strcmp(base->GetName(), "SpeedMult Penalty") != 0) {
+		return false;
+	}
+	if ( (std::strcmp(source->GetName(), "BootSlow-Enchant") != 0) && (std::strcmp(source->GetName(), "Hobble Skirt") != 0)) {
+		return false;
+	}
+
+	if (std::strcmp(source->GetName(), "BootSlow-Enchant") != 0) {
+		if (a_event->isApplied) {
+			DumpThoughts::throw_out_TTS_thought_message_after_silence(
+				"In those boots or shoes, that you got locked onto your feet, you cannot walk as fast any more. Say so in your response, and make it clear that you are speaking about your footwear.",
+				21);
+		}
+	}
+	if (std::strcmp(source->GetName(), "Hobble Skirt") != 0) {
+		if (a_event->isApplied) {
+			DumpThoughts::throw_out_TTS_thought_message_after_silence(
+				"In that hobble skirt, that you got locked onto your legs, you cannot walk as fast any more. Say so in your response, and make it clear that you are speaking about your hobbleskirt.",
+				21);
+		}
+	}
+	return true;
+}
+
+
 /*[2026-11-09 22:02:28.405] [log] [info] [handle_active_magic_effect_changes.cpp:1079] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
 [2026-11-09 22:02:28.405] [log] [info] [handle_active_magic_effect_changes.cpp:1080] Effect APPLIED on Lillith | UID=1
 [2026-11-09 22:02:28.405] [log] [info] [handle_active_magic_effect_changes.cpp:1083] Base name: Heavy Bondage Script | Base ptr: 0x258f6660d40 | Base-FormID: F07BFBB | Base-Form Type: 18   (This means: MGEF) 
@@ -825,7 +879,8 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			{"DeviceEquippedChain Harness Wrist Shackles", "YOU, the player character, just got a chain harness wrist shackles locked onto your wrists.  These shackles prevent you from moving your arms freely.  They are securely fastened so that you cannot simply remove them.   "},
 			{"DeviceEquippedBoxbinder", "YOU, the player character, just got locked into a box binder.  The box binder holds your arms and hands in a bag behind your torso, so that you are helpless and completely at the mercy of others. This device got locked onto you and now you cannot get of out it.   "},
 			{"DeviceEquippedcorset", "YOU, the player character, just got locked into a corsett.  The corsett wraps around your torso and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},
-			{"DeviceEquippedCatsuit", "YOU, the player character, just got locked into a catsuit.  The catsuit wraps around your whole body and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},			
+			{"DeviceEquippedCatsuit", "YOU, the player character, just got locked into a catsuit.  The catsuit wraps around your whole body and constricts it a bit. This device got locked onto you and now you cannot get of out it.   "},	
+			{"DeviceEquippedHobble Dress", "YOU, the player character, just got locked into a hobble dress.  The dress wraps around your whole body and constricts it a bit, but especially your legs are forced together. This device got locked onto you and now you cannot get of out it.   "},			
 			
 
 			// Crotch things here:
@@ -921,6 +976,7 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			{"DeviceRemovedRope Harness", "YOU, the player character, just got released from your rope harness.  The constricting pressure around your torso no longer applies now that it is removed.   "},
 			{"DeviceRemovedHarness", "YOU, the player character, just got released from your harness.  The constricting and restrictive pressure from that harness no longer applies now that it is removed.   "},
 			{"DeviceRemovedSuit", "YOU, the player character, just got your locking bodysuit removed.  The suit wrapped around your whole body and constricted it a bit. This device got removed and now you are free from it.   "},
+			{"DeviceRemovedHobble Dress", "YOU, the player character, just got your hobble dress removed.  The constricting pressure around your legs and body no longer applies now that it is removed.   "},
 			// NOTE:  These two again come with two different spellings.
 			{"DeviceRemovedArmCuffs", "YOU, the player character, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.   "},
 			{"DeviceRemovedArm Cuffs", "YOU, the player character, just got your arm cuffs removed.  Your wrists are no longer cuffed and restrained, so those restrictions no longer apply.   "},
