@@ -120,6 +120,25 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 		}
 		return true;
 	}
+/*[2026-11-09 22:02:27.727] [log] [info] [handle_active_magic_effect_changes.cpp:1079] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-11-09 22:02:27.727] [log] [info] [handle_active_magic_effect_changes.cpp:1080] Effect APPLIED on Lillith | UID=1
+[2026-11-09 22:02:27.727] [log] [info] [handle_active_magic_effect_changes.cpp:1083] Base name: Device Manifest | Base ptr: 0x258f8285ec0 | Base-FormID: 241327E0 | Base-Form Type: 18   (This means: MGEF) 
+[2026-11-09 22:02:27.727] [log] [info] [handle_active_magic_effect_changes.cpp:1084] base-Effect EDID:  | Source ptr: 0x258fa32a980  |  Caster: Lillith 
+[2026-11-09 22:02:27.727] [log] [info] [handle_active_magic_effect_changes.cpp:1088] Magnitude: 2 | Duration: 0
+[2026-11-09 22:02:27.727] [log] [info] [handle_active_magic_effect_changes.cpp:1091] Source name: Black Goo | Source FormID: 24132274 | Source EDID:  
+[2026-11-09 22:02:27.727] [log] [info] [handle_active_magic_effect_changes.cpp:1097] Form LookupByID 241327E0 found: Device Manifest  */
+	if (std::strcmp(base_name, "Device Manifest") == 0 &&
+		(std::strcmp(source_name, "Black Goo") == 0 || std::strcmp(source_name, "Black Goo") == 0)) {
+		if (a_event->isApplied) {
+			SKSE::log::info("Event handler for DEVICE MANIFEST effect application from Black Goo!");
+			// NOTE:  We don't really produce a thought here, because that is already done by the device application events anyway.
+			// DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, just ate a piece of {} and received a Device Manifest effect from it.    Say as much in your response, and make sure you make it clear that {} simply causes Device Manifest effect.", source_name, source_name));
+		}
+		return true;
+	}
+
+
+
 
 	/*
 [2026-10-16 13:00:13.881] [log] [info] [handle_active_magic_effect_changes.cpp:1076] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
