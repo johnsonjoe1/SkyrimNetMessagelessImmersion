@@ -300,6 +300,38 @@ bool handle_DDUD::handle_DDUD_thieving_removal_effect(
 	return true;
 }
 
+/*[2026-11-09 22:02:28.405] [log] [info] [handle_active_magic_effect_changes.cpp:1079] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-11-09 22:02:28.405] [log] [info] [handle_active_magic_effect_changes.cpp:1080] Effect APPLIED on Lillith | UID=1
+[2026-11-09 22:02:28.405] [log] [info] [handle_active_magic_effect_changes.cpp:1083] Base name: Heavy Bondage Script | Base ptr: 0x258f6660d40 | Base-FormID: F07BFBB | Base-Form Type: 18   (This means: MGEF) 
+[2026-11-09 22:02:28.405] [log] [info] [handle_active_magic_effect_changes.cpp:1084] base-Effect EDID:  | Source ptr: 0x258f6281c00  |  Caster: Lillith 
+[2026-11-09 22:02:28.405] [log] [info] [handle_active_magic_effect_changes.cpp:1088] Magnitude: 0 | Duration: 0
+[2026-11-09 22:02:28.405] [log] [info] [handle_active_magic_effect_changes.cpp:1091] Source name: Straitjacket Script | Source FormID: 1002D9FC | Source EDID:  
+[2026-11-09 22:02:28.405] [log] [info] [handle_active_magic_effect_changes.cpp:1097] Form LookupByID F07BFBB found: Heavy Bondage Script    */
+bool handle_DDUD::handle_DDUD_heavy_bondage_effect(
+	const RE::TESActiveEffectApplyRemoveEvent* a_event,
+	RE::ActiveEffect* a_effect)
+{
+	if (!a_event || !a_effect) {
+		return false;
+	}
+
+	auto* base = a_effect->GetBaseObject();
+	if (!base || std::strcmp(base->GetName(), "Heavy Bondage Script") != 0) {
+		return false;
+	}
+	auto* source = a_effect->spell;
+	if (!source || std::strcmp(source->GetName(), "Straitjacket Script") != 0) {
+		return false;
+	}
+
+	if (a_event->isApplied) {
+		DumpThoughts::throw_out_TTS_thought_message_after_silence(
+			"YOU, the player character, are now wearing a Straitjacket bondage outfit.  But that is not the point.  The point is, that you cannot even fight in this outfit and that you are completely restrained. Tell us how you feel about that.",
+			22);
+	}
+	return true;
+}
+
 
 bool handle_DDUD::handle_DDUD_chastity_bra_effect(
 	const RE::TESActiveEffectApplyRemoveEvent* a_event,
@@ -804,7 +836,8 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			{"DeviceEquippedVaginal Plug", "YOU, the player character, just got a vaginal plug locked into your vagina.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
 			{"DeviceEquippedVaginal Pear Plug", "YOU, the player character, just got a vaginal pear plug locked into your vagina.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
 			{"DeviceEquippedAnal Plug", "YOU, the player character, just got a anal plug locked into your anus.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
-			{"DeviceEquippedPlug", "YOU, the player character, just got a anal plug locked into your anus.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedPlug", "YOU, the player character, just got a plug locked into your ass or pussy.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
+			{"DeviceEquippedPlugs", "YOU, the player character, just got a plug locked into your ass or pussy.  Such a plug may start to inflate and deflate at the most inconvenient times and can be removed only be picking the lock.  This device got locked onto you and now you cannot get if off.   "},
 			{"DeviceEquippedAnal Pear Plug", "YOU, the player character, just got an Anal Pear Plug plugged into your ass.  This plug is plugged into the anus, and then it expands inside, so that you cannot remove it any more.  And it is locked in this state, locked onto your body and now you cannot get if out without somehow opening the lock first.   "},
 			{"DeviceEquippedChastity Belt", "YOU, the player character, just got a chastity belt locked onto your body.  This device is like a normal panties, but it is absolutely sturdy and prevents stimulation including self-stimulation and masturbation all access to your pussy.  On the one hand it keeps you from having intercourse with a man and thus also might prevent rape unless the attacker has the key, on the other hand you can't access your own sex this way, which might be very frustrating when you are very horny.  This device got locked onto you and now you cannot get if off.   "},
 			{"DeviceEquippedBelt", "YOU, the player character, just got a chastity belt locked onto your body.  This device is like a normal panties, but it is absolutely sturdy and prevents stimulation including self-stimulation and masturbation all access to your pussy.  On the one hand it keeps you from having intercourse with a man and thus also might prevent rape unless the attacker has the key, on the other hand you can't access your own sex this way, which might be very frustrating when you are very horny.  This device got locked onto you and now you cannot get if off.   "},
@@ -871,7 +904,7 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			// Two different spellings again:
 			{"DeviceRemovedAnal Plug", "YOU, the player character, just got your anal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
 			{"DeviceRemovedPlugAnal", "YOU, the player character, just got your anal plug removed.  That plug had imposed restrictive and intrusive stimulation effects, but those effects no longer apply now that it is gone.   "},
-			
+			{"DeviceRemovedPlugs", "YOU, the player character, just got a plug removed from your ass or pussy.  Such a plug can start to inflate and deflate at the most inconvenient times, but those effects no longer apply now that it is gone.   "},
 			
 			
 			{"DeviceRemovedCollar", "YOU, the player character, just got your collar removed.  The feeling of being locked and restrained by that collar no longer applies now that it is gone.   "},
@@ -934,6 +967,25 @@ bool handle_DDUD::handle_DDUD_sentient_dialogue_event(const SKSE::ModCallbackEve
 
 	// Name: UD_SentientDialogue  StrArg: Hand restraint  NumArg: 1
 	std::string thought_message = std::format("YOU, the player character, suddenly have a feeling like your {} is speaking to you, even though it is just an item and not a living creature.  Is it maybe time to question your sanity?  What is going on?  You have no clue, but you suspect it's some sentient device speaking to you.  Say so in your response. ", a_event->strArg.c_str());
+	DumpThoughts::throw_out_TTS_thought_message(thought_message);
+	return true;
+}
+
+
+
+/*
+[2026-11-09 22:14:13.613] [log] [info] [handle_mod_broadcasts.cpp:655] An unhandled mod-event was discovered: MOD EVENT:  Name: EventOnSit  StrArg:   NumArg: 0
+[2026-11-09 22:14:13.931] [log] [info] [handle_debug_notifications.cpp:225] HUD notification: You awkwardly sit down, doing your best to avoid disturbing the plugs inside of you.
+[2026-11-09 22:14:13.931] [log] [info] [handle_debug_notifications.cpp:260] Checking for relevant notification: You awkwardly sit down, doing your best to avoid disturbing the plugs inside of you.
+*/
+bool handle_DDUD::handle_DDUD_event_on_sit(const SKSE::ModCallbackEvent* a_event)
+{
+	if (!a_event || std::strcmp(a_event->eventName.c_str(), "EventOnSit") != 0) {
+		return false;
+	}
+
+	// Name: EventOnSit  StrArg:   NumArg: 0
+	std::string thought_message = "YOU, the player character, awkwardly sit down, doing your best to avoid disturbing the plugs inside of you.  Tell us about exactly that and how that feels in character.";
 	DumpThoughts::throw_out_TTS_thought_message(thought_message);
 	return true;
 }

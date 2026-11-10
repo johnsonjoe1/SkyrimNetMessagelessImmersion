@@ -47,6 +47,9 @@ public:
 	static bool handle_DDUD_chastity_bra_effect(
 		const RE::TESActiveEffectApplyRemoveEvent* a_event,
 		RE::ActiveEffect* a_effect);
+	static bool handle_DDUD_heavy_bondage_effect( 
+		const RE::TESActiveEffectApplyRemoveEvent* a_event,
+		RE::ActiveEffect* a_effect);
 	static bool handle_DDUD_rubber_dress_squeaking_effect(
 		const RE::TESActiveEffectApplyRemoveEvent* a_event,
 		RE::ActiveEffect* a_effect);
@@ -66,5 +69,7 @@ public:
 	static bool handle_DDUD_device_removed_event(
 		const SKSE::ModCallbackEvent* a_event);
 	static bool handle_DDUD_sentient_dialogue_event(
+		const SKSE::ModCallbackEvent* a_event);
+	static bool handle_DDUD_event_on_sit(
 		const SKSE::ModCallbackEvent* a_event);
 };
