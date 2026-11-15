@@ -13,6 +13,11 @@ bool handle_bimbos::try_handle_mod_event(const SKSE::ModCallbackEvent* a_event)
 		return false;
 	}
 
+	if (player_is_in_BATTLEFUCK_scene()) {
+		SKSE::log::info("CC_ModBimboCorruption event detected, but player is in a BattleFuck scene, so we will not process it.");
+		return true;
+	}
+
 /* [2026-08-16 17:57:25.863] MOD EVENT: Name: CC_ModBimboCorruption  StrArg: I love pretty jewellery!  NumArg: 2*/
 	if (player_is_in_ANY_SL_scene() && a_event->strArg != "Oooh... I could get used to not being in control...") {
 		SKSE::log::info("CC_ModBimboCorruption event detected, but player is in a scene and it's not the corrupting sex as a message, so we will not process it.");
