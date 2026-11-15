@@ -888,10 +888,18 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 [2026-10-10 22:08:28.822] [log] [info] [handle_active_magic_effect_changes.cpp:998] Magnitude: 0 | Duration: 0
 [2026-10-10 22:08:28.822] [log] [info] [handle_active_magic_effect_changes.cpp:1001] Source name: Get Dirty Over Time - Not Dirty | Source FormID: FE01903F | Source EDID:  
 [2026-10-10 22:08:28.822] [log] [info] [handle_active_magic_effect_changes.cpp:1007] Form LookupByID FE019033 found: Get Condition: Swimming
+
+[2026-11-15 15:14:01.591] [log] [info] [handle_active_magic_effect_changes.cpp:1088] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-11-15 15:14:01.591] [log] [info] [handle_active_magic_effect_changes.cpp:1089] Effect APPLIED on Lillith | UID=14
+[2026-11-15 15:14:01.591] [log] [info] [handle_active_magic_effect_changes.cpp:1092] Base name: Warm Water Script | Base ptr: 0x115f2013580 | Base-FormID: 2B05CDBE | Base-Form Type: 18   (This means: MGEF) 
+[2026-11-15 15:14:01.591] [log] [info] [handle_active_magic_effect_changes.cpp:1093] base-Effect EDID:  | Source ptr: 0x115f203cd00  |  Caster: Lillith 
+[2026-11-15 15:14:01.591] [log] [info] [handle_active_magic_effect_changes.cpp:1097] Magnitude: 0 | Duration: 0
+[2026-11-15 15:14:01.591] [log] [info] [handle_active_magic_effect_changes.cpp:1100] Source name: iNeed | Source FormID: 2B000D63 | Source EDID:  
+[2026-11-15 15:14:01.591] [log] [info] [handle_active_magic_effect_changes.cpp:1106] Form LookupByID 2B05CDBE found: Warm Water Script
 */
 
 
-	if (base && ( (std::strcmp(base_name, "Is In Water Script") == 0) || (std::strcmp(base_name, "Get Condition: Swimming") == 0) ) )
+	if (base && ( (std::strcmp(base_name, "Is In Water Script") == 0) || (std::strcmp(base_name, "Warm Water Script") == 0) || (std::strcmp(base_name, "Get Condition: Swimming") == 0) ) )
 	{
 		std::string final_thought_string = std::format("Preparing for water thought string.");
 		if (a_event->isApplied)
@@ -904,7 +912,10 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			SKSE::log::info("Event handler for Is In Water Script / Get Condition: Swimming effect application!");
 			if (std::strcmp(base_name, "Is In Water Script") == 0) {
 				SKSE::log::info("Handling 'Is In Water Script' effect application.");
-				final_thought_string = std::format("You have entered the water.  It may be quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now in the water.");
+				final_thought_string = std::format("You have entered cold water.  Respond in character and say something and be sure to mention that you are now in cold water.");
+			} else if (std::strcmp(base_name, "Warm Water Script") == 0) {
+				SKSE::log::info("Handling 'Warm Water Script' effect application.");
+				final_thought_string = std::format("You have entered warm water.  Respond in character and say something and be sure to mention that you are now in warm water.");
 			} else if (std::strcmp(base_name, "Get Condition: Swimming") == 0) {
 				SKSE::log::info("Handling 'Get Condition: Swimming' effect application.");
 				final_thought_string = std::format("You have started to swim in the water.  It may be quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now swimming in the water.");
@@ -925,7 +936,10 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 
 			SKSE::log::info("Event handler for Is In Water Script / Get Condition: Swimming effect removal!");
 			if (std::strcmp(base_name, "Is In Water Script") == 0) {
-				final_thought_string = std::format("You have exited the water.  It may have been quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now out of the water.");
+				final_thought_string = std::format("You have exited the cold water.  Respond in character and say something and be sure to mention that you are now out of the cold water.");
+				last_exited_water_thought_timestamp = std::chrono::steady_clock::now();
+			} else if (std::strcmp(base_name, "Warm Water Script") == 0) {
+				final_thought_string = std::format("You have exited the warm water.  Respond in character and say something and be sure to mention that you are now out of the warm water.");
 				last_exited_water_thought_timestamp = std::chrono::steady_clock::now();
 			} else if (std::strcmp(base_name, "Get Condition: Swimming") == 0) {
 				final_thought_string = std::format("You have stopped swimming in the water.  It may have been quite cold and fresh or warm.  Respond in character and say something and be sure to mention that you are now out of the water.");
