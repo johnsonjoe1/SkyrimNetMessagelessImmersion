@@ -151,6 +151,11 @@ namespace
 		constexpr std::string_view willpowerPrefix = "$DF_WILLPOWER";
 		constexpr std::string_view willpowerSuffix = "_NOTI";
 
+		if (player_is_in_BATTLEFUCK_scene() ) {
+			SKSE::log::info("Skipping Devious Followers notification because player is in a BattleFuck scene: {}", a_notification);
+			return true;
+		}
+
 		if (a_notification.starts_with(willpowerPrefix) && a_notification.ends_with(willpowerSuffix)) {
 			const auto levelText = a_notification.substr(
 				willpowerPrefix.size(),
@@ -174,7 +179,7 @@ namespace
 				emit_devious_followers_thought(
 					a_notification,
 					std::format(
-						"Your Devious Followers willpower has just changed to {} out of 10. {} Resistance is the buffer protecting this stat: whenever resistance is completely exhausted, you lose another point of willpower and resistance resets. Respond in first person and make this change and its meaning clear.",
+						"Your Devious Followers willpower has just changed to {} out of 10. {} Resistance is the buffer protecting this stat: whenever resistance is completely exhausted, you lose another point of willpower and resistance resets. Respond in first person and make this change and its meaning clear.  Never mention any numbers explicitly.  They just indicate how much willpower you have left.  But your response must be in character and void any numbers.",
 						level,
 						consequence),
 					true);
