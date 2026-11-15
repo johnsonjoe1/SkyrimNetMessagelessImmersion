@@ -165,7 +165,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 	if ( (std::strcmp(a_event->eventName.c_str() , "StageStart_BattleFuckRape") == 0)  ) {
 		set_current_animation_status("in_a_scene", std::format("Mod Event detected: {}", a_event->eventName.c_str()));
 		// This event is always about the player, nobody else.
-		std::string  thought_message = std::format("YOU, the player character, are currently getting raped by a different guy after you have been raped by the inital attacker already.  This new guy is either starting to rape you or already switching your body into a new position to fuck you even more. In either case, after the first guy successfully raped you, you stopped resisting for one reason or another. Let us know what you are feeling and thinking in that moment.");
+		std::string  thought_message = std::format("YOU, the player character, are currently getting raped by a different guy after you have been raped by the inital attacker already.  This new guy is either starting to rape you or already switching your body into a new position to fuck you even more. Let us know what you are feeling and thinking in that moment.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("StageStart_BattleFuckRape:  " + thought_message);
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -176,6 +176,9 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 		LillithOnlyBox("AnimationChange_BattleFuckRape:  WE JUST RECEIVED AN ANIMATION-CHANGE-EVENT.  WHAT DOES THAT IMPLY?  (3x message)");
 		LillithOnlyBox("AnimationChange_BattleFuckRape:  WE JUST RECEIVED AN ANIMATION-CHANGE-EVENT.  WHAT DOES THAT IMPLY?  (3x message)");
 		LillithOnlyBox("AnimationChange_BattleFuckRape:  WE JUST RECEIVED AN ANIMATION-CHANGE-EVENT.  WHAT DOES THAT IMPLY?  (3x message)");
+		std::string  thought_message = std::format("YOU, the player character, are are being moved into a new setup by your attacker.  Since you cannot resist, he is using your weakness to move you into even new sex setups and having his way with you in different ways. But you are too weak to be anything but a plaything at the moment. Let us know what you are feeling and thinking.");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
+		LillithOnlyBox("StageStart_BattleFuckRape:  " + thought_message);		
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
 
@@ -192,7 +195,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 	// MOD EVENT:  Name:AnimationEnd_BattleFuckRape :  this is the end of a BattleFuck rape animation.  We may want to comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnd_BattleFuckRape") == 0)  ) {
 		set_current_animation_status("not_in_a_scene", std::format("Mod Event detected: {}", a_event->eventName.c_str()));
-		std::string  thought_message = std::format("YOU, the player character, just got raped at least two times now and now finally the rape is over.  After the first guy, you stopped resisting and the other guys took your body as they pleased. Reflect on the experience and express your feelings about it in character.");
+		std::string  thought_message = std::format("YOU, the player character, just got raped at least two times now and now finally the rape is over.  They took your body as they pleased. Reflect on the experience and express your feelings about it in character.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("AnimationEnd_BattleFuckRape:  " + thought_message);
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -212,9 +215,6 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}	
-
-	
-
 
 	return false;  // If we didn't handle the event, return false.
 }
