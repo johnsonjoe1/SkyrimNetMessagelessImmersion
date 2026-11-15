@@ -46,8 +46,8 @@ namespace
 
 	void throw_out_yps_fashion_thought(const std::string& thought)
 	{
-		if (player_is_in_ANY_SL_scene()) {
-			LillithOnlyBox(std::format("SUPPRESSING YPS thought because of ongoing SL scene: {}", thought));
+		if (player_is_in_ANY_SL_scene() || 	player_is_in_BATTLEFUCK_scene()) {
+			LillithOnlyBox(std::format("SUPPRESSING YPS thought because of ongoing SL or battlefuck scene: {}", thought));
 			return;
 		} else {
 			LillithOnlyBox(thought);
@@ -231,9 +231,9 @@ bool handle_yps::try_handle_yps_mod_stuff(const SKSE::ModCallbackEvent* a_event)
 		// std::string  thought_message = std::format(a_event->strArg.c_str());
 
 		// While in the middle of a scene, a fashion thought is often out of place.  We stop them during scenes.
-		if (player_is_in_ANY_SL_scene()) {
-			SKSE::log::info("YPS-ThoughtEvent detected, but player is in a scene, so we will not process it.");
-			LillithOnlyBox("YPS-ThoughtEvent detected, but player is in a scene, so we will not process it.");
+		if (player_is_in_ANY_SL_scene()   || player_is_in_BATTLEFUCK_scene()) {
+			SKSE::log::info("YPS-ThoughtEvent detected, but player is in an SL or BattleFuck scene, so we will not process it.");
+			LillithOnlyBox("YPS-ThoughtEvent detected, but player is in an SL or BattleFuck scene, so we will not process it.");
 			return true;  // In this case it really was a YPS event and that means no further processing necessary in the main mod boadcast module.
 		}
 

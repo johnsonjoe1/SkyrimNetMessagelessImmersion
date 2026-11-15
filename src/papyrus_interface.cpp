@@ -212,12 +212,12 @@ void SNMIPapyrus::set_yps_AddictionBuff(RE::StaticFunctionTag*, float a_value)
 		final_thought_string = "YOU, the player character, have become a little less dependent on fashion than before. Reflect on this easing of your fashion addiction and how it changes the importance you place on being perfectly styled. Be sure to mention your decreasing fashion addiction explicitly so the reason for the thought is clear.";
 	}
 	if (!final_thought_string.empty()) {
-		if (!player_is_in_ANY_SL_scene()) {
+		if (!player_is_in_ANY_SL_scene() && !player_is_in_BATTLEFUCK_scene()) {
 			LillithOnlyBox(std::format("YPS state change detected: yps_AddictionBuff ({} -> {}) so we generate the following thought BUT WITH A SILENCE-BASED DELAY: {}", previous_yps_AddictionBuff, _yps_AddictionBuff, final_thought_string));
 			DumpThoughts::throw_out_TTS_thought_message_after_silence(final_thought_string, 19);  // throw out this thought as soon as 19 seconds of silence have occured
 			SKSE::log::info("Note: Cause-aware YPS addiction thought was delivered.");
 		} else {
-			LillithOnlyBox(std::format("YPS state change detected while in SL scene, so the following thought was SUPPRESSED: {}", final_thought_string));
+			LillithOnlyBox(std::format("YPS state change detected while in SL or BattleFuck scene, so the following thought was SUPPRESSED: {}", final_thought_string));
 		}
 	}
 	previous_yps_AddictionBuff = _yps_AddictionBuff;  // update the previous level for the next check

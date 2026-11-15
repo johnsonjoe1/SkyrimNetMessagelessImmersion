@@ -20,8 +20,9 @@ void run_constant_whining_in_case_of_silence()
 	const auto requiredSilence = std::string_view(player->GetName()) == "Lillith" ? 20 : SNMI::GetSettings().silenceRequiredBeforeSpontaneousStatusWhining;
 	const auto silenceDuration = std::chrono::steady_clock::now() - DumpThoughts::GetLastSpeechTimestamp();
 
-	if (player_is_in_ANY_SL_scene()) {
+	if (player_is_in_ANY_SL_scene() || player_is_in_BATTLEFUCK_scene()) {
 		// In the middle of a SL scene, we don't want to run any background constant whining, because that would be out of place.
+		SKSE::log::info("Constant whining might be due, but player is in an SL or BattleFuck scene, so we will not process it.");	
 		return;
 	}
 

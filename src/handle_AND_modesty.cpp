@@ -537,6 +537,12 @@ void handle_hard_change_in_slots_0_to_7()
 		} 
 	}
 	constructed_change_description += ". Say so in your response to the player, to make him aware of your modesty situation, and tell us how that makes you feel.";
+
+	if (player_is_in_BATTLEFUCK_scene()) {
+		constructed_change_description += " BUT MOST IMPORTANTLY:  This is happening in the middle of a BATTLEFUCK rape scene, so the sexual attacker has stripped these clothes off of you against your will. Speak in character and mention how this affects the chances of you successfully getting inserted with the penis of the attacker or means that you have less protection fro the coming rape you are about to suffer.  Don't use complicated wording and phrases here, but keep it simple and direct instead.";
+	}
+
+
 	LillithOnlyBox(constructed_change_description.c_str());
 	if (new_game_thought_cooldown_has_passed() && DumpThoughts::seconds_since_game_load() >= 5.0f) {
 		// Actually getting naked is important enough to force-push the message

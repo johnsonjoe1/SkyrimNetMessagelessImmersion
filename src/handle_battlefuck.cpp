@@ -66,7 +66,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 		push_down_occurred = false;
 		// This event is always about the player, nobody else.
 		set_current_battlefuck_status("in_a_scene", std::format("Mod Event detected: {}", a_event->eventName.c_str()));
-		std::string  thought_message = std::format("YOU, the player character, are now getting ambushed in a sexual assault.  Someone gips you from behind.  He probably wants to strip away your clothing and armour, so he can then rape you right in front of everybody later.  Say so and let us know what you are feeling and thinking in that moment, given that you are about to be stripped forefully of all your clothes and make it clear from your response, that you are going to be stripped of all your clothing if you cannot manage to break free from his grip.");
+		std::string  thought_message = std::format("YOU, the player character, are now getting ambushed in a sexual assault.  Someone gips you from behind.  He probably wants to strip away your clothing and armour, so he can then rape you right in front of everybody later.  Say so and let us know what you are feeling and thinking in that moment, given that you are about to be pushed to the ground and raped, if you cannot manage to break free from his grip.");
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
 		LillithOnlyBox("AnimationStarting_BattleFuck:  " + thought_message);
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
@@ -82,16 +82,16 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 
 		std::string  thought_message = std::format("dummy_init_string");
 
-		thought_message = std::format("During the ongoing sexual assault, the attacker is tryting to throw you off balance and trying to push you down to the ground, so that you cannot run away any more. You must try to resist and prevent that from happening.  Explain what is going on, expressing your immediate feelings in character.");		
+		thought_message = std::format("During the ongoing sexual assault, the attacker is tryting to throw you off balance and trying to push you down to the ground, so that you cannot run away any more and so that he can rape you as he pleases.  Explain what is going on, expressing your immediate feelings in character.  Don't use complicated wording and phrases here, but keep it simple and direct instead.");		
 
 		if (handle_battlefuck::has_push_down_occurred()) 
 		{
-			thought_message = std::format("During the ongoing sexual assault, you were thrown off balance and pushed you down to the ground.  But now your attacker is trying to strip away your clothes and armor, so that he can then succssfully fuck you. Explain what is going on, expressing your immediate feelings in character.");
+			thought_message = std::format("During the ongoing sexual assault, you were thrown off balance and pushed you down to the ground.  But now your attacker is trying to strip away your clothes and armor, so that he can then succssfully rape you. Explain what is going on, expressing your immediate feelings in character.  Don't use complicated wording and phrases here, but keep it simple and direct instead.");
 		}
 
 		if (has_insertion_occurred())
 		{
-			thought_message = std::format("YOU, the player character, have already been stripped of your protecting clothes and armour.  He has also tied your hands together, so you can not resist any more, at least until you can untie your wrists.  And your attacker has successfully managed to penetrated you. Now the current event is this:  He is fucking you in the first position after penetration or he is just switching to a new position to fuck you even more.  And he will come inside you, if this continues.  Explain your situation and how you feel now in character.");
+			thought_message = std::format("YOU, the player character, have already been stripped of your protecting clothes and armour.  He has also tied your hands together, so you can not resist any more, at least until you can untie your wrists.  And your attacker has successfully managed to penetrated you. Now the current event is this:  He is fucking you in the first position after penetration or he is just switching to a new position to fuck you even more.  And he will come inside you, if this continues.  Explain your situation and how you feel now in character.  Don't use complicated wording and phrases here, but keep it simple and direct instead.");
 		}
 
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
