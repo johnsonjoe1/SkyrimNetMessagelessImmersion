@@ -616,13 +616,17 @@ bool handle_DDUD::handle_DDUD_restrictive_corset_effect(
 
 	auto* base = a_effect->GetBaseObject();
 	auto* source = a_effect->spell;
-	if (!base || !source || std::strcmp(source->GetName(), "Restrictive Corset") != 0) {
+	if (!base || !source ) {
 		return false;
-	}
+	}	
 
 	if (std::strcmp(base->GetName(), "Belly Script") == 0 ) {
-		// We don't know what to day upon "Belly Script".  No idea what that is supposed to mean in the game.  So we do nothing here, but consider it handled.
+		// "Belly Script" is just Devious Devices making the belly node of the character skeleton disappear under worn devices to prevent clipping.  Is a pure graphics tweak.  No need to respond to that, whichever device may have triggered it.
 		return true;  // true, because we now consider the effect handled.
+	}
+
+	if (std::strcmp(source->GetName(), "Restrictive Corset") != 0) {
+		return false;
 	}
 
 	if (std::strcmp(base->GetName(), "Stagger when shouting") != 0 ) {
