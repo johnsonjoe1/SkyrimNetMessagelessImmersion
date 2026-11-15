@@ -7,6 +7,12 @@
 
 static auto last_battlefuck_stage_start_thought_timestamp = std::chrono::steady_clock::now() - std::chrono::hours(1);
 static bool insertion_occurred = false;
+static bool push_down_occurred = false;
+
+bool handle_battlefuck::has_push_down_occurred()
+{
+	return push_down_occurred;
+}
 
 bool handle_battlefuck::has_insertion_occurred()
 {
@@ -21,15 +27,32 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 
 	const std::string_view event_name = a_event->eventName.c_str();
 
+	if (event_name == "_BF_PushDownSucceeded") {
+		push_down_occurred = true;
+		LillithOnlyBox("BattleFuck push-down detected!!! (3x message)");
+		LillithOnlyBox("BattleFuck push-down detected!!! (3x message)");
+		LillithOnlyBox("BattleFuck push-down detected!!! (3x message)");		
+		set_current_battlefuck_status("in_a_scene", "BattleFuck push-down succeeded");
+		auto* aggressor = a_event->sender ? a_event->sender->As<RE::Actor>() : nullptr;
+		const char* name = aggressor ? aggressor->GetDisplayFullName() : nullptr;
+		std::string thought_message = "During the ongoing sexual assault, the attacker has just successfully thrown you off balance and pushed you down to the ground, so that you cannot run away any more. React to losing your footing and control of the situation, expressing your immediate feelings in character, also mentioning the fact that you were thrown off your feet.";
+		if (name && *name) {
+			thought_message += std::format(" The attacker is {}.", name);
+		}
+		SKSE::log::info("BattleFuck successful push-down detected");
+		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);
+		return true;
+	}
+
 	if (event_name == "_BF_InsertionStarted") {
 		insertion_occurred = true;
-		LillithOnlyBox("BattleFuck insertion detected!!! (3x message)");
-		LillithOnlyBox("BattleFuck insertion detected!!! (3x message)");
-		LillithOnlyBox("BattleFuck insertion detected!!! (3x message)");
+		LillithOnlyBox("BattleFuck insertion started!!! (3x message)");
+		LillithOnlyBox("BattleFuck insertion started!!! (3x message)");
+		LillithOnlyBox("BattleFuck insertion started!!! (3x message)");
 		set_current_battlefuck_status("in_a_scene", "BattleFuck insertion started");
 		auto* aggressor = a_event->sender ? a_event->sender->As<RE::Actor>() : nullptr;
 		const char* name = aggressor ? aggressor->GetDisplayFullName() : nullptr;
-		std::string thought_message = "During the ongoing assault, the attacker has just crossed another boundary. Express your immediate emotional reaction in character, without describing the act.";
+		std::string thought_message = "During the ongoing sexual assault, the attacker has now managed to insert his penis into your pussy, despite all your attempts to resist. Express your immediate emotional reaction in character, also mentioning the act.";
 		if (name && *name) {
 			thought_message += std::format(" The attacker is {}.", name);
 		}
@@ -40,6 +63,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 	// MOD EVENT:  Name: AnimationStarting_BattleFuck :  this is the start of a BattleFuck scene.  We absolutely should comment on it.
 	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationStarting_BattleFuck") == 0)  ) {
 		insertion_occurred = false;
+		push_down_occurred = false;
 		// This event is always about the player, nobody else.
 		set_current_battlefuck_status("in_a_scene", std::format("Mod Event detected: {}", a_event->eventName.c_str()));
 		std::string  thought_message = std::format("YOU, the player character, are now getting ambushed in a sexual assault.  Someone gips you from behind.  He probably wants to strip away your clothing and armour, so he can then rape you right in front of everybody later.  Say so and let us know what you are feeling and thinking in that moment, given that you are about to be stripped forefully of all your clothes and make it clear from your response, that you are going to be stripped of all your clothing if you cannot manage to break free from his grip.");
@@ -56,10 +80,18 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 		}
 		last_battlefuck_stage_start_thought_timestamp = std::chrono::steady_clock::now();
 
-		std::string  thought_message = std::format("YOU, the player character, are now forcefully stripped of more and more of your clothing and armour.  Also your attacker is pushing you down, to prepare you for the coming rape.  Let us know how you feel now.");
+		std::string  thought_message = std::format("dummy_init_string");
+
+		thought_message = std::format("During the ongoing sexual assault, the attacker is tryting to throw you off balance and trying to push you down to the ground, so that you cannot run away any more. You must try to resist and prevent that from happening.  Explain what is going on, expressing your immediate feelings in character.");		
+
+		if (handle_battlefuck::has_push_down_occurred()) 
+		{
+			thought_message = std::format("During the ongoing sexual assault, you were thrown off balance and pushed you down to the ground.  But now your attacker is trying to strip away your clothes and armor, so that he can then succssfully fuck you. Explain what is going on, expressing your immediate feelings in character.");
+		}
+
 		if (has_insertion_occurred())
 		{
-			thought_message = std::format("YOU, the player character, have already been stripped of your protecting clothes and armour.  He has also tied your hands together, so you can not resist any more, at least until you can untie your wrists.  And your attacker has successfully managed to penetrated you. Now the current event is this:  He is either fucking you in the first position after penetration or he is switching your body into another position to fuck you even more and at some point will reach his climax inside of you.  Let us know your situation and how you feel now.");
+			thought_message = std::format("YOU, the player character, have already been stripped of your protecting clothes and armour.  He has also tied your hands together, so you can not resist any more, at least until you can untie your wrists.  And your attacker has successfully managed to penetrated you. Now the current event is this:  He is fucking you in the first position after penetration or he is just switching to a new position to fuck you even more.  And he will come inside you, if this continues.  Explain your situation and how you feel now in character.");
 		}
 
 		DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(thought_message);   // this should be rare enough to use the important TTS thought channel.
@@ -77,8 +109,9 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 		return true;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;
 	}
 	// MOD EVENT:  Name:  "AnimationEnding_BattleFuck" :  this is the end of a BattleFuck scene.  We absolutely should comment on it.
-	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BattleFuck") == 0)  ) {
+	if ( (std::strcmp(a_event->eventName.c_str() , "AnimationEnd_BattleFuck") == 0)  ) {
 		insertion_occurred = false;
+		push_down_occurred = false;
 		set_current_battlefuck_status("not_in_a_scene", std::format("Mod Event detected: {}", a_event->eventName.c_str()));
 		// This event is always about the player, nobody else.
 		std::string  thought_message = std::format("YOU, the player character, survived a sexual assault.  Maybe you got completely undressed by the attacker and maybe he even fucked you and came inside of you, while everybody else stood by and watched, but regardless of that, the assault is over now and you can get dressed again.  Say so and let us know what you are feeling and thinking in that moment.");
