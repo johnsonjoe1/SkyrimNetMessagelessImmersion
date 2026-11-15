@@ -597,6 +597,15 @@ bool handle_DDUD::handle_DDUD_abadon_domination_shout_effect(
 [2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:544] Magnitude: 0 | Duration: 0
 [2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:547] Source name: Restrictive Corset | Source FormID: 10052D45 | Source EDID: zad_EnchCorset 
 [2026-08-16 17:56:35.887] [log] [info] [handle_active_magic_effect_changes.cpp:553] Form LookupByID 1005380A found: Stagger when shouting*/
+
+/*[2026-11-15 12:16:29.794] [log] [info] [handle_active_magic_effect_changes.cpp:1088] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-11-15 12:16:29.794] [log] [info] [handle_active_magic_effect_changes.cpp:1089] Effect REMOVED on Lillith | UID=26
+[2026-11-15 12:16:29.794] [log] [info] [handle_active_magic_effect_changes.cpp:1092] Base name: Belly Script | Base ptr: 0x13eef4b8b80 | Base-FormID: F056336 | Base-Form Type: 18   (This means: MGEF) 
+[2026-11-15 12:16:29.794] [log] [info] [handle_active_magic_effect_changes.cpp:1093] base-Effect EDID:  | Source ptr: 0x13eef2edd80  |  Caster: Lillith 
+[2026-11-15 12:16:29.794] [log] [info] [handle_active_magic_effect_changes.cpp:1097] Magnitude: 0 | Duration: 0
+[2026-11-15 12:16:29.794] [log] [info] [handle_active_magic_effect_changes.cpp:1100] Source name: Restrictive Corset | Source FormID: F052D45 | Source EDID:  
+[2026-11-15 12:16:29.794] [log] [info] [handle_active_magic_effect_changes.cpp:1106] Form LookupByID F056336 found: Belly Script*/
+
 bool handle_DDUD::handle_DDUD_restrictive_corset_effect(
 	const RE::TESActiveEffectApplyRemoveEvent* a_event,
 	RE::ActiveEffect* a_effect)
@@ -607,8 +616,16 @@ bool handle_DDUD::handle_DDUD_restrictive_corset_effect(
 
 	auto* base = a_effect->GetBaseObject();
 	auto* source = a_effect->spell;
-	if (!base || !source || std::strcmp(base->GetName(), "Stagger when shouting") != 0 ||
-		std::strcmp(source->GetName(), "Restrictive Corset") != 0) {
+	if (!base || !source || std::strcmp(source->GetName(), "Restrictive Corset") != 0) {
+		return false;
+	}
+
+	if (std::strcmp(base->GetName(), "Belly Script") == 0 ) {
+		// We don't know what to day upon "Belly Script".  No idea what that is supposed to mean in the game.  So we do nothing here, but consider it handled.
+		return true;  // true, because we now consider the effect handled.
+	}
+
+	if (std::strcmp(base->GetName(), "Stagger when shouting") != 0 ) {
 		return false;
 	}
 
@@ -975,6 +992,7 @@ bool handle_DDUD::handle_DDUD_device_equipped_event(const SKSE::ModCallbackEvent
 			{"DeviceRemovedElbowbinder", "YOU, the player character, just got released from your elbow binder.  Your arms are no longer forced behind your back in that restrictive position, so those restraints no longer apply.   "},
 			{"DeviceRemovedRope Harness", "YOU, the player character, just got released from your rope harness.  The constricting pressure around your torso no longer applies now that it is removed.   "},
 			{"DeviceRemovedHarness", "YOU, the player character, just got released from your harness.  The constricting and restrictive pressure from that harness no longer applies now that it is removed.   "},
+			{"DeviceRemovedCorset", "YOU, the player character, just got released from your corset.  The constricting and restrictive pressure from that corset no longer applies now that it is removed.   "},			
 			{"DeviceRemovedSuit", "YOU, the player character, just got your locking bodysuit removed.  The suit wrapped around your whole body and constricted it a bit. This device got removed and now you are free from it.   "},
 			{"DeviceRemovedHobble Dress", "YOU, the player character, just got your hobble dress removed.  The constricting pressure around your legs and body no longer applies now that it is removed.   "},
 			// NOTE:  These two again come with two different spellings.
