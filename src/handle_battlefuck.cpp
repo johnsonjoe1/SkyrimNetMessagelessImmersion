@@ -196,12 +196,13 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 	}
 
 	// Now down here we handle any events that we do not need but also do not need to flag as unhandled
-	if ( (std::strcmp(a_event->eventName.c_str() , "StageEnd_BattleFuck") == 0)  ||   // Small sub-stage-ends don't get a comment
-	     (std::strcmp(a_event->eventName.c_str() , "StageEnd_BattleFuckRape") == 0) ||      // We respont to stage-start only, otherwise the thought channel gets spammed.
-		 (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BattleFuck") == 0) ||       // We respond to AnimationStarting_BattleFuck instead
-		 (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BattleFuckRape") == 0) ||   // We respond to AnimationStartING instead
-		 (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BattleFuck") == 0) ||      // We respond to AnimationEnd_BattleFuck instead
-		 (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BattleFuckRape") == 0)     // We respond to AnimationEnd_BattleFuckRape instead
+	if ( (std::strcmp(a_event->eventName.c_str() , "StageEnd_BattleFuck") == 0)  ||             // Small sub-stage-ends don't get a comment
+	     (std::strcmp(a_event->eventName.c_str() , "StageEnd_BattleFuckRape") == 0) ||          // We respond to stage-start only, otherwise the thought channel gets spammed.
+		 (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BattleFuck") == 0) ||        // We respond to AnimationStarting_BattleFuck instead
+		 (std::strcmp(a_event->eventName.c_str() , "AnimationStart_BattleFuckRape") == 0) ||    // We respond to AnimationStartING instead
+		 (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BattleFuck") == 0) ||       // We respond to AnimationEnd_BattleFuck instead
+		 (std::strcmp(a_event->eventName.c_str() , "AnimationEnding_BattleFuckRape") == 0) ||   // We respond to AnimationEnd_BattleFuckRape instead
+		 (std::strcmp(a_event->eventName.c_str() , "ActorChangeStart_BattleFuck") == 0)         // This can happen at the very end of the main Battlefuck scene without any follow-up, so we dont comment.
 		) {
 		// Nothing to do in that case
 		// No need for a message, like for super-irrelevant it's the same:  SKSE::log::info("SKIPPING HANDLING OF IRRELEVANT MOD EVENT: Name: {}  StrArg: {}  NumArg: {}", a_event->eventName.c_str(), a_event->strArg, a_event->numArg);
