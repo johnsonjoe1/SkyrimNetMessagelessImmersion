@@ -136,9 +136,37 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 		}
 		return true;
 	}
+/*[2026-11-19 13:40:11.043] [log] [info] [handle_active_magic_effect_changes.cpp:1102] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-11-19 13:40:11.043] [log] [info] [handle_active_magic_effect_changes.cpp:1103] Effect APPLIED on BambiAgain | UID=18
+[2026-11-19 13:40:11.043] [log] [info] [handle_active_magic_effect_changes.cpp:1106] Base name: Concentrated Device Manifest | Base ptr: 0x1ea71939d00 | Base-FormID: 241553DA | Base-Form Type: 18   (This means: MGEF) 
+[2026-11-19 13:40:11.043] [log] [info] [handle_active_magic_effect_changes.cpp:1107] base-Effect EDID:  | Source ptr: 0x1ea739da700  |  Caster: BambiAgain 
+[2026-11-19 13:40:11.043] [log] [info] [handle_active_magic_effect_changes.cpp:1111] Magnitude: 0 | Duration: 0
+[2026-11-19 13:40:11.043] [log] [info] [handle_active_magic_effect_changes.cpp:1114] Source name: Concentrated Black Goo | Source FormID: 241553DF | Source EDID:  
+[2026-11-19 13:40:11.043] [log] [info] [handle_active_magic_effect_changes.cpp:1120] Form LookupByID 241553DA found: Concentrated Device Manifest*/
+	if (std::strcmp(base_name, "Concentrated Device Manifest") == 0 &&
+		(std::strcmp(source_name, "Concentrated Black Goo") == 0)) {
+		if (a_event->isApplied) {
+			SKSE::log::info("Event handler for CONCENTRATED DEVICE MANIFEST effect application from Concentrated Black Goo!");
+			// NOTE:  We don't really produce a thought here, because that is already done by the device application events anyway.
+			// DumpThoughts::throw_out_TTS_thought_message(std::format("YOU, the player character, just ate a piece of {} and received a Concentrated Device Manifest effect from it.    Say as much in your response, and make sure it is clear that {} simply causes Concentrated Device Manifest effect.", source_name, source_name));
+		}
+		return true;
+	}
 
-
-
+/*[2026-11-19 13:50:47.045] [log] [info] [handle_active_magic_effect_changes.cpp:1102] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-11-19 13:50:47.045] [log] [info] [handle_active_magic_effect_changes.cpp:1103] Effect APPLIED on BambiAgain | UID=39
+[2026-11-19 13:50:47.045] [log] [info] [handle_active_magic_effect_changes.cpp:1106] Base name: Slow | Base ptr: 0x1ea719390c0 | Base-FormID: 2412E1D6 | Base-Form Type: 18   (This means: MGEF) 
+[2026-11-19 13:50:47.045] [log] [info] [handle_active_magic_effect_changes.cpp:1107] base-Effect EDID:  | Source ptr: 0x1ea73a14f00  |  Caster: BambiAgain 
+[2026-11-19 13:50:47.045] [log] [info] [handle_active_magic_effect_changes.cpp:1111] Magnitude: -50 | Duration: 86400
+[2026-11-19 13:50:47.045] [log] [info] [handle_active_magic_effect_changes.cpp:1114] Source name: Swimming penalty | Source FormID: 2412E1D5 | Source EDID:  
+[2026-11-19 13:50:47.045] [log] [info] [handle_active_magic_effect_changes.cpp:1120] Form LookupByID 2412E1D6 found: Slow*/
+	if (std::strcmp(base_name, "Slow") == 0 && std::strcmp(source_name, "Skeever Tail") == 0) {
+		if (a_event->isApplied) {
+			SKSE::log::info("Event handler for SLOW effect application during swimming in bondage gear!");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player character, are in water but you can't swim so well because of all the bondage gear you are wearing.  You should be careful, because you could drown easily like that.  Say as much in your response, and make sure you make it clear that you are speaking about your inability to swim properly in all that bondage gear you are wearing.");
+		}
+		return true;
+	}
 
 	/*
 [2026-10-16 13:00:13.881] [log] [info] [handle_active_magic_effect_changes.cpp:1076] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
