@@ -853,8 +853,16 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 [2026-08-14 16:40:34.172] [log] [info] [handle_active_magic_effect_changes.cpp:520] Magnitude: 3 | Duration: 50
 [2026-08-14 16:40:34.172] [log] [info] [handle_active_magic_effect_changes.cpp:523] Source name: Tears | Source FormID: 2415A4F0 | Source EDID: UD_ZAZTearsSpell 
 [2026-08-14 16:40:34.172] [log] [info] [handle_active_magic_effect_changes.cpp:529] Form LookupByID 2415A4EF found: Tears
+
+[2026-11-19 14:43:18.935] [log] [info] [handle_active_magic_effect_changes.cpp:1102] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-11-19 14:43:18.935] [log] [info] [handle_active_magic_effect_changes.cpp:1103] Effect APPLIED on BambiAgain | UID=39
+[2026-11-19 14:43:18.935] [log] [info] [handle_active_magic_effect_changes.cpp:1106] Base name: Tears | Base ptr: 0x16ffe556b00 | Base-FormID: 2315A4EF | Base-Form Type: 18   (This means: MGEF) 
+[2026-11-19 14:43:18.935] [log] [info] [handle_active_magic_effect_changes.cpp:1107] base-Effect EDID:  | Source ptr: 0x17000214500  |  Caster: BambiAgain 
+[2026-11-19 14:43:18.935] [log] [info] [handle_active_magic_effect_changes.cpp:1111] Magnitude: 3 | Duration: 50
+[2026-11-19 14:43:18.935] [log] [info] [handle_active_magic_effect_changes.cpp:1114] Source name: Tears | Source FormID: 2315A4F0 | Source EDID:  
+[2026-11-19 14:43:18.935] [log] [info] [handle_active_magic_effect_changes.cpp:1120] Form LookupByID 2315A4EF found: Tears
 */
-	if (base && ( (std::strcmp(base_name, "Tears") == 0) && (std::strcmp(base->GetFormEditorID(), "UD_ZAZTearsSpell") == 0) ) )
+	if (base && source && ( (std::strcmp(base_name, "Tears") == 0) && (std::strcmp(source->GetName(), "Tears") == 0 ) ) )
 	{
 		if (a_event->isApplied)
 		{
