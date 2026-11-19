@@ -8,6 +8,72 @@
 #include "misc.h"
 #include "RE/S/SendHUDMessage.h"
 
+namespace
+{
+	void complain_about_apropos_wear(RE::PlayerCharacter* player)
+	{
+		auto* dataHandler = RE::TESDataHandler::GetSingleton();
+		const auto* apropos = dataHandler ? dataHandler->LookupModByName("Apropos2.esp") : nullptr;
+		auto* target = player->GetMagicTarget();
+		if (!apropos || !target) {
+			return;
+		}
+
+		// Apropos2 applies these spells when the current wear stage has gameplay penalties.
+		class WearEffectVisitor : public RE::MagicTarget::ForEachActiveEffectVisitor
+		{
+		public:
+			explicit WearEffectVisitor(const RE::TESFile* file) : apropos(file) {}
+
+			RE::BSContainer::ForEachResult Accept(RE::ActiveEffect* effect) override
+			{
+				if (!effect || !effect->spell || effect->spell->GetFile(0) != apropos ||
+					effect->flags.any(RE::ActiveEffect::Flag::kInactive, RE::ActiveEffect::Flag::kDispelled)) {
+					return RE::BSContainer::ForEachResult::kContinue;
+				}
+
+				switch (effect->spell->GetLocalFormID()) {
+				case 0xAA11:  // Vaginal stamina regeneration
+				case 0xAA13:  // Vaginal movement speed
+				case 0xAA15:  // Vaginal health regeneration
+					vaginalPain = true;
+					break;
+				case 0xAA0B:  // Anal health regeneration
+				case 0xAA0D:  // Anal movement speed
+				case 0xAA1B:  // Anal stamina regeneration
+					analPain = true;
+					break;
+				case 0xAA17:  // Oral speech
+				case 0xAA19:  // Oral magicka regeneration
+					oralPain = true;
+					break;
+				}
+				return RE::BSContainer::ForEachResult::kContinue;
+			}
+
+			const RE::TESFile* apropos;
+			bool vaginalPain = false;
+			bool analPain = false;
+			bool oralPain = false;
+		};
+
+		WearEffectVisitor wear(apropos);
+		target->VisitEffects(wear);
+		if (wear.vaginalPain) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
+				"Your pussy still hurts from wear and tear, and the pain is taking a toll on you. In your own words, complain about the lingering pain and make clear where it hurts.");
+		}
+		if (wear.analPain) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
+				"Your ass still hurts from wear and tear, and the pain is taking a toll on you. In your own words, complain about the lingering pain and make clear where it hurts.");
+		}
+		if (wear.oralPain) {
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
+				"Your mouth still hurts from wear and tear, and the pain is taking a toll on you. In your own words, complain about the lingering pain and make clear where it hurts.");
+		}
+	}
+}
+
 void run_constant_whining_in_case_of_silence()
 {
 	if (!SNMI::GetSettings().enableConstantWhining) {
@@ -73,6 +139,7 @@ void run_constant_whining_in_case_of_silence()
 		for (const auto& sicknessThought : get_current_other_sickness_thoughts()) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(sicknessThought);
 		}
+		complain_about_apropos_wear(player);
 		if (actually_wearing_heels_according_to_yps_thoughts) {
 			const char* heelsThought = nullptr;
 			switch (handle_yps::get_current_heels_training_status()) {
