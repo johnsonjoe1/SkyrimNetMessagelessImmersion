@@ -160,7 +160,7 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 [2026-11-19 13:50:47.045] [log] [info] [handle_active_magic_effect_changes.cpp:1111] Magnitude: -50 | Duration: 86400
 [2026-11-19 13:50:47.045] [log] [info] [handle_active_magic_effect_changes.cpp:1114] Source name: Swimming penalty | Source FormID: 2412E1D5 | Source EDID:  
 [2026-11-19 13:50:47.045] [log] [info] [handle_active_magic_effect_changes.cpp:1120] Form LookupByID 2412E1D6 found: Slow*/
-	if (std::strcmp(base_name, "Slow") == 0 && std::strcmp(source_name, "Skeever Tail") == 0) {
+	if (std::strcmp(base_name, "Slow") == 0 && std::strcmp(source_name, "Swimming penalty") == 0) {
 		if (a_event->isApplied) {
 			SKSE::log::info("Event handler for SLOW effect application during swimming in bondage gear!");
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player character, are in water but you can't swim so well because of all the bondage gear you are wearing.  You should be careful, because you could drown easily like that.  Say as much in your response, and make sure you make it clear that you are speaking about your inability to swim properly in all that bondage gear you are wearing.");
