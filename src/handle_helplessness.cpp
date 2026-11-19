@@ -84,7 +84,7 @@ bool handle_helplessness::try_handle_mod_event(const SKSE::ModCallbackEvent* a_e
 	// MOD EVENT:  the rest of the sequence, where we don't do anything and just return on those events.
 	if ((std::strcmp(a_event->eventName.c_str(), "AnimationStart_Helpless") == 0) ||
 		(std::strcmp(a_event->eventName.c_str(), "AnimationStarting_Helpless") == 0) ||
-		(std::strcmp(a_event->eventName.c_str(), "StageStart_Helpless") == 0) ||
+		// (std::strcmp(a_event->eventName.c_str(), "StageStart_Helpless") == 0) ||
 		(std::strcmp(a_event->eventName.c_str(), "StageEnd_Helpless") == 0) ||
 		(std::strcmp(a_event->eventName.c_str(), "AnimationEnding_Helpless") == 0)) {
 		return true;

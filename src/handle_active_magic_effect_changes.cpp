@@ -110,7 +110,22 @@ std::vector<std::string> get_current_other_sickness_thoughts()
 	for (const auto& disease : severeDiseases) {
 		auto* spell = RE::TESForm::LookupByEditorID<RE::SpellItem>(disease.spellEditorID);
 		if (spell && player->HasSpell(spell)) {
-			thoughts.push_back(std::format("You are suffering from the most severe stage of {}. {} You need a cure for this disease. Say so in your response and explicitly name {} as the cause of these symptoms.", disease.name, disease.symptoms, disease.name));
+
+			logger::info("*** RND-CASE ***");
+			logger::info("*** RND-CASE *** xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+			logger::info("*** RND-CASE ***");
+			logger::info("*** RND-CASE *** xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+			logger::info("*** RND-CASE ***");
+			logger::info("*** RND-CASE *** xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+			logger::info("*** RND-CASE ***");
+			logger::info("*** RND-CASE ***xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+			logger::info("*** RND-CASE ***");
+			logger::info("*** RND-CASE ***XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+			logger::info("*** RND-CASE ***");
+
+			logger::info("disease.name: {} , disease.symptoms={} , disease.spellEditorID={} , HASSPELL={}", disease.name, disease.symptoms, disease.spellEditorID, player->HasSpell(spell));
+
+			thoughts.push_back(std::format("You are suffering from the most severe stage of the Realistic-Needs-and-Diseases mod's version of {}. {} You need a cure for this disease. Say so in your response and explicitly name {} as the cause of these symptoms.", disease.name, disease.symptoms, disease.name));
 		}
 	}
 
