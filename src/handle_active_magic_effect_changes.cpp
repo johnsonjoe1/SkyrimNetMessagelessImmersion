@@ -156,7 +156,7 @@ std::vector<std::string> get_current_other_sickness_thoughts()
 
 			logger::info("disease.name: {} , disease.symptoms={} , disease.spellEditorID={} , HASSPELL={}", disease.name, disease.symptoms, disease.spellEditorID, player->HasSpell(spell));
 
-			thoughts.push_back(std::format("You are suffering from the most severe stage of the Realistic-Needs-and-Diseases mod's version of {}. {} You need a cure for this disease. Say so in your response and explicitly name {} as the cause of these symptoms.", disease.name, disease.symptoms, disease.name));
+			thoughts.push_back(std::format("You are suffering from the most severe stage of {}. {} You need a cure for this disease. Say so in your response and explicitly name {} as the cause of these symptoms.", disease.name, disease.symptoms, disease.name));
 		}
 	}
 
