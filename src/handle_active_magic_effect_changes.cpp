@@ -60,6 +60,42 @@ std::array<std::string, 12> list_of_all_sicknesses = {
     "Food Poisoning"	
 };
 
+namespace
+{
+	bool has_active_disease_effect(RE::PlayerCharacter* player, std::string_view spellEditorID)
+	{
+		auto* spell = RE::TESForm::LookupByEditorID<RE::SpellItem>(spellEditorID);
+		auto* target = player ? player->GetMagicTarget() : nullptr;
+		if (!spell || !target) {
+			return false;
+		}
+
+		class DiseaseEffectVisitor : public RE::MagicTarget::ForEachActiveEffectVisitor
+		{
+		public:
+			explicit DiseaseEffectVisitor(RE::SpellItem* diseaseSpell) : spell(diseaseSpell) {}
+
+			RE::BSContainer::ForEachResult Accept(RE::ActiveEffect* effect) override
+			{
+				// Curing a disease can dispel its effects while leaving HasSpell true.
+				if (effect && effect->spell == spell &&
+					!effect->flags.any(RE::ActiveEffect::Flag::kInactive, RE::ActiveEffect::Flag::kDispelled)) {
+					found = true;
+					return RE::BSContainer::ForEachResult::kStop;
+				}
+				return RE::BSContainer::ForEachResult::kContinue;
+			}
+
+			RE::SpellItem* spell;
+			bool found = false;
+		};
+
+		DiseaseEffectVisitor visitor(spell);
+		target->VisitEffects(visitor);
+		return visitor.found;
+	}
+}
+
 AtaxiaStage get_current_ataxia_stage()
 {
 	auto* player = RE::PlayerCharacter::GetSingleton();
@@ -67,18 +103,13 @@ AtaxiaStage get_current_ataxia_stage()
 		return AtaxiaStage::none;
 	}
 
-	auto has_spell = [player](std::string_view editorID) {
-		auto* spell = RE::TESForm::LookupByEditorID<RE::SpellItem>(editorID);
-		return spell && player->HasSpell(spell);
-	};
-
-	if (has_spell("RND_DiseaseAtaxiaStage2")) {
+	if (has_active_disease_effect(player, "RND_DiseaseAtaxiaStage2")) {
 		return AtaxiaStage::stage2;
 	}
-	if (has_spell("RND_DiseaseAtaxiaStage1")) {
+	if (has_active_disease_effect(player, "RND_DiseaseAtaxiaStage1")) {
 		return AtaxiaStage::stage1;
 	}
-	if (has_spell("RND_DiseaseAtaxiaStage0")) {
+	if (has_active_disease_effect(player, "RND_DiseaseAtaxiaStage0")) {
 		return AtaxiaStage::stage0;
 	}
 
@@ -109,7 +140,7 @@ std::vector<std::string> get_current_other_sickness_thoughts()
 	}};
 	for (const auto& disease : severeDiseases) {
 		auto* spell = RE::TESForm::LookupByEditorID<RE::SpellItem>(disease.spellEditorID);
-		if (spell && player->HasSpell(spell)) {
+		if (has_active_disease_effect(player, disease.spellEditorID)) {
 
 			logger::info("*** RND-CASE ***");
 			logger::info("*** RND-CASE *** xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
