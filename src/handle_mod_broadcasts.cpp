@@ -270,7 +270,7 @@ bool is_known_useless_event_that_can_be_completely_shortcircuited(std::string ev
 
 		"AnimationStart_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"StageEnd_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
-		"StageStart_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
+		// "StageStart_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"AnimationEnding_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"AnimationEnd_HelplessCreature",   // This is technical Devious Helplessness / creature stuff, and doesn't warrant a separate comment.
 		"AnimationChange_HelplessCreature", // hmmm, Devious Helplessness or Aroused Creatures??
