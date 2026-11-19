@@ -163,7 +163,7 @@ bool handle_alchemy_magic_effects::handle_magic_effect(
 	if (std::strcmp(base_name, "Slow") == 0 && std::strcmp(source_name, "Swimming penalty") == 0) {
 		if (a_event->isApplied) {
 			SKSE::log::info("Event handler for SLOW effect application during swimming in bondage gear!");
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player character, are in water but you can't swim so well because of all the bondage gear you are wearing.  You should be careful, because you could drown easily like that.  Say as much in your response, and make sure you make it clear that you are speaking about your inability to swim properly in all that bondage gear you are wearing.");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message("YOU, the player character, just got into water, with your hands tied, so you might drown very soon. The player doesn't know that though. Tell him, that you can't swim with your hands tied and that you might die now in your response.");
 		}
 		return true;
 	}
