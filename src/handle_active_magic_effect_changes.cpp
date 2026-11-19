@@ -687,7 +687,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 
 			SKSE::log::info("Event handler for Get Condition: Swimming via Get Dirty Over Time - Clean APPLICATION!");
 			std::string final_thought_string = std::format("YOU, the player character, just started a little swim, which is helping to remove some of the dirt you have been aquiring. Respond in character and mention your relief about the little swim, how good it feels and how nice it is, that this will remove even more of the dirt and filth you have been aquiring."); //  + standard_thought_instruction;
-			DumpThoughts::throw_out_TTS_thought_message("Active Effect: Get Condition: Swimming via Get Dirty Over Time - Clean: THOUGHT: " + final_thought_string);
+			DumpThoughts::throw_out_TTS_thought_message_after_silence("Active Effect: Get Condition: Swimming via Get Dirty Over Time - Clean: THOUGHT: " + final_thought_string, 10);  // require 10 seconds of silence, since some drowning message might need priority
 			LillithOnlyBox(final_thought_string);
 			last_swimming_effect_thought_timestamp = std::chrono::steady_clock::now();
 		} 
@@ -947,7 +947,7 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 			}
 		}
 		LillithOnlyBox(final_thought_string);
-		DumpThoughts::throw_out_TTS_thought_message(final_thought_string); //  + standard_thought_instruction;	
+		DumpThoughts::throw_out_TTS_thought_message_after_silence(final_thought_string, 10); //  We require 10 seconds of silence, since a drowning message might need to take priority
 		return;  // This will then be done in the calling function:   return RE::BSEventNotifyControl::kContinue;	
 	}
 
