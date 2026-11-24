@@ -41,7 +41,7 @@ bool handle_battlefuck::try_handle_mod_event(const SKSE::ModCallbackEvent* a_eve
 		set_current_battlefuck_status("in_a_scene", "BattleFuck attacker undressed");
 		auto* aggressor = a_event->sender ? a_event->sender->As<RE::Actor>() : nullptr;
 		const char* name = aggressor ? aggressor->GetDisplayFullName() : nullptr;
-		std::string thought_message = "During the ongoing struggle, the attacker has now deftly removed his own clothing. He is naked now and ready to penetrate.  React to this development and what it means for your safety, expressing your immediate feelings in character and explaining what is happening.  Don't use complicated elaboration here, but keep is simple and direct instead.";
+		std::string thought_message = "During the ongoing struggle, the attacker has now deftly removed his own clothing. He took off his clothes and armour and is ready to penetrate you now.  React to this development and what it means for your safety, expressing your immediate feelings in character and explaining what is happening.  Don't use complicated elaboration here, but keep is simple and direct instead.";
 		if (name && *name) {
 			thought_message += std::format(" The attacker is {}.", name);
 		}
