@@ -622,6 +622,15 @@ void handle_changes_in_active_magic_effects( const RE::TESActiveEffectApplyRemov
 
 
 
+/*
+[2026-11-19 17:07:32.894] [log] [info] [handle_active_magic_effect_changes.cpp:1156] ========== Found A SO-FAR UNHANDLED effect, that is actually about the Player.  Let's go into more details below! =============
+[2026-11-19 17:07:32.894] [log] [info] [handle_active_magic_effect_changes.cpp:1157] Effect APPLIED on Lillith | UID=17
+[2026-11-19 17:07:32.894] [log] [info] [handle_active_magic_effect_changes.cpp:1160] Base name: Varignal Bleeding low | Base ptr: 0x24bfdd00f00 | Base-FormID: 15006EBA | Base-Form Type: 18   (This means: MGEF) 
+[2026-11-19 17:07:32.894] [log] [info] [handle_active_magic_effect_changes.cpp:1161] base-Effect EDID:  | Source ptr: 0x24bfdbbc400  |  Caster: Lillith 
+[2026-11-19 17:07:32.894] [log] [info] [handle_active_magic_effect_changes.cpp:1165] Magnitude: 0 | Duration: 86400
+[2026-11-19 17:07:32.894] [log] [info] [handle_active_magic_effect_changes.cpp:1168] Source name: Vaginal bleeding low | Source FormID: 15006EBC | Source EDID:  
+[2026-11-19 17:07:32.894] [log] [info] [handle_active_magic_effect_changes.cpp:1174] Form LookupByID 15006EBA found: Varignal Bleeding low
+*/
 
 
 /*[2026-08-16 17:56:42.354] [log] [info] [handle_active_magic_effect_changes.cpp:536] Effect REMOVED on Lillith | UID=30
