@@ -176,6 +176,22 @@ RE::BSEventNotifyControl handle_worn_equipment_change::ProcessEvent(
 		item_name ? item_name : "<unknown>",
 		a_event->baseObject);
 
+	// In case of an aphrotisiac, we instantly throw out a message:
+	/*
+	[2026-11-19 17:09:43.142] [log] [info] [handle_worn_equipment_change.cpp:229] Player INVENTORY CHANGED: item added: Aphrodisiac (FormID 5D3C781F), count before: 0, count after: 1
+	[2026-11-19 17:09:43.154] [log] [info] [handle_worn_equipment_change.cpp:229] Player INVENTORY CHANGED: item removed: Aphrodisiac (FormID 5D3C781F), count before: 2, count after: 1
+	[2026-11-19 17:09:43.154] [log] [info] [handle_worn_equipment_change.cpp:170] Hook ENTERED AT ALL
+	[2026-11-19 17:09:43.154] [log] [info] [handle_worn_equipment_change.cpp:174] Hook TRIGGERED for item equipped: Aphrodisiac (FormID 5D3C781F)
+	*/
+	if (a_event->equipped) {
+		if (item_name && std::strcmp(item_name, "Aphrodisiac") == 0) {
+			LillithOnlyBox("You have equipped an Aphrodisiac!");
+			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
+			"You've just swallowed something (or someone else made you swallow something).  You wonder, whether that was an aphrodisiac?  Express those thoughts and what they might mean in this context and your feelings about it in character.");
+		}
+		// Handle the case when an item is equipped
+	}
+
 	// NOTE:  This event isn't just triggerd by change in WORN equipment, it is triggered by ANY change in worn items.
 	//        Therefore we have to disable this message, at least for now, because it triggers excessively during normal gameplay.
 	// LillithOnlyBox("Player worn-equipment change event received.  -->  Triggering a refresh of the currently worn items records.");
