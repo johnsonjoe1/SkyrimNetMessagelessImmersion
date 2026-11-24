@@ -77,6 +77,30 @@ namespace SNMI
         settings.enableConstantWhining = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhining", 1, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhining.  New variable value = {}", settings.enableConstantWhining);
 
+        settings.enableConstantWhiningAboutApropos = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhiningAboutApropos", 1, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhiningAboutApropos.  New variable value = {}", settings.enableConstantWhiningAboutApropos);
+
+        settings.enableConstantWhiningAboutFatigue = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhiningAboutFatigue", 1, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhiningAboutFatigue.  New variable value = {}", settings.enableConstantWhiningAboutFatigue);
+
+        settings.enableConstantWhiningAboutHunger = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhiningAboutHunger", 1, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhiningAboutHunger.  New variable value = {}", settings.enableConstantWhiningAboutHunger);
+
+        settings.enableConstantWhiningAboutThirst = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhiningAboutThirst", 1, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhiningAboutThirst.  New variable value = {}", settings.enableConstantWhiningAboutThirst);
+
+        settings.enableConstantWhiningAboutDirt = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhiningAboutDirt", 1, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhiningAboutDirt.  New variable value = {}", settings.enableConstantWhiningAboutDirt);
+
+        settings.enableConstantWhiningAboutSickness = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhiningAboutSickness", 1, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhiningAboutSickness.  New variable value = {}", settings.enableConstantWhiningAboutSickness);
+
+        settings.enableConstantWhiningAboutBimboCorruption = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhiningAboutBimboCorruption", 1, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhiningAboutBimboCorruption.  New variable value = {}", settings.enableConstantWhiningAboutBimboCorruption);
+
+        settings.enableConstantWhiningAboutYpsHeels = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhiningAboutYpsHeels", 1, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhiningAboutYpsHeels.  New variable value = {}", settings.enableConstantWhiningAboutYpsHeels);
+
         settings.enableLicensesPlayerOppressionThoughts = GetPrivateProfileIntW(L"Thoughts", L"EnableLicensesPlayerOppressionThoughts", 1, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableLicensesPlayerOppressionThoughts.  New variable value = {}", settings.enableLicensesPlayerOppressionThoughts);
 

@@ -76,14 +76,15 @@ namespace
 
 void run_constant_whining_in_case_of_silence()
 {
-	if (!SNMI::GetSettings().enableConstantWhining) {
+	const auto& settings = SNMI::GetSettings();
+	if (!settings.enableConstantWhining) {
 		return;
 	}
 	auto* player = RE::PlayerCharacter::GetSingleton();
 	if (!player) {
 		return;
 	}
-	const auto requiredSilence = std::string_view(player->GetName()) == "Lillith" ? 20 : SNMI::GetSettings().silenceRequiredBeforeSpontaneousStatusWhining;
+	const auto requiredSilence = std::string_view(player->GetName()) == "Lillith" ? 20 : settings.silenceRequiredBeforeSpontaneousStatusWhining;
 	const auto silenceDuration = std::chrono::steady_clock::now() - DumpThoughts::GetLastSpeechTimestamp();
 
 	if (player_is_in_ANY_SL_scene() || player_is_in_BATTLEFUCK_scene()) {
@@ -96,23 +97,23 @@ void run_constant_whining_in_case_of_silence()
 		// LillithOnlyBox(std::format("run_constant_whining_in_case_of_silence() ran after at least {} seconds without a thought.", requiredSilence));
 		// LillithOnlyHUDmessage(std::format("run_constant_whining_...() ran ({} sec no thought).", requiredSilence));
 
-		if (handle_iNeed::previous_iNeed_fatigue_level == 3) {
+		if (settings.enableConstantWhiningAboutFatigue && handle_iNeed::previous_iNeed_fatigue_level == 3) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 				"You are extremely tired. You need a good long night of sleep. Your base Stamina and Magicka are reduced by about 55%. Your movement speed is reduced by 15%. And you can learn new skills 70% slower. Say so in your response and make clear that you are speaking about your fatigue from sleep deprivation.  But don't mention any exact numbers in your response.");
 		}
-		if (handle_iNeed::previous_iNeed_hunger_level == 3) {
+		if (settings.enableConstantWhiningAboutHunger && handle_iNeed::previous_iNeed_hunger_level == 3) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 				"You are extremely hungry. You need to eat a substantial meal to regain your strength. Your base Health regeneration and damage output are reduced by 70%. And sleeping is less effective by about 20%. Say so in your response and make clear that you are speaking about your hunger.  But don't mention any exact numbers in your response.");
 		}
-		if (handle_iNeed::previous_iNeed_thirst_level == 3) {
+		if (settings.enableConstantWhiningAboutThirst && handle_iNeed::previous_iNeed_thirst_level == 3) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 				"You are extremely thirsty. You need to drink a substantial amount of water to stay hydrated. Your base Stamina and Magicka regeneration are reduced by about 70%. And sleeping is less effective by about 20%. And also you need 70% more time in between shouts from your dry throat. Say so in your response and make clear that you are speaking about your thirst.  But don't mention any exact numbers in your response.");
 		}
-		if (SNMI::GetSettings().enablePlayerDirtThoughts && handle_player_dirt::is_player_almost_at_filthy_dirt_stage()) {
+		if (settings.enableConstantWhiningAboutDirt && handle_player_dirt::is_player_almost_at_filthy_dirt_stage()) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 				"You are very dirty. You need a proper bath with soap to get clean again. Your speechcraft effectiveness is reduced by 50%, because other people find you disgusting. And also your sneak ability is reduced by 25, because adversaries can smell you. And also your disease resistance is reduced by 100%, because you are more susceptible to infections. Say so in your response and make clear that you are speaking about your dirtiness.  But don't mention any exact numbers in your response.");
 		}
-		if (get_current_ataxia_stage() == AtaxiaStage::stage2) {
+		if (settings.enableConstantWhiningAboutSickness && get_current_ataxia_stage() == AtaxiaStage::stage2) {
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 				"You are suffering from the most severe stage of Ataxia. The disease is making you move more slowly and deal less damage to enemies. Say so in your response and make clear that these symptoms are caused by your severe Ataxia.");
 		}
@@ -120,27 +121,35 @@ void run_constant_whining_in_case_of_silence()
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(arousalThought);
 		}
 		if (auto* dataHandler = RE::TESDataHandler::GetSingleton()) {
-			// BoS's CC_SexEventsScript.CC_PlayerBimboLevel property is bound to CC_PlayerBimboScore.
-			auto* corruption = dataHandler->LookupForm<RE::TESGlobal>(0x33192B, "CustomComments.esp");
-			auto* suppressed = dataHandler->LookupForm<RE::TESGlobal>(0x4CBC91, "CustomComments.esp");  // CC_IsPlayerBimboSuppressed
-			// BoS labels corruption above 60 as High, above 80 as Very High, and 100+ as Gone Too Far.
-			// suppression is only relevant, after you've become a bimbo
-			// && suppressed && suppressed->value == 0.0f
-			if (corruption && corruption->value > 80.0f && corruption->value < 99.0f ) {
-				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format(
-					"Your current bimbo corruption level is {:.0f}, which is high or worse, because at 100 you will permanently become a bimbo. Speak in character, like a brainless bimbo, and let the player know how the bimbo corruption makes your mind foggy and unable to focus on anything but fashion and pleasure.  Your thoughts should make is somewhat clear, that you are speaking about very high bimbo corruption levels of your mind.",
-					corruption->value));
-			} else if (corruption) {
-				// LillithOnlyBox(std::format(
-				// 	"Your current bimbo corruption level is {:.0f}, which is not high enough to trigger the high corruption response.",
-				// 	corruption->value));
+
+			if (settings.enableConstantWhiningAboutBimboCorruption) {
+
+				// BoS's CC_SexEventsScript.CC_PlayerBimboLevel property is bound to CC_PlayerBimboScore.
+				auto* corruption = dataHandler->LookupForm<RE::TESGlobal>(0x33192B, "CustomComments.esp");
+				auto* suppressed = dataHandler->LookupForm<RE::TESGlobal>(0x4CBC91, "CustomComments.esp");  // CC_IsPlayerBimboSuppressed
+				// BoS labels corruption above 60 as High, above 80 as Very High, and 100+ as Gone Too Far.
+				// suppression is only relevant, after you've become a bimbo
+				// && suppressed && suppressed->value == 0.0f
+				if (corruption && corruption->value > 80.0f && corruption->value < 99.0f ) {
+					DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(std::format(
+						"Your current bimbo corruption level is {:.0f}, which is high or worse, because at 100 you will permanently become a bimbo. Speak in character, like a brainless bimbo, and let the player know how the bimbo corruption makes your mind foggy and unable to focus on anything but fashion and pleasure.  Your thoughts should make is somewhat clear, that you are speaking about very high bimbo corruption levels of your mind.",
+						corruption->value));
+				} else if (corruption) {
+					// LillithOnlyBox(std::format(
+					// 	"Your current bimbo corruption level is {:.0f}, which is not high enough to trigger the high corruption response.",
+					// 	corruption->value));
+				}
 			}
 		}
-		for (const auto& sicknessThought : get_current_other_sickness_thoughts()) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(sicknessThought);
+		if (settings.enableConstantWhiningAboutSickness) {
+			for (const auto& sicknessThought : get_current_other_sickness_thoughts()) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_with_LILLITH_DEBUG_WINDOW(sicknessThought);
+			}
 		}
-		complain_about_apropos_wear(player);
-		if (actually_wearing_heels_according_to_yps_thoughts) {
+		if (settings.enableConstantWhiningAboutApropos) {
+			complain_about_apropos_wear(player);
+		}
+		if (settings.enableConstantWhiningAboutYpsHeels && actually_wearing_heels_according_to_yps_thoughts) {
 			const char* heelsThought = nullptr;
 			switch (handle_yps::get_current_heels_training_status()) {
 			case YpsHeelTrainingStatus::untrained_feet:

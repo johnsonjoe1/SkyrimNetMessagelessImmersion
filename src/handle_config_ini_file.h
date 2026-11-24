@@ -12,6 +12,14 @@ namespace SNMI
         int SLSFthoughtThreshold{ 5 };
         int SLSFthoughtCooldown{ 300 };
         bool enableConstantWhining{ true };
+        bool enableConstantWhiningAboutApropos{ true };
+        bool enableConstantWhiningAboutFatigue{ true };
+        bool enableConstantWhiningAboutHunger{ true };
+        bool enableConstantWhiningAboutThirst{ true };
+        bool enableConstantWhiningAboutDirt{ true };
+        bool enableConstantWhiningAboutSickness{ true };
+        bool enableConstantWhiningAboutBimboCorruption{ true };
+        bool enableConstantWhiningAboutYpsHeels{ true };
         bool enableLicensesPlayerOppressionThoughts{ true };
         bool enableDirectPushOfYPSThoughtsToSkyrimNetPlayerThoughts{ true };
 		int updateInterval{ 5 };
