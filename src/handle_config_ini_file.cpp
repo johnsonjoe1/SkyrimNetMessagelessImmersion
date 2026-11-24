@@ -92,6 +92,9 @@ namespace SNMI
         settings.enableConstantWhiningAboutDirt = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhiningAboutDirt", 1, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhiningAboutDirt.  New variable value = {}", settings.enableConstantWhiningAboutDirt);
 
+        settings.enableConstantWhiningAboutArousal = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhiningAboutArousal", 1, configPath.c_str()) != 0;
+        SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhiningAboutArousal.  New variable value = {}", settings.enableConstantWhiningAboutArousal);
+
         settings.enableConstantWhiningAboutSickness = GetPrivateProfileIntW(L"Thoughts", L"EnableConstantWhiningAboutSickness", 1, configPath.c_str()) != 0;
         SKSE::log::info("Finished reading (or defaulting to fallback for) config variable settings.enableConstantWhiningAboutSickness.  New variable value = {}", settings.enableConstantWhiningAboutSickness);
 

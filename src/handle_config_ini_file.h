@@ -17,6 +17,7 @@ namespace SNMI
         bool enableConstantWhiningAboutHunger{ true };
         bool enableConstantWhiningAboutThirst{ true };
         bool enableConstantWhiningAboutDirt{ true };
+        bool enableConstantWhiningAboutArousal{ true };
         bool enableConstantWhiningAboutSickness{ true };
         bool enableConstantWhiningAboutBimboCorruption{ true };
         bool enableConstantWhiningAboutYpsHeels{ true };

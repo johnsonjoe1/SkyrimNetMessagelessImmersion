@@ -117,8 +117,10 @@ void run_constant_whining_in_case_of_silence()
 			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(
 				"You are suffering from the most severe stage of Ataxia. The disease is making you move more slowly and deal less damage to enemies. Say so in your response and make clear that these symptoms are caused by your severe Ataxia.");
 		}
-		if (const auto arousalThought = handle_arousal::get_current_high_arousal_thought(); !arousalThought.empty()) {
-			DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(arousalThought);
+		if (settings.enableConstantWhiningAboutArousal) {
+			if (const auto arousalThought = handle_arousal::get_current_high_arousal_thought(); !arousalThought.empty()) {
+				DumpThoughts::throw_out_IMPORTANT_TTS_thought_message(arousalThought);
+			}
 		}
 		if (auto* dataHandler = RE::TESDataHandler::GetSingleton()) {
 
